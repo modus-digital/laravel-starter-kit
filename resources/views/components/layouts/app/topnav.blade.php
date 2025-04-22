@@ -22,7 +22,10 @@
         <!-- Logo -->
         <a href="https://flowbite.com" class="flex ms-2 md:me-24">
           <img src="https://flowbite.com/docs/images/logo.svg" class="h-8 me-3" alt="FlowBite Logo" />
-          <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">Flowbite</span>
+          <span class="self-center text-xl font-bold sm:text-2xl whitespace-nowrap dark:text-white font-clash-display">
+            Modus Digital
+            <span class="text-neutral-500 dark:text-neutral-400">- Starter Kit</span>
+          </span>
         </a>
         
       </div>
