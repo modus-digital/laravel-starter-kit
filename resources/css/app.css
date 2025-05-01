@@ -5,13 +5,16 @@
 @plugin 'flowbite/plugin';
 
 /* Define source files */
-@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
 @source '../../node_modules/flowbite';
 
 /* Variants */
-@custom-variant dark (&:where(.dark, .dark *));
+/* @custom-variant dark (&:where(.dark, .dark *)); */
 
 /* Theming */
-@import 'fonts.css';
-@import 'themes/default.css';
-@import 'themes/indigo.css'
+@import './fonts.css';
+@import './themes/default.css';
+@import './themes/indigo.css'
