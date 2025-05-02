@@ -6,7 +6,7 @@
     'label' => null,
 ])
 
-<li>
+<li class="w-full">
     @if (count($children) > 0)
         <button
             type="button"
