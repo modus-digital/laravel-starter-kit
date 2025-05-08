@@ -25,8 +25,10 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-            ->path('dashboard')
-            ->login()
+            ->path('admin')
+            ->brandName('Modus Digital - Admin panel')
+            ->darkMode(true)
+            ->spa()
             ->colors([
                 'primary' => Color::Blue,
             ])
