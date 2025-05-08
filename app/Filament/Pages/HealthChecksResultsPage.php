@@ -9,7 +9,7 @@ class HealthChecksResultsPage extends BaseHealthCheckResults
 
   public static function getSlug(): string
   {
-    return '/health-checks';
+    return '/core/health-checks';
   }
   
   public static function getNavigationLabel(): string
@@ -26,6 +26,5 @@ class HealthChecksResultsPage extends BaseHealthCheckResults
   {
       return 'Applicatie-info';
   }
-
   
 }
