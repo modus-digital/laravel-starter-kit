@@ -6,6 +6,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -98,6 +99,31 @@ class UserResource extends Resource
                             ->email()
                             ->maxLength(255),
                     ]),
+
+                Forms\Components\Section::make('Sessie-informatie')
+                    ->description('Hier vind je informatie over de actieve sessies van de gebruiker.')
+                    ->aside()
+                    ->schema([
+
+                        Forms\Components\TextInput::make('last_login_at')
+                            ->label('Laatst ingelogd op')
+                            ->prefixIcon('heroicon-o-calendar')
+                            ->formatStateUsing(function (?User $record): ?string {
+                                return $record?->last_login_at ? $record->last_login_at->format('d-m-Y H:i') : 'Nog niet ingelogd';
+                            })
+                            ->disabled(),
+                    ]),
+
+                Forms\Components\Section::make('Toegangscontrole')
+                    ->description('Hier beheer je de toegang van de gebruiker tot de applicatie.')
+                    ->aside()
+                    ->schema([
+
+                        Forms\Components\Select::make('roles')
+                            ->relationship(name: 'roles', titleAttribute: 'name')
+                            ->label('Rol')
+
+                    ])
 
             ]);
     }
