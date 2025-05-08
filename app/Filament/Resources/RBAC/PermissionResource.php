@@ -37,7 +37,7 @@ class PermissionResource extends Resource
    *
    * @var string|null
    */
-  protected static ?string $navigationGroup = 'RBAC Beheer';
+  protected static ?string $navigationGroup = 'Toegangsbeheer';
 
   /**
    * The text for the navigation label.
