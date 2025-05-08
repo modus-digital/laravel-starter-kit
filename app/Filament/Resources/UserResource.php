@@ -71,15 +71,34 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Naam')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->label('E-mailadres')
-                    ->required()
-                    ->email()
-                    ->maxLength(255),
+
+                Forms\Components\Section::make('Persoonlijke gegevens')
+                    ->description('Hier bewerk je de persoonlijke informatie van deze gebruiker.')
+                    ->aside()
+                    ->columns(3)
+                    ->schema([
+
+                        Forms\Components\TextInput::make('first_name')
+                            ->label('Voornaam')
+                            ->required()
+                            ->maxLength(255),
+                        
+                        Forms\Components\TextInput::make('last_name_prefix')
+                            ->label('Tussenvoegsel')
+                            ->maxLength(255),
+        
+                        Forms\Components\TextInput::make('last_name')
+                            ->label('Achternaam')
+                            ->maxLength(255),
+        
+                        Forms\Components\TextInput::make('email')
+                            ->label('E-mailadres')
+                            ->columnSpan(2)
+                            ->required()
+                            ->email()
+                            ->maxLength(255),
+                    ]),
+
             ]);
     }
 
@@ -89,8 +108,11 @@ class UserResource extends Resource
             ->columns([
 
                 // Column for name
-                Tables\Columns\TextColumn::make('name')
-                    ->label('Naam')
+                Tables\Columns\TextColumn::make('first_name')
+                    ->label('Volledige naam')
+                    ->formatStateUsing(function (User $record): string {
+                        return "{$record->first_name} {$record?->last_name_prefix} {$record?->last_name}";
+                    })
                     ->searchable()
                     ->sortable(),
 

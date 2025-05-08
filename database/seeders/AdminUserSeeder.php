@@ -17,7 +17,8 @@ class AdminUserSeeder extends Seeder
     {
         /** @var \App\Models\User $superAdmin */
         $superAdmin = User::create([
-            'name' => 'Modus Admin',
+            'first_name' => 'Modus',
+            'last_name' => 'Admin',
             'email' => 'admin@modus-digital.com',
             'password' => Hash::make('password'),
         ]);
