@@ -7,15 +7,13 @@ use App\Enums\Settings\Language;
 use App\Enums\Settings\Theme;
 use App\Enums\Settings\TwoFactor;
 use App\Enums\Settings\UserSettings;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Illuminate\Validation\Validator;
 
-final readonly class UserSettingsValidators
+class UserSettingsValidators
 {
     public static function byKey(UserSettings $key, array $data): Validator
     {
-        dump($key, $data);
         switch ($key) {
             case UserSettings::LOCALIZATION:
                 return self::localization($data);
@@ -106,27 +104,19 @@ final readonly class UserSettingsValidators
 
     private static function ensureNullableFieldsExist(array $data, array $rules): array
     {
+        $defaults = [];
+
         foreach ($rules as $field => $rule) {
-            // Skip wildcard rules as they don't represent a single field to default.
-            if (str_contains($field, '*')) {
-                continue;
+            // If the rule is a string and contains the 'nullable' rule, and the field isn't already in the data
+            if (is_string($rule) && strpos($rule, 'nullable') !== false && !array_key_exists($field, $data)) {
+                $defaults[$field] = null;
             }
-
-            $isNullable = false;
-            // Check if 'nullable' is present in the rule string or array
-            if (is_string($rule) && strpos($rule, 'nullable') !== false) {
-                $isNullable = true;
-            } elseif (is_array($rule) && in_array('nullable', $rule, true)) {
-                $isNullable = true;
-            }
-
-            // If the field is nullable and doesn't exist in the data (even with dot notation),
-            // set it to null in the data array.
-            if ($isNullable && !Arr::has($data, $field)) {
-                Arr::set($data, $field, null);
+            // If the rule is an array and contains the 'nullable' rule, and the field isn't already in the data
+            elseif (is_array($rule) && in_array('nullable', $rule) && !array_key_exists($field, $data)) {
+                $defaults[$field] = null;
             }
         }
 
-        return $data; // Return the directly modified data array
+        return array_merge($defaults, $data);
     }
 }
