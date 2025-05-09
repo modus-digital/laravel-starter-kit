@@ -11,21 +11,23 @@
     "dev:server": "php artisan serve"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.0.7",
+    "@tailwindcss/vite": "^4.1.5",
     "alpinejs": "^3.14.9",
-    "autoprefixer": "^10.4.20",
-    "axios": "^1.7.4",
+    "autoprefixer": "^10.4.21",
+    "axios": "^1.9.0",
     "flowbite": "3.1.2",
-    "laravel-vite-plugin": "^1.0",
-    "tailwindcss": "^4.0.7",
-    "vite": "^6.0"
+    "laravel-vite-plugin": "^1.2.0",
+    "tailwindcss": "^4.1.5",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "4.9.5",
-    "@tailwindcss/oxide-linux-x64-gnu": "^4.0.1",
-    "lightningcss-linux-x64-gnu": "^1.29.1"
+    "@tailwindcss/oxide-linux-x64-gnu": "^4.1.5",
+    "lightningcss-linux-x64-gnu": "^1.29.3"
   },
   "devDependencies": {
+    "@types/node": "^22.15.16",
     "concurrently": "9.1.2"
   },
   "packageManager": "pnpm@9.15.4+sha512.b2dc20e2fc72b3e18848459b37359a32064663e5627a51e4c74b2c29dd8e8e0491483c3abb40789cfd578bf362fb6ba8261b05f0387d76792ed6e23ea3b1b6a0"

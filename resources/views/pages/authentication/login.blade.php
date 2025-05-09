@@ -1,7 +1,7 @@
 <?php
     use function Laravel\Folio\{name, middleware};
     use Livewire\Volt\Component;
-    use Livewire\Attributes\Rule;
+    use Livewire\Attributes\Validate;
     use Illuminate\Support\Facades\Auth;
 
     // Named route + middleware
@@ -10,10 +10,10 @@
 
     // Define the component using an anonymous class
     new class extends Component {
-        #[Rule('required|email')]
+        #[Validate('required|email')]
         public string $email = '';
 
-        #[Rule('required')]
+        #[Validate('required')]
         public string $password = '';
 
         public bool $remember = false;

@@ -55,7 +55,7 @@
           <span class="sr-only">Open user menu</span>
           <img
             class="w-8 h-8 rounded-full"
-            src="{{ auth()->user() !== null ? (auth()->user()->avatar ?? "https://ui-avatars.com/api/?name=" . urlencode(auth()->user()->name)) : "https://ui-avatars.com/api/?name=" . urlencode('Guest') }}"
+            src="{{ auth()->user() !== null ? (auth()->user()->avatar ?? "https://ui-avatars.com/api/?name=" . urlencode(auth()->user()->initials())) : "https://ui-avatars.com/api/?name=" . urlencode('Guest') }}"
             alt="user photo"
           />
         </button>

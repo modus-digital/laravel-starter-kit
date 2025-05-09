@@ -7,7 +7,7 @@ name('user.profile');
 ?>
 
 <x-layouts.app title="profile">
-    <div class="container mx-auto p-4">
+    <div class="mx-auto p-4">
         <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-4">
             <!-- Header Row -->
             <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
@@ -24,7 +24,7 @@ name('user.profile');
                     {{-- Avatar --}}
                     <div class="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
                         <img
-                            src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=random' }}"
+                            src="{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->initials()) }}"
                             alt="{{ auth()->user()->name }}'s profile picture"
                             class="w-full h-full object-cover"
                         >
@@ -64,7 +64,7 @@ name('user.profile');
                     {{-- Mobile View (Icon + Text) --}}
                     <div class="flex sm:hidden items-center space-x-2">
                         <svg class="h-5 w-5 text-gray-500 dark:text-gray-400 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" /></svg>
-                        <span class="text-sm text-gray-700 dark:text-gray-300">+1 234 567 890</span>
+                        <span class="text-sm text-gray-700 dark:text-gray-300">{{ auth()->user()->phone ?? 'Not set' }}</span>
                     </div>
                     {{-- Desktop View (Icon Box + Label/Text) --}}
                     <div class="hidden sm:flex sm:items-center sm:space-x-4">
@@ -73,7 +73,7 @@ name('user.profile');
                         </span>
                          <div class="flex flex-col items-start">
                             <span class="text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Phone</span>
-                            <span class="text-lg font-medium text-gray-700 dark:text-gray-300">+1 234 567 890</span> {{-- Static phone number --}}
+                            <span class="text-lg font-medium text-gray-700 dark:text-gray-300">{{ auth()->user()->phone ?? 'Not set' }}</span>
                         </div>
                     </div>
                 </div>
@@ -105,12 +105,7 @@ name('user.profile');
                         </div>
                     </div>
                 </div>
-
-                {{-- Block 5: Edit Button Removed from here --}}
-
             </div>
-
-            {{-- Profile Information Section Removed --}}
         </div>
     </div>
 
@@ -126,7 +121,6 @@ name('user.profile');
                     </a>
                 </div>
 
-                <!-- Container for Fieldsets -->
                 <div> <!-- Removed space-y-4 -->
 
                     <!-- Group 1: Locale -->
@@ -154,10 +148,35 @@ name('user.profile');
                           <div> <!-- Removed space-y-0 -->
                              <div class="flex justify-between items-center py-2">
                                 <span class="text-sm text-gray-700 dark:text-gray-300">Two-factor status</span>
-                                <span class="flex items-center">
-                                    <span class="inline-block h-2 w-2 rounded-full bg-gray-400 dark:bg-gray-500 mr-2"></span> <!-- Indicator Dot -->
-                                    <span class="text-sm text-gray-900 dark:text-white font-medium">Disabled</span>
-                                </span>
+
+                                @php
+                                    $status = 'disabled';
+                                @endphp
+                                @switch($status)
+                                    @case('disabled')
+                                        <span class="inline-flex items-center rounded-full bg-gray-100 dark:bg-gray-700 px-3 py-1 text-xs font-medium text-gray-600 dark:text-gray-300 ring-1 ring-inset ring-gray-500/10 dark:ring-gray-600/20">
+                                            <span class="inline-block h-2 w-2 rounded-full bg-gray-400 dark:bg-gray-500 mr-1.5"></span>
+                                            Disabled
+                                        </span>
+                                        @break
+
+                                    @case('enabled')
+                                        <span class="inline-flex items-center rounded-full bg-green-100 dark:bg-green-700 px-3 py-1 text-xs font-medium text-green-600 dark:text-green-300 ring-1 ring-inset ring-green-500/10 dark:ring-green-600/20">
+                                            <span class="inline-block h-2 w-2 rounded-full bg-green-400 dark:bg-green-500 mr-1.5"></span>
+                                            Enabled
+                                        </span>
+                                        @break
+
+                                    @case('not_setup')
+                                        <span class="inline-flex items-center rounded-full bg-orange-100 dark:bg-orange-700 px-3 py-1 text-xs font-medium text-orange-600 dark:text-orange-300 ring-1 ring-inset ring-orange-500/10 dark:ring-orange-600/20">
+                                            <span class="inline-block h-2 w-2 rounded-full bg-orange-400 dark:bg-orange-500 mr-1.5"></span>
+                                            Not setup
+                                        </span>
+                                        @break
+
+                                    @default
+                                        <span class="text-sm text-gray-900 dark:text-white font-medium">Unknown</span>
+                                @endswitch
                             </div>
                             <div class="flex justify-between items-center py-2">
                                 <span class="text-sm text-gray-700 dark:text-gray-300">Password last changed</span>
@@ -189,50 +208,24 @@ name('user.profile');
                  <!-- Header for Browser Sessions Card -->
                  <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
                     <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Browser Sessions</h2>
-                    <button type="button" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:border-red-700 focus:ring focus:ring-red-200 active:bg-red-600 transition">
+                    <button
+                        type="button"
+                        onclick="Livewire.dispatch('open-modal', { name: 'confirmable-password' })"
+                        class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:border-red-700 focus:ring focus:ring-red-200 active:bg-red-600 transition"
+                    >
                         Log out other browser sessions
                     </button>
+
+                    <x-modal name="confirmable-password">
+                        <x-slot name="title">Confirm Password</x-slot>
+                        <x-slot name="description">Please confirm your password to log out other browser sessions.</x-slot>
+
+                        <livewire:profile.sessions.clear-browser-sessions name="confirmable-password" />
+
+                    </x-modal>
                 </div>
 
-                <div class="space-y-3"> <!-- List container - flex-grow removed -->
-
-                    <!-- Session Item 1 (Current Device) -->
-                    <div class="flex items-center space-x-4 bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                         {{-- Icon: heroicons/outline/computer-desktop --}}
-                        <svg class="h-8 w-8 text-gray-500 dark:text-gray-400 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
-                        </svg>
-                        <div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">Windows - Chrome</p>
-                            <p class="text-xs text-gray-600 dark:text-gray-400">127.0.0.1 - This device</p>
-                        </div>
-                    </div>
-
-                    <!-- Session Item 2 -->
-                    <div class="flex items-center space-x-4 bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                        {{-- Icon: heroicons/outline/computer-desktop --}}
-                        <svg class="h-8 w-8 text-gray-500 dark:text-gray-400 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
-                        </svg>
-                         <div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">Windows - Chrome</p>
-                            <p class="text-xs text-gray-600 dark:text-gray-400">127.0.0.1 - Last active 3 days ago</p> {{-- Static Example --}}
-                        </div>
-                    </div>
-
-                     <!-- Session Item 3 -->
-                    <div class="flex items-center space-x-4 bg-gray-50 dark:bg-gray-700/50 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                        {{-- Icon: heroicons/outline/computer-desktop --}}
-                         <svg class="h-8 w-8 text-gray-500 dark:text-gray-400 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0V12a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 12V5.25" />
-                        </svg>
-                         <div>
-                            <p class="text-sm font-medium text-gray-900 dark:text-white">macOS - Safari</p> {{-- Static Example --}}
-                            <p class="text-xs text-gray-600 dark:text-gray-400">192.168.1.10 - Last active yesterday</p> {{-- Static Example --}}
-                        </div>
-                    </div>
-
-                </div>
+                <livewire:profile.sessions.show-browser-sessions />
 
             </div>
         </div>

@@ -8,7 +8,7 @@
 <div
     x-data="{ show: false, name: '{{ $name }}' }"
     x-on:open-modal.window="$event.detail.name === name && (show = true)"
-    x-on:close-modal.window="$event.detail.name === name && (show = false)"
+    x-on:close-modal.window="show = false"
     x-on:keydown.escape.window="show = false"
     x-show="show"
     x-transition.opacity
