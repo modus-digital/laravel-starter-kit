@@ -10,10 +10,8 @@ use Filament\Resources\Pages\ListRecords;
  */
 class ListRoles extends ListRecords
 {
-  /**
-   * The resource class this page belongs to.
-   *
-   * @var string
-   */
-  protected static string $resource = RoleResource::class;
+    /**
+     * The resource class this page belongs to.
+     */
+    protected static string $resource = RoleResource::class;
 }

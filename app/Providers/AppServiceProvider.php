@@ -31,8 +31,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Health::checks([
-            
-            // CPU load check       
+
+            // CPU load check
             CpuLoadCheck::new()
                 ->failWhenLoadIsHigherInTheLastMinute(2.5)
                 ->failWhenLoadIsHigherInTheLast5Minutes(1.5)
@@ -40,13 +40,13 @@ class AppServiceProvider extends ServiceProvider
 
             // Check cache health
             CacheCheck::new(),
-            
+
             // Cached config, routes and events check
             OptimizedAppCheck::new(),
-            
+
             // DB connection check
             DatabaseCheck::new(),
-            
+
             // DB connection count check
             DatabaseConnectionCountCheck::new()
                 ->warnWhenMoreConnectionsThan(50)
@@ -55,7 +55,7 @@ class AppServiceProvider extends ServiceProvider
             // DB size check
             DatabaseSizeCheck::new()
                 ->failWhenSizeAboveGb(errorThresholdGb: 1.0),
-        
+
             // Check if scheduled tasks are running
             ScheduleCheck::new(),
 

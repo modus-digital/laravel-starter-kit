@@ -10,10 +10,8 @@ use Filament\Resources\Pages\ViewRecord;
  */
 class ViewPermission extends ViewRecord
 {
-  /**
-   * The resource class this page belongs to.
-   *
-   * @var string
-   */
-  protected static string $resource = PermissionResource::class;
+    /**
+     * The resource class this page belongs to.
+     */
+    protected static string $resource = PermissionResource::class;
 }

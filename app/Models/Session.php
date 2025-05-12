@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 use Jenssegers\Agent\Agent;
 
 /**
@@ -27,14 +27,14 @@ class Session extends Model
 {
     /**
      * The table associated with the model.
-     * 
+     *
      * @var string
      */
     protected $table = 'sessions';
 
     /**
      * The attributes that should be cast.
-     * 
+     *
      * @var array
      */
     protected $casts = [
@@ -54,7 +54,7 @@ class Session extends Model
 
     /**
      * Get the session information.
-     * 
+     *
      * @return Attribute<array>
      */
     public function sessionInfo(): Attribute
@@ -69,7 +69,7 @@ class Session extends Model
                     'platform' => $agent->platform(),
                     'is_desktop' => $agent->isDesktop(),
                     'is_mobile' => $agent->isMobile(),
-                    'is_tablet' => $agent->isTablet(), 
+                    'is_tablet' => $agent->isTablet(),
                 ],
                 'ip_address' => $this->ip_address,
                 'expires_at' => $this->expires_at,
@@ -82,7 +82,7 @@ class Session extends Model
 
     /**
      * Get the session expiration date.
-     * 
+     *
      * @return Attribute<string>
      */
     public function expiresAt(): Attribute
@@ -96,7 +96,7 @@ class Session extends Model
 
     /**
      * Determine if the session has expired.
-     * 
+     *
      * @return Attribute<bool>
      */
     public function isExpired(): Attribute
@@ -109,8 +109,7 @@ class Session extends Model
     /**
      * Create an Agent instance from the session.
      * This is used to retrieve information about the user's device.
-     * 
-     * @param  mixed  $session
+     *
      * @return Agent
      */
     private function createAgent(mixed $session)

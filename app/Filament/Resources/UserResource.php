@@ -4,21 +4,16 @@ namespace App\Filament\Resources;
 
 use App\Enums\RBAC\Permission;
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\Session;
-use Filament\Notifications\Notification;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Repeater;
-use Filament\Infolists;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
 class UserResource extends Resource
@@ -27,36 +22,26 @@ class UserResource extends Resource
 
     /**
      * The model the resource corresponds to.
-     *
-     * @var string
      */
     protected static ?string $model = User::class;
 
     /**
      * The icon of the resource.
-     *
-     * @var string|null
      */
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
     /**
      * The text for the navigation label.
-     *
-     * @var string|null
      */
     protected static ?string $navigationLabel = 'Gebruikers';
 
     /**
      * The slug for the resource
-     * 
-     * @var string|null
      */
     protected static ?string $slug = '/users';
 
     /**
      * The label for this resource.
-     *
-     * @return string
      */
     public static function getModelLabel(): string
     {
@@ -65,8 +50,6 @@ class UserResource extends Resource
 
     /**
      * The plural label for this resource.
-     *
-     * @return string
      */
     public static function getPluralModelLabel(): string
     {
@@ -90,15 +73,15 @@ class UserResource extends Resource
                             ->label('Voornaam')
                             ->required()
                             ->maxLength(255),
-                        
+
                         Forms\Components\TextInput::make('last_name_prefix')
                             ->label('Tussenvoegsel')
                             ->maxLength(255),
-        
+
                         Forms\Components\TextInput::make('last_name')
                             ->label('Achternaam')
                             ->maxLength(255),
-        
+
                         Forms\Components\TextInput::make('email')
                             ->label('E-mailadres')
                             ->columnSpan(2)
@@ -127,12 +110,13 @@ class UserResource extends Resource
                             ->columns(2)
                             ->deletable(function (array $state) {
 
-                                if(!array_key_exists('id', $state)) {
+                                if (! array_key_exists('id', $state)) {
                                     return false;
                                 }
-                                
+
                                 $record = $state['id'];
                                 $session = Session::find($record);
+
                                 return $session?->session_info['is_current_device'] === true ? false : true;
                             })
                             ->deleteAction(
@@ -184,8 +168,8 @@ class UserResource extends Resource
                                             },
                                         ];
                                     }),
-                                    
-                            ])
+
+                            ]),
 
                     ]),
 
@@ -253,10 +237,10 @@ class UserResource extends Resource
                         /** @var \App\Models\User|null $currentUser */
                         $currentUser = Auth::user();
 
-                        if($record->id === $currentUser?->id) {
+                        if ($record->id === $currentUser?->id) {
                             return Color::Gray;
                         }
-                        if(!$currentUser->hasPermissionTo(Permission::CAN_IMPERSONATE_USERS)) {
+                        if (! $currentUser->hasPermissionTo(Permission::CAN_IMPERSONATE_USERS)) {
                             return Color::Gray;
                         }
 
@@ -267,10 +251,10 @@ class UserResource extends Resource
                         /** @var \App\Models\User|null $currentUser */
                         $currentUser = Auth::user();
 
-                        if($record->id === $currentUser?->id) {
+                        if ($record->id === $currentUser?->id) {
                             return true;
                         }
-                        if(!$currentUser->hasPermissionTo(Permission::CAN_IMPERSONATE_USERS)) {
+                        if (! $currentUser->hasPermissionTo(Permission::CAN_IMPERSONATE_USERS)) {
                             return true;
                         }
 
@@ -281,13 +265,13 @@ class UserResource extends Resource
                         /** @var \App\Models\User|null $currentUser */
                         $currentUser = Auth::user();
 
-                        if(!$currentUser || !$currentUser->hasPermissionTo(Permission::CAN_IMPERSONATE_USERS)) {
+                        if (! $currentUser || ! $currentUser->hasPermissionTo(Permission::CAN_IMPERSONATE_USERS)) {
                             Notification::make()
                                 ->title('Je hebt geen toegang tot deze actie')
                                 ->body('Je hebt niet de juiste rechten om deze actie uit te voeren.')
                                 ->color(Color::Red)
                                 ->send();
-                            
+
                             return;
                         }
 
@@ -296,9 +280,10 @@ class UserResource extends Resource
                         session()->put('can_bypass_2fa', true);
 
                         Auth::login($record);
+
                         return redirect()->to('/dashboard');
                     }),
-                
+
                 Tables\Actions\EditAction::make()
                     ->label('Bewerken'),
             ])

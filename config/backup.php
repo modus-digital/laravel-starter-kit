@@ -273,7 +273,7 @@ return [
     ],
 
     'cleanup' => [
-        
+
         /*
          * The strategy that will be used to cleanup old backups. The default strategy
          * will keep all backups for a certain amount of days. After that period only
