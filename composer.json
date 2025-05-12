@@ -16,7 +16,8 @@
         "shuvroroy/filament-spatie-laravel-backup": "^2.2",
         "shuvroroy/filament-spatie-laravel-health": "*",
         "spatie/cpu-load-health-check": "^1.0",
-        "spatie/laravel-permission": "^6.17"
+        "spatie/laravel-permission": "^6.17",
+        "vormkracht10/filament-mails": "^2.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

@@ -22,6 +22,8 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Kenepa\TranslationManager\TranslationManagerPlugin;
 use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
 use ShuvroRoy\FilamentSpatieLaravelHealth\FilamentSpatieLaravelHealthPlugin;
+use Vormkracht10\FilamentMails\Facades\FilamentMails;
+use Vormkracht10\FilamentMails\FilamentMailsPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -37,6 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Blue,
             ])
+            ->routes(fn () => FilamentMails::routes())
             ->discoverResources(
                 in: app_path('Filament/Resources'), 
                 for: 'App\\Filament\\Resources'
@@ -74,6 +77,7 @@ class AdminPanelProvider extends PanelProvider
                 FilamentSpatieLaravelHealthPlugin::make()->usingPage(HealthChecksResultsPage::class),
                 FilamentSpatieLaravelBackupPlugin::make()->usingPage(BackupsPage::class),
                 TranslationManagerPlugin::make(),
+                FilamentMailsPlugin::make(),
             ]);
     }
 }
