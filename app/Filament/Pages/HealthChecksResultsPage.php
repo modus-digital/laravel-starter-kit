@@ -6,6 +6,10 @@ use ShuvroRoy\FilamentSpatieLaravelHealth\Pages\HealthCheckResults as BaseHealth
 
 class HealthChecksResultsPage extends BaseHealthCheckResults
 {
+  public static function getNavigationSort(): ?int
+  {
+    return 4;
+  }
 
   public static function getSlug(): string
   {

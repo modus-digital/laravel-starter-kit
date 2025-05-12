@@ -7,6 +7,10 @@ use ShuvroRoy\FilamentSpatieLaravelBackup\Pages\Backups as BaseBackups;
  
 class BackupsPage extends BaseBackups
 {
+  public static function getNavigationSort(): ?int
+  {
+    return 3;
+  }
   public static function getSlug(): string
   {
     return '/core/backups';

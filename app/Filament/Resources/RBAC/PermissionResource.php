@@ -40,6 +40,13 @@ class PermissionResource extends Resource
   protected static ?string $navigationGroup = 'Toegangsbeheer';
 
   /**
+   * The navigation sort order.
+   * 
+   * @var int|null
+   */
+  protected static ?int $navigationSort = 2;
+
+  /**
    * The text for the navigation label.
    *
    * @var string|null

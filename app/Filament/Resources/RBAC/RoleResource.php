@@ -34,6 +34,13 @@ class RoleResource extends Resource
   protected static ?string $navigationIcon = 'heroicon-o-shield-check';
 
   /**
+   * The navigation sort order.
+   * 
+   * @var int|null
+   */
+  protected static ?int $navigationSort = 1;
+
+  /**
    * The navigation group name.
    *
    * @var string|null

@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -161,7 +162,14 @@ class UserResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('impersonate')
+                    ->label('Inloggen als')
+                    ->icon('heroicon-o-arrow-left-end-on-rectangle')
+                    ->color(Color::Green)
+                    ->action(function (User $record) {}),
+                
+                Tables\Actions\EditAction::make()
+                    ->label('Bewerken'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
