@@ -110,6 +110,7 @@ class UserResource extends Resource
                 Forms\Components\Section::make('Sessie-informatie')
                     ->description('Hier vind je informatie over de actieve sessies van de gebruiker.')
                     ->aside()
+                    ->hidden(fn (string $operation): bool => $operation !== 'edit')
                     ->schema([
 
                         Forms\Components\TextInput::make('last_login_at')
@@ -157,7 +158,7 @@ class UserResource extends Resource
                                 Forms\Components\TextInput::make('expires_at')
                                     ->label('Verloopt op')
                                     ->prefixIcon('heroicon-o-clock')
-                                    ->formatStateUsing(function (Session $record): ?string {
+                                    ->formatStateUsing(function (?Session $record): ?string {
                                         return $record?->expires_at;
                                     })
                                     ->disabled(),
@@ -171,7 +172,7 @@ class UserResource extends Resource
                                     ->editableKeys(false)
                                     ->editableValues(false)
                                     ->columnSpan(2)
-                                    ->formatStateUsing(function (Session $record): array {
+                                    ->formatStateUsing(function (?Session $record): array {
                                         return [
                                             'Browser' => $record?->session_info['device']['browser'],
                                             'Platform' => $record?->session_info['device']['platform'],
