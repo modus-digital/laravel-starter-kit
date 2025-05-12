@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Enums\RBAC\Permission;
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Spatie\CpuLoadHealthCheck\CpuLoadCheck;
 use Spatie\Health\Checks\Checks\CacheCheck;
@@ -57,5 +60,10 @@ class AppServiceProvider extends ServiceProvider
             ScheduleCheck::new(),
 
         ]);
+
+        Gate::define('use-translation-manager', function (?User $user) {
+            // Your authorization logic
+            return $user !== null && $user->hasPermissionTo(Permission::HAS_ACCESS_TO_ADMIN_PANEL);
+        });
     }
 }
