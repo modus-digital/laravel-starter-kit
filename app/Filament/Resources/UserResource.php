@@ -5,10 +5,13 @@ namespace App\Filament\Resources;
 use App\Enums\RBAC\Permission;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\Session;
 use Filament\Notifications\Notification;
 use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Components\ViewField;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Repeater;
+use Filament\Infolists;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
@@ -116,6 +119,73 @@ class UserResource extends Resource
                                 return $record?->last_login_at ? $record->last_login_at->format('d-m-Y H:i') : 'Nog niet ingelogd';
                             })
                             ->disabled(),
+
+                        Forms\Components\Repeater::make('sessions')
+                            ->label('Actieve sessies')
+                            ->relationship('sessions')
+                            ->columns(2)
+                            ->deletable(function (array $state) {
+
+                                if(!array_key_exists('id', $state)) {
+                                    return false;
+                                }
+                                
+                                $record = $state['id'];
+                                $session = Session::find($record);
+                                return $session?->session_info['is_current_device'] === true ? false : true;
+                            })
+                            ->deleteAction(
+                                fn (Action $action) => $action->action(function (array $arguments): void {
+                                    $id = preg_replace('/record-/', '', $arguments['item']);
+                                    $session = Session::find($id);
+                                    $session?->delete();
+                                })
+                            )
+                            ->reorderable(false)
+                            ->addable(false)
+                            ->collapsed()
+                            ->itemLabel(function (array $state) {
+                                return array_key_exists('id', $state) ? "ID: {$state['id']}" : 'ID onbekend';
+                            })
+                            ->schema([
+
+                                Forms\Components\TextInput::make('ip_address')
+                                    ->label('IP-adres')
+                                    ->prefixIcon('heroicon-o-globe-alt')
+                                    ->disabled(),
+
+                                Forms\Components\TextInput::make('expires_at')
+                                    ->label('Verloopt op')
+                                    ->prefixIcon('heroicon-o-clock')
+                                    ->formatStateUsing(function (Session $record): ?string {
+                                        return $record?->expires_at;
+                                    })
+                                    ->disabled(),
+
+                                Forms\Components\KeyValue::make('session_info')
+                                    ->label('Apparaat-info')
+                                    ->addable(false)
+                                    ->keyLabel('Type')
+                                    ->valueLabel('Details')
+                                    ->deletable(false)
+                                    ->editableKeys(false)
+                                    ->editableValues(false)
+                                    ->columnSpan(2)
+                                    ->formatStateUsing(function (Session $record): array {
+                                        return [
+                                            'Browser' => $record?->session_info['device']['browser'],
+                                            'Platform' => $record?->session_info['device']['platform'],
+                                            'Apparaat' => match (true) {
+                                                $record?->session_info['device']['is_desktop'] => 'Desktop',
+                                                $record?->session_info['device']['is_mobile'] => 'Mobiel',
+                                                $record?->session_info['device']['is_tablet'] => 'Tablet',
+                                                default => 'Onbekend',
+                                            },
+                                        ];
+                                    }),
+                                    
+                            ])
+
                     ]),
 
                 Forms\Components\Section::make('Toegangscontrole')
@@ -136,7 +206,7 @@ class UserResource extends Resource
                             ->revealable()
                             ->columnSpan(2),
 
-                    ])
+                    ]),
 
             ]);
     }
