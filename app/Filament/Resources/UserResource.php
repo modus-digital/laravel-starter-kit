@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\RBAC\Permission;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use Filament\Notifications\Notification;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\ViewField;
@@ -14,6 +16,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class UserResource extends Resource
 {
@@ -118,11 +121,20 @@ class UserResource extends Resource
                 Forms\Components\Section::make('Toegangscontrole')
                     ->description('Hier beheer je de toegang van de gebruiker tot de applicatie.')
                     ->aside()
+                    ->columns(3)
                     ->schema([
 
                         Forms\Components\Select::make('roles')
                             ->relationship(name: 'roles', titleAttribute: 'name')
-                            ->label('Rol')
+                            ->columnSpan(3)
+                            ->label('Rol'),
+
+                        Forms\Components\TextInput::make('password')
+                            ->label('Nieuw wachtwoord instellen')
+                            ->minLength(8)
+                            ->password()
+                            ->revealable()
+                            ->columnSpan(2),
 
                     ])
 
@@ -165,8 +177,56 @@ class UserResource extends Resource
                 Tables\Actions\Action::make('impersonate')
                     ->label('Inloggen als')
                     ->icon('heroicon-o-arrow-left-end-on-rectangle')
-                    ->color(Color::Green)
-                    ->action(function (User $record) {}),
+                    ->color(function (User $record) {
+
+                        /** @var \App\Models\User|null $currentUser */
+                        $currentUser = Auth::user();
+
+                        if($record->id === $currentUser?->id) {
+                            return Color::Gray;
+                        }
+                        if(!$currentUser->hasPermissionTo(Permission::CAN_IMPERSONATE_USERS)) {
+                            return Color::Gray;
+                        }
+
+                        return Color::Green;
+                    })
+                    ->disabled(function (User $record): bool {
+
+                        /** @var \App\Models\User|null $currentUser */
+                        $currentUser = Auth::user();
+
+                        if($record->id === $currentUser?->id) {
+                            return true;
+                        }
+                        if(!$currentUser->hasPermissionTo(Permission::CAN_IMPERSONATE_USERS)) {
+                            return true;
+                        }
+
+                        return false;
+                    })
+                    ->action(function (User $record) {
+
+                        /** @var \App\Models\User|null $currentUser */
+                        $currentUser = Auth::user();
+
+                        if(!$currentUser || !$currentUser->hasPermissionTo(Permission::CAN_IMPERSONATE_USERS)) {
+                            Notification::make()
+                                ->title('Je hebt geen toegang tot deze actie')
+                                ->body('Je hebt niet de juiste rechten om deze actie uit te voeren.')
+                                ->color(Color::Red)
+                                ->send();
+                            
+                            return;
+                        }
+
+                        session()->put('impersonating_user_id', $currentUser->id);
+                        session()->put('impersonating_return_url', url()->previous());
+                        session()->put('can_bypass_2fa', true);
+
+                        Auth::login($record);
+                        return redirect()->to('/dashboard');
+                    }),
                 
                 Tables\Actions\EditAction::make()
                     ->label('Bewerken'),
