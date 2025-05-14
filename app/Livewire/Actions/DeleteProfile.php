@@ -4,9 +4,9 @@ namespace App\Livewire\Actions;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\RedirectResponse;
-use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Validate;
+use Livewire\Component;
 
 class DeleteProfile extends Component
 {

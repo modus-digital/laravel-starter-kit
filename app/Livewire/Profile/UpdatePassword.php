@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Profile;
 
-use Livewire\Component;
 use Livewire\Attributes\Validate;
+use Livewire\Component;
 
 class UpdatePassword extends Component
 {

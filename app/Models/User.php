@@ -4,22 +4,26 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-use App\Enums\Settings\UserSettings;
 use App\Enums\Settings\Appearance;
 use App\Enums\Settings\Language;
 use App\Enums\Settings\Theme;
 use App\Enums\Settings\TwoFactor;
-
+use App\Enums\Settings\UserSettings;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory;
+
+    use HasRoles;
+    use Notifiable;
 
     public static function booted(): void
     {
@@ -55,16 +59,20 @@ class User extends Authenticatable
             ]);
         });
     }
+
     /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name_prefix',
+        'last_name',
         'email',
         'phone',
         'password',
+        'last_login_at',
     ];
 
     /**
@@ -87,6 +95,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_login_at' => 'datetime',
         ];
     }
 
@@ -104,17 +113,31 @@ class User extends Authenticatable
      *
      * @return string
      */
-    public function initials(): string
+    public function name(): Attribute
     {
-        $parts = Str::of($this->name)->explode(' ');
+        return Attribute::make(
+            get: fn () => "{$this->first_name} {$this?->last_name_prefix} {$this?->last_name}",
+        );
+    }
 
-        if (count($parts) <= 1) {
-            return Str::of($parts[0] ?? '')->substr(0, 1);
-        }
+    #endregion
 
-        $firstName = $parts[0];
-        $lastName = $parts[count($parts) - 1];
+    #region Relationships
 
-        return Str::of($firstName)->substr(0, 1) . Str::of($lastName)->substr(0, 1);
+    /**
+     * Get the user's sessions.
+     */
+    public function sessions(): HasMany
+    {
+        return $this->hasMany(related: Session::class);
+    }
+
+    #endregion
+
+    public function initials(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => Str::of($this->name)->explode(' ')->map(fn ($name) => Str::of($name)->substr(0, 1))->implode(''),
+        );
     }
 }

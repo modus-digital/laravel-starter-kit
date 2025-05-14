@@ -10,25 +10,27 @@ use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Masmerise\Toaster\Toastable;
 use PragmaRX\Google2FA\Exceptions\IncompatibleWithGoogleAuthenticatorException;
 use PragmaRX\Google2FA\Exceptions\InvalidCharactersException;
 use PragmaRX\Google2FA\Exceptions\SecretKeyTooShortException;
 use PragmaRX\Google2FA\Google2FA;
-use Illuminate\Support\Str;
 
 class EnableTwoFactor extends Component
 {
     use Toastable;
 
     public string $secret;
+
     public string $qrCode;
+
     public string $code = '';
 
     public function mount(?Authenticatable $user = null)
     {
-        $g2fa = new Google2FA;
+        $g2fa = new Google2FA();
 
         $this->secret = $g2fa->generateSecretKey();
 
@@ -41,7 +43,7 @@ class EnableTwoFactor extends Component
         $qrWriterBackend = new Writer(
             renderer: new ImageRenderer(
                 rendererStyle: new RendererStyle(size: 250, margin: 1),
-                imageBackEnd: new SvgImageBackEnd
+                imageBackEnd: new SvgImageBackEnd()
             )
         );
 
@@ -54,7 +56,7 @@ class EnableTwoFactor extends Component
 
     public function enable()
     {
-        $g2fa = new Google2FA;
+        $g2fa = new Google2FA();
         $user = auth()->user();
 
         $backupCodes = $this->generateRecoveryCodes(count: 10);
@@ -67,7 +69,7 @@ class EnableTwoFactor extends Component
                         'status' => TwoFactor::ENABLED->value,
                         'secret' => $this->secret,
                         'confirmed_at' => Carbon::now(),
-                        'recovery_codes' => $backupCodes
+                        'recovery_codes' => $backupCodes,
                     ]
                 );
 
@@ -84,7 +86,8 @@ class EnableTwoFactor extends Component
                     backupCodes: $backupCodes
                 );
             }
-        } catch (IncompatibleWithGoogleAuthenticatorException | SecretKeyTooShortException | InvalidCharactersException $e) {
+        }
+        catch (IncompatibleWithGoogleAuthenticatorException|SecretKeyTooShortException|InvalidCharactersException $e) {
             $this->error(
                 message: __('notifications.toasts.two_factor.error'),
             );
@@ -94,7 +97,7 @@ class EnableTwoFactor extends Component
     private function generateRecoveryCodes(int $count = 8): array
     {
         return collect(range(1, $count))
-            ->map(fn() => Str::upper(Str::random(4) . '-' . Str::random(4)))
+            ->map(fn () => Str::upper(Str::random(4) . '-' . Str::random(4)))
             ->toArray();
     }
 

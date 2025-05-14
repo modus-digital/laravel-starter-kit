@@ -4,7 +4,6 @@ namespace App\Enums\Settings;
 
 enum Appearance: string
 {
-
     case LIGHT = 'light';
     case DARK = 'dark';
     case SYSTEM = 'system';
@@ -26,8 +25,9 @@ enum Appearance: string
             self::SYSTEM => __('settings.appearance.labels.system'),
         };
     }
+
     public static function values(): array
     {
-        return array_map(fn(Appearance $appearance) => $appearance->value, self::cases());
+        return array_map(fn (Appearance $appearance) => $appearance->value, self::cases());
     }
 }

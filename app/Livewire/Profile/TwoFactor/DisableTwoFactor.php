@@ -35,7 +35,6 @@ class DisableTwoFactor extends Component
         $this->dispatch('two-factor-status-updated');
     }
 
-
     public function render()
     {
         return view('livewire.profile.two-factor.disable-two-factor');

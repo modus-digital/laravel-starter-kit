@@ -40,7 +40,7 @@ class UserSetting extends Model
         }
 
         return Attribute::make(
-            get: fn() => $validator->validated(),
+            get: fn () => $validator->validated(),
         );
     }
 
@@ -50,7 +50,8 @@ class UserSetting extends Model
 
         if ($path !== null) {
             data_set($currentValue, $path, $newValue);
-        } else {
+        }
+        else {
             $currentValue = $newValue;
         }
 

@@ -14,9 +14,11 @@ class Display extends Component
     use Toastable;
 
     protected $user;
+
     public Collection $displaySettings;
 
     public string $appearance = '';
+
     public string $theme = '';
 
     public function mount(?Authenticatable $user = null): void

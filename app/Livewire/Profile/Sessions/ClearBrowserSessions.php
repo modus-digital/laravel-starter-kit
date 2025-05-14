@@ -23,7 +23,7 @@ class ClearBrowserSessions extends Component
             return;
         }
 
-        if (!Auth::user()) {
+        if (! Auth::user()) {
             return;
         }
 
@@ -51,11 +51,12 @@ class ClearBrowserSessions extends Component
             $this->reset('password');
             $this->dispatch(event: 'cleared-browser-sessions');
             $this->success(message: __('notifications.toasts.sessions.cleared'));
-        } catch (\Throwable $e) {
-
+        }
+        catch (\Throwable $e) {
 
             $this->error(message: __('notifications.toasts.sessions.cleared_error'));
-        } finally {
+        }
+        finally {
             $this->dispatch(event: 'close-modal');
         }
     }

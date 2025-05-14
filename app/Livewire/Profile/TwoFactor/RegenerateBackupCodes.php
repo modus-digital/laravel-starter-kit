@@ -4,17 +4,18 @@ namespace App\Livewire\Profile\TwoFactor;
 
 use App\Enums\Settings\UserSettings;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Livewire\Component;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Livewire\Component;
 use Masmerise\Toaster\Toastable;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class RegenerateBackupCodes extends Component
 {
     use Toastable;
 
     public array $backupCodes;
+
     public ?Authenticatable $user;
 
     public function mount(?Authenticatable $user = null): void
@@ -57,7 +58,6 @@ class RegenerateBackupCodes extends Component
             backupCodes: $this->backupCodes
         );
     }
-
 
     public function render()
     {

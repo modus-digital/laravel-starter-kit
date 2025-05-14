@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
     const TABLE_NAME = 'application_settings';
 
     /**

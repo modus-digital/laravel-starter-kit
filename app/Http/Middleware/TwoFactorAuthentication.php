@@ -2,11 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\Settings\TwoFactor;
+use App\Enums\Settings\UserSettings;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Enums\Settings\UserSettings;
-use App\Enums\Settings\TwoFactor;
 
 class TwoFactorAuthentication
 {
@@ -25,7 +25,7 @@ class TwoFactorAuthentication
             return $next($request);
         }
 
-        if ($this->isTwoFactorEnabled($request) === false) {;
+        if ($this->isTwoFactorEnabled($request) === false) {
             return $next($request);
         }
 
@@ -51,13 +51,13 @@ class TwoFactorAuthentication
     private function isTwoFactorEnabled(Request $request): bool
     {
         $user = auth()->user();
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
         $settings = $this->getTwoFactorSettings(user: $user);
 
-        if (!$settings) {
+        if (! $settings) {
             return false;
         }
 
@@ -68,7 +68,7 @@ class TwoFactorAuthentication
     {
         // Check if any bypass conditions are met
         $isPostMethod = $request->isMethod('POST');
-        $isNotAuthenticated = !auth()->check();
+        $isNotAuthenticated = ! auth()->check();
         $canBypassTwoFactor = session()->has('can_bypass_two_factor');
         $isImpersonating = session()->has('impersonate');
         $isTwoFactorVerified = session()->has('two_factor_verified');

@@ -5,11 +5,11 @@ use App\Models\ApplicationSetting;
 use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-if (!function_exists('feature')) {
+if (! function_exists('feature')) {
     /**
      * Retrieve a feature's status.
      *
-     * @param string $featureKey The name of the feature setting.
+     * @param  string  $featureKey  The name of the feature setting.
      * @return FeatureStatus An object representing the feature's status.
      */
     function feature(string $featureKey): FeatureStatus
@@ -23,7 +23,7 @@ if (!function_exists('feature')) {
     }
 }
 
-if (!function_exists('local_date')) {
+if (! function_exists('local_date')) {
     function local_date(Carbon|int|string $date)
     {
         if (! $date instanceof Carbon) {
@@ -44,7 +44,7 @@ if (!function_exists('local_date')) {
     }
 }
 
-if (!function_exists('download_backup_codes')) {
+if (! function_exists('download_backup_codes')) {
     function download_backup_codes(string $filename, array $backupCodes): StreamedResponse
     {
         return response()
@@ -52,8 +52,9 @@ if (!function_exists('download_backup_codes')) {
                 callback: function () use ($backupCodes) {
                     $file = fopen('php://output', 'w');
 
-                    if (!$file) {
+                    if (! $file) {
                         fclose($file);
+
                         return;
                     }
 
@@ -65,7 +66,8 @@ if (!function_exists('download_backup_codes')) {
                         }
 
                         fclose($file);
-                    } catch (Throwable $e) {
+                    }
+                    catch (Throwable $e) {
                         fclose($file);
                     }
                 },

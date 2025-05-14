@@ -20,13 +20,13 @@ class FeatureStatus
     {
         // Handles common truthy string values and boolean true
         return
-            in_array(strtolower((string)$this->value), ['1', 'true', 'on', 'yes', 'enabled'], true) ||
+            in_array(strtolower((string) $this->value), ['1', 'true', 'on', 'yes', 'enabled'], true) ||
             filter_var($this->value, FILTER_VALIDATE_BOOLEAN);
     }
 
     public function disabled(): bool
     {
-        return !$this->enabled();
+        return ! $this->enabled();
     }
 
     /**
@@ -42,6 +42,6 @@ class FeatureStatus
      */
     public function __toString(): string
     {
-        return (string)$this->value;
+        return (string) $this->value;
     }
 }

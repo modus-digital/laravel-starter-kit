@@ -109,11 +109,11 @@ class UserSettingsValidators
 
         foreach ($rules as $field => $rule) {
             // If the rule is a string and contains the 'nullable' rule, and the field isn't already in the data
-            if (is_string($rule) && strpos($rule, 'nullable') !== false && !array_key_exists($field, $data)) {
+            if (is_string($rule) && strpos($rule, 'nullable') !== false && ! array_key_exists($field, $data)) {
                 $defaults[$field] = null;
             }
             // If the rule is an array and contains the 'nullable' rule, and the field isn't already in the data
-            elseif (is_array($rule) && in_array('nullable', $rule) && !array_key_exists($field, $data)) {
+            elseif (is_array($rule) && in_array('nullable', $rule) && ! array_key_exists($field, $data)) {
                 $defaults[$field] = null;
             }
         }
