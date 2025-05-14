@@ -35,7 +35,7 @@ class UpdatePersonalInformation extends Component
             'phone' => $this->phone,
         ]);
 
-        $this->success(message: 'Updated your personal information');
+        $this->success(message: __('notifications.toasts.profile.updated'));
     }
 
     public function render()

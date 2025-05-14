@@ -29,8 +29,8 @@ class User extends Authenticatable
                     'key' => UserSettings::LOCALIZATION,
                     'value' => [
                         'locale' => Language::ENGLISH,
-                        'timezone' => 'UTC',
-                        'date_format' => 'd-m-Y H:i',
+                        'timezone' => config('app.default_timezone', 'UTC'),
+                        'date_format' => config('app.default_date_format', 'd-m-Y H:i'),
                     ],
                 ],
                 [
@@ -92,11 +92,17 @@ class User extends Authenticatable
 
     public function settings(): HasMany
     {
-        return $this->hasMany(related: UserSetting::class);
+        return $this->hasMany(
+            related: UserSetting::class,
+            foreignKey: 'user_id',
+        );
     }
 
     /**
-     * Get the user's initials
+     * Get the user's initials based on their name
+     * Extract only from the first and last word of their name
+     *
+     * @return string
      */
     public function initials(): string
     {

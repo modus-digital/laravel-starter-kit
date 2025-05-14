@@ -52,10 +52,10 @@
           aria-expanded="false"
           data-dropdown-toggle="dropdown"
         >
-          <span class="sr-only">Open user menu</span>
+          <span class="sr-only">{{ __('ui.navigation.header.open_user_menu') }}</span>
           <img
             class="w-8 h-8 rounded-full"
-            src="{{ auth()->user() !== null ? (auth()->user()->avatar ?? "https://ui-avatars.com/api/?name=" . urlencode(auth()->user()->initials())) : "https://ui-avatars.com/api/?name=" . urlencode('Guest') }}"
+            src="{{ auth()->user() !== null ? (auth()->user()->avatar ?? "https://ui-avatars.com/api/?name=" . urlencode(auth()->user()->initials())) : "https://ui-avatars.com/api/?name=" . urlencode(__('ui.navigation.header.guest')) }}"
             alt="user photo"
           />
         </button>
@@ -66,8 +66,8 @@
           id="dropdown"
         >
           <div class="py-3 px-4">
-            <span class="block text-sm font-semibold text-gray-900 dark:text-white">{{ auth()->user() !== null ? auth()->user()->name : 'Guest' }}</span>
-            <span class="block text-sm text-gray-900 truncate dark:text-white">{{ auth()->user() !== null ? auth()->user()->email : 'guest@example.com' }}</span>
+            <span class="block text-sm font-semibold text-gray-900 dark:text-white">{{ auth()->user() !== null ? auth()->user()->name : __('ui.navigation.header.guest') }}</span>
+            <span class="block text-sm text-gray-900 truncate dark:text-white">{{ auth()->user() !== null ? auth()->user()->email : __('ui.navigation.header.guest_email') }}</span>
           </div>
           <ul
             class="py-1 text-gray-700 dark:text-gray-300"
@@ -77,7 +77,7 @@
               <a
                 href="{{ route('user.profile') }}"
                 class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white"
-                >My profile</a
+                >{{ __('ui.navigation.header.my_profile') }}</a
               >
             </li>
           </ul>
@@ -90,7 +90,7 @@
                     @csrf
 
                     <button type="submit" class="block w-full py-2 px-4 text-sm text-left hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                        Sign out
+                        {{ __('ui.navigation.header.sign_out') }}
                     </button>
                 </form>
             </li>

@@ -3,20 +3,21 @@
 namespace App\Livewire\Profile;
 
 use App\Enums\Settings\UserSettings;
-use App\Models\UserSetting;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Livewire\Attributes\On;
 use Livewire\Component;
-use Masmerise\Toaster\Toastable;
 
 class TwoFactorStatus extends Component
 {
-    public UserSetting $userSetting;
+    public ?array $twoFactorSettings;
 
+    #[On('two-factor-status-updated')]
     public function mount(?Authenticatable $user = null): void
     {
-        $this->userSetting = $user->settings->get(UserSettings::SECURITY);
-
-        // dump($this->userSetting);
+        $this->twoFactorSettings = $user
+            ->settings
+            ->first()
+            ->retrieve(UserSettings::SECURITY, 'two_factor');
     }
 
     public function render()

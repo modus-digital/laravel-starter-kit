@@ -10,8 +10,13 @@ enum TwoFactor: string
     public function description(): string
     {
         return match ($this) {
-            self::ENABLED => 'Two-factor authentication is enabled',
-            self::DISABLED => 'Two-factor authentication is disabled',
+            self::ENABLED => __('settings.security.two_factor.enabled'),
+            self::DISABLED => __('settings.security.two_factor.disabled'),
         };
+    }
+
+    public static function values(): array
+    {
+        return array_map(fn(TwoFactor $twoFactor) => $twoFactor->value, self::cases());
     }
 }

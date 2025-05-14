@@ -7,11 +7,11 @@ name('application.dashboard');
 
 ?>
 
-<x-layouts.app title="Dashboard">
+<x-layouts.app title="{{ __('pages.dashboard.title') }}">
   <h1 class="text-3xl font-bold dark:text-white font-clash-display">
-    Welkom {{  auth()->user()->name }}
+    {{ __('pages.dashboard.welcome', ['name' => auth()->user()->name]) }}
   </h1>
   <p class="text-xl mt-1 text-neutral-500 max-w-lg leading-6">
-    Dit is het Modus standaard dashboard. Begin nu met het bouwen of aanpassen van je nieuwe applicatie!
+    {{ __('pages.dashboard.description') }}
   </p>
 </x-layouts.app>

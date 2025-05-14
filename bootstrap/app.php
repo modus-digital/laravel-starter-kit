@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\CheckFeatureIsEnabled;
+use App\Http\Middleware\TwoFactorAuthentication;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -12,9 +13,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->alias([
+        $middleware->alias(aliases: [
             'feature' => CheckFeatureIsEnabled::class,
         ]);
+
+        $middleware->web(
+            append: [
+                TwoFactorAuthentication::class,
+            ]
+        );
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

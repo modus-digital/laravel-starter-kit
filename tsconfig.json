@@ -110,6 +110,8 @@
         "baseUrl": ".",
         "paths": {
             "@/*": ["./resources/ts/*"],
+            "@components/*": ["./resources/ts/components/*"],
+            "@types/*": ["./resources/ts/types/*"],
         },
     },
     "include": [

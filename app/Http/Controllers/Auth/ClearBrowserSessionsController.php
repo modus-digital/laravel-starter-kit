@@ -14,7 +14,6 @@ class ClearBrowserSessionsController extends Controller
      */
     public function __invoke(Request $request): RedirectResponse
     {
-        dump($request->all());
         BrowserSessions::logoutOtherBrowserSessions();
 
         return redirect()->back()->with('bs-cleared', 'Browser sessions cleared.');

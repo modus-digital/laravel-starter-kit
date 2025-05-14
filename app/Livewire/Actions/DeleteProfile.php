@@ -30,6 +30,8 @@ class DeleteProfile extends Component
         session()->invalidate();
         session()->regenerateToken();
 
+        $this->success(message: __('notifications.toasts.profile.deleted'));
+
         return to_route('login');
     }
 

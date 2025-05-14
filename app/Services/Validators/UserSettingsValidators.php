@@ -8,6 +8,7 @@ use App\Enums\Settings\Theme;
 use App\Enums\Settings\TwoFactor;
 use App\Enums\Settings\UserSettings;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 class UserSettingsValidators
@@ -35,7 +36,7 @@ class UserSettingsValidators
     public static function localization(array $data): Validator
     {
         $rules = [
-            'language' => 'required|string|in:' . implode(',', Language::values()),
+            'locale' => 'required|string|in:' . implode(',', Language::values()),
             'timezone' => 'required|string',
             'date_format' => 'required|string',
         ];
@@ -52,13 +53,13 @@ class UserSettingsValidators
     public static function security(array $data): Validator
     {
         $rules = [
-            'password_last_changed_at' => 'required|date',
+            'password_last_changed_at' => 'nullable|date',
             'two_factor' => 'required|array',
             'two_factor.status' => 'required|string|in:' . implode(',', TwoFactor::values()),
-            'two_factor.secret' => 'required_if:two_factor.status,' . TwoFactor::ENABLED . '|string',
-            'two_factor.confirmed_at' => 'required_if:two_factor.status,' . TwoFactor::ENABLED . '|date',
-            'two_factor.recovery_codes' => 'required_if:two_factor.status,' . TwoFactor::ENABLED . '|array',
-            'two_factor.recovery_codes.*' => 'required_if:two_factor.status,' . TwoFactor::ENABLED . '|string',
+            'two_factor.secret' => 'string|nullable|required_if:two_factor.status,' . TwoFactor::ENABLED->value,
+            'two_factor.confirmed_at' => 'date|nullable|required_if:two_factor.status,' . TwoFactor::ENABLED->value,
+            'two_factor.recovery_codes' => 'array|required_if:two_factor.status,' . TwoFactor::ENABLED->value,
+            'two_factor.recovery_codes.*' => 'string|required_if:two_factor.status,' . TwoFactor::ENABLED->value,
         ];
 
         $data = self::ensureNullableFieldsExist($data, $rules);

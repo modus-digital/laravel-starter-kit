@@ -23,7 +23,10 @@
                         'font-semibold'
                     ])
                 >
-                    {{ $session['is_current_device'] ? 'This device' : 'Last active ' . $session['last_active'] }}
+                    {{ $session['is_current_device']
+                        ? __('user.sessions.this_device')
+                        : __('user.sessions.last_active') . ' ' . $session['last_active']
+                    }}
                 </span>
             </p>
         </div>

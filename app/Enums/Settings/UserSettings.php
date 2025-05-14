@@ -12,10 +12,10 @@ enum UserSettings: string
     public function description(): string
     {
         return match ($this) {
-            self::LOCALIZATION => 'Localization settings',
-            self::SECURITY => 'Security settings',
-            self::DISPLAY => 'Display settings',
-            self::NOTIFICATIONS => 'Notifications settings',
+            self::LOCALIZATION => __('settings.categories.localization'),
+            self::SECURITY => __('settings.categories.security'),
+            self::DISPLAY => __('settings.categories.display'),
+            self::NOTIFICATIONS => __('settings.categories.notifications'),
         };
     }
 }

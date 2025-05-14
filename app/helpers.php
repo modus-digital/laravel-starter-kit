@@ -3,6 +3,7 @@
 use App\Helpers\FeatureStatus;
 use App\Models\ApplicationSetting;
 use Carbon\Carbon;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 if (!function_exists('feature')) {
     /**
@@ -35,10 +36,40 @@ if (!function_exists('local_date')) {
 
         // TODO: Get the user's timezone and date format from the database once settings are implemented
         $settings = [
-            'timezone' => 'Europe/Amsterdam',
-            'date_format' => 'd-m-Y H:i',
+            'timezone' => config('app.default_timezone', 'UTC'),
+            'date_format' => config('app.default_date_format', 'd-m-Y H:i'),
         ];
 
         return $date->setTimezone($settings['timezone'])->format($settings['date_format']);
+    }
+}
+
+if (!function_exists('download_backup_codes')) {
+    function download_backup_codes(string $filename, array $backupCodes): StreamedResponse
+    {
+        return response()
+            ->streamDownload(
+                callback: function () use ($backupCodes) {
+                    $file = fopen('php://output', 'w');
+
+                    if (!$file) {
+                        fclose($file);
+                        return;
+                    }
+
+                    try {
+                        fwrite($file, 'Recovery Codes for ' . config('app.name') . "\n---------\n");
+
+                        foreach ($backupCodes as $code) {
+                            fputcsv($file, [$code]);
+                        }
+
+                        fclose($file);
+                    } catch (Throwable $e) {
+                        fclose($file);
+                    }
+                },
+                name: $filename
+            );
     }
 }

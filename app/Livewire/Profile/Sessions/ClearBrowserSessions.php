@@ -37,7 +37,7 @@ class ClearBrowserSessions extends Component
 
         if ($sessions->count() === 0) {
             $this
-                ->warning(message: __('No other browser sessions to clear'))
+                ->warning(message: __('notifications.toasts.sessions.no_sessions'))
                 ->duration(milliseconds: 3000);
 
             return;
@@ -50,11 +50,11 @@ class ClearBrowserSessions extends Component
 
             $this->reset('password');
             $this->dispatch(event: 'cleared-browser-sessions');
-            $this->success(message: __('All other browser sessions have been cleared'),);
+            $this->success(message: __('notifications.toasts.sessions.cleared'));
         } catch (\Throwable $e) {
 
 
-            $this->error(message: __('Failed to clear browser sessions'));
+            $this->error(message: __('notifications.toasts.sessions.cleared_error'));
         } finally {
             $this->dispatch(event: 'close-modal');
         }

@@ -1,7 +1,10 @@
-@use ('App\Enums\Settings')
+@use ('App\Enums\Settings\UserSettings')
 
 @php
-    $theme = 'blue'; // TODO: Get from user settings once implemented
+    $user = auth()->user();
+    $settings = collect($user->settings->where('key', UserSettings::DISPLAY)->first()->value);
+
+    $theme = $settings->get('theme');
 @endphp
 
 <!DOCTYPE html>
@@ -14,8 +17,14 @@
 
         <title>{{ (isset($title) ? $title . " | " : "") . config('app.name') }}</title>
     </head>
-    <body class="antialiased bg-gray-50 dark:bg-gray-900" data-theme="{{ $theme }}">
-        <x-layouts.navigation.header title="Modus digital" />
+    <body
+        data-theme="{{ $theme }}"
+        @class([
+            'antialiased bg-gray-50 dark:bg-gray-900',
+            'dark' => $settings->get('appearance') === 'dark',
+        ])
+    >
+        <x-layouts.navigation.header title="{{ config('app.title', 'Modus digital') }}" />
         <x-layouts.navigation.sidebar />
 
         <main class="p-4 md:ml-64 h-auto pt-20">

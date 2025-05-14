@@ -40,24 +40,28 @@ new class extends Component {
         </a>
         <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">Verify your email</h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Please confirm your email before continuing.</p>
+                <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                    {{ __('auth.verify.title') }}
+                </h1>
+
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    {{ __('auth.verify.message') }}
+                </p>
 
                 @if (session('resent'))
-                    <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-900 dark:text-green-400" role="alert">
-                        <span class="font-medium">A new verification link has been sent to your email address.</span>
-                    </div>
+                <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-900 dark:text-green-400" role="alert">
+                    <span class="font-medium">{{ __('auth.verify.resent') }}</span>
+                </div>
                 @endif
 
-                <div class="text-sm leading-6 text-gray-700 dark:text-gray-400">
-                    <p>
-                        Before proceeding, please check your email for a verification link. If you did not receive the email. <br> <br>
-                        <a
-                            wire:click="resendVerificationEmail"
-                            class="text-gray-700 underline transition duration-150 ease-in-out cursor-pointer dark:text-gray-300 hover:text-gray-600 focus:outline-none focus:underline"
-                        >click here to request another</a>.
-                    </p>
-                </div>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    {{ __('auth.verify.before_proceeding') }} <br> <br>
+                    <form wire:submit="resendVerificationEmail">
+                        <button type="submit" class="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">
+                            {{ __('auth.verify.request_another_link') }}</a>.
+                        </button>
+                    </form>
+                </p>
             </div>
         </div>
     </div>

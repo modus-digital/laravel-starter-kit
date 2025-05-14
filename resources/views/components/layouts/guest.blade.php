@@ -6,7 +6,7 @@
 
         @vite('resources/css/app.css')
 
-        <title>{{ $title ?? 'Page Title' }}</title>
+        <title>{{ $title ?? config('app.name') }}</title>
     </head>
     <body class="antialiased bg-gray-50 dark:bg-gray-900">
 

@@ -11,7 +11,7 @@
                     </svg>
                 </x-slot:icon>
 
-                Dashboard
+                {{ __('ui.navigation.dashboard') }}
             </x-layouts.navigation.nav-link>
 
             <x-layouts.navigation.nav-link>
@@ -21,7 +21,7 @@
                     </svg>
                 </x-slot:icon>
 
-                Users
+                {{ __('ui.navigation.users') }}
             </x-layouts.navigation.nav-link>
         </ul>
     </div>
@@ -36,7 +36,7 @@
                     </svg>
                 </x-slot:icon>
 
-                Administrator portaal
+                {{ __('ui.navigation.admin_portal') }}
             </x-layouts.navigation.nav-link>
         </ul>
     </div>

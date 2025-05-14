@@ -17,10 +17,10 @@
                 </div>
 
                 <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label for="newPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         {{ __('New Password') }}
                     </label>
-                    <input type="password" id="password" wire:model="password" class="mt-1 block w-full shadow-sm sm:text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primary-500 focus:ring-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500" />
+                    <input type="password" id="newPassword" wire:model="password" class="mt-1 block w-full shadow-sm sm:text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primary-500 focus:ring-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500" />
                     @error('password')
                         <span class="text-red-500">{{ $message }}</span>
                     @enderror

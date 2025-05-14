@@ -44,32 +44,48 @@ class UserSetting extends Model
         );
     }
 
-
-    public function put(UserSettings $key, array $value): void
+    public function updateValueAttribute(?string $path = null, mixed $newValue = null)
     {
-        $validator = UserSettingsValidators::byKey($key, $value);
+        $currentValue = $this->value;
+
+        if ($path !== null) {
+            data_set($currentValue, $path, $newValue);
+        } else {
+            $currentValue = $newValue;
+        }
+
+        $validator = UserSettingsValidators::byKey(key: $this->key, data: $currentValue);
 
         if ($validator->fails()) {
-            throw new \Exception('Invalid user setting value');
+            throw new \Exception('Invalid value provided for user setting: ' . $validator->errors()->first());
         }
 
-        [$validatedKey, $validatedValue] = $validator->validated();
+        dump([
+            'user_id' => $this->user_id,
+            'key' => $this->key,
+            'value' => json_encode($validator->validated()),
+        ]);
 
-        $this->updateOrCreate(
-            attributes: ['user_id' => $this->user_id, 'key' => $validatedKey],
-            values: ['value' => json_encode($validatedValue)],
-        );
+        UserSetting::where('user_id', $this->user_id)
+            ->where('key', $this->key)
+            ->update([
+                'value' => json_encode($validator->validated()),
+            ]);
     }
 
-    public function get(UserSettings $key, ?string $field = null): array
+    public function retrieve(UserSettings $key, ?string $path = null): mixed
     {
-        $setting = $this->where('user_id', $this->user_id)->where('key', $key)->first();
+        $object = $this->where('key', $key)->first();
 
-        if ($field) {
-            return data_get($setting, $field, []);
+        if ($object === null) {
+            return null;
         }
 
-        return $setting->parsedValue;
+        if ($path) {
+            return data_get($object->parsedValue, $path);
+        }
+
+        return $object->parsedValue;
     }
 
     public function user(): BelongsTo

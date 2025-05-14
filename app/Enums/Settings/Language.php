@@ -11,4 +11,22 @@ enum Language: string
     case ITALIAN = 'it';
     case PORTUGUESE = 'pt';
     case DUTCH = 'nl';
+
+    public function displayName(): string
+    {
+        return match ($this) {
+            self::ENGLISH => __('settings.language.options.en'),
+            self::SPANISH => __('settings.language.options.es'),
+            self::FRENCH => __('settings.language.options.fr'),
+            self::GERMAN => __('settings.language.options.de'),
+            self::ITALIAN => __('settings.language.options.it'),
+            self::PORTUGUESE => __('settings.language.options.pt'),
+            self::DUTCH => __('settings.language.options.nl'),
+        };
+    }
+
+    public static function values(): array
+    {
+        return array_map(fn(Language $language) => $language->value, self::cases());
+    }
 }

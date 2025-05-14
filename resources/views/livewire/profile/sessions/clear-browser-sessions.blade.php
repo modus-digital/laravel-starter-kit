@@ -2,7 +2,7 @@
     <div class="space-y-4">
         <div>
             <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {{ __('Password') }}
+                {{ __('user.sessions.password') }}
             </label>
             <input type="password" id="password" wire:model="password" class="mt-1 block w-full shadow-sm sm:text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primary-500 focus:ring-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500" />
             @error('password')
@@ -12,7 +12,7 @@
 
         <div class="flex items-center justify-end">
             <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:border-red-700 focus:ring focus:ring-red-200 active:bg-red-600 transition">
-                {{ __('Log out other browser sessions') }}
+                {{ __('user.sessions.logout_other_sessions') }}
             </button>
         </div>
     </div>

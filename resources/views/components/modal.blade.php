@@ -2,6 +2,7 @@
     'name' => Str::uuid()->toString(),
     'title' => null,
     'description' => null,
+    'size' => 'md', // md, lg, xl
 ])
 
 <!-- Modal Container -->
@@ -21,7 +22,13 @@
 
     <!-- Modal Content -->
     <div
-        class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-auto"
+        @class([
+            'relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-h-[90vh] overflow-auto',
+            'max-w-md' => $size === 'md',
+            'max-w-lg' => $size === 'lg',
+            'max-w-xl' => $size === 'xl',
+            'max-w-sm' => $size === 'sm',
+        ])
         x-on:click.stop
     >
         <!-- Modal Header -->
