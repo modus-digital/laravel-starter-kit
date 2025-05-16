@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\BackupsPage;
 use App\Filament\Pages\HealthChecksResultsPage;
+use App\Filament\Pages\Settings;
 use App\Http\Middleware\Filament\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -22,6 +23,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Kenepa\TranslationManager\TranslationManagerPlugin;
+use Outerweb\FilamentSettings\Filament\Plugins\FilamentSettingsPlugin;
 use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
 use ShuvroRoy\FilamentSpatieLaravelHealth\FilamentSpatieLaravelHealthPlugin;
 use Vormkracht10\FilamentMails\Facades\FilamentMails;
@@ -44,7 +46,7 @@ class AdminPanelProvider extends PanelProvider
                     ->sort(1)
                     ->icon('heroicon-o-arrow-left'),
             ])
-            ->routes(fn () => FilamentMails::routes())
+            ->routes(fn() => FilamentMails::routes())
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([Dashboard::class])
@@ -68,6 +70,7 @@ class AdminPanelProvider extends PanelProvider
                 FilamentSpatieLaravelBackupPlugin::make()->usingPage(BackupsPage::class),
                 TranslationManagerPlugin::make(),
                 FilamentMailsPlugin::make(),
+                FilamentSettingsPlugin::make()->pages([Settings::class])
             ]);
     }
 }

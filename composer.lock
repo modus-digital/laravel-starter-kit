@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f50cc996bc2fe4bd9c1b2e5b9b33827",
+    "content-hash": "eee10ff54876d0449f1c233d3da8b15c",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -4492,6 +4492,114 @@
                 }
             ],
             "time": "2025-03-11T14:40:46+00:00"
+        },
+        {
+            "name": "outerweb/filament-settings",
+            "version": "v1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/outer-web/filament-settings.git",
+                "reference": "891fcd1bd7654deb65e62552f91d8bf21bf87433"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/outer-web/filament-settings/zipball/891fcd1bd7654deb65e62552f91d8bf21bf87433",
+                "reference": "891fcd1bd7654deb65e62552f91d8bf21bf87433",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^3.2",
+                "laravel/framework": "^10.0|^11.0|^12.0",
+                "outerweb/settings": "^1.0",
+                "php": "^8.0",
+                "spatie/laravel-package-tools": "^1.16"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Outerweb\\FilamentSettings\\FilamentSettingsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src\\Helpers\\helpers.php"
+                ],
+                "psr-4": {
+                    "Outerweb\\FilamentSettings\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Outerweb",
+                    "email": "info@outerweb.be"
+                }
+            ],
+            "description": "This package adds a way to interact with outerweb/settings in Filament.",
+            "homepage": "https://github.com/outer-web/filament-settings",
+            "support": {
+                "issues": "https://github.com/outer-web/filament-settings/issues",
+                "source": "https://github.com/outer-web/filament-settings/tree/v1.3.0"
+            },
+            "time": "2025-02-27T18:41:57+00:00"
+        },
+        {
+            "name": "outerweb/settings",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/outer-web/settings.git",
+                "reference": "3fdd6c92ec6df3f725706ce7665d877d66258d18"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/outer-web/settings/zipball/3fdd6c92ec6df3f725706ce7665d877d66258d18",
+                "reference": "3fdd6c92ec6df3f725706ce7665d877d66258d18",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^10.0|^11.0|^12.0",
+                "php": "^8.0",
+                "spatie/laravel-package-tools": "^1.16"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Outerweb\\Settings\\SettingsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src\\Helpers\\helpers.php"
+                ],
+                "psr-4": {
+                    "Outerweb\\Settings\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Outerweb",
+                    "email": "info@outerweb.be"
+                }
+            ],
+            "description": "This package adds application wide settings stored in your database.",
+            "homepage": "https://github.com/outer-web/settings",
+            "support": {
+                "issues": "https://github.com/outer-web/settings/issues",
+                "source": "https://github.com/outer-web/settings/tree/v1.1.0"
+            },
+            "time": "2025-02-27T18:44:23+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -14076,7 +14184,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.2"
+        "php": "^8.3"
     },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"
