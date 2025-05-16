@@ -9,7 +9,8 @@
     "dev:all": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
     "dev:client": "vite",
     "dev:server": "php artisan serve",
-    "format": "vendor\\bin\\php-cs-fixer fix -v --show-progress=dots"
+    "format": "vendor\\bin\\php-cs-fixer fix -v --show-progress=dots",
+    "rector": "vendor\\bin\\rector process --no-progress-bar"
   },
   "simple-git-hooks": {
     "pre-push": "npm run format"
