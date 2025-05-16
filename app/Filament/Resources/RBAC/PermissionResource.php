@@ -134,7 +134,7 @@ class PermissionResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-            Tables\Filters\SelectFilter::make('linked_to_enum')
+                Tables\Filters\SelectFilter::make('linked_to_enum')
                     ->label('Gekoppeld aan enum')
                     ->options([
                         '1' => 'Ja',
@@ -156,15 +156,15 @@ class PermissionResource extends Resource
                             }
                         });
                     }),
-        ])
+            ])
             ->actions([
-            Tables\Actions\ViewAction::make(),
-            Tables\Actions\DeleteAction::make()
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\DeleteAction::make()
                     ->visible(fn (Permission $record): bool => ! self::isPermissionLinkedToEnum($record)),
-        ])
+            ])
           // No bulk actions needed
             ->headerActions([
-            Tables\Actions\Action::make('sync-permissions')
+                Tables\Actions\Action::make('sync-permissions')
                     ->label('Synchroniseren met enums')
                     ->icon('heroicon-o-arrow-path')
                     ->color('primary')
@@ -186,7 +186,7 @@ class PermissionResource extends Resource
                             ->success()
                             ->send();
                     }),
-        ]);
+            ]);
     }
 
     /**

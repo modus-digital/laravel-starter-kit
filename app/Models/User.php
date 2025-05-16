@@ -4,11 +4,17 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Enums\Settings\Appearance;
+use App\Enums\Settings\Language;
+use App\Enums\Settings\Theme;
+use App\Enums\Settings\TwoFactor;
+use App\Enums\Settings\UserSettings;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -18,6 +24,41 @@ class User extends Authenticatable
 
     use HasRoles;
     use Notifiable;
+
+    public static function booted(): void
+    {
+        static::created(function (User $user) {
+            $user->settings()->createMany([
+                [
+                    'key' => UserSettings::LOCALIZATION,
+                    'value' => [
+                        'locale' => Language::ENGLISH,
+                        'timezone' => config('app.default_timezone', 'UTC'),
+                        'date_format' => config('app.default_date_format', 'd-m-Y H:i'),
+                    ],
+                ],
+                [
+                    'key' => UserSettings::SECURITY,
+                    'value' => [
+                        'password_last_changed_at' => null,
+                        'two_factor' => [
+                            'status' => TwoFactor::DISABLED,
+                            'secret' => null,
+                            'confirmed_at' => null,
+                            'recovery_codes' => [],
+                        ],
+                    ],
+                ],
+                [
+                    'key' => UserSettings::DISPLAY,
+                    'value' => [
+                        'appearance' => Appearance::SYSTEM,
+                        'theme' => Theme::BLUE,
+                    ],
+                ],
+            ]);
+        });
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -29,6 +70,7 @@ class User extends Authenticatable
         'last_name_prefix',
         'last_name',
         'email',
+        'phone',
         'password',
         'last_login_at',
     ];
@@ -57,10 +99,19 @@ class User extends Authenticatable
         ];
     }
 
-    #region Custom attributes
+    public function settings(): HasMany
+    {
+        return $this->hasMany(
+            related: UserSetting::class,
+            foreignKey: 'user_id',
+        );
+    }
 
     /**
-     * Get the user's full name.
+     * Get the user's initials based on their name
+     * Extract only from the first and last word of their name
+     *
+     * @return string
      */
     public function name(): Attribute
     {
@@ -82,4 +133,11 @@ class User extends Authenticatable
     }
 
     #endregion
+
+    public function initials(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => Str::of($this->name)->explode(' ')->map(fn ($name) => Str::of($name)->substr(0, 1))->implode(''),
+        );
+    }
 }

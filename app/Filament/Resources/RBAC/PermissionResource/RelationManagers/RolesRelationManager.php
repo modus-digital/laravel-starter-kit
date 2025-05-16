@@ -77,7 +77,7 @@ class RolesRelationManager extends RelationManager
                     ->tooltip('Geeft aan of deze rol gekoppeld is aan een enum waarde'),
             ])
             ->filters([
-            Tables\Filters\SelectFilter::make('linked_to_enum')
+                Tables\Filters\SelectFilter::make('linked_to_enum')
                     ->label('Gekoppeld aan enum')
                     ->options([
                         '1' => 'Ja',
@@ -99,10 +99,10 @@ class RolesRelationManager extends RelationManager
                             }
                         });
                     }),
-        ])
+            ])
             ->headerActions([
-            // Custom action to add roles
-            Tables\Actions\Action::make('addRoles')
+                // Custom action to add roles
+                Tables\Actions\Action::make('addRoles')
                     ->label('Rollen toevoegen')
                     ->modalHeading('Rollen toevoegen aan deze permissie')
                     ->icon('heroicon-o-plus')
@@ -142,10 +142,10 @@ class RolesRelationManager extends RelationManager
                             ->success()
                             ->send();
                     }),
-        ])
+            ])
             ->actions([
-            // Custom detach action using syncRoles
-            Tables\Actions\Action::make('detachRole')
+                // Custom detach action using syncRoles
+                Tables\Actions\Action::make('detachRole')
                     ->label('Ontkoppelen')
                     ->icon('heroicon-o-trash')
                     ->color('danger')
@@ -163,7 +163,7 @@ class RolesRelationManager extends RelationManager
                             ->success()
                             ->send();
                     }),
-        ])
+            ])
             ->bulkActions([]);
     }
 }

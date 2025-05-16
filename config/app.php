@@ -17,6 +17,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Title
+    |--------------------------------------------------------------------------
+    |
+    | This value is the title of your application displayed in the header.
+    |
+    */
+
+    'title' => env('APP_TITLE', 'Modus digital'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |
@@ -60,12 +71,25 @@ return [
     |--------------------------------------------------------------------------
     |
     | Here you may specify the default timezone for your application, which
-    | will be used by the PHP date and date-time functions. The timezone
-    | is set to "UTC" by default as it is suitable for most use cases.
+    | will be used by the PHP date and date-time functions. We have gone
+    | ahead and set this to a sensible default for you out of the box.
     |
     */
 
     'timezone' => 'UTC',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Timezone and Date Format
+    |--------------------------------------------------------------------------
+    |
+    | These values are used as defaults for user settings.
+    |
+    */
+
+    'default_timezone' => 'UTC',
+    'default_date_format' => 'd-m-Y H:i',
+    'default_theme' => 'blue',
 
     /*
     |--------------------------------------------------------------------------
