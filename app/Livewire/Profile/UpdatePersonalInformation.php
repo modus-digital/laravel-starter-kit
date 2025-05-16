@@ -17,16 +17,16 @@ class UpdatePersonalInformation extends Component
     public string $email;
 
     #[Validate('nullable|string|max:255')]
-    public ?string $phone;
+    public ?string $phone = null;
 
-    public function mount(?Authenticatable $user)
+    public function mount(?Authenticatable $user): void
     {
         $this->name = $user->name;
         $this->email = $user->email;
         $this->phone = $user->phone ?? null;
     }
 
-    public function save()
+    public function save(): void
     {
         $this->validate();
 

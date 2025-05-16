@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Profile\TwoFactor;
 
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Enums\Settings\TwoFactor;
 use App\Enums\Settings\UserSettings;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
@@ -28,7 +29,7 @@ class EnableTwoFactor extends Component
 
     public string $code = '';
 
-    public function mount(?Authenticatable $user = null)
+    public function mount(?Authenticatable $user = null): void
     {
         $g2fa = new Google2FA();
 
@@ -54,7 +55,7 @@ class EnableTwoFactor extends Component
         $this->qrCode = preg_replace($pattern, $replacement, $this->qrCode);
     }
 
-    public function enable()
+    public function enable(): ?StreamedResponse
     {
         $g2fa = new Google2FA();
         $user = auth()->user();
@@ -87,11 +88,13 @@ class EnableTwoFactor extends Component
                 );
             }
         }
-        catch (IncompatibleWithGoogleAuthenticatorException|SecretKeyTooShortException|InvalidCharactersException $e) {
+        catch (IncompatibleWithGoogleAuthenticatorException|SecretKeyTooShortException|InvalidCharactersException) {
             $this->error(
                 message: __('notifications.toasts.two_factor.error'),
             );
         }
+
+        return null;
     }
 
     private function generateRecoveryCodes(int $count = 8): array

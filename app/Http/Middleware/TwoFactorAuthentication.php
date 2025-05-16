@@ -7,13 +7,14 @@ use App\Enums\Settings\UserSettings;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\User;
 
 class TwoFactorAuthentication
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param Closure(Request):Response $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -25,14 +26,14 @@ class TwoFactorAuthentication
             return $next($request);
         }
 
-        if ($this->isTwoFactorEnabled($request) === false) {
+        if ($this->isTwoFactorEnabled() === false) {
             return $next($request);
         }
 
         return to_route('auth.two-factor.verify');
     }
 
-    private function getTwoFactorSettings($user): ?array
+    private function getTwoFactorSettings(User $user): ?array
     {
         $twoFactorSettings = $user->settings()->where('key', UserSettings::SECURITY)->first();
 
@@ -45,10 +46,14 @@ class TwoFactorAuthentication
 
     private function isTwoFactorRoute(Request $request): bool
     {
-        return $request->routeIs('auth.two-factor.verify') || $request->routeIs('auth.two-factor.recovery.*');
+        if ($request->routeIs('auth.two-factor.verify')) {
+            return true;
+        }
+
+        return $request->routeIs('auth.two-factor.recovery.*');
     }
 
-    private function isTwoFactorEnabled(Request $request): bool
+    private function isTwoFactorEnabled(): bool
     {
         $user = auth()->user();
         if (! $user) {
@@ -56,7 +61,6 @@ class TwoFactorAuthentication
         }
 
         $settings = $this->getTwoFactorSettings(user: $user);
-
         if (! $settings) {
             return false;
         }

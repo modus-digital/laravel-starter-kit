@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create(config('mails.database.tables.attachments', 'mail_attachments'), function (Blueprint $table) {
+        Schema::create(config('mails.database.tables.attachments', 'mail_attachments'), function (Blueprint $table): void {
             $table->id();
             $table->foreignIdFor(config('mails.models.mail'))
                 ->constrained()
@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('uuid');
             $table->string('filename');
             $table->string('mime');
-            $table->boolean('inline', false);
+            $table->boolean('inline');
             $table->bigInteger('size');
             $table->timestamps();
         });

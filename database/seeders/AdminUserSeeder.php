@@ -14,7 +14,7 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        /** @var \App\Models\User $superAdmin */
+        /** @var User $superAdmin */
         $superAdmin = User::create([
             'first_name' => 'Modus',
             'last_name' => 'Admin',

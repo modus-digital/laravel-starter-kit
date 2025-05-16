@@ -7,6 +7,9 @@ enum TwoFactor: string
     case ENABLED = 'enabled';
     case DISABLED = 'disabled';
 
+    /**
+     * Get the description for the two-factor authentication
+     */
     public function description(): string
     {
         return match ($this) {
@@ -15,8 +18,13 @@ enum TwoFactor: string
         };
     }
 
+    /**
+     * Get all possible enum values as an array
+     *
+     * @return string[]
+     */
     public static function values(): array
     {
-        return array_map(fn (TwoFactor $twoFactor) => $twoFactor->value, self::cases());
+        return array_map(fn(TwoFactor $twoFactor) => $twoFactor->value, self::cases());
     }
 }

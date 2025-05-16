@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::table(config('mails.database.tables.mails'), function (Blueprint $table) {
-            $table->after('clicks', function (Blueprint $table) {
+        Schema::table(config('mails.database.tables.mails'), function (Blueprint $table): void {
+            $table->after('clicks', function (Blueprint $table): void {
                 $table->json('tags')->nullable();
             });
         });

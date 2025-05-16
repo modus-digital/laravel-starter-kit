@@ -17,4 +17,11 @@
 /* Theming */
 @import './fonts.css';
 @import './themes/default.css';
-@import './themes/indigo.css'
+@import './themes/indigo.css';
+@import './themes/red.css';
+@import './themes/orange.css';
+@import './themes/yellow.css';
+@import './themes/green.css';
+@import './themes/teal.css';
+@import './themes/cyan.css';
+@import './themes/purple.css';

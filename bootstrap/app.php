@@ -15,7 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware) {
+    ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias(aliases: [
             'feature' => CheckFeatureIsEnabled::class,
         ]);
@@ -26,10 +26,10 @@ return Application::configure(basePath: dirname(__DIR__))
             ]
         );
     })
-    ->withExceptions(function (Exceptions $exceptions) {
+    ->withExceptions(function (Exceptions $exceptions): void {
         //
     })
-    ->withSchedule(function (Schedule $schedule) {
+    ->withSchedule(function (Schedule $schedule): void {
 
         if (App::environment() !== 'local') {
 

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_settings', function (Blueprint $table) {
+        Schema::create('user_settings', function (Blueprint $table): void {
             $table->string(column: 'key', length: 255);
             $table->foreignId(column: 'user_id')->constrained(table: 'users');
             $table->json(column: 'value');

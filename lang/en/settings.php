@@ -11,6 +11,8 @@ return [
     |
     */
 
+    'header' => 'Settings',
+
     // Settings categories
     'categories' => [
         'localization' => 'Localization settings',
@@ -89,12 +91,12 @@ return [
         'date_format' => 'Date Format',
         'timezone' => 'Timezone',
         'formats' => [
-            'day_month_year_time' => 'Day-Month-Year Hour:Minute',
-            'day_month_year' => 'Day-Month-Year',
-            'day_month_year_slash' => 'Day/Month/Year',
-            'day_month_year_dot' => 'Day.Month.Year',
-            'year_month_day' => 'Year-Month-Day',
-            'month_day_year' => 'Month/Day/Year',
+            'day_month_year_time' => '31-01-2025 23:59',
+            'day_month_year' => '31-01-2025',
+            'day_month_year_slash' => '31/01/2025',
+            'day_month_year_dot' => '31.01.2025',
+            'year_month_day' => '2025-01-31',
+            'month_day_year' => '01/31/2025',
         ],
     ],
 

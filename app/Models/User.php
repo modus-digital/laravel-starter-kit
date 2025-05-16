@@ -3,7 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-
+use Override;
+use Database\Factories\UserFactory;
 use App\Enums\Settings\Appearance;
 use App\Enums\Settings\Language;
 use App\Enums\Settings\Theme;
@@ -16,18 +17,22 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+use App\Enums\RBAC\Permission;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use HasFactory;
 
     use HasRoles;
     use Notifiable;
 
-    public static function booted(): void
+    #[Override]
+    protected static function booted(): void
     {
-        static::created(function (User $user) {
+        static::created(function (User $user): void {
             $user->settings()->createMany([
                 [
                     'key' => UserSettings::LOCALIZATION,
@@ -116,7 +121,7 @@ class User extends Authenticatable
     public function name(): Attribute
     {
         return Attribute::make(
-            get: fn () => "{$this->first_name} {$this?->last_name_prefix} {$this?->last_name}",
+            get: fn(): string => sprintf('%s %s %s', $this->first_name, $this?->last_name_prefix, $this?->last_name),
         );
     }
 
@@ -134,10 +139,13 @@ class User extends Authenticatable
 
     #endregion
 
-    public function initials(): Attribute
+    public function initials(): string
     {
-        return Attribute::make(
-            get: fn () => Str::of($this->name)->explode(' ')->map(fn ($name) => Str::of($name)->substr(0, 1))->implode(''),
-        );
+        return Str::of($this->name)->explode(' ')->map(fn($name) => Str::of($name)->substr(0, 1))->implode('');
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->hasPermissionTo(Permission::HAS_ACCESS_TO_ADMIN_PANEL);
     }
 }

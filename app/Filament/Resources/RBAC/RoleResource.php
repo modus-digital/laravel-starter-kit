@@ -2,6 +2,20 @@
 
 namespace App\Filament\Resources\RBAC;
 
+use Override;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\Action;
+use Filament\Notifications\Notification;
+use App\Filament\Resources\RBAC\RoleResource\Pages\ListRoles;
+use App\Filament\Resources\RBAC\RoleResource\Pages\ViewRole;
 use App\Enums\RBAC\Role as RoleEnum;
 use App\Filament\Resources\RBAC\RoleResource\Pages;
 use App\Filament\Resources\RBAC\RoleResource\RelationManagers\PermissionsRelationManager;
@@ -51,6 +65,7 @@ class RoleResource extends Resource
     /**
      * The label for this resource.
      */
+    #[Override]
     public static function getModelLabel(): string
     {
         return 'Rol';
@@ -59,6 +74,7 @@ class RoleResource extends Resource
     /**
      * The plural label for this resource.
      */
+    #[Override]
     public static function getPluralModelLabel(): string
     {
         return 'Rollen';
@@ -67,24 +83,27 @@ class RoleResource extends Resource
     /**
      * Defines the form for viewing role details.
      */
+    #[Override]
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make()
+                Section::make()
                     ->schema([
-                        Forms\Components\Grid::make(2)
+                        Grid::make(2)
                             ->schema([
-                                Forms\Components\TextInput::make('enum_key')
+                                TextInput::make('enum_key')
                                     ->label('Enum Key')
-                                    ->formatStateUsing(fn (Role $record): ?string => collect(RoleEnum::cases())->first(fn ($case) => $case->value === $record->name)->name
+                                    ->formatStateUsing(
+                                        fn(Role $record): string => collect(RoleEnum::cases())
+                                            ->first(fn($case): bool => $case->value === $record->name)->name ?? 'Unknown'
                                     )
                                     ->disabled(),
-                                Forms\Components\TextInput::make('name')
+                                TextInput::make('name')
                                     ->label('Naam')
                                     ->disabled(),
                             ]),
-                        Forms\Components\Textarea::make('description')
+                        Textarea::make('description')
                             ->label('Beschrijving')
                             ->disabled()
                             ->rows(3),
@@ -95,46 +114,47 @@ class RoleResource extends Resource
     /**
      * Defines the table for displaying roles.
      */
+    #[Override]
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('enum_key')
+                TextColumn::make('enum_key')
                     ->label('Enum Key')
                     ->badge()
                     ->sortable(false) // Kan niet sorteren op een berekende kolom in de database
                     ->getStateUsing(function (Role $record): ?string {
                         $roleEnum = collect(RoleEnum::cases())
-                            ->first(fn ($case) => $case->value === $record->name);
+                            ->first(fn($case): bool => $case->value === $record->name);
 
                         return $roleEnum ? $roleEnum->name : null;
                     }),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label('Naam')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\IconColumn::make('linked_to_enum')
+                IconColumn::make('linked_to_enum')
                     ->label('Gekoppeld aan enum')
                     ->boolean()
-                    ->getStateUsing(fn (Role $record): bool => self::isRoleLinkedToEnum($record))
+                    ->getStateUsing(fn(Role $record): bool => self::isRoleLinkedToEnum($record))
                     ->tooltip('Geeft aan of deze rol gekoppeld is aan een enum waarde'),
-                Tables\Columns\TextColumn::make('permissions_count')
+                TextColumn::make('permissions_count')
                     ->label('Aantal permissies')
                     ->counts('permissions')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('Aangemaakt op')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label('Laatst bijgewerkt')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('linked_to_enum')
+                SelectFilter::make('linked_to_enum')
                     ->label('Gekoppeld aan enum')
                     ->options([
                         '1' => 'Ja',
@@ -145,30 +165,29 @@ class RoleResource extends Resource
                             return $query;
                         }
 
-                        return $query->where(function ($query) use ($data) {
-                            $enumValues = collect(RoleEnum::cases())->map(fn ($case) => $case->value)->toArray();
+                        return $query->where(function ($query) use ($data): void {
+                            $enumValues = collect(RoleEnum::cases())->map(fn($case) => $case->value)->toArray();
 
                             if ($data['value'] === '1') {
                                 $query->whereIn('name', $enumValues);
-                            }
-                            else {
+                            } else {
                                 $query->whereNotIn('name', $enumValues);
                             }
                         });
                     }),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\DeleteAction::make()
-                    ->visible(fn (Role $record): bool => ! self::isRoleLinkedToEnum($record)),
+                ViewAction::make(),
+                DeleteAction::make()
+                    ->visible(fn(Role $record): bool => ! self::isRoleLinkedToEnum($record)),
             ])
-          // No bulk actions needed
+            // No bulk actions needed
             ->headerActions([
-                Tables\Actions\Action::make('sync-roles')
+                Action::make('sync-roles')
                     ->label('Synchroniseren met enums')
                     ->icon('heroicon-o-arrow-path')
                     ->color('primary')
-                    ->action(function () {
+                    ->action(function (): void {
                         $count = 0;
 
                         // Create or update roles from enum
@@ -180,9 +199,9 @@ class RoleResource extends Resource
                             $count++;
                         }
 
-                        \Filament\Notifications\Notification::make()
+                        Notification::make()
                             ->title('Synchronisatie voltooid')
-                            ->body("$count rollen zijn gesynchroniseerd.")
+                            ->body($count . ' rollen zijn gesynchroniseerd.')
                             ->success()
                             ->send();
                     }),
@@ -192,6 +211,7 @@ class RoleResource extends Resource
     /**
      * Returns the related pages for the resource.
      */
+    #[Override]
     public static function getRelations(): array
     {
         return [
@@ -201,7 +221,10 @@ class RoleResource extends Resource
 
     /**
      * Define the custom query for retrieving records.
+     *
+     * @return Builder<\Spatie\Permission\Models\Role>
      */
+    #[Override]
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->orderBy('name');
@@ -210,11 +233,12 @@ class RoleResource extends Resource
     /**
      * Returns the pages for the resource.
      */
+    #[Override]
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListRoles::route('/'),
-            'view' => Pages\ViewRole::route('/{record}'),
+            'index' => ListRoles::route('/'),
+            'view' => ViewRole::route('/{record}'),
         ];
     }
 
@@ -227,6 +251,6 @@ class RoleResource extends Resource
     protected static function isRoleLinkedToEnum(Role $role): bool
     {
         return collect(RoleEnum::cases())
-            ->contains(fn ($case) => $case->value === $role->name);
+            ->contains(fn($case): bool => $case->value === $role->name);
     }
 }

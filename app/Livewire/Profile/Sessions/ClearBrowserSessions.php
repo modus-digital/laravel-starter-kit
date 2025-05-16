@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Profile\Sessions;
 
+use Throwable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Rule;
@@ -44,7 +45,7 @@ class ClearBrowserSessions extends Component
         }
 
         try {
-            DB::transaction(function () use ($sessions) {
+            DB::transaction(function () use ($sessions): void {
                 $sessions->delete();
             });
 
@@ -52,7 +53,7 @@ class ClearBrowserSessions extends Component
             $this->dispatch(event: 'cleared-browser-sessions');
             $this->success(message: __('notifications.toasts.sessions.cleared'));
         }
-        catch (\Throwable $e) {
+        catch (Throwable) {
 
             $this->error(message: __('notifications.toasts.sessions.cleared_error'));
         }

@@ -3,28 +3,32 @@
 namespace App\Livewire\Profile\Edit;
 
 use App\Enums\Settings\UserSettings;
-use Illuminate\Contracts\Auth\Authenticatable;
+use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Masmerise\Toaster\Toastable;
+use Illuminate\Contracts\View\View;
 
 class Display extends Component
 {
     use Toastable;
 
-    protected $user;
+    protected ?User $user = null;
 
+    /**
+     * @var Collection<string, mixed>
+     */
     public Collection $displaySettings;
 
     public string $appearance = '';
 
     public string $theme = '';
 
-    public function mount(?Authenticatable $user = null): void
+    public function mount(): void
     {
-        $this->user = $user;
-        $settings = $user->settings->where('key', UserSettings::DISPLAY)->first();
+        $this->user = auth()->user();
+        $settings = $this->user->settings->where('key', UserSettings::DISPLAY)->first();
         $this->displaySettings = collect($settings->value);
 
         $this->appearance = $this->displaySettings->get('appearance');
@@ -44,7 +48,7 @@ class Display extends Component
         $this->success('Display settings updated successfully');
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.profile.edit.display');
     }

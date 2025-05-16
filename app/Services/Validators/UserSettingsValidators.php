@@ -2,6 +2,7 @@
 
 namespace App\Services\Validators;
 
+use InvalidArgumentException;
 use App\Enums\Settings\Appearance;
 use App\Enums\Settings\Language;
 use App\Enums\Settings\Theme;
@@ -9,11 +10,17 @@ use App\Enums\Settings\TwoFactor;
 use App\Enums\Settings\UserSettings;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Validator;
 
 class UserSettingsValidators
 {
-    public static function byKey(UserSettings $key, array $data): Validator
+    /**
+     * Validate the user settings based on the key
+     *
+     * @param UserSettings|string $key The key of the user setting to validate
+     * @param array<string, mixed>|string $data The data to validate
+     * @return \Illuminate\Contracts\Validation\Validator The validator instance
+     */
+    public static function byKey(UserSettings|string $key, array|string $data): \Illuminate\Contracts\Validation\Validator
     {
         switch ($key) {
             case UserSettings::LOCALIZATION:
@@ -29,11 +36,17 @@ class UserSettingsValidators
                 return self::notifications($data);
 
             default:
-                throw new \InvalidArgumentException('Invalid user setting key');
+                throw new InvalidArgumentException('Invalid user setting key');
         }
     }
 
-    public static function localization(array $data): Validator
+    /**
+     * Validate the localization settings
+     *
+     * @param array<string, mixed> $data The data to validate
+     * @return \Illuminate\Contracts\Validation\Validator The validator instance
+     */
+    public static function localization(array $data): \Illuminate\Contracts\Validation\Validator
     {
         $rules = [
             'locale' => 'required|string|in:' . implode(',', Language::values()),
@@ -42,15 +55,20 @@ class UserSettingsValidators
         ];
 
         $data = self::ensureNullableFieldsExist($data, $rules);
-        $validator = ValidatorFacade::make(
+
+        return ValidatorFacade::make(
             data: $data,
             rules: $rules
         );
-
-        return $validator;
     }
 
-    public static function security(array $data): Validator
+    /**
+     * Validate the security settings
+     *
+     * @param array<string, mixed> $data The data to validate
+     * @return \Illuminate\Contracts\Validation\Validator The validator instance
+     */
+    public static function security(array $data): \Illuminate\Contracts\Validation\Validator
     {
         $rules = [
             'password_last_changed_at' => 'nullable|date',
@@ -63,15 +81,20 @@ class UserSettingsValidators
         ];
 
         $data = self::ensureNullableFieldsExist($data, $rules);
-        $validator = ValidatorFacade::make(
+
+        return ValidatorFacade::make(
             data: $data,
             rules: $rules
         );
-
-        return $validator;
     }
 
-    public static function display(array $data): Validator
+    /**
+     * Validate the display settings
+     *
+     * @param array<string, mixed> $data The data to validate
+     * @return \Illuminate\Contracts\Validation\Validator The validator instance
+     */
+    public static function display(array $data): \Illuminate\Contracts\Validation\Validator
     {
         $rules = [
             'appearance' => 'required|string|in:' . implode(',', Appearance::values()),
@@ -79,15 +102,20 @@ class UserSettingsValidators
         ];
 
         $data = self::ensureNullableFieldsExist($data, $rules);
-        $validator = ValidatorFacade::make(
+
+        return ValidatorFacade::make(
             data: $data,
             rules: $rules
         );
-
-        return $validator;
     }
 
-    public static function notifications(array $data): Validator
+    /**
+     * Validate the notifications settings
+     *
+     * @param array<string, mixed> $data The data to validate
+     * @return \Illuminate\Contracts\Validation\Validator The validator instance
+     */
+    public static function notifications(array $data): \Illuminate\Contracts\Validation\Validator
     {
         $rules = [
             'email' => 'required|boolean',
@@ -95,21 +123,27 @@ class UserSettingsValidators
         ];
 
         $data = self::ensureNullableFieldsExist($data, $rules);
-        $validator = ValidatorFacade::make(
+
+        return ValidatorFacade::make(
             data: $data,
             rules: $rules
         );
-
-        return $validator;
     }
 
+    /**
+     * Ensure nullable fields exist in the data
+     *
+     * @param array<string, mixed> $data The data to validate
+     * @param array<string, mixed> $rules The rules to validate against
+     * @return array<string, mixed> The data with nullable fields
+     */
     private static function ensureNullableFieldsExist(array $data, array $rules): array
     {
         $defaults = [];
 
         foreach ($rules as $field => $rule) {
             // If the rule is a string and contains the 'nullable' rule, and the field isn't already in the data
-            if (is_string($rule) && strpos($rule, 'nullable') !== false && ! array_key_exists($field, $data)) {
+            if (is_string($rule) && str_contains($rule, 'nullable') && ! array_key_exists($field, $data)) {
                 $defaults[$field] = null;
             }
             // If the rule is an array and contains the 'nullable' rule, and the field isn't already in the data

@@ -2,6 +2,20 @@
 
 namespace App\Filament\Resources\RBAC;
 
+use Override;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\Action;
+use Filament\Notifications\Notification;
+use App\Filament\Resources\RBAC\PermissionResource\Pages\ListPermissions;
+use App\Filament\Resources\RBAC\PermissionResource\Pages\ViewPermission;
 use App\Enums\RBAC\Permission as PermissionEnum;
 use App\Filament\Resources\RBAC\PermissionResource\Pages;
 use App\Filament\Resources\RBAC\PermissionResource\RelationManagers\RolesRelationManager;
@@ -51,6 +65,7 @@ class PermissionResource extends Resource
     /**
      * The label for this resource.
      */
+    #[Override]
     public static function getModelLabel(): string
     {
         return 'Permissie';
@@ -59,6 +74,7 @@ class PermissionResource extends Resource
     /**
      * The plural label for this resource.
      */
+    #[Override]
     public static function getPluralModelLabel(): string
     {
         return 'Permissies';
@@ -67,24 +83,27 @@ class PermissionResource extends Resource
     /**
      * Defines the form for viewing permission details.
      */
+    #[Override]
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make()
+                Section::make()
                     ->schema([
-                        Forms\Components\Grid::make(2)
+                        Grid::make(2)
                             ->schema([
-                                Forms\Components\TextInput::make('enum_key')
+                                TextInput::make('enum_key')
                                     ->label('Enum Key')
-                                    ->formatStateUsing(fn (Permission $record): ?string => collect(PermissionEnum::cases())->first(fn ($case) => $case->value === $record->name)->name
+                                    ->formatStateUsing(
+                                        fn(Permission $record): string => collect(PermissionEnum::cases())
+                                            ->first(fn($case): bool => $case->value === $record->name)->name ?? 'Unknown'
                                     )
                                     ->disabled(),
-                                Forms\Components\TextInput::make('name')
+                                TextInput::make('name')
                                     ->label('Naam')
                                     ->disabled(),
                             ]),
-                        Forms\Components\Textarea::make('description')
+                        Textarea::make('description')
                             ->label('Beschrijving')
                             ->disabled()
                             ->rows(3),
@@ -95,46 +114,47 @@ class PermissionResource extends Resource
     /**
      * Defines the table for displaying permissions.
      */
+    #[Override]
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('enum_key')
+                TextColumn::make('enum_key')
                     ->label('Enum Key')
                     ->badge()
                     ->sortable(false) // Kan niet sorteren op een berekende kolom in de database
                     ->getStateUsing(function (Permission $record): ?string {
                         $permissionEnum = collect(PermissionEnum::cases())
-                            ->first(fn ($case) => $case->value === $record->name);
+                            ->first(fn($case): bool => $case->value === $record->name);
 
                         return $permissionEnum ? $permissionEnum->name : null;
                     }),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label('Naam')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\IconColumn::make('linked_to_enum')
+                IconColumn::make('linked_to_enum')
                     ->label('Gekoppeld aan enum')
                     ->boolean()
-                    ->getStateUsing(fn (Permission $record): bool => self::isPermissionLinkedToEnum($record))
+                    ->getStateUsing(fn(Permission $record): bool => self::isPermissionLinkedToEnum($record))
                     ->tooltip('Geeft aan of deze permissie gekoppeld is aan een enum waarde'),
-                Tables\Columns\TextColumn::make('roles_count')
+                TextColumn::make('roles_count')
                     ->label('Aantal rollen')
                     ->counts('roles')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->label('Aangemaakt op')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
                     ->label('Laatst bijgewerkt')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('linked_to_enum')
+                SelectFilter::make('linked_to_enum')
                     ->label('Gekoppeld aan enum')
                     ->options([
                         '1' => 'Ja',
@@ -145,30 +165,29 @@ class PermissionResource extends Resource
                             return $query;
                         }
 
-                        return $query->where(function ($query) use ($data) {
-                            $enumValues = collect(PermissionEnum::cases())->map(fn ($case) => $case->value)->toArray();
+                        return $query->where(function ($query) use ($data): void {
+                            $enumValues = collect(PermissionEnum::cases())->map(fn($case) => $case->value)->toArray();
 
                             if ($data['value'] === '1') {
                                 $query->whereIn('name', $enumValues);
-                            }
-                            else {
+                            } else {
                                 $query->whereNotIn('name', $enumValues);
                             }
                         });
                     }),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\DeleteAction::make()
-                    ->visible(fn (Permission $record): bool => ! self::isPermissionLinkedToEnum($record)),
+                ViewAction::make(),
+                DeleteAction::make()
+                    ->visible(fn(Permission $record): bool => ! self::isPermissionLinkedToEnum($record)),
             ])
-          // No bulk actions needed
+            // No bulk actions needed
             ->headerActions([
-                Tables\Actions\Action::make('sync-permissions')
+                Action::make('sync-permissions')
                     ->label('Synchroniseren met enums')
                     ->icon('heroicon-o-arrow-path')
                     ->color('primary')
-                    ->action(function () {
+                    ->action(function (): void {
                         $count = 0;
 
                         // Create or update permissions from enum
@@ -180,9 +199,9 @@ class PermissionResource extends Resource
                             $count++;
                         }
 
-                        \Filament\Notifications\Notification::make()
+                        Notification::make()
                             ->title('Synchronisatie voltooid')
-                            ->body("$count permissies zijn gesynchroniseerd.")
+                            ->body($count . ' permissies zijn gesynchroniseerd.')
                             ->success()
                             ->send();
                     }),
@@ -192,6 +211,7 @@ class PermissionResource extends Resource
     /**
      * Returns the related pages for the resource.
      */
+    #[Override]
     public static function getRelations(): array
     {
         return [
@@ -201,7 +221,10 @@ class PermissionResource extends Resource
 
     /**
      * Define the custom query for retrieving records.
+     *
+     * @return Builder<\Spatie\Permission\Models\Permission>
      */
+    #[Override]
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->orderBy('name');
@@ -210,11 +233,12 @@ class PermissionResource extends Resource
     /**
      * Returns the pages for the resource.
      */
+    #[Override]
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPermissions::route('/'),
-            'view' => Pages\ViewPermission::route('/{record}'),
+            'index' => ListPermissions::route('/'),
+            'view' => ViewPermission::route('/{record}'),
         ];
     }
 
@@ -227,6 +251,6 @@ class PermissionResource extends Resource
     protected static function isPermissionLinkedToEnum(Permission $permission): bool
     {
         return collect(PermissionEnum::cases())
-            ->contains(fn ($case) => $case->value === $permission->name);
+            ->contains(fn($case): bool => $case->value === $permission->name);
     }
 }

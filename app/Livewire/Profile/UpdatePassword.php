@@ -16,7 +16,7 @@ class UpdatePassword extends Component
     #[Validate('required|string|min:8')]
     public string $password_confirmation;
 
-    public function save()
+    public function save(): void
     {
         $this->validate();
 

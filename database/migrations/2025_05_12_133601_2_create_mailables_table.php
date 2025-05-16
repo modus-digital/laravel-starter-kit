@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create(config('mails.database.tables.polymorph'), function (Blueprint $table) {
+        Schema::create(config('mails.database.tables.polymorph'), function (Blueprint $table): void {
             $table->id();
             $table->foreignIdFor(config('mails.models.mail'))
                 ->constrained()

@@ -2,6 +2,15 @@
 
 namespace App\Filament\Resources\RBAC\PermissionResource\RelationManagers;
 
+use Override;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Actions\Action;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use App\Enums\RBAC\Role as RoleEnum;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -34,14 +43,15 @@ class RolesRelationManager extends RelationManager
     /**
      * Defines the form for viewing a role.
      */
+    #[Override]
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->label('Naam')
                     ->disabled(),
-                Forms\Components\Textarea::make('description')
+                Textarea::make('description')
                     ->label('Beschrijving')
                     ->rows(3)
                     ->disabled(),
@@ -56,28 +66,28 @@ class RolesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('enum_key')
+                TextColumn::make('enum_key')
                     ->label('Enum Key')
                     ->badge()
                     ->sortable(false) // Kan niet sorteren op een berekende kolom in de database
                     ->getStateUsing(function (Role $record): ?string {
                         $roleEnum = collect(RoleEnum::cases())
-                            ->first(fn ($case) => $case->value === $record->name);
+                            ->first(fn($case): bool => $case->value === $record->name);
 
                         return $roleEnum ? $roleEnum->name : null;
                     }),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label('Naam')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\IconColumn::make('linked_to_enum')
+                IconColumn::make('linked_to_enum')
                     ->label('Gekoppeld aan enum')
                     ->boolean()
-                    ->getStateUsing(fn (Role $record): bool => collect(RoleEnum::cases())->contains(fn ($case) => $case->value === $record->name))
+                    ->getStateUsing(fn(Role $record): bool => collect(RoleEnum::cases())->contains(fn($case): bool => $case->value === $record->name))
                     ->tooltip('Geeft aan of deze rol gekoppeld is aan een enum waarde'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('linked_to_enum')
+                SelectFilter::make('linked_to_enum')
                     ->label('Gekoppeld aan enum')
                     ->options([
                         '1' => 'Ja',
@@ -88,13 +98,12 @@ class RolesRelationManager extends RelationManager
                             return $query;
                         }
 
-                        return $query->where(function ($query) use ($data) {
-                            $enumValues = collect(RoleEnum::cases())->map(fn ($case) => $case->value)->toArray();
+                        return $query->where(function ($query) use ($data): void {
+                            $enumValues = collect(RoleEnum::cases())->map(fn($case) => $case->value)->toArray();
 
                             if ($data['value'] === '1') {
                                 $query->whereIn('name', $enumValues);
-                            }
-                            else {
+                            } else {
                                 $query->whereNotIn('name', $enumValues);
                             }
                         });
@@ -102,15 +111,16 @@ class RolesRelationManager extends RelationManager
             ])
             ->headerActions([
                 // Custom action to add roles
-                Tables\Actions\Action::make('addRoles')
+                Action::make('addRoles')
                     ->label('Rollen toevoegen')
                     ->modalHeading('Rollen toevoegen aan deze permissie')
                     ->icon('heroicon-o-plus')
                     ->color('primary')
                     ->form([
-                        Forms\Components\Select::make('roles')
+                        Select::make('roles')
                             ->label('Rollen')
                             ->options(function () {
+                                /** @var Permission $permission */
                                 $permission = $this->getOwnerRecord();
                                 $existingRoleIds = $permission->roles()->pluck('id')->toArray();
 
@@ -128,6 +138,7 @@ class RolesRelationManager extends RelationManager
                             return;
                         }
 
+                        /** @var Permission $permission */
                         $permission = $this->getOwnerRecord();
                         $newRoles = Role::whereIn('id', $data['roles'])->get();
 
@@ -135,17 +146,17 @@ class RolesRelationManager extends RelationManager
                             $permission->assignRole($role);
                         }
 
-                        \Filament\Notifications\Notification::make()
+                        Notification::make()
                             ->title(count($data['roles']) > 1
-                              ? 'Rollen toegevoegd'
-                              : 'Rol toegevoegd')
+                                ? 'Rollen toegevoegd'
+                                : 'Rol toegevoegd')
                             ->success()
                             ->send();
                     }),
             ])
             ->actions([
                 // Custom detach action using syncRoles
-                Tables\Actions\Action::make('detachRole')
+                Action::make('detachRole')
                     ->label('Ontkoppelen')
                     ->icon('heroicon-o-trash')
                     ->color('danger')
@@ -153,12 +164,13 @@ class RolesRelationManager extends RelationManager
                     ->modalHeading('Rol ontkoppelen')
                     ->modalDescription('Weet je zeker dat je deze rol wilt ontkoppelen van de permissie?')
                     ->action(function (Role $record): void {
+                        /** @var Permission $permission */
                         $permission = $this->getOwnerRecord();
 
                         // Detach the role from the permission using removeRole
                         $permission->removeRole($record);
 
-                        \Filament\Notifications\Notification::make()
+                        Notification::make()
                             ->title('Rol ontkoppeld')
                             ->success()
                             ->send();
