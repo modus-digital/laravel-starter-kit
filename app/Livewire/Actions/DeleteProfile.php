@@ -25,7 +25,7 @@ class DeleteProfile extends Component
     {
         $this->validate();
 
-        if (!$this->user instanceof User) {
+        if (! $this->user instanceof User) {
             return to_route('login');
         }
 

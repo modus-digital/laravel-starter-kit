@@ -1,6 +1,7 @@
 <?php
 
 use Pest\Mutate\Mutators\Sets\LaravelSet;
+use Rector\Arguments\Rector\ClassMethod\ArgumentAdderRector;
 use Rector\Config\RectorConfig;
 use Rector\Set\ValueObject\SetList;
 use Rector\ValueObject\PhpVersion;
@@ -25,6 +26,11 @@ return RectorConfig::configure()
         LaravelLevelSetList::UP_TO_LARAVEL_120,
         LaravelSetList::LARAVEL_CODE_QUALITY,
         LaravelSetList::LARAVEL_COLLECTION
+    ])
+    ->withSkip([
+        ArgumentAdderRector::class => [
+            __DIR__ . '/app/Http/Middleware/Filament/Authenticate.php'
+        ]
     ])
     ->withPaths(paths: [
         __DIR__ . '/app',
