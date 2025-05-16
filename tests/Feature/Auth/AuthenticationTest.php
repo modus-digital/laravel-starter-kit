@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Auth\Events\Login;
 use App\Models\User;
+use Illuminate\Auth\Events\Login;
 use Livewire\Volt\Volt as LivewireVolt;
 
 test('login screen can be rendered', function (): void {

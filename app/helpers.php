@@ -55,8 +55,8 @@ if (! function_exists('download_backup_codes')) {
     /**
      * Download backup codes as a CSV file.
      *
-     * @param string $filename The name of the file to download.
-     * @param array<string> $backupCodes The backup codes to include in the file.
+     * @param  string  $filename  The name of the file to download.
+     * @param  array<string>  $backupCodes  The backup codes to include in the file.
      * @return StreamedResponse The CSV file as a streamed response.
      */
     function download_backup_codes(string $filename, array $backupCodes): StreamedResponse
@@ -78,7 +78,8 @@ if (! function_exists('download_backup_codes')) {
                         }
 
                         fclose($file);
-                    } catch (Throwable) {
+                    }
+                    catch (Throwable) {
                         fclose($file);
                     }
                 },

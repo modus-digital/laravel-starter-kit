@@ -1,12 +1,22 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/livewire-starter-kit",
+    "name": "modus-digital/laravel-starter-kit",
     "type": "project",
-    "description": "The official Laravel starter kit for Livewire.",
+    "description": "The official Laravel starter kit for Modus Digital applications.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex van Steenhoven",
+            "email": "alex@modus-digital.com"
+        },
+        {
+            "name": "Thim van Amersfoort",
+            "email": "thim@modus-digital.com"
+        }
+    ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "bacon/bacon-qr-code": "^3.0",
         "jenssegers/agent": "*",
         "laravel/folio": "^1.1",

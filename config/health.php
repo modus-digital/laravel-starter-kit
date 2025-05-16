@@ -1,8 +1,8 @@
 <?php
 
-use Spatie\Health\ResultStores\CacheHealthResultStore;
 use Spatie\Health\Notifications\CheckFailedNotification;
 use Spatie\Health\Notifications\Notifiable;
+use Spatie\Health\ResultStores\CacheHealthResultStore;
 
 return [
     /*

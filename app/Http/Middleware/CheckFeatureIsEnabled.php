@@ -11,7 +11,7 @@ class CheckFeatureIsEnabled
     /**
      * Handle an incoming request.
      *
-     * @param Closure(Request):Response $next
+     * @param  Closure(Request):Response  $next
      * @param  string  $featureKey  The dot-notation key for the feature flag (e.g., 'auth.register')
      */
     public function handle(Request $request, Closure $next, string $featureKey): Response

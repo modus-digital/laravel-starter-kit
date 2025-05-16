@@ -2,12 +2,12 @@
 
 namespace App\Livewire\Profile\Sessions;
 
-use Throwable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Masmerise\Toaster\Toastable;
+use Throwable;
 
 class ClearBrowserSessions extends Component
 {

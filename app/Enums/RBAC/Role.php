@@ -8,12 +8,12 @@ namespace App\Enums\RBAC;
  */
 enum Role: string
 {
-/**
+    /**
      * The super admin role.
      */
     case SUPER_ADMIN = 'Super-administrator';
 
-/**
+    /**
      * The default role for users.
      */
     case USER = 'Gebruiker';

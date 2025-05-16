@@ -35,6 +35,6 @@ enum Language: string
      */
     public static function values(): array
     {
-        return array_map(fn(Language $language) => $language->value, self::cases());
+        return array_map(fn (Language $language) => $language->value, self::cases());
     }
 }

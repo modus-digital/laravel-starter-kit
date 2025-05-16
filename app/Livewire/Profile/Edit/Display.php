@@ -4,11 +4,11 @@ namespace App\Livewire\Profile\Edit;
 
 use App\Enums\Settings\UserSettings;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Masmerise\Toaster\Toastable;
-use Illuminate\Contracts\View\View;
 
 class Display extends Component
 {

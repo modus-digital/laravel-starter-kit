@@ -2,21 +2,19 @@
 
 namespace App\Filament\Resources\RBAC\PermissionResource\RelationManagers;
 
-use Override;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Actions\Action;
-use Filament\Forms\Components\Select;
-use Filament\Notifications\Notification;
 use App\Enums\RBAC\Role as RoleEnum;
-use Filament\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Override;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -72,7 +70,7 @@ class RolesRelationManager extends RelationManager
                     ->sortable(false) // Kan niet sorteren op een berekende kolom in de database
                     ->getStateUsing(function (Role $record): ?string {
                         $roleEnum = collect(RoleEnum::cases())
-                            ->first(fn($case): bool => $case->value === $record->name);
+                            ->first(fn ($case): bool => $case->value === $record->name);
 
                         return $roleEnum ? $roleEnum->name : null;
                     }),
@@ -83,7 +81,7 @@ class RolesRelationManager extends RelationManager
                 IconColumn::make('linked_to_enum')
                     ->label('Gekoppeld aan enum')
                     ->boolean()
-                    ->getStateUsing(fn(Role $record): bool => collect(RoleEnum::cases())->contains(fn($case): bool => $case->value === $record->name))
+                    ->getStateUsing(fn (Role $record): bool => collect(RoleEnum::cases())->contains(fn ($case): bool => $case->value === $record->name))
                     ->tooltip('Geeft aan of deze rol gekoppeld is aan een enum waarde'),
             ])
             ->filters([
@@ -99,11 +97,12 @@ class RolesRelationManager extends RelationManager
                         }
 
                         return $query->where(function ($query) use ($data): void {
-                            $enumValues = collect(RoleEnum::cases())->map(fn($case) => $case->value)->toArray();
+                            $enumValues = collect(RoleEnum::cases())->map(fn ($case) => $case->value)->toArray();
 
                             if ($data['value'] === '1') {
                                 $query->whereIn('name', $enumValues);
-                            } else {
+                            }
+                            else {
                                 $query->whereNotIn('name', $enumValues);
                             }
                         });

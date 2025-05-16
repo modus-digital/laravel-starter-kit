@@ -2,7 +2,6 @@
 
 /** @noinspection RedundantRectorRule StringToClassConstantRector */
 
-use App\Http\Controllers\Auth\ClearBrowserSessionsController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LogoutController;
 use Illuminate\Support\Facades\Route;

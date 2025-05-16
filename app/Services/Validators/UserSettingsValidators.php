@@ -2,7 +2,6 @@
 
 namespace App\Services\Validators;
 
-use InvalidArgumentException;
 use App\Enums\Settings\Appearance;
 use App\Enums\Settings\Language;
 use App\Enums\Settings\Theme;
@@ -10,14 +9,15 @@ use App\Enums\Settings\TwoFactor;
 use App\Enums\Settings\UserSettings;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Illuminate\Validation\Rule;
+use InvalidArgumentException;
 
 class UserSettingsValidators
 {
     /**
      * Validate the user settings based on the key
      *
-     * @param UserSettings|string $key The key of the user setting to validate
-     * @param array<string, mixed>|string $data The data to validate
+     * @param  UserSettings|string  $key  The key of the user setting to validate
+     * @param  array<string, mixed>|string  $data  The data to validate
      * @return \Illuminate\Contracts\Validation\Validator The validator instance
      */
     public static function byKey(UserSettings|string $key, array|string $data): \Illuminate\Contracts\Validation\Validator
@@ -43,7 +43,7 @@ class UserSettingsValidators
     /**
      * Validate the localization settings
      *
-     * @param array<string, mixed> $data The data to validate
+     * @param  array<string, mixed>  $data  The data to validate
      * @return \Illuminate\Contracts\Validation\Validator The validator instance
      */
     public static function localization(array $data): \Illuminate\Contracts\Validation\Validator
@@ -65,7 +65,7 @@ class UserSettingsValidators
     /**
      * Validate the security settings
      *
-     * @param array<string, mixed> $data The data to validate
+     * @param  array<string, mixed>  $data  The data to validate
      * @return \Illuminate\Contracts\Validation\Validator The validator instance
      */
     public static function security(array $data): \Illuminate\Contracts\Validation\Validator
@@ -91,7 +91,7 @@ class UserSettingsValidators
     /**
      * Validate the display settings
      *
-     * @param array<string, mixed> $data The data to validate
+     * @param  array<string, mixed>  $data  The data to validate
      * @return \Illuminate\Contracts\Validation\Validator The validator instance
      */
     public static function display(array $data): \Illuminate\Contracts\Validation\Validator
@@ -112,7 +112,7 @@ class UserSettingsValidators
     /**
      * Validate the notifications settings
      *
-     * @param array<string, mixed> $data The data to validate
+     * @param  array<string, mixed>  $data  The data to validate
      * @return \Illuminate\Contracts\Validation\Validator The validator instance
      */
     public static function notifications(array $data): \Illuminate\Contracts\Validation\Validator
@@ -133,8 +133,8 @@ class UserSettingsValidators
     /**
      * Ensure nullable fields exist in the data
      *
-     * @param array<string, mixed> $data The data to validate
-     * @param array<string, mixed> $rules The rules to validate against
+     * @param  array<string, mixed>  $data  The data to validate
+     * @param  array<string, mixed>  $rules  The rules to validate against
      * @return array<string, mixed> The data with nullable fields
      */
     private static function ensureNullableFieldsExist(array $data, array $rules): array

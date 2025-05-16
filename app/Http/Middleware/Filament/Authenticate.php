@@ -2,15 +2,15 @@
 
 namespace App\Http\Middleware\Filament;
 
-use Override;
-use Illuminate\Http\Request;
-use Illuminate\Auth\AuthenticationException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Enums\RBAC\Permission;
 use App\Models\User;
 use Filament\Facades\Filament;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Override;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * The Filament authentication middleware.

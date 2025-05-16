@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Profile\TwoFactor;
 
-use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Enums\Settings\TwoFactor;
 use App\Enums\Settings\UserSettings;
 use BaconQrCode\Renderer\Image\SvgImageBackEnd;
@@ -18,6 +17,7 @@ use PragmaRX\Google2FA\Exceptions\IncompatibleWithGoogleAuthenticatorException;
 use PragmaRX\Google2FA\Exceptions\InvalidCharactersException;
 use PragmaRX\Google2FA\Exceptions\SecretKeyTooShortException;
 use PragmaRX\Google2FA\Google2FA;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EnableTwoFactor extends Component
 {

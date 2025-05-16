@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Exception;
 use App\Enums\Settings\UserSettings;
 use App\Services\Validators\UserSettingsValidators;
+use Exception;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class UserSetting extends Model
 {
     protected $table = 'user_settings';
+
     public $incrementing = false;
 
     protected $fillable = [
@@ -36,7 +37,7 @@ class UserSetting extends Model
         }
 
         return Attribute::make(
-            get: fn() => $validator->validated(),
+            get: fn () => $validator->validated(),
         );
     }
 
@@ -46,7 +47,8 @@ class UserSetting extends Model
 
         if ($path !== null) {
             data_set($currentValue, $path, $newValue);
-        } else {
+        }
+        else {
             $currentValue = $newValue;
         }
 

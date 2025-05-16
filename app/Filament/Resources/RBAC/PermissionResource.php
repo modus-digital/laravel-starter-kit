@@ -2,29 +2,27 @@
 
 namespace App\Filament\Resources\RBAC;
 
-use Override;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\Action;
-use Filament\Notifications\Notification;
-use App\Filament\Resources\RBAC\PermissionResource\Pages\ListPermissions;
-use App\Filament\Resources\RBAC\PermissionResource\Pages\ViewPermission;
 use App\Enums\RBAC\Permission as PermissionEnum;
 use App\Filament\Resources\RBAC\PermissionResource\Pages;
+use App\Filament\Resources\RBAC\PermissionResource\Pages\ListPermissions;
+use App\Filament\Resources\RBAC\PermissionResource\Pages\ViewPermission;
 use App\Filament\Resources\RBAC\PermissionResource\RelationManagers\RolesRelationManager;
-use Filament\Forms;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Override;
 use Spatie\Permission\Models\Permission;
 
 /**
@@ -95,8 +93,8 @@ class PermissionResource extends Resource
                                 TextInput::make('enum_key')
                                     ->label('Enum Key')
                                     ->formatStateUsing(
-                                        fn(Permission $record): string => collect(PermissionEnum::cases())
-                                            ->first(fn($case): bool => $case->value === $record->name)->name ?? 'Unknown'
+                                        fn (Permission $record): string => collect(PermissionEnum::cases())
+                                            ->first(fn ($case): bool => $case->value === $record->name)->name ?? 'Unknown'
                                     )
                                     ->disabled(),
                                 TextInput::make('name')
@@ -125,7 +123,7 @@ class PermissionResource extends Resource
                     ->sortable(false) // Kan niet sorteren op een berekende kolom in de database
                     ->getStateUsing(function (Permission $record): ?string {
                         $permissionEnum = collect(PermissionEnum::cases())
-                            ->first(fn($case): bool => $case->value === $record->name);
+                            ->first(fn ($case): bool => $case->value === $record->name);
 
                         return $permissionEnum ? $permissionEnum->name : null;
                     }),
@@ -136,7 +134,7 @@ class PermissionResource extends Resource
                 IconColumn::make('linked_to_enum')
                     ->label('Gekoppeld aan enum')
                     ->boolean()
-                    ->getStateUsing(fn(Permission $record): bool => self::isPermissionLinkedToEnum($record))
+                    ->getStateUsing(fn (Permission $record): bool => self::isPermissionLinkedToEnum($record))
                     ->tooltip('Geeft aan of deze permissie gekoppeld is aan een enum waarde'),
                 TextColumn::make('roles_count')
                     ->label('Aantal rollen')
@@ -166,11 +164,12 @@ class PermissionResource extends Resource
                         }
 
                         return $query->where(function ($query) use ($data): void {
-                            $enumValues = collect(PermissionEnum::cases())->map(fn($case) => $case->value)->toArray();
+                            $enumValues = collect(PermissionEnum::cases())->map(fn ($case) => $case->value)->toArray();
 
                             if ($data['value'] === '1') {
                                 $query->whereIn('name', $enumValues);
-                            } else {
+                            }
+                            else {
                                 $query->whereNotIn('name', $enumValues);
                             }
                         });
@@ -179,7 +178,7 @@ class PermissionResource extends Resource
             ->actions([
                 ViewAction::make(),
                 DeleteAction::make()
-                    ->visible(fn(Permission $record): bool => ! self::isPermissionLinkedToEnum($record)),
+                    ->visible(fn (Permission $record): bool => ! self::isPermissionLinkedToEnum($record)),
             ])
             // No bulk actions needed
             ->headerActions([
@@ -251,6 +250,6 @@ class PermissionResource extends Resource
     protected static function isPermissionLinkedToEnum(Permission $permission): bool
     {
         return collect(PermissionEnum::cases())
-            ->contains(fn($case): bool => $case->value === $permission->name);
+            ->contains(fn ($case): bool => $case->value === $permission->name);
     }
 }

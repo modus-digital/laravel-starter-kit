@@ -2,9 +2,9 @@
 
 namespace App\Providers;
 
-use Override;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Folio\Folio;
+use Override;
 
 class FolioServiceProvider extends ServiceProvider
 {

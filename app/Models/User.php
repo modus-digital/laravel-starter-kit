@@ -3,23 +3,23 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Override;
-use Database\Factories\UserFactory;
+use App\Enums\RBAC\Permission;
 use App\Enums\Settings\Appearance;
 use App\Enums\Settings\Language;
 use App\Enums\Settings\Theme;
 use App\Enums\Settings\TwoFactor;
 use App\Enums\Settings\UserSettings;
+use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Override;
 use Spatie\Permission\Traits\HasRoles;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
-use App\Enums\RBAC\Permission;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -121,7 +121,7 @@ class User extends Authenticatable implements FilamentUser
     public function name(): Attribute
     {
         return Attribute::make(
-            get: fn(): string => sprintf('%s %s %s', $this->first_name, $this?->last_name_prefix, $this?->last_name),
+            get: fn (): string => sprintf('%s %s %s', $this->first_name, $this?->last_name_prefix, $this?->last_name),
         );
     }
 
@@ -141,7 +141,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function initials(): string
     {
-        return Str::of($this->name)->explode(' ')->map(fn($name) => Str::of($name)->substr(0, 1))->implode('');
+        return Str::of($this->name)->explode(' ')->map(fn ($name) => Str::of($name)->substr(0, 1))->implode('');
     }
 
     public function canAccessPanel(Panel $panel): bool

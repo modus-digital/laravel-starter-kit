@@ -2,29 +2,27 @@
 
 namespace App\Filament\Resources\RBAC;
 
-use Override;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Textarea;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\Action;
-use Filament\Notifications\Notification;
-use App\Filament\Resources\RBAC\RoleResource\Pages\ListRoles;
-use App\Filament\Resources\RBAC\RoleResource\Pages\ViewRole;
 use App\Enums\RBAC\Role as RoleEnum;
 use App\Filament\Resources\RBAC\RoleResource\Pages;
+use App\Filament\Resources\RBAC\RoleResource\Pages\ListRoles;
+use App\Filament\Resources\RBAC\RoleResource\Pages\ViewRole;
 use App\Filament\Resources\RBAC\RoleResource\RelationManagers\PermissionsRelationManager;
-use Filament\Forms;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Override;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -95,8 +93,8 @@ class RoleResource extends Resource
                                 TextInput::make('enum_key')
                                     ->label('Enum Key')
                                     ->formatStateUsing(
-                                        fn(Role $record): string => collect(RoleEnum::cases())
-                                            ->first(fn($case): bool => $case->value === $record->name)->name ?? 'Unknown'
+                                        fn (Role $record): string => collect(RoleEnum::cases())
+                                            ->first(fn ($case): bool => $case->value === $record->name)->name ?? 'Unknown'
                                     )
                                     ->disabled(),
                                 TextInput::make('name')
@@ -125,7 +123,7 @@ class RoleResource extends Resource
                     ->sortable(false) // Kan niet sorteren op een berekende kolom in de database
                     ->getStateUsing(function (Role $record): ?string {
                         $roleEnum = collect(RoleEnum::cases())
-                            ->first(fn($case): bool => $case->value === $record->name);
+                            ->first(fn ($case): bool => $case->value === $record->name);
 
                         return $roleEnum ? $roleEnum->name : null;
                     }),
@@ -136,7 +134,7 @@ class RoleResource extends Resource
                 IconColumn::make('linked_to_enum')
                     ->label('Gekoppeld aan enum')
                     ->boolean()
-                    ->getStateUsing(fn(Role $record): bool => self::isRoleLinkedToEnum($record))
+                    ->getStateUsing(fn (Role $record): bool => self::isRoleLinkedToEnum($record))
                     ->tooltip('Geeft aan of deze rol gekoppeld is aan een enum waarde'),
                 TextColumn::make('permissions_count')
                     ->label('Aantal permissies')
@@ -166,11 +164,12 @@ class RoleResource extends Resource
                         }
 
                         return $query->where(function ($query) use ($data): void {
-                            $enumValues = collect(RoleEnum::cases())->map(fn($case) => $case->value)->toArray();
+                            $enumValues = collect(RoleEnum::cases())->map(fn ($case) => $case->value)->toArray();
 
                             if ($data['value'] === '1') {
                                 $query->whereIn('name', $enumValues);
-                            } else {
+                            }
+                            else {
                                 $query->whereNotIn('name', $enumValues);
                             }
                         });
@@ -179,7 +178,7 @@ class RoleResource extends Resource
             ->actions([
                 ViewAction::make(),
                 DeleteAction::make()
-                    ->visible(fn(Role $record): bool => ! self::isRoleLinkedToEnum($record)),
+                    ->visible(fn (Role $record): bool => ! self::isRoleLinkedToEnum($record)),
             ])
             // No bulk actions needed
             ->headerActions([
@@ -251,6 +250,6 @@ class RoleResource extends Resource
     protected static function isRoleLinkedToEnum(Role $role): bool
     {
         return collect(RoleEnum::cases())
-            ->contains(fn($case): bool => $case->value === $role->name);
+            ->contains(fn ($case): bool => $case->value === $role->name);
     }
 }
