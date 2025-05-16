@@ -86,6 +86,12 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
+        ],
+        "format": [
+            "vendor/bin/php-cs-fixer fix -v --show-progress=dots"
+        ],
+        "rector": [
+            "vendor/bin/rector process --no-progress-bar"
         ]
     },
     "extra": {
