@@ -18,7 +18,7 @@ use Jenssegers\Agent\Agent;
  * @property string $ip_address IP address where the session originated
  * @property string $user_agent User agent string from the browser
  * @property int $last_activity Timestamp of the last activity
- * @property-read \App\Models\User $user The user that owns the session
+ * @property-read User $user The user that owns the session
  * @property-read array $session_info Information about the session
  * @property-read string $expires_at When the session will expire
  * @property-read bool $is_expired Whether the session has expired
@@ -31,15 +31,6 @@ class Session extends Model
      * @var string
      */
     protected $table = 'sessions';
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'id' => 'string',
-    ];
 
     /**
      * Get the user that owns the session.
@@ -62,7 +53,7 @@ class Session extends Model
         $agent = $this->createAgent($this);
 
         return Attribute::make(
-            get: fn () => [
+            get: fn (): array => [
                 'id' => $this->id,
                 'device' => [
                     'browser' => $agent->browser(),
@@ -102,7 +93,7 @@ class Session extends Model
     public function isExpired(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->expires_at < now()
+            get: fn (): bool => $this->expires_at < now()
         );
     }
 
@@ -118,5 +109,15 @@ class Session extends Model
             value: new Agent(),
             callback: fn ($agent) => $agent->setUserAgent(userAgent: $session->user_agent)
         );
+    }
+
+    /**
+     * The attributes that should be cast.
+     */
+    protected function casts(): array
+    {
+        return [
+            'id' => 'string',
+        ];
     }
 }

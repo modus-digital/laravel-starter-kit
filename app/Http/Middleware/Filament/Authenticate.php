@@ -5,8 +5,12 @@ namespace App\Http\Middleware\Filament;
 use App\Enums\RBAC\Permission;
 use App\Models\User;
 use Filament\Facades\Filament;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Override;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * The Filament authentication middleware.
@@ -19,14 +23,13 @@ class Authenticate extends Middleware
     /**
      * Authenticate the incoming request using the given guards.
      *
-     * @param  \Illuminate\Http\Request  $request
-     *
-     * @throws \Illuminate\Auth\AuthenticationException
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpException
+     * @throws AuthenticationException
+     * @throws HttpException
      */
+    #[Override]
     protected function authenticate($request, array $guards): void
     {
-        $panel = Filament::getCurrentPanel();
+        Filament::getCurrentPanel();
 
         /** @var User|null $user */
         $user = Auth::loginUsingId(1);

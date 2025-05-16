@@ -3,18 +3,31 @@
 namespace App\Filament\Resources;
 
 use App\Enums\RBAC\Permission;
-use App\Filament\Resources\UserResource\Pages;
+use App\Enums\RBAC\Role;
+use App\Filament\Resources\UserResource\Pages\CreateUser;
+use App\Filament\Resources\UserResource\Pages\EditUser;
+use App\Filament\Resources\UserResource\Pages\ListUsers;
 use App\Models\Session;
 use App\Models\User;
-use Filament\Forms;
+use DateTime;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use Override;
 
 class UserResource extends Resource
 {
@@ -43,6 +56,7 @@ class UserResource extends Resource
     /**
      * The label for this resource.
      */
+    #[Override]
     public static function getModelLabel(): string
     {
         return 'Gebruiker';
@@ -51,6 +65,7 @@ class UserResource extends Resource
     /**
      * The plural label for this resource.
      */
+    #[Override]
     public static function getPluralModelLabel(): string
     {
         return 'Gebruikers';
@@ -58,31 +73,32 @@ class UserResource extends Resource
 
     #endregion
 
+    #[Override]
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
 
-                Forms\Components\Section::make('Persoonlijke gegevens')
+                Section::make('Persoonlijke gegevens')
                     ->description('Hier bewerk je de persoonlijke informatie van deze gebruiker.')
                     ->aside()
                     ->columns(3)
                     ->schema([
 
-                        Forms\Components\TextInput::make('first_name')
+                        TextInput::make('first_name')
                             ->label('Voornaam')
                             ->required()
                             ->maxLength(255),
 
-                        Forms\Components\TextInput::make('last_name_prefix')
+                        TextInput::make('last_name_prefix')
                             ->label('Tussenvoegsel')
                             ->maxLength(255),
 
-                        Forms\Components\TextInput::make('last_name')
+                        TextInput::make('last_name')
                             ->label('Achternaam')
                             ->maxLength(255),
 
-                        Forms\Components\TextInput::make('email')
+                        TextInput::make('email')
                             ->label('E-mailadres')
                             ->columnSpan(2)
                             ->required()
@@ -90,25 +106,29 @@ class UserResource extends Resource
                             ->maxLength(255),
                     ]),
 
-                Forms\Components\Section::make('Sessie-informatie')
+                Section::make('Sessie-informatie')
                     ->description('Hier vind je informatie over de actieve sessies van de gebruiker.')
                     ->aside()
                     ->hidden(fn (string $operation): bool => $operation !== 'edit')
                     ->schema([
 
-                        Forms\Components\TextInput::make('last_login_at')
+                        TextInput::make('last_login_at')
                             ->label('Laatst ingelogd op')
                             ->prefixIcon('heroicon-o-calendar')
-                            ->formatStateUsing(function (?User $record): ?string {
-                                return $record?->last_login_at ? $record->last_login_at->format('d-m-Y H:i') : 'Nog niet ingelogd';
-                            })
+                            ->formatStateUsing(
+                                fn (User $record): string => $record->last_login_at ?
+                                    ($record->last_login_at instanceof DateTime ?
+                                        $record->last_login_at->format('d-m-Y H:i') :
+                                        $record->last_login_at) :
+                                    'Nog niet ingelogd'
+                            )
                             ->disabled(),
 
-                        Forms\Components\Repeater::make('sessions')
+                        Repeater::make('sessions')
                             ->label('Actieve sessies')
                             ->relationship('sessions')
                             ->columns(2)
-                            ->deletable(function (array $state) {
+                            ->deletable(function (array $state): bool {
 
                                 if (! array_key_exists('id', $state)) {
                                     return false;
@@ -117,11 +137,11 @@ class UserResource extends Resource
                                 $record = $state['id'];
                                 $session = Session::find($record);
 
-                                return $session?->session_info['is_current_device'] === true ? false : true;
+                                return $session?->session_info['is_current_device'] !== true;
                             })
                             ->deleteAction(
-                                fn (Action $action) => $action->action(function (array $arguments): void {
-                                    $id = preg_replace('/record-/', '', $arguments['item']);
+                                fn (Action $action): Action => $action->action(function (array $arguments): void {
+                                    $id = preg_replace('/record-/', '', (string) $arguments['item']);
                                     $session = Session::find($id);
                                     $session?->delete();
                                 })
@@ -129,25 +149,21 @@ class UserResource extends Resource
                             ->reorderable(false)
                             ->addable(false)
                             ->collapsed()
-                            ->itemLabel(function (array $state) {
-                                return array_key_exists('id', $state) ? "ID: {$state['id']}" : 'ID onbekend';
-                            })
+                            ->itemLabel(fn (array $state): string => array_key_exists('id', $state) ? 'ID: ' . $state['id'] : 'ID onbekend')
                             ->schema([
 
-                                Forms\Components\TextInput::make('ip_address')
+                                TextInput::make('ip_address')
                                     ->label('IP-adres')
                                     ->prefixIcon('heroicon-o-globe-alt')
                                     ->disabled(),
 
-                                Forms\Components\TextInput::make('expires_at')
+                                TextInput::make('expires_at')
                                     ->label('Verloopt op')
                                     ->prefixIcon('heroicon-o-clock')
-                                    ->formatStateUsing(function (?Session $record): ?string {
-                                        return $record?->expires_at;
-                                    })
+                                    ->formatStateUsing(fn (?Session $record): ?string => $record?->expires_at)
                                     ->disabled(),
 
-                                Forms\Components\KeyValue::make('session_info')
+                                KeyValue::make('session_info')
                                     ->label('Apparaat-info')
                                     ->addable(false)
                                     ->keyLabel('Type')
@@ -156,35 +172,33 @@ class UserResource extends Resource
                                     ->editableKeys(false)
                                     ->editableValues(false)
                                     ->columnSpan(2)
-                                    ->formatStateUsing(function (?Session $record): array {
-                                        return [
-                                            'Browser' => $record?->session_info['device']['browser'],
-                                            'Platform' => $record?->session_info['device']['platform'],
-                                            'Apparaat' => match (true) {
-                                                $record?->session_info['device']['is_desktop'] => 'Desktop',
-                                                $record?->session_info['device']['is_mobile'] => 'Mobiel',
-                                                $record?->session_info['device']['is_tablet'] => 'Tablet',
-                                                default => 'Onbekend',
-                                            },
-                                        ];
-                                    }),
+                                    ->formatStateUsing(fn (?Session $record): array => [
+                                        'Browser' => $record?->session_info['device']['browser'],
+                                        'Platform' => $record?->session_info['device']['platform'],
+                                        'Apparaat' => match (true) {
+                                            $record?->session_info['device']['is_desktop'] => 'Desktop',
+                                            $record?->session_info['device']['is_mobile'] => 'Mobiel',
+                                            $record?->session_info['device']['is_tablet'] => 'Tablet',
+                                            default => 'Onbekend',
+                                        },
+                                    ]),
 
                             ]),
 
                     ]),
 
-                Forms\Components\Section::make('Toegangscontrole')
+                Section::make('Toegangscontrole')
                     ->description('Hier beheer je de toegang van de gebruiker tot de applicatie.')
                     ->aside()
                     ->columns(3)
                     ->schema([
 
-                        Forms\Components\Select::make('roles')
+                        Select::make('roles')
                             ->relationship(name: 'roles', titleAttribute: 'name')
                             ->columnSpan(3)
                             ->label('Rol'),
 
-                        Forms\Components\TextInput::make('password')
+                        TextInput::make('password')
                             ->label('Nieuw wachtwoord instellen')
                             ->minLength(8)
                             ->password()
@@ -196,32 +210,29 @@ class UserResource extends Resource
             ]);
     }
 
+    #[Override]
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
 
                 // Column for name
-                Tables\Columns\TextColumn::make('first_name')
+                TextColumn::make('first_name')
                     ->label('Volledige naam')
-                    ->formatStateUsing(function (User $record): string {
-                        return "{$record->first_name} {$record?->last_name_prefix} {$record?->last_name}";
-                    })
+                    ->formatStateUsing(fn (User $record): string => sprintf('%s %s %s', $record->first_name, $record->last_name_prefix, $record->last_name))
                     ->searchable()
                     ->sortable(),
 
                 // Column for email
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->label('E-mailadres')
                     ->searchable()
                     ->sortable(),
 
                 // Column for displaying role
-                Tables\Columns\TextColumn::make('')
+                TextColumn::make('')
                     ->label('Rol')
-                    ->getStateUsing(function (User $record): ?string {
-                        return $record->roles->first()->name ?? 'Geen rol';
-                    })
+                    ->getStateUsing(fn (User $record): string => Role::from($record->roles->first()?->name)->displayName() ?? 'Geen rol')
                     ->badge(),
 
             ])
@@ -232,14 +243,15 @@ class UserResource extends Resource
                 Tables\Actions\Action::make('impersonate')
                     ->label('Inloggen als')
                     ->icon('heroicon-o-arrow-left-end-on-rectangle')
-                    ->color(function (User $record) {
+                    ->color(function (User $record): array {
 
-                        /** @var \App\Models\User|null $currentUser */
+                        /** @var User $currentUser */
                         $currentUser = Auth::user();
 
-                        if ($record->id === $currentUser?->id) {
+                        if ($record->id === $currentUser->id) {
                             return Color::Gray;
                         }
+
                         if (! $currentUser->hasPermissionTo(Permission::CAN_IMPERSONATE_USERS)) {
                             return Color::Gray;
                         }
@@ -248,21 +260,18 @@ class UserResource extends Resource
                     })
                     ->disabled(function (User $record): bool {
 
-                        /** @var \App\Models\User|null $currentUser */
+                        /** @var User $currentUser */
                         $currentUser = Auth::user();
 
-                        if ($record->id === $currentUser?->id) {
-                            return true;
-                        }
-                        if (! $currentUser->hasPermissionTo(Permission::CAN_IMPERSONATE_USERS)) {
+                        if ($record->id === $currentUser->id) {
                             return true;
                         }
 
-                        return false;
+                        return ! $currentUser->hasPermissionTo(Permission::CAN_IMPERSONATE_USERS);
                     })
                     ->action(function (User $record) {
 
-                        /** @var \App\Models\User|null $currentUser */
+                        /** @var User $currentUser */
                         $currentUser = Auth::user();
 
                         if (! $currentUser || ! $currentUser->hasPermissionTo(Permission::CAN_IMPERSONATE_USERS)) {
@@ -284,16 +293,17 @@ class UserResource extends Resource
                         return redirect()->to('/dashboard');
                     }),
 
-                Tables\Actions\EditAction::make()
+                EditAction::make()
                     ->label('Bewerken'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
 
+    #[Override]
     public static function getRelations(): array
     {
         return [
@@ -301,12 +311,13 @@ class UserResource extends Resource
         ];
     }
 
+    #[Override]
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => ListUsers::route('/'),
+            'create' => CreateUser::route('/create'),
+            'edit' => EditUser::route('/{record}/edit'),
         ];
     }
 }

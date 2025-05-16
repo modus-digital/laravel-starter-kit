@@ -16,7 +16,7 @@ class RegenerateBackupCodes extends Component
 
     public array $backupCodes;
 
-    public ?Authenticatable $user;
+    public ?Authenticatable $user = null;
 
     public function mount(?Authenticatable $user = null): void
     {

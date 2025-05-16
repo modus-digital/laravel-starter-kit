@@ -8,6 +8,9 @@ enum Appearance: string
     case DARK = 'dark';
     case SYSTEM = 'system';
 
+    /**
+     * Get the description for the appearance mode
+     */
     public function description(): string
     {
         return match ($this) {
@@ -17,6 +20,9 @@ enum Appearance: string
         };
     }
 
+    /**
+     * Get the label for the appearance mode
+     */
     public function label(): string
     {
         return match ($this) {
@@ -26,6 +32,11 @@ enum Appearance: string
         };
     }
 
+    /**
+     * Get all possible enum values as an array
+     *
+     * @return string[]
+     */
     public static function values(): array
     {
         return array_map(fn (Appearance $appearance) => $appearance->value, self::cases());

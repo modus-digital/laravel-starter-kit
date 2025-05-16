@@ -2,15 +2,12 @@
 
 namespace App\Helpers;
 
-// Define the FeatureStatus class
-class FeatureStatus
-{
-    protected $value;
+use Stringable;
 
-    public function __construct($value)
-    {
-        $this->value = $value;
-    }
+// Define the FeatureStatus class
+class FeatureStatus implements Stringable
+{
+    public function __construct(protected mixed $value) {}
 
     /**
      * Checks if the feature is enabled.
@@ -32,7 +29,7 @@ class FeatureStatus
     /**
      * Returns the raw value of the feature setting.
      */
-    public function value()
+    public function value(): mixed
     {
         return $this->value;
     }

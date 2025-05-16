@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create(config('mails.database.tables.mails'), function (Blueprint $table) {
+        Schema::create(config('mails.database.tables.mails'), function (Blueprint $table): void {
             $table->id();
             $table->string('uuid')->nullable()->index();
             $table->string('mail_class')->nullable()->index();

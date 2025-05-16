@@ -15,7 +15,7 @@ class DisableTwoFactor extends Component
     #[Validate('required|current_password')]
     public string $password = '';
 
-    public function disable()
+    public function disable(): void
     {
         $this->validate();
 

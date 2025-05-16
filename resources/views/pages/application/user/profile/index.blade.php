@@ -3,13 +3,13 @@
 use function Laravel\Folio\name;
 use Livewire\Volt\Component;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Contracts\Auth\Authenticatable;
 use App\Enums\Settings\UserSettings;
 use Illuminate\Support\Arr;
 use App\Enums\Settings\Language;
 use App\Enums\Settings\TwoFactor;
 use App\Enums\Settings\Appearance;
 use App\Enums\Settings\Theme;
+use App\Enums\RBAC\Role;
 
 name('user.profile');
 
@@ -17,11 +17,20 @@ name('user.profile');
 new class extends Component {
     public mixed $settings = [];
 
-    public function mount(?Authenticatable $user = null) {
+    public function mount() {
+        $user = Auth::user();
+
         // Create a settings collection with nested data
-        $localization = collect($user->settings->where('key', UserSettings::LOCALIZATION)->first()->value)->dot();
-        $display = collect($user->settings->where('key', UserSettings::DISPLAY)->first()->value)->dot();
-        $security = collect($user->settings->where('key', UserSettings::SECURITY)->first()->value)->dot();
+        // Helper function to get settings collection
+        $getSettings = function($key) use ($user) {
+            return collect(
+                $user?->settings->where('key', $key)->first()?->value ?? []
+            )->dot();
+        };
+
+        $localization = $getSettings(UserSettings::LOCALIZATION);
+        $display = $getSettings(UserSettings::DISPLAY);
+        $security = $getSettings(UserSettings::SECURITY);
 
         // Create object-like structure that supports dot notation
         $this->settings = (object)[
@@ -63,8 +72,8 @@ new class extends Component {
                         </div>
                         {{-- Name & Role --}}
                         <div class="flex-shrink-0 text-left">
-                            <span class="mb-1 inline-flex items-center rounded-md bg-blue-50 dark:bg-blue-900 px-2 py-1 text-xs font-medium text-blue-700 dark:text-blue-300 ring-1 ring-inset ring-blue-700/10 dark:ring-blue-300/20">
-                                Super admin
+                            <span class="mb-1 inline-flex items-center rounded-md {{ Role::from(auth()->user()->roles->first()->name)->color() }} px-2 py-1 text-xs font-medium">
+                                {{ Role::from(auth()->user()->roles->first()->name)->displayName() }}
                             </span>
                             <h1 class="text-xl font-semibold text-gray-900 dark:text-white">{{ auth()->user()->name }}</h1>
                         </div>
@@ -134,7 +143,7 @@ new class extends Component {
                                     @endif
                                 </div>
                                 <span class="text-lg font-medium text-gray-700 dark:text-gray-300">
-                                    {{ local_date(now()) }}
+                                    {{ local_date(auth()->user()->created_at) }}
                                 </span>
                             </div>
                         </div>

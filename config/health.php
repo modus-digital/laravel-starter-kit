@@ -1,5 +1,9 @@
 <?php
 
+use Spatie\Health\Notifications\CheckFailedNotification;
+use Spatie\Health\Notifications\Notifiable;
+use Spatie\Health\ResultStores\CacheHealthResultStore;
+
 return [
     /*
      * A result store is responsible for saving the results of the checks. The
@@ -13,7 +17,7 @@ return [
         //     'keep_history_for_days' => 5,
         // ],
 
-        Spatie\Health\ResultStores\CacheHealthResultStore::class => [
+        CacheHealthResultStore::class => [
             'store' => 'file',
         ],
 
@@ -36,14 +40,14 @@ return [
         'enabled' => true,
 
         'notifications' => [
-            Spatie\Health\Notifications\CheckFailedNotification::class => ['mail'],
+            CheckFailedNotification::class => ['mail'],
         ],
 
         /*
          * Here you can specify the notifiable to which the notifications should be sent. The default
          * notifiable will use the variables specified in this config file.
          */
-        'notifiable' => Spatie\Health\Notifications\Notifiable::class,
+        'notifiable' => Notifiable::class,
 
         /*
          * When checks start failing, you could potentially end up getting
@@ -144,7 +148,7 @@ return [
     /*
      * You can specify a secret token that needs to be sent in the X-Secret-Token for secured access.
      */
-    'secret_token' => env('HEALTH_SECRET_TOKEN') ?? null,
+    'secret_token' => env('HEALTH_SECRET_TOKEN'),
 
 /**
  * By default, conditionally skipped health checks are treated as failures.

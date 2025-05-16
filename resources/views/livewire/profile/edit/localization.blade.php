@@ -70,12 +70,12 @@
                         {{ __('settings.datetime.date_format') }}
                     </label>
                     <select id="dateFormat" wire:model.live="dateFormat" class="mt-1 block w-full shadow-sm sm:text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:border-primary-500 focus:ring-primary-500 dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        <option value="d-m-Y H:i">{{ date('d-m-Y H:i') }} ({{ __('settings.datetime.formats.day_month_year_time') }})</option>
-                        <option value="d-m-Y">{{ date('d-m-Y') }} ({{ __('settings.datetime.formats.day_month_year') }})</option>
-                        <option value="d/m/Y">{{ date('d/m/Y') }} ({{ __('settings.datetime.formats.day_month_year_slash') }})</option>
-                        <option value="d.m.Y">{{ date('d.m.Y') }} ({{ __('settings.datetime.formats.day_month_year_dot') }})</option>
-                        <option value="Y-m-d">{{ date('Y-m-d') }} ({{ __('settings.datetime.formats.year_month_day') }})</option>
-                        <option value="m/d/Y">{{ date('m/d/Y') }} ({{ __('settings.datetime.formats.month_day_year') }})</option>
+                        <option value="d-m-Y H:i">{{ __('settings.datetime.formats.day_month_year_time') }}</option>
+                        <option value="d-m-Y">{{ __('settings.datetime.formats.day_month_year') }}</option>
+                        <option value="d/m/Y">{{ __('settings.datetime.formats.day_month_year_slash') }}</option>
+                        <option value="d.m.Y">{{ __('settings.datetime.formats.day_month_year_dot') }}</option>
+                        <option value="Y-m-d">{{ __('settings.datetime.formats.year_month_day') }}</option>
+                        <option value="m/d/Y">{{ __('settings.datetime.formats.month_day_year') }}</option>
                     </select>
                     @error('dateFormat')
                         <span class="text-red-500">{{ $message }}</span>

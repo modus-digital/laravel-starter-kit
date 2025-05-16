@@ -9,7 +9,7 @@ use Livewire\Component;
 
 class TwoFactorStatus extends Component
 {
-    public ?array $twoFactorSettings;
+    public ?array $twoFactorSettings = null;
 
     #[On('two-factor-status-updated')]
     public function mount(?Authenticatable $user = null): void

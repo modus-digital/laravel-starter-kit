@@ -2,7 +2,8 @@
 
 namespace App\Livewire\Actions;
 
-use Illuminate\Contracts\Auth\Authenticatable;
+use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Validate;
@@ -13,16 +14,20 @@ class DeleteProfile extends Component
     #[Validate('required|current_password')]
     public string $password = '';
 
-    public ?Authenticatable $user = null;
+    public ?User $user = null;
 
-    public function mount(?Authenticatable $user = null)
+    public function mount(): void
     {
-        $this->user = $user;
+        $this->user = auth()->user();
     }
 
     public function deleteAccount(): RedirectResponse
     {
         $this->validate();
+
+        if (! $this->user instanceof User) {
+            return to_route('login');
+        }
 
         $this->user->delete();
         Auth::logout();
@@ -35,7 +40,7 @@ class DeleteProfile extends Component
         return to_route('login');
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.actions.delete-profile');
     }

@@ -6,7 +6,7 @@ name('user.profile.settings');
 
 ?>
 
-<x-layouts.app title="{{ __('app.pages.user.profile.settings.header') }}">
+<x-layouts.app title="{{ __('settings.header') }}">
     <div class="max-w-3xl mx-auto space-y-6">
         {{-- Display settings --}}
         <livewire:profile.edit.display />

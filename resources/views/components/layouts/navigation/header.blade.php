@@ -55,7 +55,7 @@
           <span class="sr-only">{{ __('ui.navigation.header.open_user_menu') }}</span>
           <img
             class="w-8 h-8 rounded-full"
-            src="{{ auth()->user() !== null ? (auth()->user()->avatar ?? "https://ui-avatars.com/api/?name=" . urlencode(auth()->user()->initials)) : "https://ui-avatars.com/api/?name=" . urlencode(__('ui.navigation.header.guest')) }}"
+            src="{{ auth()->user() !== null ? (auth()->user()->avatar ?? "https://ui-avatars.com/api/?name=" . urlencode(auth()->user()->initials())) : "https://ui-avatars.com/api/?name=" . urlencode(__('ui.navigation.header.guest')) }}"
             alt="user photo"
           />
         </button>

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Masmerise\Toaster\Toastable;
+use Throwable;
 
 class ClearBrowserSessions extends Component
 {
@@ -44,7 +45,7 @@ class ClearBrowserSessions extends Component
         }
 
         try {
-            DB::transaction(function () use ($sessions) {
+            DB::transaction(function () use ($sessions): void {
                 $sessions->delete();
             });
 
@@ -52,7 +53,7 @@ class ClearBrowserSessions extends Component
             $this->dispatch(event: 'cleared-browser-sessions');
             $this->success(message: __('notifications.toasts.sessions.cleared'));
         }
-        catch (\Throwable $e) {
+        catch (Throwable) {
 
             $this->error(message: __('notifications.toasts.sessions.cleared_error'));
         }

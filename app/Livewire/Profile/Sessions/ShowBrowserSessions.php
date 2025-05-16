@@ -15,11 +15,12 @@ class ShowBrowserSessions extends Component
     public ?Collection $sessions = null;
 
     #[On('cleared-browser-sessions')]
-    public function mount()
+    public function mount(): void
     {
         if (config(key: 'session.driver') !== 'database') {
             return;
         }
+
         if (! Auth::user()) {
             return;
         }

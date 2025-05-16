@@ -12,6 +12,9 @@ enum Language: string
     case PORTUGUESE = 'pt';
     case DUTCH = 'nl';
 
+    /**
+     * Get the display name for the language
+     */
     public function displayName(): string
     {
         return match ($this) {
@@ -25,6 +28,11 @@ enum Language: string
         };
     }
 
+    /**
+     * Get all possible enum values as an array
+     *
+     * @return string[]
+     */
     public static function values(): array
     {
         return array_map(fn (Language $language) => $language->value, self::cases());

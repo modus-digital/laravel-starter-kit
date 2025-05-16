@@ -9,6 +9,9 @@ enum UserSettings: string
     case DISPLAY = 'display';
     case NOTIFICATIONS = 'notifications';
 
+    /**
+     * Get the description for the user settings
+     */
     public function description(): string
     {
         return match ($this) {

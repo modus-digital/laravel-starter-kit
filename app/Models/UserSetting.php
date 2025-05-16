@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\Settings\UserSettings;
 use App\Services\Validators\UserSettingsValidators;
+use Exception;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,8 +12,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class UserSetting extends Model
 {
     protected $table = 'user_settings';
-
-    protected $primaryKey = ['user_id', 'key'];
 
     public $incrementing = false;
 
@@ -22,13 +21,11 @@ class UserSetting extends Model
         'value',
     ];
 
-    protected $casts = [
-        'key' => UserSettings::class,
-        'value' => 'array',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-    ];
-
+    /**
+     * The parsed value attribute.
+     *
+     * @return Attribute<array<string, mixed>|null>
+     */
     public function parsedValue(): Attribute
     {
         $validator = UserSettingsValidators::byKey($this->key, $this->value);
@@ -44,7 +41,7 @@ class UserSetting extends Model
         );
     }
 
-    public function updateValueAttribute(?string $path = null, mixed $newValue = null)
+    public function updateValueAttribute(?string $path = null, mixed $newValue = null): void
     {
         $currentValue = $this->value;
 
@@ -58,14 +55,8 @@ class UserSetting extends Model
         $validator = UserSettingsValidators::byKey(key: $this->key, data: $currentValue);
 
         if ($validator->fails()) {
-            throw new \Exception('Invalid value provided for user setting: ' . $validator->errors()->first());
+            throw new Exception('Invalid value provided for user setting: ' . $validator->errors()->first());
         }
-
-        dump([
-            'user_id' => $this->user_id,
-            'key' => $this->key,
-            'value' => json_encode($validator->validated()),
-        ]);
 
         UserSetting::where('user_id', $this->user_id)
             ->where('key', $this->key)
@@ -89,11 +80,26 @@ class UserSetting extends Model
         return $object->parsedValue;
     }
 
+    /**
+     * Get the user that owns the user setting.
+     *
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(
             related: User::class,
             foreignKey: 'user_id',
         );
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'key' => UserSettings::class,
+            'value' => 'array',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+        ];
     }
 }

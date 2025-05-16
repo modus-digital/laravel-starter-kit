@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
         Schema::table(config('mails.database.tables.mails', 'mails'), function (Blueprint $table): void {
             $table->string('transport')

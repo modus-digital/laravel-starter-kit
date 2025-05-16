@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
@@ -11,11 +12,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('language_lines', function (Blueprint $table) {
+        Schema::create('language_lines', function (Blueprint $table): void {
             $table->bigIncrements('id');
             $table->string('group')->index();
             $table->string('key')->index();
-            $table->json('text')->default(new \Illuminate\Database\Query\Expression('(JSON_ARRAY())'));
+            $table->json('text')->default(new Expression('(JSON_ARRAY())'));
             $table->timestamps();
         });
     }

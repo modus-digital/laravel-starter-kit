@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Settings\UserSettings;
 use App\Helpers\FeatureStatus;
 use App\Models\ApplicationSetting;
 use Carbon\Carbon;
@@ -24,7 +25,7 @@ if (! function_exists('feature')) {
 }
 
 if (! function_exists('local_date')) {
-    function local_date(Carbon|int|string $date)
+    function local_date(Carbon|int|string $date): Carbon|string
     {
         if (! $date instanceof Carbon) {
             $date = new Carbon($date);
@@ -34,10 +35,16 @@ if (! function_exists('local_date')) {
             return $date->timezone(config('app.timezone'));
         }
 
-        // TODO: Get the user's timezone and date format from the database once settings are implemented
+        $localizationSettings = auth()
+            ->user()
+            ->settings
+            ->where('key', UserSettings::LOCALIZATION)
+            ->first()
+            ->value;
+
         $settings = [
-            'timezone' => config('app.default_timezone', 'UTC'),
-            'date_format' => config('app.default_date_format', 'd-m-Y H:i'),
+            'timezone' => $localizationSettings['timezone'],
+            'date_format' => $localizationSettings['date_format'],
         ];
 
         return $date->setTimezone($settings['timezone'])->format($settings['date_format']);
@@ -45,16 +52,21 @@ if (! function_exists('local_date')) {
 }
 
 if (! function_exists('download_backup_codes')) {
+    /**
+     * Download backup codes as a CSV file.
+     *
+     * @param  string  $filename  The name of the file to download.
+     * @param  array<string>  $backupCodes  The backup codes to include in the file.
+     * @return StreamedResponse The CSV file as a streamed response.
+     */
     function download_backup_codes(string $filename, array $backupCodes): StreamedResponse
     {
         return response()
             ->streamDownload(
-                callback: function () use ($backupCodes) {
+                callback: function () use ($backupCodes): void {
                     $file = fopen('php://output', 'w');
 
                     if (! $file) {
-                        fclose($file);
-
                         return;
                     }
 
@@ -62,12 +74,12 @@ if (! function_exists('download_backup_codes')) {
                         fwrite($file, 'Recovery Codes for ' . config('app.name') . "\n---------\n");
 
                         foreach ($backupCodes as $code) {
-                            fputcsv($file, [$code]);
+                            fputcsv($file, [$code], escape: '\\');
                         }
 
                         fclose($file);
                     }
-                    catch (Throwable $e) {
+                    catch (Throwable) {
                         fclose($file);
                     }
                 },

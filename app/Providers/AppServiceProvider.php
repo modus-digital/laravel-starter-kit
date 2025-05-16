@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Override;
 use Spatie\CpuLoadHealthCheck\CpuLoadCheck;
 use Spatie\Health\Checks\Checks\CacheCheck;
 use Spatie\Health\Checks\Checks\DatabaseCheck;
@@ -24,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
+    #[Override]
     public function register(): void {}
 
     /**
@@ -74,9 +76,8 @@ class AppServiceProvider extends ServiceProvider
 
         ]);
 
-        Gate::define('use-translation-manager', function (?User $user) {
+        Gate::define('use-translation-manager', fn (?User $user): bool =>
             // Your authorization logic
-            return $user !== null && $user->hasPermissionTo(Permission::HAS_ACCESS_TO_ADMIN_PANEL);
-        });
+            $user instanceof User && $user->hasPermissionTo(Permission::HAS_ACCESS_TO_ADMIN_PANEL));
     }
 }
