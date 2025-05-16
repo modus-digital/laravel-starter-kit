@@ -27,7 +27,7 @@ class Authenticate extends Middleware
      * @throws HttpException
      */
     #[Override]
-    protected function authenticate(): void
+    protected function authenticate($request = null, array $guards): void
     {
         Filament::getCurrentPanel();
 

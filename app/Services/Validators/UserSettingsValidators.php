@@ -22,22 +22,13 @@ class UserSettingsValidators
      */
     public static function byKey(UserSettings|string $key, array|string $data): \Illuminate\Contracts\Validation\Validator
     {
-        switch ($key) {
-            case UserSettings::LOCALIZATION:
-                return self::localization($data);
-
-            case UserSettings::SECURITY:
-                return self::security($data);
-
-            case UserSettings::DISPLAY:
-                return self::display($data);
-
-            case UserSettings::NOTIFICATIONS:
-                return self::notifications($data);
-
-            default:
-                throw new InvalidArgumentException('Invalid user setting key');
-        }
+        return match ($key) {
+            UserSettings::LOCALIZATION => self::localization($data),
+            UserSettings::SECURITY => self::security($data),
+            UserSettings::DISPLAY => self::display($data),
+            UserSettings::NOTIFICATIONS => self::notifications($data),
+            default => throw new InvalidArgumentException('Invalid user setting key'),
+        };
     }
 
     /**
