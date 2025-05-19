@@ -37,8 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName(config('app.name') . ' - Admin panel')
-            ->spa()
+            ->brandName('Admin panel')
             ->colors(['primary' => Color::Blue])
             ->navigationItems([
                 NavigationItem::make('Back to the application')
@@ -56,7 +55,7 @@ class AdminPanelProvider extends PanelProvider
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
-                // AuthenticateSession::class,
+                AuthenticateSession::class,
                 ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
@@ -64,7 +63,6 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->authGuard('web')
-            // ->authMiddleware([Authenticate::class])
             ->plugins([
                 FilamentSpatieLaravelHealthPlugin::make()->usingPage(HealthChecksResultsPage::class),
                 FilamentSpatieLaravelBackupPlugin::make()->usingPage(BackupsPage::class),
