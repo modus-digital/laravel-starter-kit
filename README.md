@@ -1,4 +1,12 @@
-# Modus Laravel Starter Kit
+<h2 align="center" style="font-weight: bold"><a href="https://modus-digital.com" target="_blank" style="vertical-align: middle;"><img src="https://www.modus-digital.com/images/uploads/logos/modus-logo-totaal-wit.png"></a> - Laravel starter kit</h2>
+
+<p align="center">
+<a href="https://github.com/modus-digital/laravel-starter-kit"><img src="https://img.shields.io/github/v/release/modus-digital/laravel-starter-kit" alt="Latest Stable Version"></a>
+<a href="https://github.com/modus-digital/laravel-starter-kit"><img src="https://img.shields.io/badge/license-MIT-green" alt="License"></a>
+<a href="https://herd.laravel.com/new?starter-kit=modus-digital/laravel-starter-kit" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/Install%20with%20Herd-f55247?logo=laravel&logoColor=white"></a>
+</p>
+
+---
 
 A comprehensive Laravel starter kit by Modus Digital for quickly bootstrapping new Laravel applications with built-in features and best practices.
 

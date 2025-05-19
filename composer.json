@@ -1,9 +1,9 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "modus-digital/laravel-starter-kit",
     "type": "project",
+    "name": "modus-digital/laravel-starter-kit",
     "description": "The official Laravel starter kit for Modus Digital applications.",
-    "keywords": ["laravel", "framework"],
+    "keywords": ["laravel", "filament", "livewire", "Modus Digital"],
     "license": "MIT",
     "authors": [
         {
@@ -64,21 +64,24 @@
         }
     },
     "scripts": {
-        "post-autoload-dump": [
-            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi",
-            "@php artisan filament:upgrade"
-        ],
-        "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
-        ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
-            "@php artisan migrate --graceful --ansi"
+            "@php artisan migrate --graceful --ansi",
+            "@php artisan db:seed"
+        ],
+        "post-update-cmd": [
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+        ],
+        "post-autoload-dump": [
+            "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
+            "@php artisan package:discover --ansi",
+            "@php artisan storage:link",
+            "@php artisan filament:upgrade",
+            "@php artisan livewire:publish --assets"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
@@ -92,7 +95,7 @@
             "vendor/bin/php-cs-fixer fix -v --show-progress=dots"
         ],
         "rector": [
-            "vendor/bin/rector process --no-progress-bar"
+            "vendor/bin/rector process"
         ]
     },
     "extra": {
@@ -105,8 +108,7 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "pestphp/pest-plugin": true
         }
     },
     "minimum-stability": "stable",
