@@ -7,6 +7,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
@@ -29,20 +30,12 @@ class Settings extends BaseSettings
                             Fieldset::make('features.auth')
                                 ->label('Authentication')
                                 ->schema([
-                                    Toggle::make('features.auth.register'),
-                                    Toggle::make('features.auth.login'),
-                                    Toggle::make('features.auth.two_factor_authentication'),
-                                    Toggle::make('features.auth.password_reset'),
-                                    Toggle::make('features.auth.email_verification'),
+                                    Toggle::make('features.auth.register')->label('Register'),
+                                    Toggle::make('features.auth.login')->label('Login'),
+                                    Toggle::make('features.auth.password_reset')->label('Password Reset'),
+                                    Toggle::make('features.auth.email_verification')->label('Email Verification'),
                                 ])
-                                ->columns(3),
-
-                            Fieldset::make('tools')
-                                ->label('Tools')
-                                ->schema([
-                                    Toggle::make('features.tools.translation_manager'),
-                                ])
-                                ->columns(3),
+                                ->columns(2),
                         ]),
                 ])
         ];
