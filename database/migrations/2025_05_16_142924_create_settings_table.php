@@ -5,6 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Outerweb\Settings\Models\Setting;
 
 return new class extends Migration
 {
@@ -18,15 +19,12 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // Insert the default settings
-        DB::table(config('settings.database_table_name'))->insert([
-            ['key' => 'general.app_name', 'value' => 'Laravel', 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-            ['key' => 'general.logo', 'value' => null, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-            ['key' => 'features.auth.register', 'value' => true, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-            ['key' => 'features.auth.login', 'value' => true, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-            ['key' => 'features.auth.password_reset', 'value' => true, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-            ['key' => 'features.auth.email_verification', 'value' => true, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-        ]);
+        Setting::set('general.app_name', 'Laravel');
+        Setting::set('general.logo', null);
+        Setting::set('features.auth.register', true);
+        Setting::set('features.auth.login', true);
+        Setting::set('features.auth.password_reset', true);
+        Setting::set('features.auth.email_verification', true);
     }
 
     public function down(): void
