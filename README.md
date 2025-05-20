@@ -1,4 +1,4 @@
-<h2 align="center" style="font-weight: bold"><a href="https://modus-digital.com" target="_blank" style="vertical-align: middle;"><img src="https://www.modus-digital.com/images/uploads/logos/modus-logo-totaal-wit.png"></a> - Laravel starter kit</h2>
+<h2 align="center" style="font-weight: bold;"><a href="https://modus-digital.com" target="_blank" style="vertical-align: middle;">Modus Laravel starter kit</a></h2>
 
 <p align="center">
 <a href="https://github.com/modus-digital/laravel-starter-kit"><img src="https://img.shields.io/github/v/release/modus-digital/laravel-starter-kit" alt="Latest Stable Version"></a>
