@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use Override;
 use Closure;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
@@ -14,6 +15,7 @@ use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
 
 class Settings extends BaseSettings
 {
+    #[Override]
     public function schema(): array|Closure
     {
         return [

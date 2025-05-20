@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         // Create the settings table
-        Schema::create(config('settings.database_table_name'), function (Blueprint $table) {
+        Schema::create(config('settings.database_table_name'), function (Blueprint $table): void {
             $table->id();
             $table->string('key')->unique()->index();
             $table->json('value')->nullable();
