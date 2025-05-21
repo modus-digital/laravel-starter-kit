@@ -17,7 +17,7 @@ class CheckFeatureIsEnabled
     public function handle(Request $request, Closure $next, string $featureKey): Response
     {
         // Check if the feature is enabled
-        if (! feature('app.features.' . $featureKey)->enabled()) {
+        if (! feature('features.' . $featureKey)->enabled()) {
             abort(
                 code: 404,
                 message: 'Feature is not enabled'

@@ -49,6 +49,11 @@ class UserResource extends Resource
     protected static ?string $navigationLabel = 'Gebruikers';
 
     /**
+     * The text for the navigation group.
+     */
+    protected static ?string $navigationGroup = 'Beheer';
+
+    /**
      * The slug for the resource
      */
     protected static ?string $slug = '/users';
@@ -82,41 +87,50 @@ class UserResource extends Resource
                 Section::make('Persoonlijke gegevens')
                     ->description('Hier bewerk je de persoonlijke informatie van deze gebruiker.')
                     ->aside()
-                    ->columns(3)
+                    ->columns(5)
                     ->schema([
 
                         TextInput::make('first_name')
                             ->label('Voornaam')
                             ->required()
+                            ->columnSpan(2)
                             ->maxLength(255),
 
                         TextInput::make('last_name_prefix')
                             ->label('Tussenvoegsel')
+                            ->columnSpan(1)
                             ->maxLength(255),
 
                         TextInput::make('last_name')
                             ->label('Achternaam')
+                            ->columnSpan(2)
                             ->maxLength(255),
 
                         TextInput::make('email')
                             ->label('E-mailadres')
-                            ->columnSpan(2)
+                            ->columnSpan(3)
                             ->required()
                             ->email()
                             ->maxLength(255),
+
+                        TextInput::make('phone')
+                            ->label('Telefoonnummer')
+                            ->columnSpan(2)
+                            ->maxLength(255),
+
                     ]),
 
                 Section::make('Sessie-informatie')
                     ->description('Hier vind je informatie over de actieve sessies van de gebruiker.')
                     ->aside()
-                    ->hidden(fn (string $operation): bool => $operation !== 'edit')
+                    ->hidden(fn(string $operation): bool => $operation !== 'edit')
                     ->schema([
 
                         TextInput::make('last_login_at')
                             ->label('Laatst ingelogd op')
                             ->prefixIcon('heroicon-o-calendar')
                             ->formatStateUsing(
-                                fn (User $record): string => $record->last_login_at ?
+                                fn(?User $record): string => $record?->last_login_at ?
                                     ($record->last_login_at instanceof DateTime ?
                                         $record->last_login_at->format('d-m-Y H:i') :
                                         $record->last_login_at) :
@@ -140,7 +154,7 @@ class UserResource extends Resource
                                 return $session?->session_info['is_current_device'] !== true;
                             })
                             ->deleteAction(
-                                fn (Action $action): Action => $action->action(function (array $arguments): void {
+                                fn(Action $action): Action => $action->action(function (array $arguments): void {
                                     $id = preg_replace('/record-/', '', (string) $arguments['item']);
                                     $session = Session::find($id);
                                     $session?->delete();
@@ -149,7 +163,7 @@ class UserResource extends Resource
                             ->reorderable(false)
                             ->addable(false)
                             ->collapsed()
-                            ->itemLabel(fn (array $state): string => array_key_exists('id', $state) ? 'ID: ' . $state['id'] : 'ID onbekend')
+                            ->itemLabel(fn(array $state): string => array_key_exists('id', $state) ? 'ID: ' . $state['id'] : 'ID onbekend')
                             ->schema([
 
                                 TextInput::make('ip_address')
@@ -160,7 +174,7 @@ class UserResource extends Resource
                                 TextInput::make('expires_at')
                                     ->label('Verloopt op')
                                     ->prefixIcon('heroicon-o-clock')
-                                    ->formatStateUsing(fn (?Session $record): ?string => $record?->expires_at)
+                                    ->formatStateUsing(fn(?Session $record): ?string => $record?->expires_at)
                                     ->disabled(),
 
                                 KeyValue::make('session_info')
@@ -172,7 +186,7 @@ class UserResource extends Resource
                                     ->editableKeys(false)
                                     ->editableValues(false)
                                     ->columnSpan(2)
-                                    ->formatStateUsing(fn (?Session $record): array => [
+                                    ->formatStateUsing(fn(?Session $record): array => [
                                         'Browser' => $record?->session_info['device']['browser'],
                                         'Platform' => $record?->session_info['device']['platform'],
                                         'Apparaat' => match (true) {
@@ -196,6 +210,7 @@ class UserResource extends Resource
                         Select::make('roles')
                             ->relationship(name: 'roles', titleAttribute: 'name')
                             ->columnSpan(3)
+                            ->native(false)
                             ->label('Rol'),
 
                         TextInput::make('password')
@@ -219,7 +234,7 @@ class UserResource extends Resource
                 // Column for name
                 TextColumn::make('first_name')
                     ->label('Volledige naam')
-                    ->formatStateUsing(fn (User $record): string => sprintf('%s %s %s', $record->first_name, $record->last_name_prefix, $record->last_name))
+                    ->formatStateUsing(fn(User $record): string => sprintf('%s %s %s', $record->first_name, $record->last_name_prefix, $record->last_name))
                     ->searchable()
                     ->sortable(),
 
@@ -232,7 +247,7 @@ class UserResource extends Resource
                 // Column for displaying role
                 TextColumn::make('')
                     ->label('Rol')
-                    ->getStateUsing(fn (User $record): string => Role::from($record->roles->first()?->name)->displayName() ?? 'Geen rol')
+                    ->getStateUsing(fn(User $record): string => Role::from($record->roles->first()?->name)->displayName() ?? 'Geen rol')
                     ->badge(),
 
             ])
