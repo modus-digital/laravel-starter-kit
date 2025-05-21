@@ -2,8 +2,8 @@
 
 use App\Enums\Settings\UserSettings;
 use App\Helpers\FeatureStatus;
-use App\Models\ApplicationSetting;
 use Carbon\Carbon;
+use Outerweb\Settings\Models\Setting;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 if (! function_exists('feature')) {
@@ -16,7 +16,7 @@ if (! function_exists('feature')) {
     function feature(string $featureKey): FeatureStatus
     {
         // Fetch the setting, default to null if not found
-        $setting = ApplicationSetting::where('name', $featureKey)->first();
+        $setting = Setting::where('key', $featureKey)->first();
         $value = $setting ? $setting->value : null; // Default to null if setting doesn't exist
 
         // Return a FeatureStatus object
@@ -78,8 +78,7 @@ if (! function_exists('download_backup_codes')) {
                         }
 
                         fclose($file);
-                    }
-                    catch (Throwable) {
+                    } catch (Throwable) {
                         fclose($file);
                     }
                 },
