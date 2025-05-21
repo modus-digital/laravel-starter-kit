@@ -34,5 +34,14 @@
         <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
         @vite('resources/ts/app.ts')
         <x-toaster-hub />
+
+        <script>
+            const mode = window.matchMedia('(prefers-color-scheme: dark)').matches
+                    ? 'dark'
+                    : 'light';
+
+            if (!document.cookie.match(/(^|;) *pref_theme=/))
+                document.cookie = `pref_theme=${mode};path=/;SameSite=Lax`;
+        </script>
     </body>
 </html>

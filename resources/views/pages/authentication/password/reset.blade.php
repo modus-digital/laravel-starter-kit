@@ -64,7 +64,7 @@
                         {{ __('auth.password_reset.request.reset_password') }}
                     </button>
 
-                    @if (feature('app.features.auth.login')->enabled())
+                    @if (feature('features.auth.login')->enabled())
                         <p class="text-sm font-light text-gray-500 dark:text-gray-400">
                             {{ __('auth.password_reset.request.already_have_account') }} <a href="{{  route('login') }}" wire:navigate class="font-medium text-primary-600 hover:underline dark:text-primary-500">
                                 {{ __('auth.password_reset.request.sign_in') }}
