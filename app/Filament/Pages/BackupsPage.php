@@ -8,11 +8,7 @@ use ShuvroRoy\FilamentSpatieLaravelBackup\Pages\Backups as BaseBackups;
 
 class BackupsPage extends BaseBackups
 {
-    #[Override]
-    public static function getNavigationSort(): ?int
-    {
-        return 3;
-    }
+    public static ?int $navigationSort = 2;
 
     public static function getSlug(): string
     {
@@ -28,18 +24,18 @@ class BackupsPage extends BaseBackups
     #[Override]
     public static function getNavigationLabel(): string
     {
-        return 'Backups';
+        return __('admin.navigation.pages.backups');
     }
 
     #[Override]
     public function getHeading(): string
     {
-        return 'Backups';
+        return __('admin.navigation.pages.backups');
     }
 
     #[Override]
     public static function getNavigationGroup(): ?string
     {
-        return 'Applicatie-info';
+        return __('admin.navigation.groups.applicatie-info');
     }
 }

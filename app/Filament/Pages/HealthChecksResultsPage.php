@@ -7,11 +7,7 @@ use ShuvroRoy\FilamentSpatieLaravelHealth\Pages\HealthCheckResults as BaseHealth
 
 class HealthChecksResultsPage extends BaseHealthCheckResults
 {
-    #[Override]
-    public static function getNavigationSort(): ?int
-    {
-        return 4;
-    }
+    public static ?int $navigationSort = 1;
 
     public static function getSlug(): string
     {
@@ -21,18 +17,18 @@ class HealthChecksResultsPage extends BaseHealthCheckResults
     #[Override]
     public static function getNavigationLabel(): string
     {
-        return 'Gezondheidschecks';
+        return __('admin.navigation.pages.health');
     }
 
     #[Override]
     public function getHeading(): string
     {
-        return 'Gezondheidschecks';
+        return __('admin.navigation.pages.health');
     }
 
     #[Override]
     public static function getNavigationGroup(): ?string
     {
-        return 'Applicatie-info';
+        return __('admin.navigation.groups.applicatie-info');
     }
 }
