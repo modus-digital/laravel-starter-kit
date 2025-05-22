@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\RBAC\Permission;
 use Illuminate\Contracts\Support\Htmlable;
 use Override;
 use ShuvroRoy\FilamentSpatieLaravelBackup\Pages\Backups as BaseBackups;
@@ -9,6 +10,11 @@ use ShuvroRoy\FilamentSpatieLaravelBackup\Pages\Backups as BaseBackups;
 class BackupsPage extends BaseBackups
 {
     public static ?int $navigationSort = 2;
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->hasPermissionTo(Permission::CAN_ACCESS_BACKUPS);
+    }
 
     public static function getSlug(): string
     {

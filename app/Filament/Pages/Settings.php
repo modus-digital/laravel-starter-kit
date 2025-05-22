@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\RBAC\Permission;
 use Override;
 use Closure;
 use Filament\Forms\Components\Fieldset;
@@ -15,6 +16,11 @@ use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
 
 class Settings extends BaseSettings
 {
+    public static function canAccess(): bool
+    {
+        return auth()->user()->hasPermissionTo(Permission::CAN_ACCESS_SETTINGS);
+    }
+
     #[Override]
     public function schema(): array|Closure
     {
