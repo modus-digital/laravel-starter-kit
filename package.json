@@ -12,6 +12,7 @@
     "pre-push": "npm run format"
   },
   "dependencies": {
+    "@sentry/browser": "^9.22.0",
     "@tailwindcss/vite": "^4.1.7",
     "alpinejs": "^3.14.9",
     "autoprefixer": "^10.4.21",
