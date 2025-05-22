@@ -82,12 +82,15 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
-        ]
+        ],
+        "lint": "@php php-cs-fixer check --verbose --diff",
+        "lint:fix": "@php php-cs-fixer fix --verbose",
+        "analyze": "@php -d memory_limit=4G vendor/bin/phpstan analyse"
     },
     "extra": {
         "hooks": {
             "pre-push": [
-                "vendor/bin/php-cs-fixer fix -v --show-progress=dots",
+                "@lint:fix",
                 "git commit -am '[HOOK] Ran php-cs-fixer to fix formatting issues'"
             ]
         },
