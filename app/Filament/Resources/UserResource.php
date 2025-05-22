@@ -49,11 +49,6 @@ class UserResource extends Resource
     protected static ?string $navigationLabel = 'Gebruikers';
 
     /**
-     * The text for the navigation group.
-     */
-    protected static ?string $navigationGroup = 'Beheer';
-
-    /**
      * The slug for the resource
      */
     protected static ?string $slug = '/users';
@@ -87,37 +82,28 @@ class UserResource extends Resource
                 Section::make('Persoonlijke gegevens')
                     ->description('Hier bewerk je de persoonlijke informatie van deze gebruiker.')
                     ->aside()
-                    ->columns(5)
+                    ->columns(3)
                     ->schema([
 
                         TextInput::make('first_name')
                             ->label('Voornaam')
                             ->required()
-                            ->columnSpan(2)
                             ->maxLength(255),
 
                         TextInput::make('last_name_prefix')
                             ->label('Tussenvoegsel')
-                            ->columnSpan(1)
                             ->maxLength(255),
 
                         TextInput::make('last_name')
                             ->label('Achternaam')
-                            ->columnSpan(2)
                             ->maxLength(255),
 
                         TextInput::make('email')
                             ->label('E-mailadres')
-                            ->columnSpan(3)
+                            ->columnSpan(2)
                             ->required()
                             ->email()
                             ->maxLength(255),
-
-                        TextInput::make('phone')
-                            ->label('Telefoonnummer')
-                            ->columnSpan(2)
-                            ->maxLength(255),
-
                     ]),
 
                 Section::make('Sessie-informatie')
@@ -131,9 +117,9 @@ class UserResource extends Resource
                             ->prefixIcon('heroicon-o-calendar')
                             ->formatStateUsing(
                                 fn(?User $record): string => $record?->last_login_at ?
-                                    ($record->last_login_at instanceof DateTime ?
-                                        $record->last_login_at->format('d-m-Y H:i') :
-                                        $record->last_login_at) :
+                                    ($record?->last_login_at instanceof DateTime ?
+                                        $record?->last_login_at->format('d-m-Y H:i') :
+                                        $record?->last_login_at) :
                                     'Nog niet ingelogd'
                             )
                             ->disabled(),
@@ -207,16 +193,20 @@ class UserResource extends Resource
                     ->columns(3)
                     ->schema([
 
-                        Select::make('roles')
+                        Select::make('role')
                             ->relationship(name: 'roles', titleAttribute: 'name')
+                            ->multiple()
+                            ->maxItems(1)
+                            ->preload()
                             ->columnSpan(3)
-                            ->native(false)
+                            ->required()
                             ->label('Rol'),
 
                         TextInput::make('password')
                             ->label('Nieuw wachtwoord instellen')
                             ->minLength(8)
                             ->password()
+                            ->required(fn(string $operation) => $operation === 'create')
                             ->revealable()
                             ->columnSpan(2),
 
@@ -234,7 +224,7 @@ class UserResource extends Resource
                 // Column for name
                 TextColumn::make('first_name')
                     ->label('Volledige naam')
-                    ->formatStateUsing(fn(User $record): string => sprintf('%s %s %s', $record->first_name, $record->last_name_prefix, $record->last_name))
+                    ->formatStateUsing(fn(?User $record): string => sprintf('%s %s %s', $record?->first_name, $record?->last_name_prefix, $record?->last_name))
                     ->searchable()
                     ->sortable(),
 
@@ -247,7 +237,7 @@ class UserResource extends Resource
                 // Column for displaying role
                 TextColumn::make('')
                     ->label('Rol')
-                    ->getStateUsing(fn(User $record): string => Role::from($record->roles->first()?->name)->displayName() ?? 'Geen rol')
+                    ->getStateUsing(fn(?User $record): string => Role::from($record?->roles->first()?->name)->displayName() ?? 'Geen rol')
                     ->badge(),
 
             ])
@@ -258,12 +248,12 @@ class UserResource extends Resource
                 Tables\Actions\Action::make('impersonate')
                     ->label('Inloggen als')
                     ->icon('heroicon-o-arrow-left-end-on-rectangle')
-                    ->color(function (User $record): array {
+                    ->color(function (?User $record): array {
 
                         /** @var User $currentUser */
                         $currentUser = Auth::user();
 
-                        if ($record->id === $currentUser->id) {
+                        if ($record?->id === $currentUser->id) {
                             return Color::Gray;
                         }
 
@@ -273,18 +263,18 @@ class UserResource extends Resource
 
                         return Color::Green;
                     })
-                    ->disabled(function (User $record): bool {
+                    ->disabled(function (?User $record): bool {
 
                         /** @var User $currentUser */
                         $currentUser = Auth::user();
 
-                        if ($record->id === $currentUser->id) {
+                        if ($record?->id === $currentUser->id) {
                             return true;
                         }
 
                         return ! $currentUser->hasPermissionTo(Permission::CAN_IMPERSONATE_USERS);
                     })
-                    ->action(function (User $record) {
+                    ->action(function (?User $record) {
 
                         /** @var User $currentUser */
                         $currentUser = Auth::user();
