@@ -6,14 +6,8 @@
     "keywords": ["laravel", "filament", "livewire", "Modus Digital"],
     "license": "MIT",
     "authors": [
-        {
-            "name": "Alex van Steenhoven",
-            "email": "alex@modus-digital.com"
-        },
-        {
-            "name": "Thim van Amersfoort",
-            "email": "thim@modus-digital.com"
-        }
+        { "name": "Alex van Steenhoven", "email": "alex@modus-digital.com" },
+        { "name": "Thim van Amersfoort", "email": "thim@modus-digital.com" }
     ],
     "require": {
         "php": "^8.3",
@@ -35,7 +29,7 @@
         "vormkracht10/filament-mails": "^2.3"
     },
     "require-dev": {
-        "driftingly/rector-laravel": "^2.0",
+        "brainmaestro/composer-git-hooks": "^3.0",
         "fakerphp/faker": "^1.23",
         "friendsofphp/php-cs-fixer": "^3.75",
         "larastan/larastan": "^3.4",
@@ -45,8 +39,7 @@
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
         "pestphp/pest": "^3.8",
-        "pestphp/pest-plugin-laravel": "^3.2",
-        "rector/rector": "^2.0"
+        "pestphp/pest-plugin-laravel": "^3.2"
     },
     "autoload": {
         "psr-4": {
@@ -90,15 +83,15 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
-        ],
-        "format": [
-            "vendor/bin/php-cs-fixer fix -v --show-progress=dots"
-        ],
-        "rector": [
-            "vendor/bin/rector process"
         ]
     },
     "extra": {
+        "hooks": {
+            "pre-push": [
+                "vendor/bin/php-cs-fixer fix -v --show-progress=dots",
+                "git commit -am '[HOOK] Ran php-cs-fixer to fix formatting issues'"
+            ]
+        },
         "laravel": {
             "dont-discover": []
         }
