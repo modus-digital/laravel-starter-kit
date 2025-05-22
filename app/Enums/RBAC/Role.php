@@ -8,15 +8,9 @@ namespace App\Enums\RBAC;
  */
 enum Role: string
 {
-/**
-     * The super admin role.
-     */
-    case SUPER_ADMIN = 'Super-administrator';
-
-/**
-     * The default role for users.
-     */
-    case USER = 'Gebruiker';
+    case SUPER_ADMIN = 'super-administrator';
+    case ADMIN = 'administrator';
+    case USER = 'gebruiker';
 
     /**
      * Get the description for the role.
@@ -31,6 +25,7 @@ enum Role: string
     {
         return match ($this) {
             self::SUPER_ADMIN => __('auth.rbac.role.super_admin.description'),
+            self::ADMIN => __('auth.rbac.role.admin.description'),
             self::USER => __('auth.rbac.role.user.description'),
         };
     }
@@ -39,6 +34,7 @@ enum Role: string
     {
         return match ($this) {
             self::SUPER_ADMIN => __('auth.rbac.role.super_admin.title'),
+            self::ADMIN => __('auth.rbac.role.admin.title'),
             self::USER => __('auth.rbac.role.user.title'),
         };
     }
@@ -47,7 +43,8 @@ enum Role: string
     {
         return match ($this) {
             self::SUPER_ADMIN => 'bg-rose-100 text-rose-800 ring-rose-800/10 dark:bg-rose-900 dark:text-rose-300 dark:ring-rose-300/20',
-            self::USER => 'bg-sky-100 text-sky-800 ring-sky-800/10 dark:bg-sky-900 dark:text-sky-300 dark:ring-sky-300/20'
+            self::ADMIN => 'bg-sky-100 text-sky-800 ring-sky-800/10 dark:bg-sky-900 dark:text-sky-300 dark:ring-sky-300/20',
+            self::USER => 'bg-emerald-100 text-emerald-800 ring-emerald-800/10 dark:bg-emerald-900 dark:text-emerald-300 dark:ring-emerald-300/20',
         };
     }
 

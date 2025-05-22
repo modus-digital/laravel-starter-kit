@@ -36,6 +36,12 @@ class RolesAndPermissionsSeeder extends Seeder
         $superAdminRole = Role::findByName(RoleEnum::SUPER_ADMIN->value);
         $superAdminRole->givePermissionTo(Permission::all());
 
+        $adminRole = Role::findByName(RoleEnum::ADMIN->value);
+        $adminRole->givePermissionTo([
+            PermissionEnum::CAN_ACCESS_BACKUPS->value,
+            PermissionEnum::CAN_ACCESS_HEALTH_CHECKS->value,
+        ]);
+
         $userRole = Role::findByName(RoleEnum::USER->value);
         $userRole->givePermissionTo([
             // Add default user permissions here
