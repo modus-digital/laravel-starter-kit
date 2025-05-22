@@ -73,8 +73,7 @@
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",
             "@php artisan storage:link",
-            "@php artisan filament:upgrade",
-            "@php artisan livewire:publish --assets"
+            "@php artisan filament:upgrade"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
