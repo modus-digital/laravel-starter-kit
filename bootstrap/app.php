@@ -33,7 +33,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function (Schedule $schedule): void {
 
-        if (App::environment() !== 'local') {
+        if (! App::isLocal()) {
             $schedule->command('telescope:prune --hours=48')->daily();
             $schedule->command('backup:clean')->daily()->at('01:00');
             $schedule->command('backup:run')->daily()->at('01:30');

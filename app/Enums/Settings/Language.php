@@ -14,6 +14,8 @@ enum Language: string
 
     /**
      * Get the display name for the language
+     *
+     * @return string
      */
     public function displayName(): string
     {
@@ -35,6 +37,6 @@ enum Language: string
      */
     public static function values(): array
     {
-        return array_map(fn (Language $language) => $language->value, self::cases());
+        return array_map(fn(Language $language) => $language->value, self::cases());
     }
 }

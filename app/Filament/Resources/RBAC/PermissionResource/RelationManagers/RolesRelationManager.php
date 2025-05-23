@@ -18,30 +18,19 @@ use Override;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-/**
- * Relation manager for managing roles associated with a permission.
- */
+// Relation manager for managing roles associated with a permission.
 class RolesRelationManager extends RelationManager
 {
-    /**
-     * The name of the relationship.
-     */
+    // The name of the relationship.
     protected static string $relationship = 'roles';
 
-    /**
-     * The title for this relation manager.
-     */
+    // The title for this relation manager.
     protected static ?string $title = 'Rollen';
 
-    /**
-     * Label for the attachment button.
-     */
+    // Label for the attachment button.
     protected static ?string $inverseRelationshipName = 'permissies';
 
-    /**
-     * Defines the form for viewing a role.
-     */
-    #[Override]
+    // Defines the form for viewing a role.
     public function form(Form $form): Form
     {
         return $form
@@ -56,9 +45,7 @@ class RolesRelationManager extends RelationManager
             ]);
     }
 
-    /**
-     * Defines the table for displaying roles linked to a permission.
-     */
+    // Defines the table for displaying roles linked to a permission.
     public function table(Table $table): Table
     {
         return $table
@@ -67,7 +54,7 @@ class RolesRelationManager extends RelationManager
                 TextColumn::make('enum_key')
                     ->label('Enum Key')
                     ->badge()
-                    ->sortable(false) // Kan niet sorteren op een berekende kolom in de database
+                    ->sortable(false) // Cannot sort on a calculated column in the database
                     ->getStateUsing(function (Role $record): ?string {
                         $roleEnum = collect(RoleEnum::cases())
                             ->first(fn ($case): bool => $case->value === $record->name);

@@ -13,9 +13,13 @@ use Symfony\Component\HttpFoundation\Response;
 class ApplyUserTheme
 {
     /**
-     * Handle an incoming request.
+     * Applies the user's theme and appearance settings to the Filament admin panel,
+     * syncing it with the user's custom application settings.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Request  $request
+     * @param  Closure  $next
+     * @return Response
+     * @throws \Exception
      */
     public function handle(Request $request, Closure $next): Response
     {

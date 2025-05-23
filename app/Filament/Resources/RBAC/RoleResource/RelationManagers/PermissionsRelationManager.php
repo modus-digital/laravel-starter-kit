@@ -14,34 +14,22 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Override;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-/**
- * Relation manager for managing permissions associated with a role.
- */
+// Relation manager for managing permissions associated with a role.
 class PermissionsRelationManager extends RelationManager
 {
-    /**
-     * The name of the relationship.
-     */
+    // The name of the relationship.
     protected static string $relationship = 'permissions';
 
-    /**
-     * The title for this relation manager.
-     */
+    // The title for this relation manager.
     protected static ?string $title = 'Permissies';
 
-    /**
-     * Label for the attachment button.
-     */
+    // Label for the attachment button.
     protected static ?string $inverseRelationshipName = 'rollen';
 
-    /**
-     * Defines the form for viewing a permission.
-     */
-    #[Override]
+    // Defines the form for viewing a permission.
     public function form(Form $form): Form
     {
         return $form
@@ -56,9 +44,7 @@ class PermissionsRelationManager extends RelationManager
             ]);
     }
 
-    /**
-     * Defines the table for displaying permissions linked to a role.
-     */
+    // Defines the table for displaying permissions linked to a role.
     public function table(Table $table): Table
     {
         return $table

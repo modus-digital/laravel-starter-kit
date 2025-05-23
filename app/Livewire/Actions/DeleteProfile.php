@@ -16,11 +16,19 @@ class DeleteProfile extends Component
 
     public ?User $user = null;
 
+    /**
+     * Mount the component and set the user.
+     */
     public function mount(): void
     {
         $this->user = auth()->user();
     }
 
+    /**
+     * Delete the user's account.
+     *
+     * @return RedirectResponse
+     */
     public function deleteAccount(): RedirectResponse
     {
         $this->validate();
@@ -40,6 +48,11 @@ class DeleteProfile extends Component
         return to_route('login');
     }
 
+    /**
+     * Render the component.
+     *
+     * @return View
+     */
     public function render(): View
     {
         return view('livewire.actions.delete-profile');

@@ -11,6 +11,8 @@ enum UserSettings: string
 
     /**
      * Get the description for the user settings
+     *
+     * @return string
      */
     public function description(): string
     {

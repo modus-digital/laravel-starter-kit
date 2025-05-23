@@ -11,11 +11,7 @@ class VoltServiceProvider extends ServiceProvider
     /**
      * Register services.
      */
-    #[Override]
-    public function register(): void
-    {
-        //
-    }
+    public function register(): void {}
 
     /**
      * Bootstrap services.

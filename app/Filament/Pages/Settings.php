@@ -9,19 +9,27 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
 
 class Settings extends BaseSettings
 {
+    /**
+     * Determine if the user can access the settings page.
+     *
+     * @return bool
+     */
     public static function canAccess(): bool
     {
         return auth()->user()->hasPermissionTo(Permission::CAN_ACCESS_SETTINGS);
     }
 
-    #[Override]
+    /**
+     * Get the schema for the settings page.
+     *
+     * @return array|Closure
+     */
     public function schema(): array|Closure
     {
         return [

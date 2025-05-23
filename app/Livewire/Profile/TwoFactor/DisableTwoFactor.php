@@ -15,6 +15,9 @@ class DisableTwoFactor extends Component
     #[Validate('required|current_password')]
     public string $password = '';
 
+    /**
+     * Disable the two-factor authentication.
+     */
     public function disable(): void
     {
         $this->validate();
@@ -35,6 +38,11 @@ class DisableTwoFactor extends Component
         $this->dispatch('two-factor-status-updated');
     }
 
+    /**
+     * Render the component.
+     *
+     * @return View
+     */
     public function render()
     {
         return view('livewire.profile.two-factor.disable-two-factor');

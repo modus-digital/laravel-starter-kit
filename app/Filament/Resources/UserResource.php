@@ -33,39 +33,25 @@ class UserResource extends Resource
 {
     #region UI Configuration
 
-    /**
-     * The model the resource corresponds to.
-     */
+    // The model the resource corresponds to.
     protected static ?string $model = User::class;
 
-    /**
-     * The icon of the resource.
-     */
+    // The icon of the resource.
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    /**
-     * The text for the navigation label.
-     */
+    // The text for the navigation label.
     protected static ?string $navigationLabel = 'Gebruikers';
 
-    /**
-     * The slug for the resource
-     */
+    // The slug for the resource
     protected static ?string $slug = '/users';
 
-    /**
-     * The label for this resource.
-     */
-    #[Override]
+    // The label for this resource.
     public static function getModelLabel(): string
     {
         return 'Gebruiker';
     }
 
-    /**
-     * The plural label for this resource.
-     */
-    #[Override]
+    // The plural label for this resource.
     public static function getPluralModelLabel(): string
     {
         return 'Gebruikers';
@@ -73,7 +59,7 @@ class UserResource extends Resource
 
     #endregion
 
-    #[Override]
+    // Defines the form for viewing user details.
     public static function form(Form $form): Form
     {
         return $form
@@ -215,7 +201,7 @@ class UserResource extends Resource
             ]);
     }
 
-    #[Override]
+    // Defines the table for displaying users.
     public static function table(Table $table): Table
     {
         return $table
@@ -308,15 +294,13 @@ class UserResource extends Resource
             ]);
     }
 
-    #[Override]
+    // Returns the related pages for the resource.
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
-    #[Override]
+    // Returns the pages for the resource.
     public static function getPages(): array
     {
         return [

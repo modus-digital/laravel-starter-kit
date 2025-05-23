@@ -25,6 +25,12 @@ if (! function_exists('feature')) {
 }
 
 if (! function_exists('local_date')) {
+    /**
+     * Format a date according to the user's localization settings.
+     *
+     * @param  Carbon|int|string  $date  The date to format.
+     * @return Carbon|string The formatted date.
+     */
     function local_date(Carbon|int|string $date): Carbon|string
     {
         if (! $date instanceof Carbon) {

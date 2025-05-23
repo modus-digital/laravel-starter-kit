@@ -12,7 +12,6 @@ use App\Enums\Settings\UserSettings;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
-use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -22,6 +21,25 @@ use Illuminate\Support\Str;
 use Override;
 use Spatie\Permission\Traits\HasRoles;
 
+/**
+ * The User model represents a user in the application.
+ * It provides methods to access user information, settings, and relationships.
+ * This model is linked to the 'users' table which is used by Laravel's authentication system.
+ *
+ * @property string $id Unique identifier for the user
+ * @property string $first_name First name of the user
+ * @property string $last_name_prefix Last name prefix of the user
+ * @property string $last_name Last name of the user
+ * @property string $email Email address of the user
+ * @property string $phone Phone number of the user
+ * @property string $password Hashed password of the user
+ * @property Carbon $last_login_at Timestamp of the last login
+ * @property-read UserSetting $settings User settings
+ * @property-read Session[] $sessions User sessions
+ * @property-read string $name Full name of the user
+ * @property-read string $initials Initials of the user
+ * @property-read bool $can_access_panel Whether the user can access the admin panel
+ */
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */

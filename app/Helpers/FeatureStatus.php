@@ -12,6 +12,8 @@ class FeatureStatus implements Stringable
     /**
      * Checks if the feature is enabled.
      * Considers '1', 'true', 'on', 'yes' (case-insensitive) or boolean true as enabled.
+     *
+     * @return bool
      */
     public function enabled(): bool
     {
@@ -21,6 +23,11 @@ class FeatureStatus implements Stringable
             filter_var($this->value, FILTER_VALIDATE_BOOLEAN);
     }
 
+    /**
+     * Checks if the feature is disabled.
+     *
+     * @return bool
+     */
     public function disabled(): bool
     {
         return ! $this->enabled();
@@ -28,6 +35,8 @@ class FeatureStatus implements Stringable
 
     /**
      * Returns the raw value of the feature setting.
+     *
+     * @return mixed
      */
     public function value(): mixed
     {
@@ -36,6 +45,8 @@ class FeatureStatus implements Stringable
 
     /**
      * Returns the string representation of the value.
+     *
+     * @return string
      */
     public function __toString(): string
     {
