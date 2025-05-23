@@ -1,0 +1,254 @@
+---
+kind: pipeline
+type: docker
+name: lint
+
+trigger:
+  event: [ push ]
+  branch: [ main, master, production, staging, acceptance ]
+
+steps:
+  - name: Install PHP dependencies
+    image: lorisleiva/laravel-docker:8.3
+    commands:
+      - composer install --prefer-dist --no-progress --no-suggest --no-interaction
+
+  - name: Run linting
+    image: lorisleiva/laravel-docker:8.3
+    commands:
+      - ./vendor/bin/php-cs-fixer fix --verbose
+
+  - name: Analyze code
+    image: lorisleiva/laravel-docker:8.3
+    commands:
+      - ./vendor/bin/phpstan analyse --memory-limit=4G --ansi
+
+  - name: Run tests
+    image: lorisleiva/laravel-docker:8.3
+    commands:
+      - ./vendor/bin/pest
+
+  - name: Send Notification
+    image: plugins/webhook
+    settings:
+      urls: https://automations.modus-digital.com/webhook/deployments
+      method: POST
+      content_type: application/json
+    when:
+      status: [ failure ]
+
+# ----------------------------------------------------------------------
+# Deployment stages
+# ----------------------------------------------------------------------
+# This stage is used to deploy the application to the development,
+# staging, and production environments.
+# ----------------------------------------------------------------------
+
+# ----------------------------------------------------------------------
+# Deploy to Development
+# ----------------------------------------------------------------------
+---
+kind: pipeline
+type: docker
+name: Deploy to development
+
+trigger:
+  event: [ push ]
+  branch: [ dev, develop, development ]
+
+steps:
+  - name: Install PHP dependencies
+    image: lorisleiva/laravel-docker:8.3
+    commands:
+      - composer install --prefer-dist --no-progress --no-suggest --no-interaction
+
+  - name: Install Node dependencies
+    image: node:20
+    commands:
+      - npm install -g pnpm@10
+      - pnpm install
+      - pnpm run build
+
+  - name: compressing files
+    image: alpine:latest
+    commands:
+      - |
+        tar --create --gzip \
+            --exclude="bootstrap/cache/*" \
+            --exclude="node_modules" \
+            --exclude="public/storage" \
+            --exclude="storage" \
+            --exclude="tests" \
+            --file artifacts.tar.gz * .deployment
+
+  - name: Deployment
+    image: atlassian/default-image:4
+    environment:
+      base_directory:
+        from_secret: dev_base_directory
+      ssh_user:
+        from_secret: ssh_user
+      ssh_host:
+        from_secret: ssh_host
+      ssh_port:
+        from_secret: ssh_port
+      php_executable:
+        from_secret: php_executable
+      DEPLOY_PRIVATE_KEY:
+        from_secret: DEPLOY_PRIVATE_KEY
+    commands:
+      - mkdir -p ~/.ssh
+      - echo "$DEPLOY_PRIVATE_KEY" > ~/.ssh/id_ed25519
+      - chmod 600 ~/.ssh/id_ed25519
+      - ssh-keyscan -H "$ssh_host" >> ~/.ssh/known_hosts
+      - tar -xf artifacts.tar.gz .deployment/prepare.sh -O | bash -se -- "$base_directory" "$ssh_user" "$ssh_host" "$ssh_port" "$php_executable"
+
+  - name: Send Notification
+    image: plugins/webhook
+    settings:
+      urls: https://automations.modus-digital.com/webhook/deployments
+      method: POST
+      content_type: application/json
+    when:
+      status: [ success, failure ]
+
+# ----------------------------------------------------------------------
+# Deploy to Staging
+# ----------------------------------------------------------------------
+---
+kind: pipeline
+type: docker
+name: Deploy to staging
+
+depends_on: [ lint ]
+
+trigger:
+  event: [ push ]
+  branch: [ staging, acceptance ]
+
+steps:
+  - name: Install PHP dependencies
+    image: lorisleiva/laravel-docker:8.3
+    commands:
+      - composer install --prefer-dist --no-progress --no-suggest --no-interaction --no-dev
+
+  - name: Install Node dependencies
+    image: node:20
+    commands:
+      - npm install -g pnpm@10
+      - pnpm install
+      - pnpm run build
+
+  - name: compressing files
+    image: alpine:latest
+    commands:
+      - |
+        tar --create --gzip \
+            --exclude="bootstrap/cache/*" \
+            --exclude="node_modules" \
+            --exclude="public/storage" \
+            --exclude="storage" \
+            --exclude="tests" \
+            --file artifacts.tar.gz * .deployment
+
+  - name: Deployment
+    image: atlassian/default-image:4
+    environment:
+      base_directory:
+        from_secret: staging_base_directory
+      ssh_user:
+        from_secret: ssh_user
+      ssh_host:
+        from_secret: ssh_host
+      ssh_port:
+        from_secret: ssh_port
+      php_executable:
+        from_secret: php_executable
+      DEPLOY_PRIVATE_KEY:
+        from_secret: DEPLOY_PRIVATE_KEY
+    commands:
+      - mkdir -p ~/.ssh
+      - echo "$DEPLOY_PRIVATE_KEY" > ~/.ssh/id_ed25519
+      - chmod 600 ~/.ssh/id_ed25519
+      - ssh-keyscan -H "$ssh_host" >> ~/.ssh/known_hosts
+      - tar -xf artifacts.tar.gz .deployment/prepare.sh -O | bash -se -- "$base_directory" "$ssh_user" "$ssh_host" "$ssh_port" "$php_executable"
+
+  - name: Send Notification
+    image: plugins/webhook
+    settings:
+      urls: https://automations.modus-digital.com/webhook/deployments
+      method: POST
+      content_type: application/json
+    when:
+      status: [ success, failure ]
+
+# ----------------------------------------------------------------------
+# Deploy to Production
+# ----------------------------------------------------------------------
+---
+kind: pipeline
+type: docker
+name: Deploy to production
+
+depends_on: [ lint ]
+
+trigger:
+  event: [ push ]
+  branch: [ main, master, production ]
+
+steps:
+  - name: Install PHP dependencies
+    image: lorisleiva/laravel-docker:8.3
+    commands:
+      - composer install --prefer-dist --no-progress --no-suggest --no-interaction --no-dev
+
+  - name: Install Node dependencies
+    image: node:20
+    commands:
+      - npm install -g pnpm@10
+      - pnpm install
+      - pnpm run build
+
+  - name: compressing files
+    image: alpine:latest
+    commands:
+      - |
+        tar --create --gzip \
+            --exclude="bootstrap/cache/*" \
+            --exclude="node_modules" \
+            --exclude="public/storage" \
+            --exclude="storage" \
+            --exclude="tests" \
+            --file artifacts.tar.gz * .deployment
+
+  - name: Deployment
+    image: atlassian/default-image:4
+    environment:
+      base_directory:
+        from_secret: prod_base_directory
+      ssh_user:
+        from_secret: ssh_user
+      ssh_host:
+        from_secret: ssh_host
+      ssh_port:
+        from_secret: ssh_port
+      php_executable:
+        from_secret: php_executable
+      DEPLOY_PRIVATE_KEY:
+        from_secret: DEPLOY_PRIVATE_KEY
+    commands:
+      - mkdir -p ~/.ssh
+      - echo "$DEPLOY_PRIVATE_KEY" > ~/.ssh/id_ed25519
+      - chmod 600 ~/.ssh/id_ed25519
+      - ssh-keyscan -H "$ssh_host" >> ~/.ssh/known_hosts
+      - tar -xf artifacts.tar.gz .deployment/prepare.sh -O | bash -se -- "$base_directory" "$ssh_user" "$ssh_host" "$ssh_port" "$php_executable"
+
+  - name: Send Notification
+    image: plugins/webhook
+    settings:
+      urls: https://automations.modus-digital.com/webhook/deployments
+      method: POST
+      content_type: application/json
+    when:
+      status: [ success, failure ]
+
