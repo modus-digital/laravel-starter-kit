@@ -25,7 +25,7 @@ class UpdatePersonalInformation extends Component
      */
     public function mount(?Authenticatable $user): void
     {
-            $this->name = $user->name;
+        $this->name = $user->name;
         $this->email = $user->email;
         $this->phone = $user->phone ?? null;
     }
@@ -35,7 +35,7 @@ class UpdatePersonalInformation extends Component
      */
     public function save(): void
     {
-            $this->validate();
+        $this->validate();
 
         auth()->user()->update([
             'name' => $this->name,

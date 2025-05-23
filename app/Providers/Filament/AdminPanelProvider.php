@@ -6,7 +6,6 @@ use App\Filament\Pages\BackupsPage;
 use App\Filament\Pages\HealthChecksResultsPage;
 use App\Filament\Pages\Settings;
 use App\Http\Middleware\Filament\ApplyUserTheme;
-use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
@@ -38,7 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName(name: setting('general.app_name'))
+            ->brandName(name: app()->environment('testing') ? config('app.name', 'Laravel') : setting('general.app_name', config('app.name', 'Laravel')))
             ->routes(fn() => FilamentMails::routes())
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

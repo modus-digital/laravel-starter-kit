@@ -15,9 +15,17 @@ if (! function_exists('feature')) {
      */
     function feature(string $featureKey): FeatureStatus
     {
-        // Fetch the setting, default to null if not found
-        $setting = Setting::where('key', $featureKey)->first();
-        $value = $setting ? $setting->value : null; // Default to null if setting doesn't exist
+        $value = null;
+
+        try {
+            // Fetch the setting, default to null if not found
+            $setting = Setting::where('key', $featureKey)->first();
+            $value = $setting ? $setting->value : null;
+        } catch (\Throwable $e) {
+            // Handle any database or configuration errors gracefully
+            // This includes table not existing, configuration issues, etc.
+            $value = null;
+        }
 
         // Return a FeatureStatus object
         return new FeatureStatus($value);

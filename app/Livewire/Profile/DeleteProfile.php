@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Actions;
+namespace App\Livewire\Profile;
 
 use App\Models\User;
 use Illuminate\Contracts\View\View;
@@ -55,6 +55,6 @@ class DeleteProfile extends Component
      */
     public function render(): View
     {
-        return view('livewire.actions.delete-profile');
+        return view('livewire.profile.delete-profile');
     }
 }

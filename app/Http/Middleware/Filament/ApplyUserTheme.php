@@ -37,6 +37,9 @@ class ApplyUserTheme
             $appearance === 'dark' || ($appearance === 'system' && $request->cookie('pref_theme') === 'dark')
                 ? Filament::getPanel(id: 'admin')->darkMode(condition: true, isForced: true)
                 : Filament::getPanel(id: 'admin')->darkMode(condition: false, isForced: true);
+
+            // Set the panel's title
+            Filament::getPanel(id: 'admin')->brandName(setting(key: 'general.app_name'));
         }
 
         return $next($request);
