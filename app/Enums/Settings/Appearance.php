@@ -10,8 +10,6 @@ enum Appearance: string
 
     /**
      * Get the description for the appearance mode
-     *
-     * @return string
      */
     public function description(): string
     {
@@ -24,8 +22,6 @@ enum Appearance: string
 
     /**
      * Get the label for the appearance mode
-     *
-     * @return string
      */
     public function label(): string
     {
@@ -43,6 +39,6 @@ enum Appearance: string
      */
     public static function values(): array
     {
-        return array_map(fn(Appearance $appearance) => $appearance->value, self::cases());
+        return array_map(fn (Appearance $appearance) => $appearance->value, self::cases());
     }
 }

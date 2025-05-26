@@ -62,6 +62,6 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         // Define the gate for the translation manager
-        Gate::define('use-translation-manager', fn(?User $user): bool => $user instanceof User && $user->hasPermissionTo(permission:Permission::HAS_ACCESS_TO_ADMIN_PANEL));
+        Gate::define('use-translation-manager', fn (?User $user): bool => $user instanceof User && $user->hasPermissionTo(permission: Permission::HAS_ACCESS_TO_ADMIN_PANEL));
     }
 }

@@ -8,7 +8,6 @@
  * - Column structure validation
  * - Table relationships
  */
-
 test('all required tables exist', function (): void {
     $requiredTables = [
         'users',
@@ -20,7 +19,7 @@ test('all required tables exist', function (): void {
         'cache_locks',
         'jobs',
         'job_batches',
-        'failed_jobs'
+        'failed_jobs',
     ];
 
     foreach ($requiredTables as $table) {
@@ -38,7 +37,7 @@ test('users table has correct columns', function (): void {
         'password',
         'remember_token',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     foreach ($columns as $column) {
@@ -52,7 +51,7 @@ test('application_settings table has correct columns', function (): void {
         'key',
         'value',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     foreach ($columns as $column) {

@@ -5,14 +5,21 @@ declare(strict_types=1);
 namespace App\Filament\Resources\RBAC;
 
 use App\Enums\RBAC\Permission as PermissionEnum;
-use App\Filament\Resources\RBAC\PermissionResource\Pages\{ListPermissions, ViewPermission};
+use App\Filament\Resources\RBAC\PermissionResource\Pages\ListPermissions;
+use App\Filament\Resources\RBAC\PermissionResource\Pages\ViewPermission;
 use App\Filament\Resources\RBAC\PermissionResource\RelationManagers\RolesRelationManager;
-use Filament\Forms\Components\{Grid, Section, Textarea, TextInput};
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\{Action, DeleteAction, ViewAction};
-use Filament\Tables\Columns\{IconColumn, TextColumn};
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -93,7 +100,7 @@ class PermissionResource extends Resource
     /**
      * Define the form schema for viewing permission details.
      *
-     * @param Form $form The form instance
+     * @param  Form  $form  The form instance
      * @return Form The configured form
      */
     public static function form(Form $form): Form
@@ -107,8 +114,8 @@ class PermissionResource extends Resource
                                 TextInput::make('enum_key')
                                     ->label(__('admin.resources.rbac.permissions.form.enum_key'))
                                     ->formatStateUsing(
-                                        fn(Permission $record): string => collect(PermissionEnum::cases())
-                                            ->first(fn($case): bool => $case->value === $record->name)->name ?? 'Unknown'
+                                        fn (Permission $record): string => collect(PermissionEnum::cases())
+                                            ->first(fn ($case): bool => $case->value === $record->name)->name ?? 'Unknown'
                                     )
                                     ->disabled(),
                                 TextInput::make('name')
@@ -126,7 +133,7 @@ class PermissionResource extends Resource
     /**
      * Define the table schema for displaying permissions.
      *
-     * @param Table $table The table instance
+     * @param  Table  $table  The table instance
      * @return Table The configured table
      */
     public static function table(Table $table): Table
@@ -139,7 +146,7 @@ class PermissionResource extends Resource
                     ->sortable(false) // Cannot sort on computed column in database
                     ->getStateUsing(function (Permission $record): ?string {
                         $permissionEnum = collect(PermissionEnum::cases())
-                            ->first(fn($case): bool => $case->value === $record->name);
+                            ->first(fn ($case): bool => $case->value === $record->name);
 
                         return $permissionEnum ? $permissionEnum->name : null;
                     }),
@@ -150,7 +157,7 @@ class PermissionResource extends Resource
                 IconColumn::make('linked_to_enum')
                     ->label(__('admin.resources.rbac.permissions.table.linked_to_enum'))
                     ->boolean()
-                    ->getStateUsing(fn(Permission $record): bool => self::isPermissionLinkedToEnum($record))
+                    ->getStateUsing(fn (Permission $record): bool => self::isPermissionLinkedToEnum($record))
                     ->tooltip('Indicates whether this permission is linked to an enum value'),
                 TextColumn::make('roles_count')
                     ->label(__('admin.resources.rbac.permissions.table.roles_count'))
@@ -180,11 +187,12 @@ class PermissionResource extends Resource
                         }
 
                         return $query->where(function ($query) use ($data): void {
-                            $enumValues = collect(PermissionEnum::cases())->map(fn($case) => $case->value)->toArray();
+                            $enumValues = collect(PermissionEnum::cases())->map(fn ($case) => $case->value)->toArray();
 
                             if ($data['value'] === '1') {
                                 $query->whereIn('name', $enumValues);
-                            } else {
+                            }
+                            else {
                                 $query->whereNotIn('name', $enumValues);
                             }
                         });
@@ -193,7 +201,7 @@ class PermissionResource extends Resource
             ->actions([
                 ViewAction::make(),
                 DeleteAction::make()
-                    ->visible(fn(Permission $record): bool => ! self::isPermissionLinkedToEnum($record)),
+                    ->visible(fn (Permission $record): bool => ! self::isPermissionLinkedToEnum($record)),
             ])
             ->headerActions([
                 Action::make('sync-permissions')
@@ -259,12 +267,12 @@ class PermissionResource extends Resource
     /**
      * Check if a permission is linked to an enum value.
      *
-     * @param Permission $permission The permission to check
+     * @param  Permission  $permission  The permission to check
      * @return bool True if the permission is linked to an enum, false otherwise
      */
     protected static function isPermissionLinkedToEnum(Permission $permission): bool
     {
         return collect(PermissionEnum::cases())
-            ->contains(fn($case): bool => $case->value === $permission->name);
+            ->contains(fn ($case): bool => $case->value === $permission->name);
     }
 }

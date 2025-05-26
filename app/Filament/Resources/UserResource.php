@@ -4,18 +4,28 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
-use App\Enums\RBAC\{Permission, Role};
-use App\Filament\Resources\UserResource\Pages\{CreateUser, EditUser, ListUsers};
-use App\Models\{Session, User};
+use App\Enums\RBAC\Permission;
+use App\Enums\RBAC\Role;
+use App\Filament\Resources\UserResource\Pages\CreateUser;
+use App\Filament\Resources\UserResource\Pages\EditUser;
+use App\Filament\Resources\UserResource\Pages\ListUsers;
+use App\Models\Session;
+use App\Models\User;
 use DateTime;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\{KeyValue, Repeater, Section, Select, TextInput};
+use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
-use Filament\Tables\Actions\{BulkActionGroup, DeleteBulkAction, EditAction};
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
@@ -91,7 +101,7 @@ class UserResource extends Resource
     /**
      * Define the form schema for user management.
      *
-     * @param Form $form The form instance
+     * @param  Form  $form  The form instance
      * @return Form The configured form
      */
     public static function form(Form $form): Form
@@ -127,13 +137,13 @@ class UserResource extends Resource
                 Section::make(__('admin.resources.users.form.sections.session_information.label'))
                     ->description(__('admin.resources.users.form.sections.session_information.description'))
                     ->aside()
-                    ->hidden(fn(string $operation): bool => $operation !== 'edit')
+                    ->hidden(fn (string $operation): bool => $operation !== 'edit')
                     ->schema([
                         TextInput::make('last_login_at')
                             ->label(__('admin.resources.users.form.sections.session_information.last_login_at'))
                             ->prefixIcon('heroicon-o-calendar')
                             ->formatStateUsing(
-                                fn(?User $record): string => $record?->last_login_at ?
+                                fn (?User $record): string => $record?->last_login_at ?
                                     ($record?->last_login_at instanceof DateTime ?
                                         $record?->last_login_at->format('d-m-Y H:i') :
                                         $record?->last_login_at) :
@@ -156,7 +166,7 @@ class UserResource extends Resource
                                 return $session?->session_info['is_current_device'] !== true;
                             })
                             ->deleteAction(
-                                fn(Action $action): Action => $action->action(function (array $arguments): void {
+                                fn (Action $action): Action => $action->action(function (array $arguments): void {
                                     $id = preg_replace('/record-/', '', (string) $arguments['item']);
                                     $session = Session::find($id);
                                     $session?->delete();
@@ -165,7 +175,7 @@ class UserResource extends Resource
                             ->reorderable(false)
                             ->addable(false)
                             ->collapsed()
-                            ->itemLabel(fn(array $state): string => array_key_exists('id', $state) ? 'ID: ' . $state['id'] : 'ID unknown')
+                            ->itemLabel(fn (array $state): string => array_key_exists('id', $state) ? 'ID: ' . $state['id'] : 'ID unknown')
                             ->schema([
                                 TextInput::make('ip_address')
                                     ->label(__('admin.resources.users.form.sections.session_information.sessions.ip_address'))
@@ -175,7 +185,7 @@ class UserResource extends Resource
                                 TextInput::make('expires_at')
                                     ->label(__('admin.resources.users.form.sections.session_information.sessions.expires_at'))
                                     ->prefixIcon('heroicon-o-clock')
-                                    ->formatStateUsing(fn(?Session $record): ?string => $record?->expires_at)
+                                    ->formatStateUsing(fn (?Session $record): ?string => $record?->expires_at)
                                     ->disabled(),
 
                                 KeyValue::make('session_info')
@@ -187,7 +197,7 @@ class UserResource extends Resource
                                     ->editableKeys(false)
                                     ->editableValues(false)
                                     ->columnSpan(2)
-                                    ->formatStateUsing(fn(?Session $record): array => [
+                                    ->formatStateUsing(fn (?Session $record): array => [
                                         __('admin.resources.users.form.sections.session_information.sessions.browser') => $record?->session_info['device']['browser'],
                                         __('admin.resources.users.form.sections.session_information.sessions.platform') => $record?->session_info['device']['platform'],
                                         __('admin.resources.users.form.sections.session_information.sessions.device') => match (true) {
@@ -218,7 +228,7 @@ class UserResource extends Resource
                             ->label(__('admin.resources.users.form.sections.access_control.new_password'))
                             ->minLength(8)
                             ->password()
-                            ->required(fn(string $operation) => $operation === 'create')
+                            ->required(fn (string $operation) => $operation === 'create')
                             ->revealable()
                             ->columnSpan(2),
                     ]),
@@ -228,7 +238,7 @@ class UserResource extends Resource
     /**
      * Define the table schema for displaying users.
      *
-     * @param Table $table The table instance
+     * @param  Table  $table  The table instance
      * @return Table The configured table
      */
     public static function table(Table $table): Table
@@ -237,7 +247,7 @@ class UserResource extends Resource
             ->columns([
                 TextColumn::make('first_name')
                     ->label(__('admin.resources.users.table.name'))
-                    ->formatStateUsing(fn(?User $record): string => sprintf('%s %s %s', $record?->first_name, $record?->last_name_prefix, $record?->last_name))
+                    ->formatStateUsing(fn (?User $record): string => sprintf('%s %s %s', $record?->first_name, $record?->last_name_prefix, $record?->last_name))
                     ->searchable()
                     ->sortable(),
 
@@ -248,7 +258,7 @@ class UserResource extends Resource
 
                 TextColumn::make('')
                     ->label(__('admin.resources.users.table.role'))
-                    ->getStateUsing(fn(?User $record): string => Role::from($record?->roles->first()?->name)->displayName() ?? 'No role')
+                    ->getStateUsing(fn (?User $record): string => Role::from($record?->roles->first()?->name)->displayName() ?? 'No role')
                     ->badge(),
             ])
             ->filters([

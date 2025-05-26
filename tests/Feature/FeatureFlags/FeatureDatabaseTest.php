@@ -8,7 +8,6 @@
  * - Feature flag consistency
  * - Default feature handling
  */
-
 test('feature function handles non-existent features gracefully', function (): void {
     $featureStatus = feature('features.non.existent.feature');
 
@@ -31,10 +30,10 @@ test('settings table contains feature flags', function (): void {
 
     // Check that feature settings exist in the database
     $this->assertDatabaseHas('application_settings', [
-        'key' => 'features.auth.login'
+        'key' => 'features.auth.login',
     ]);
 
     $this->assertDatabaseHas('application_settings', [
-        'key' => 'features.auth.register'
+        'key' => 'features.auth.register',
     ]);
 });

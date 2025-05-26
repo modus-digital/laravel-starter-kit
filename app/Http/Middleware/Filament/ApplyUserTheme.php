@@ -16,9 +16,6 @@ class ApplyUserTheme
      * Applies the user's theme and appearance settings to the Filament admin panel,
      * syncing it with the user's custom application settings.
      *
-     * @param  Request  $request
-     * @param  Closure  $next
-     * @return Response
      * @throws \Exception
      */
     public function handle(Request $request, Closure $next): Response

@@ -8,7 +8,6 @@
  * - Authentication page loading
  * - Route configuration
  */
-
 test('home page redirects to login', function (): void {
     $response = $this->get('/');
 

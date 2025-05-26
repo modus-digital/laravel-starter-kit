@@ -15,8 +15,11 @@ class Display extends Component
     use Toastable;
 
     protected ?User $user = null;
+
     public Collection $displaySettings;
+
     public string $appearance = '';
+
     public string $theme = '';
 
     /**
@@ -50,8 +53,6 @@ class Display extends Component
 
     /**
      * Render the component.
-     *
-     * @return View
      */
     public function render(): View
     {

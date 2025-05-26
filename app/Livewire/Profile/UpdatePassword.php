@@ -31,8 +31,6 @@ class UpdatePassword extends Component
 
     /**
      * Render the component.
-     *
-     * @return View
      */
     public function render(): View
     {

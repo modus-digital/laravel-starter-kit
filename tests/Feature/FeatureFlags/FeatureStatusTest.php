@@ -8,7 +8,6 @@
  * - Value handling
  * - Database integration
  */
-
 test('feature status has correct methods', function (): void {
     $feature = feature('features.auth.login');
 

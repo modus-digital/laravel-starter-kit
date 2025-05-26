@@ -24,7 +24,9 @@ class EnableTwoFactor extends Component
     use Toastable;
 
     public string $secret;
+
     public string $qrCode;
+
     public string $code = '';
 
     /**
@@ -60,8 +62,6 @@ class EnableTwoFactor extends Component
     /**
      * Enable the two-factor authentication.
      * If the two-factor authentication is enabled, the user will be redirected to the download page for the backup codes.
-     *
-     * @return StreamedResponse|null
      */
     public function enable(): ?StreamedResponse
     {
@@ -107,9 +107,6 @@ class EnableTwoFactor extends Component
 
     /**
      * Generate recovery codes.
-     *
-     * @param  int  $count
-     * @return array
      */
     private function generateRecoveryCodes(int $count = 8): array
     {

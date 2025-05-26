@@ -16,8 +16,6 @@ enum Theme: string
 
     /**
      * Get the description for the theme
-     *
-     * @return string
      */
     public function description(): string
     {
@@ -41,6 +39,6 @@ enum Theme: string
      */
     public static function values(): array
     {
-        return array_map(fn(Theme $theme) => $theme->value, self::cases());
+        return array_map(fn (Theme $theme) => $theme->value, self::cases());
     }
 }

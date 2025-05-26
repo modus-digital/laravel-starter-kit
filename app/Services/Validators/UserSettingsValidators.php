@@ -7,8 +7,8 @@ use App\Enums\Settings\Language;
 use App\Enums\Settings\Theme;
 use App\Enums\Settings\TwoFactor;
 use App\Enums\Settings\UserSettings;
-use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Support\Facades\Validator as ValidatorFacade;
 use InvalidArgumentException;
 
 class UserSettingsValidators

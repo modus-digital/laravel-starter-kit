@@ -14,10 +14,10 @@
  * - Backup codes functionality
  */
 
+use App\Enums\Settings\TwoFactor;
+use App\Enums\Settings\UserSettings;
 use App\Models\User;
 use App\Models\UserSetting;
-use App\Enums\Settings\UserSettings;
-use App\Enums\Settings\TwoFactor;
 
 test('user has default 2fa settings when created', function (): void {
     $user = User::factory()->create();
@@ -52,7 +52,7 @@ test('user can enable two factor authentication', function (): void {
     $securityValue['two_factor']['recovery_codes'] = [
         'recovery-code-1',
         'recovery-code-2',
-        'recovery-code-3'
+        'recovery-code-3',
     ];
 
     // Use raw database update to avoid the complex UserSetting validation
@@ -149,7 +149,7 @@ test('recovery codes can be generated and stored', function (): void {
         'yza567bcd890',
         'efg123hij456',
         'klm789nop012',
-        'qrs345tuv678'
+        'qrs345tuv678',
     ];
 
     $securitySetting = $user->settings()
@@ -222,11 +222,11 @@ test('user settings table supports json for 2fa data', function (): void {
             'code7',
             'code8',
             'code9',
-            'code10'
+            'code10',
         ],
         'backup_used_at' => null,
         'last_used_at' => now()->subMinutes(5)->toDateTimeString(),
-        'failed_attempts' => 0
+        'failed_attempts' => 0,
     ];
 
     $securitySetting = $user->settings()

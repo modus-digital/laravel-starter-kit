@@ -71,11 +71,11 @@ return [
      |
      */
     'middleware' => [
-        'telescope'
+        'telescope',
     ],
 
     'asset_middleware' => [
-        'web'
+        'web',
     ],
 
     /*

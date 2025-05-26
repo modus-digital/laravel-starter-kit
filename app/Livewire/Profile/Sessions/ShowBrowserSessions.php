@@ -58,7 +58,6 @@ class ShowBrowserSessions extends Component
     /**
      * Create an agent for the session.
      *
-     * @param  mixed  $session
      * @return Agent
      */
     private function createAgent(mixed $session)

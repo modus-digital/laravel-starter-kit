@@ -35,9 +35,6 @@ class TwoFactorAuthentication
 
     /**
      * Retrieves the two-factor authentication settings for a user.
-     *
-     * @param  User  $user
-     * @return array|null
      */
     private function getTwoFactorSettings(User $user): ?array
     {
@@ -52,9 +49,6 @@ class TwoFactorAuthentication
 
     /**
      * Checks if the request is for a two-factor authentication route.
-     *
-     * @param  Request  $request
-     * @return bool
      */
     private function isTwoFactorRoute(Request $request): bool
     {
@@ -67,8 +61,6 @@ class TwoFactorAuthentication
 
     /**
      * Checks if two-factor authentication is enabled for the current user.
-     *
-     * @return bool
      */
     private function isTwoFactorEnabled(): bool
     {
@@ -87,9 +79,6 @@ class TwoFactorAuthentication
 
     /**
      * Checks if two-factor authentication should be bypassed for the current request.
-     *
-     * @param  Request  $request
-     * @return bool
      */
     private function shouldBypassTwoFactor(Request $request): bool
     {

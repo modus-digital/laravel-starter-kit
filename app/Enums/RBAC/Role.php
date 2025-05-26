@@ -52,7 +52,7 @@ enum Role: string
     {
         return array_combine(
             array_column(self::cases(), 'value'),
-            array_map(fn(self $role) => $role->displayName(), self::cases())
+            array_map(fn (self $role) => $role->displayName(), self::cases())
         );
     }
 }

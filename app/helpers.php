@@ -21,7 +21,8 @@ if (! function_exists('feature')) {
             // Fetch the setting, default to null if not found
             $setting = Setting::where('key', $featureKey)->first();
             $value = $setting ? $setting->value : null;
-        } catch (\Throwable $e) {
+        }
+        catch (\Throwable $e) {
             // Handle any database or configuration errors gracefully
             // This includes table not existing, configuration issues, etc.
             $value = null;
@@ -92,7 +93,8 @@ if (! function_exists('download_backup_codes')) {
                         }
 
                         fclose($file);
-                    } catch (Throwable) {
+                    }
+                    catch (Throwable) {
                         fclose($file);
                     }
                 },

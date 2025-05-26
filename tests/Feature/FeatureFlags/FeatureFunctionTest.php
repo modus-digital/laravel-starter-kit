@@ -8,7 +8,6 @@
  * - FeatureStatus object creation
  * - Enabled/disabled feature handling
  */
-
 test('feature helper function exists and is callable', function (): void {
     expect(function_exists('feature'))->toBeTrue();
 });

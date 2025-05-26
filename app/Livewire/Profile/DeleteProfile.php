@@ -26,8 +26,6 @@ class DeleteProfile extends Component
 
     /**
      * Delete the user's account.
-     *
-     * @return RedirectResponse
      */
     public function deleteAccount(): RedirectResponse
     {
@@ -50,8 +48,6 @@ class DeleteProfile extends Component
 
     /**
      * Render the component.
-     *
-     * @return View
      */
     public function render(): View
     {

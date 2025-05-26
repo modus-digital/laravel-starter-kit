@@ -5,14 +5,21 @@ declare(strict_types=1);
 namespace App\Filament\Resources\RBAC;
 
 use App\Enums\RBAC\Role as RoleEnum;
-use App\Filament\Resources\RBAC\RoleResource\Pages\{ListRoles, ViewRole};
+use App\Filament\Resources\RBAC\RoleResource\Pages\ListRoles;
+use App\Filament\Resources\RBAC\RoleResource\Pages\ViewRole;
 use App\Filament\Resources\RBAC\RoleResource\RelationManagers\PermissionsRelationManager;
-use Filament\Forms\Components\{Grid, Section, Textarea, TextInput};
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\{Action, DeleteAction, ViewAction};
-use Filament\Tables\Columns\{IconColumn, TextColumn};
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -93,7 +100,7 @@ class RoleResource extends Resource
     /**
      * Define the form schema for viewing role details.
      *
-     * @param Form $form The form instance
+     * @param  Form  $form  The form instance
      * @return Form The configured form
      */
     public static function form(Form $form): Form
@@ -107,8 +114,8 @@ class RoleResource extends Resource
                                 TextInput::make('enum_key')
                                     ->label(__('admin.resources.rbac.roles.form.enum_key'))
                                     ->formatStateUsing(
-                                        fn(Role $record): string => collect(RoleEnum::cases())
-                                            ->first(fn($case): bool => $case->value === $record->name)->name ?? 'Unknown'
+                                        fn (Role $record): string => collect(RoleEnum::cases())
+                                            ->first(fn ($case): bool => $case->value === $record->name)->name ?? 'Unknown'
                                     )
                                     ->disabled(),
                                 TextInput::make('name')
@@ -126,7 +133,7 @@ class RoleResource extends Resource
     /**
      * Define the table schema for displaying roles.
      *
-     * @param Table $table The table instance
+     * @param  Table  $table  The table instance
      * @return Table The configured table
      */
     public static function table(Table $table): Table
@@ -139,7 +146,7 @@ class RoleResource extends Resource
                     ->sortable(false) // Cannot sort on computed column in database
                     ->getStateUsing(function (Role $record): ?string {
                         $roleEnum = collect(RoleEnum::cases())
-                            ->first(fn($case): bool => $case->value === $record->name);
+                            ->first(fn ($case): bool => $case->value === $record->name);
 
                         return $roleEnum ? $roleEnum->name : null;
                     }),
@@ -150,7 +157,7 @@ class RoleResource extends Resource
                 IconColumn::make('linked_to_enum')
                     ->label(__('admin.resources.rbac.roles.table.linked_to_enum'))
                     ->boolean()
-                    ->getStateUsing(fn(Role $record): bool => self::isRoleLinkedToEnum($record))
+                    ->getStateUsing(fn (Role $record): bool => self::isRoleLinkedToEnum($record))
                     ->tooltip('Indicates whether this role is linked to an enum value'),
                 TextColumn::make('permissions_count')
                     ->label(__('admin.resources.rbac.roles.table.permissions_count'))
@@ -180,11 +187,12 @@ class RoleResource extends Resource
                         }
 
                         return $query->where(function ($query) use ($data): void {
-                            $enumValues = collect(RoleEnum::cases())->map(fn($case) => $case->value)->toArray();
+                            $enumValues = collect(RoleEnum::cases())->map(fn ($case) => $case->value)->toArray();
 
                             if ($data['value'] === '1') {
                                 $query->whereIn('name', $enumValues);
-                            } else {
+                            }
+                            else {
                                 $query->whereNotIn('name', $enumValues);
                             }
                         });
@@ -193,7 +201,7 @@ class RoleResource extends Resource
             ->actions([
                 ViewAction::make(),
                 DeleteAction::make()
-                    ->visible(fn(Role $record): bool => ! self::isRoleLinkedToEnum($record)),
+                    ->visible(fn (Role $record): bool => ! self::isRoleLinkedToEnum($record)),
             ])
             ->headerActions([
                 Action::make('sync-roles')
@@ -259,12 +267,12 @@ class RoleResource extends Resource
     /**
      * Check if a role is linked to an enum value.
      *
-     * @param Role $role The role to check
+     * @param  Role  $role  The role to check
      * @return bool True if the role is linked to an enum, false otherwise
      */
     protected static function isRoleLinkedToEnum(Role $role): bool
     {
         return collect(RoleEnum::cases())
-            ->contains(fn($case): bool => $case->value === $role->name);
+            ->contains(fn ($case): bool => $case->value === $role->name);
     }
 }

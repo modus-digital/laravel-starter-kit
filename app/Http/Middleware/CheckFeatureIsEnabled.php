@@ -11,10 +11,7 @@ class CheckFeatureIsEnabled
     /**
      * This middleware checks if a feature is enabled and aborts the request if it is not.
      *
-     * @param  Request  $request
-     * @param  Closure  $next
      * @param  string  $featureKey  The dot-notation key for the feature flag (e.g., 'auth.register')
-     * @return Response
      */
     public function handle(Request $request, Closure $next, string $featureKey): Response
     {

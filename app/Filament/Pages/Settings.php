@@ -6,10 +6,13 @@ namespace App\Filament\Pages;
 
 use App\Enums\RBAC\Permission;
 use Closure;
-use Filament\Forms\Components\{Fieldset, FileUpload, Tabs, TextInput, Toggle};
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Outerweb\FilamentSettings\Filament\Pages\Settings as BaseSettings;
-use Override;
 
 /**
  * Settings page for managing application configuration.
@@ -76,7 +79,7 @@ class Settings extends BaseSettings
                                 ])
                                 ->columns(2),
                         ]),
-                ])
+                ]),
         ];
     }
 }

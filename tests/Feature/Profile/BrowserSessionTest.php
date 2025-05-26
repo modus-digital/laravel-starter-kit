@@ -1,7 +1,7 @@
 <?php
 
-use App\Livewire\Profile\Sessions\ShowBrowserSessions;
 use App\Livewire\Profile\Sessions\ClearBrowserSessions;
+use App\Livewire\Profile\Sessions\ShowBrowserSessions;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;

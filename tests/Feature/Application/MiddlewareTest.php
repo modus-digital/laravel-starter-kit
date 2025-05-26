@@ -8,7 +8,6 @@
  * - Route protection
  * - Authentication middleware
  */
-
 test('middleware allows access to public pages', function (): void {
     // Test that public authentication pages load without middleware issues
     $loginResponse = $this->get('/auth/login');

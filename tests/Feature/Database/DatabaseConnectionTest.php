@@ -8,7 +8,6 @@
  * - Migration status
  * - Basic database operations
  */
-
 test('database connection works correctly', function (): void {
     expect(\DB::connection()->getPdo())->not->toBeNull();
     expect(\DB::connection()->getDatabaseName())->toBeString();

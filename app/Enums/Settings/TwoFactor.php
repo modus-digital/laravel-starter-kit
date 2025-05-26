@@ -9,8 +9,6 @@ enum TwoFactor: string
 
     /**
      * Get the description for the two-factor authentication
-     *
-     * @return string
      */
     public function description(): string
     {
@@ -27,6 +25,6 @@ enum TwoFactor: string
      */
     public static function values(): array
     {
-        return array_map(fn(TwoFactor $twoFactor) => $twoFactor->value, self::cases());
+        return array_map(fn (TwoFactor $twoFactor) => $twoFactor->value, self::cases());
     }
 }

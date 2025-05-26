@@ -8,9 +8,6 @@
  * - Registration page display
  * - Page content verification
  */
-
-use App\Models\User;
-
 test('auth login page displays correctly', function (): void {
     $response = $this->get('/auth/login');
 

@@ -16,6 +16,7 @@ class RegenerateBackupCodes extends Component
     use Toastable;
 
     public array $backupCodes;
+
     public ?Authenticatable $user = null;
 
     /**
@@ -55,8 +56,6 @@ class RegenerateBackupCodes extends Component
 
     /**
      * Download the backup codes.
-     *
-     * @return StreamedResponse
      */
     public function downloadBackupCodes(): StreamedResponse
     {
@@ -72,8 +71,6 @@ class RegenerateBackupCodes extends Component
 
     /**
      * Render the component.
-     *
-     * @return View
      */
     public function render(): View
     {

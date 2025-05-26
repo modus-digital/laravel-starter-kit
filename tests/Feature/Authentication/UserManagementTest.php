@@ -35,7 +35,7 @@ test('user can be created with valid data', function (): void {
 test('user authentication works correctly', function (): void {
     $user = User::factory()->create([
         'email' => 'test@example.com',
-        'password' => bcrypt('password123')
+        'password' => bcrypt('password123'),
     ]);
 
     // Test that user can be authenticated
@@ -49,7 +49,7 @@ test('user authentication works correctly', function (): void {
 test('user full name accessor works', function (): void {
     $user = User::factory()->create([
         'first_name' => 'Jane',
-        'last_name' => 'Smith'
+        'last_name' => 'Smith',
     ]);
 
     expect($user->name)->toBe('Jane  Smith');

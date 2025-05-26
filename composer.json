@@ -92,7 +92,8 @@
     },
     "extra": {
         "hooks": {
-            "pre-push": [
+            "pre-commit": [
+                "echo 'Running pre-commit hook'",
                 "composer run lint:fix",
                 "git commit -am '[HOOK] Ran php-cs-fixer to fix formatting issues'"
             ]

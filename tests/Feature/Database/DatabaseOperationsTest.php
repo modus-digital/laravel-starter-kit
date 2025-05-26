@@ -9,7 +9,6 @@
  * - Bulk operations
  * - Performance testing
  */
-
 test('database can perform basic operations', function (): void {
     // Test insert
     $userId = \DB::table('users')->insertGetId([

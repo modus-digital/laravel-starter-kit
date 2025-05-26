@@ -13,7 +13,9 @@ class Localization extends Component
     use Toastable;
 
     public string $language = '';
+
     public string $timezone = '';
+
     public string $dateFormat = '';
 
     /**

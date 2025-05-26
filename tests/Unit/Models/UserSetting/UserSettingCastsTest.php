@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\UserSetting;
 use App\Enums\Settings\UserSettings;
+use App\Models\UserSetting;
 
 test('user setting casts key to user settings enum', function () {
     $userSetting = new UserSetting();

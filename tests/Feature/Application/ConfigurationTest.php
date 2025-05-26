@@ -8,7 +8,6 @@
  * - Environment setup
  * - Helper function availability
  */
-
 test('configuration is loaded correctly', function (): void {
     expect(config('app.name'))->toBeString();
     expect(config('settings.database_table_name'))->toBe('application_settings');
