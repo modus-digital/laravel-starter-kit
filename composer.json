@@ -12,7 +12,6 @@
     "require": {
         "php": "^8.3",
         "bacon/bacon-qr-code": "^3.0",
-        "brainmaestro/composer-git-hooks": "^3.0",
         "filament/filament": "^3.3",
         "jenssegers/agent": "*",
         "kenepa/translation-manager": "^4.0",
@@ -91,12 +90,6 @@
         "analyze": "@php -d memory_limit=4G vendor/bin/phpstan analyse"
     },
     "extra": {
-        "hooks": {
-            "pre-push": [
-                "./vendor/bin/php-cs-fixer fix --verbose",
-                "git commit -am '[HOOK] Ran php-cs-fixer to fix formatting issues'"
-            ]
-        },
         "laravel": {
             "dont-discover": []
         }
