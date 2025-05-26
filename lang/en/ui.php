@@ -44,6 +44,7 @@ return [
         'users' => 'Users',
         'header' => [
             'open_user_menu' => 'Open user menu',
+            'leave_impersonation' => 'Stop impersonation',
             'guest' => 'Guest',
             'guest_email' => 'guest@example.com',
             'my_profile' => 'My profile',

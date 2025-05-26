@@ -2,8 +2,8 @@
 
 use App\Enums\Settings\UserSettings;
 use App\Helpers\FeatureStatus;
-use App\Models\ApplicationSetting;
 use Carbon\Carbon;
+use Outerweb\Settings\Models\Setting;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 if (! function_exists('feature')) {
@@ -15,9 +15,18 @@ if (! function_exists('feature')) {
      */
     function feature(string $featureKey): FeatureStatus
     {
-        // Fetch the setting, default to null if not found
-        $setting = ApplicationSetting::where('name', $featureKey)->first();
-        $value = $setting ? $setting->value : null; // Default to null if setting doesn't exist
+        $value = null;
+
+        try {
+            // Fetch the setting, default to null if not found
+            $setting = Setting::where('key', $featureKey)->first();
+            $value = $setting ? $setting->value : null;
+        }
+        catch (\Throwable $e) {
+            // Handle any database or configuration errors gracefully
+            // This includes table not existing, configuration issues, etc.
+            $value = null;
+        }
 
         // Return a FeatureStatus object
         return new FeatureStatus($value);
@@ -25,6 +34,12 @@ if (! function_exists('feature')) {
 }
 
 if (! function_exists('local_date')) {
+    /**
+     * Format a date according to the user's localization settings.
+     *
+     * @param  Carbon|int|string  $date  The date to format.
+     * @return Carbon|string The formatted date.
+     */
     function local_date(Carbon|int|string $date): Carbon|string
     {
         if (! $date instanceof Carbon) {

@@ -21,6 +21,9 @@ class FeatureStatus implements Stringable
             filter_var($this->value, FILTER_VALIDATE_BOOLEAN);
     }
 
+    /**
+     * Checks if the feature is disabled.
+     */
     public function disabled(): bool
     {
         return ! $this->enabled();

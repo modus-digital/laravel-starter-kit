@@ -16,15 +16,15 @@ class Display extends Component
 
     protected ?User $user = null;
 
-    /**
-     * @var Collection<string, mixed>
-     */
     public Collection $displaySettings;
 
     public string $appearance = '';
 
     public string $theme = '';
 
+    /**
+     * Mount the component and set the user. Also set the display settings.
+     */
     public function mount(): void
     {
         $this->user = auth()->user();
@@ -35,6 +35,9 @@ class Display extends Component
         $this->theme = $this->displaySettings->get('theme');
     }
 
+    /**
+     * Update the display settings.
+     */
     public function updateDisplaySettings(): void
     {
         $user = Auth::user();
@@ -48,6 +51,9 @@ class Display extends Component
         $this->success('Display settings updated successfully');
     }
 
+    /**
+     * Render the component.
+     */
     public function render(): View
     {
         return view('livewire.profile.edit.display');

@@ -23,7 +23,7 @@
                 {{ __('user.account.delete.confirmation') }}
             </x-slot>
 
-            <livewire:actions.delete-profile />
+            <livewire:profile.delete-account />
         </x-modal>
     </div>
 </div>

@@ -4,6 +4,7 @@ namespace App\Livewire\Profile\TwoFactor;
 
 use App\Enums\Settings\UserSettings;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -18,11 +19,17 @@ class RegenerateBackupCodes extends Component
 
     public ?Authenticatable $user = null;
 
+    /**
+     * Mount the component and set the user.
+     */
     public function mount(?Authenticatable $user = null): void
     {
         $this->user = $user;
     }
 
+    /**
+     * Regenerate the backup codes.
+     */
     #[On('regenerate-backup-codes')]
     public function regenerateBackupCodes(): void
     {
@@ -47,6 +54,9 @@ class RegenerateBackupCodes extends Component
         );
     }
 
+    /**
+     * Download the backup codes.
+     */
     public function downloadBackupCodes(): StreamedResponse
     {
         $this->success(
@@ -59,7 +69,10 @@ class RegenerateBackupCodes extends Component
         );
     }
 
-    public function render()
+    /**
+     * Render the component.
+     */
+    public function render(): View
     {
         return view('livewire.profile.two-factor.regenerate-backup-codes');
     }

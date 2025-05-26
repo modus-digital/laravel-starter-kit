@@ -9,6 +9,19 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * The UserSetting model represents a user's setting in the application.
+ * It provides methods to access user settings, update them, and retrieve them.
+ * This model is linked to the 'user_settings' table which is used to store user settings.
+ *
+ * @property string $id Unique identifier for the user setting
+ * @property string $user_id Foreign key to the users table
+ * @property UserSettings $key The key of the user setting
+ * @property array $value The value of the user setting
+ * @property Carbon $created_at Timestamp of the creation
+ * @property Carbon $updated_at Timestamp of the last update
+ * @property-read User $user The user that owns the user setting
+ */
 class UserSetting extends Model
 {
     protected $table = 'user_settings';

@@ -33,6 +33,9 @@ class TwoFactorAuthentication
         return to_route('auth.two-factor.verify');
     }
 
+    /**
+     * Retrieves the two-factor authentication settings for a user.
+     */
     private function getTwoFactorSettings(User $user): ?array
     {
         $twoFactorSettings = $user->settings()->where('key', UserSettings::SECURITY)->first();
@@ -44,6 +47,9 @@ class TwoFactorAuthentication
         return $twoFactorSettings->retrieve(UserSettings::SECURITY, 'two_factor');
     }
 
+    /**
+     * Checks if the request is for a two-factor authentication route.
+     */
     private function isTwoFactorRoute(Request $request): bool
     {
         if ($request->routeIs('auth.two-factor.verify')) {
@@ -53,6 +59,9 @@ class TwoFactorAuthentication
         return $request->routeIs('auth.two-factor.recovery.*');
     }
 
+    /**
+     * Checks if two-factor authentication is enabled for the current user.
+     */
     private function isTwoFactorEnabled(): bool
     {
         $user = auth()->user();
@@ -68,6 +77,9 @@ class TwoFactorAuthentication
         return $settings['status'] === TwoFactor::ENABLED || $settings['status'] === TwoFactor::ENABLED->value;
     }
 
+    /**
+     * Checks if two-factor authentication should be bypassed for the current request.
+     */
     private function shouldBypassTwoFactor(Request $request): bool
     {
         // Check if any bypass conditions are met

@@ -16,6 +16,9 @@ class ClearBrowserSessions extends Component
     #[Rule('required|current_password')]
     public string $password = '';
 
+    /**
+     * Clear the browser sessions.
+     */
     public function clearBrowserSessions(): void
     {
         $this->validate();

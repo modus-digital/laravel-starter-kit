@@ -101,6 +101,10 @@ return [
                 'title' => 'Super Administrator',
                 'description' => 'As super administrator you have access to all features and settings of the application.',
             ],
+            'admin' => [
+                'title' => 'Administrator',
+                'description' => 'As administrator you have access to all features and settings of the application.',
+            ],
             'user' => [
                 'title' => 'User',
                 'description' => 'As user you have standard access to the application.',

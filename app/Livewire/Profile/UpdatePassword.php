@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Profile;
 
+use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
@@ -16,6 +17,9 @@ class UpdatePassword extends Component
     #[Validate('required|string|min:8')]
     public string $password_confirmation;
 
+    /**
+     * Save the new password.
+     */
     public function save(): void
     {
         $this->validate();
@@ -25,7 +29,10 @@ class UpdatePassword extends Component
         ]);
     }
 
-    public function render()
+    /**
+     * Render the component.
+     */
+    public function render(): View
     {
         return view('livewire.profile.update-password');
     }

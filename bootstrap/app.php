@@ -7,11 +7,13 @@ use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\CheckFeatureIsEnabled;
 use App\Http\Middleware\TwoFactorAuthentication;
 use Illuminate\Support\Facades\App;
+use Sentry\Laravel\Integration;
 use Spatie\Health\Commands\ScheduleCheckHeartbeatCommand;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__ . '/../routes/web.php',
+        api: __DIR__ . '/../routes/api.php',
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
@@ -27,25 +29,15 @@ return Application::configure(basePath: dirname(__DIR__))
         );
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        Integration::handles(exceptions: $exceptions);
     })
     ->withSchedule(function (Schedule $schedule): void {
 
-        if (App::environment() !== 'local') {
-
-            $schedule->command('backup:clean')
-                ->description('Clean up old backups.')
-                ->daily()
-                ->at('01:00');
-
-            $schedule->command('backup:run')
-                ->description('Run the backup process.')
-                ->daily()
-                ->at('01:30');
-
-            $schedule->command(ScheduleCheckHeartbeatCommand::class)
-                ->description('Health check to ensure that the schedule is running every minute.')
-                ->everyMinute();
+        if (! App::isLocal()) {
+            $schedule->command('telescope:prune --hours=48')->daily();
+            $schedule->command('backup:clean')->daily()->at('01:00');
+            $schedule->command('backup:run')->daily()->at('01:30');
+            $schedule->command(ScheduleCheckHeartbeatCommand::class)->everyMinute();
         }
     })
     ->create();

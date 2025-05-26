@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\RBAC;
 
 use App\Enums\RBAC\Permission as PermissionEnum;
-use App\Filament\Resources\RBAC\PermissionResource\Pages;
 use App\Filament\Resources\RBAC\PermissionResource\Pages\ListPermissions;
 use App\Filament\Resources\RBAC\PermissionResource\Pages\ViewPermission;
 use App\Filament\Resources\RBAC\PermissionResource\RelationManagers\RolesRelationManager;
@@ -22,66 +23,86 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Override;
 use Spatie\Permission\Models\Permission;
 
 /**
- * Resource for managing permissions in the RBAC system.
+ * Resource for managing permissions in the RBAC (Role-Based Access Control) system.
+ *
+ * This resource provides CRUD operations for permissions, including:
+ * - Viewing permission details and associated roles
+ * - Synchronizing permissions with enum definitions
+ * - Managing permission-role relationships
+ *
+ * @since 1.0.0
  */
 class PermissionResource extends Resource
 {
     /**
-     * The model the resource corresponds to.
+     * The Eloquent model that this resource corresponds to.
      */
     protected static ?string $model = Permission::class;
 
     /**
-     * The icon of the resource.
+     * The navigation icon displayed in the admin panel.
      */
     protected static ?string $navigationIcon = 'heroicon-o-key';
 
     /**
-     * The navigation group name.
-     */
-    protected static ?string $navigationGroup = 'Toegangsbeheer';
-
-    /**
-     * The navigation sort order.
+     * The sort order for navigation items.
      */
     protected static ?int $navigationSort = 2;
 
     /**
-     * The text for the navigation label.
-     */
-    protected static ?string $navigationLabel = 'Permissies';
-
-    /**
-     * The slug for the resource
+     * The URL slug for this resource.
      */
     protected static ?string $slug = '/rbac/permissions';
 
     /**
-     * The label for this resource.
+     * Get the singular label for this resource.
+     *
+     * @return string The singular model label
      */
-    #[Override]
     public static function getModelLabel(): string
     {
-        return 'Permissie';
+        return __('admin.resources.rbac.permissions.label.singular');
     }
 
     /**
-     * The plural label for this resource.
+     * Get the navigation label displayed in the admin panel.
+     *
+     * @return string The navigation label
      */
-    #[Override]
+    public static function getNavigationLabel(): string
+    {
+        return __('admin.resources.rbac.permissions.label.plural');
+    }
+
+    /**
+     * Get the navigation group this resource belongs to.
+     *
+     * @return string|null The navigation group name
+     */
+    public static function getNavigationGroup(): ?string
+    {
+        return __('admin.navigation.groups.toegangsbeheer');
+    }
+
+    /**
+     * Get the plural label for this resource.
+     *
+     * @return string The plural model label
+     */
     public static function getPluralModelLabel(): string
     {
-        return 'Permissies';
+        return __('admin.resources.rbac.permissions.label.plural');
     }
 
     /**
-     * Defines the form for viewing permission details.
+     * Define the form schema for viewing permission details.
+     *
+     * @param  Form  $form  The form instance
+     * @return Form The configured form
      */
-    #[Override]
     public static function form(Form $form): Form
     {
         return $form
@@ -91,18 +112,18 @@ class PermissionResource extends Resource
                         Grid::make(2)
                             ->schema([
                                 TextInput::make('enum_key')
-                                    ->label('Enum Key')
+                                    ->label(__('admin.resources.rbac.permissions.form.enum_key'))
                                     ->formatStateUsing(
                                         fn (Permission $record): string => collect(PermissionEnum::cases())
                                             ->first(fn ($case): bool => $case->value === $record->name)->name ?? 'Unknown'
                                     )
                                     ->disabled(),
                                 TextInput::make('name')
-                                    ->label('Naam')
+                                    ->label(__('admin.resources.rbac.permissions.form.name'))
                                     ->disabled(),
                             ]),
                         Textarea::make('description')
-                            ->label('Beschrijving')
+                            ->label(__('admin.resources.rbac.permissions.form.description'))
                             ->disabled()
                             ->rows(3),
                     ]),
@@ -110,17 +131,19 @@ class PermissionResource extends Resource
     }
 
     /**
-     * Defines the table for displaying permissions.
+     * Define the table schema for displaying permissions.
+     *
+     * @param  Table  $table  The table instance
+     * @return Table The configured table
      */
-    #[Override]
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
                 TextColumn::make('enum_key')
-                    ->label('Enum Key')
+                    ->label(__('admin.resources.rbac.permissions.table.enum_key'))
                     ->badge()
-                    ->sortable(false) // Kan niet sorteren op een berekende kolom in de database
+                    ->sortable(false) // Cannot sort on computed column in database
                     ->getStateUsing(function (Permission $record): ?string {
                         $permissionEnum = collect(PermissionEnum::cases())
                             ->first(fn ($case): bool => $case->value === $record->name);
@@ -128,35 +151,35 @@ class PermissionResource extends Resource
                         return $permissionEnum ? $permissionEnum->name : null;
                     }),
                 TextColumn::make('name')
-                    ->label('Naam')
+                    ->label(__('admin.resources.rbac.permissions.table.name'))
                     ->searchable()
                     ->sortable(),
                 IconColumn::make('linked_to_enum')
-                    ->label('Gekoppeld aan enum')
+                    ->label(__('admin.resources.rbac.permissions.table.linked_to_enum'))
                     ->boolean()
                     ->getStateUsing(fn (Permission $record): bool => self::isPermissionLinkedToEnum($record))
-                    ->tooltip('Geeft aan of deze permissie gekoppeld is aan een enum waarde'),
+                    ->tooltip('Indicates whether this permission is linked to an enum value'),
                 TextColumn::make('roles_count')
-                    ->label('Aantal rollen')
+                    ->label(__('admin.resources.rbac.permissions.table.roles_count'))
                     ->counts('roles')
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->label('Aangemaakt op')
+                    ->label(__('admin.resources.rbac.permissions.table.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
-                    ->label('Laatst bijgewerkt')
+                    ->label(__('admin.resources.rbac.permissions.table.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('linked_to_enum')
-                    ->label('Gekoppeld aan enum')
+                    ->label(__('admin.resources.rbac.permissions.table.linked_to_enum'))
                     ->options([
-                        '1' => 'Ja',
-                        '0' => 'Nee',
+                        '1' => 'Yes',
+                        '0' => 'No',
                     ])
                     ->query(function ($query, array $data) {
                         if ($data['value'] === null) {
@@ -180,10 +203,9 @@ class PermissionResource extends Resource
                 DeleteAction::make()
                     ->visible(fn (Permission $record): bool => ! self::isPermissionLinkedToEnum($record)),
             ])
-            // No bulk actions needed
             ->headerActions([
                 Action::make('sync-permissions')
-                    ->label('Synchroniseren met enums')
+                    ->label(__('admin.resources.rbac.permissions.actions.sync'))
                     ->icon('heroicon-o-arrow-path')
                     ->color('primary')
                     ->action(function (): void {
@@ -199,8 +221,8 @@ class PermissionResource extends Resource
                         }
 
                         Notification::make()
-                            ->title('Synchronisatie voltooid')
-                            ->body($count . ' permissies zijn gesynchroniseerd.')
+                            ->title(__('admin.resources.rbac.permissions.notifications.sync_success.title'))
+                            ->body(__('admin.resources.rbac.permissions.notifications.sync_success.message', ['count' => $count]))
                             ->success()
                             ->send();
                     }),
@@ -208,9 +230,10 @@ class PermissionResource extends Resource
     }
 
     /**
-     * Returns the related pages for the resource.
+     * Get the relation managers for this resource.
+     *
+     * @return array<string> Array of relation manager classes
      */
-    #[Override]
     public static function getRelations(): array
     {
         return [
@@ -219,20 +242,20 @@ class PermissionResource extends Resource
     }
 
     /**
-     * Define the custom query for retrieving records.
+     * Define custom query for retrieving records.
      *
-     * @return Builder<\Spatie\Permission\Models\Permission>
+     * @return Builder The eloquent query builder
      */
-    #[Override]
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->orderBy('name');
     }
 
     /**
-     * Returns the pages for the resource.
+     * Get the pages associated with this resource.
+     *
+     * @return array<string, mixed> Array of page routes
      */
-    #[Override]
     public static function getPages(): array
     {
         return [
@@ -242,7 +265,7 @@ class PermissionResource extends Resource
     }
 
     /**
-     * Checks if a permission is linked to an enum value.
+     * Check if a permission is linked to an enum value.
      *
      * @param  Permission  $permission  The permission to check
      * @return bool True if the permission is linked to an enum, false otherwise

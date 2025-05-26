@@ -39,6 +39,15 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
+        Schema::create('user_settings', function (Blueprint $table): void {
+            $table->string(column: 'key', length: 255);
+            $table->foreignId(column: 'user_id')->constrained(table: 'users');
+            $table->json(column: 'value');
+
+            $table->timestamps();
+            $table->primary(columns: ['key', 'user_id']);
+        });
     }
 
     /**
@@ -49,5 +58,6 @@ return new class extends Migration
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('user_settings');
     }
 };

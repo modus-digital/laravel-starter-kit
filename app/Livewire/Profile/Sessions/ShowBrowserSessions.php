@@ -14,6 +14,11 @@ class ShowBrowserSessions extends Component
 {
     public ?Collection $sessions = null;
 
+    /**
+     * Mount the component and set the sessions.
+     *
+     * If the event 'cleared-browser-sessions' is dispatched, this component will be re-rendered.
+     */
     #[On('cleared-browser-sessions')]
     public function mount(): void
     {
@@ -50,6 +55,11 @@ class ShowBrowserSessions extends Component
             });
     }
 
+    /**
+     * Create an agent for the session.
+     *
+     * @return Agent
+     */
     private function createAgent(mixed $session)
     {
         return tap(
@@ -58,6 +68,11 @@ class ShowBrowserSessions extends Component
         );
     }
 
+    /**
+     * Render the component.
+     *
+     * @return View
+     */
     public function render()
     {
         return view('livewire.profile.sessions.show-browser-sessions');

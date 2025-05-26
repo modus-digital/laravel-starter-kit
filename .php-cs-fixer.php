@@ -2,6 +2,7 @@
 
 use PhpCsFixer\Config;
 use PhpCsFixer\Finder;
+use PhpCsFixer\Runner\Parallel\ParallelConfigFactory;
 
 /**
  * These rules are based on the Laravel preset found in Pint.
@@ -145,7 +146,7 @@ $rules = [
   'nullable_type_declaration_for_default_null_value' => true,
   'object_operator_without_whitespace' => true,
   'ordered_imports' => [
-    'sort_algorithm' => 'alpha', 
+    'sort_algorithm' => 'alpha',
     'imports_order' => ['const', 'class', 'function'],
   ],
   'ordered_interfaces' => true,
@@ -246,6 +247,7 @@ $finder = Finder::create()
  * Returns the configuration.
  */
 return (new Config())
+  ->setParallelConfig(ParallelConfigFactory::detect())
   ->setRules($rules)
   ->setFinder($finder)
   ->setIndent('    ')

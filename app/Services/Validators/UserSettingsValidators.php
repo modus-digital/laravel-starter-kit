@@ -7,8 +7,8 @@ use App\Enums\Settings\Language;
 use App\Enums\Settings\Theme;
 use App\Enums\Settings\TwoFactor;
 use App\Enums\Settings\UserSettings;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
-use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 
 class UserSettingsValidators
@@ -18,9 +18,9 @@ class UserSettingsValidators
      *
      * @param  UserSettings|string  $key  The key of the user setting to validate
      * @param  array<string, mixed>|string  $data  The data to validate
-     * @return \Illuminate\Contracts\Validation\Validator The validator instance
+     * @return Validator The validator instance
      */
-    public static function byKey(UserSettings|string $key, array|string $data): \Illuminate\Contracts\Validation\Validator
+    public static function byKey(UserSettings|string $key, array|string $data): Validator
     {
         return match ($key) {
             UserSettings::LOCALIZATION => self::localization($data),
@@ -35,9 +35,9 @@ class UserSettingsValidators
      * Validate the localization settings
      *
      * @param  array<string, mixed>  $data  The data to validate
-     * @return \Illuminate\Contracts\Validation\Validator The validator instance
+     * @return Validator The validator instance
      */
-    public static function localization(array $data): \Illuminate\Contracts\Validation\Validator
+    public static function localization(array $data): Validator
     {
         $rules = [
             'locale' => 'required|string|in:' . implode(',', Language::values()),
@@ -57,9 +57,9 @@ class UserSettingsValidators
      * Validate the security settings
      *
      * @param  array<string, mixed>  $data  The data to validate
-     * @return \Illuminate\Contracts\Validation\Validator The validator instance
+     * @return Validator The validator instance
      */
-    public static function security(array $data): \Illuminate\Contracts\Validation\Validator
+    public static function security(array $data): Validator
     {
         $rules = [
             'password_last_changed_at' => 'nullable|date',
@@ -83,9 +83,9 @@ class UserSettingsValidators
      * Validate the display settings
      *
      * @param  array<string, mixed>  $data  The data to validate
-     * @return \Illuminate\Contracts\Validation\Validator The validator instance
+     * @return Validator The validator instance
      */
-    public static function display(array $data): \Illuminate\Contracts\Validation\Validator
+    public static function display(array $data): Validator
     {
         $rules = [
             'appearance' => 'required|string|in:' . implode(',', Appearance::values()),
@@ -104,9 +104,9 @@ class UserSettingsValidators
      * Validate the notifications settings
      *
      * @param  array<string, mixed>  $data  The data to validate
-     * @return \Illuminate\Contracts\Validation\Validator The validator instance
+     * @return Validator The validator instance
      */
-    public static function notifications(array $data): \Illuminate\Contracts\Validation\Validator
+    public static function notifications(array $data): Validator
     {
         $rules = [
             'email' => 'required|boolean',

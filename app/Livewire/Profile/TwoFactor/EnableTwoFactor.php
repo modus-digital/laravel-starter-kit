@@ -29,6 +29,10 @@ class EnableTwoFactor extends Component
 
     public string $code = '';
 
+    /**
+     * Mount the component and set the user.
+     * The mount function will also generate a new secret and QR code, each time the component is mounted.
+     */
     public function mount(?Authenticatable $user = null): void
     {
         $g2fa = new Google2FA();
@@ -55,6 +59,10 @@ class EnableTwoFactor extends Component
         $this->qrCode = preg_replace($pattern, $replacement, $this->qrCode);
     }
 
+    /**
+     * Enable the two-factor authentication.
+     * If the two-factor authentication is enabled, the user will be redirected to the download page for the backup codes.
+     */
     public function enable(): ?StreamedResponse
     {
         $g2fa = new Google2FA();
@@ -97,6 +105,9 @@ class EnableTwoFactor extends Component
         return null;
     }
 
+    /**
+     * Generate recovery codes.
+     */
     private function generateRecoveryCodes(int $count = 8): array
     {
         return collect(range(1, $count))
@@ -104,6 +115,11 @@ class EnableTwoFactor extends Component
             ->toArray();
     }
 
+    /**
+     * Render the component.
+     *
+     * @return View
+     */
     public function render()
     {
         return view('livewire.profile.two-factor.enable-two-factor');

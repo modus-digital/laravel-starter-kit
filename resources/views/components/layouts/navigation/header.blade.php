@@ -45,6 +45,18 @@
         </a>
       </div>
       <div class="flex items-center lg:order-2">
+        @if (session()->has('impersonating_user_id'))
+            <form action="{{ route('impersonate.leave') }}" method="POST">
+                @csrf
+
+                <button type="submit" class="cursor-pointer text-sm text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600 px-4 py-2 transition-colors duration-200">
+                  <div class="flex items-center">
+                    <x-heroicon-o-arrow-left-on-rectangle class="w-4 h-4 mr-2" />
+                    <span>{{ __('ui.navigation.header.leave_impersonation') }}</span>
+                  </div>
+                </button>
+            </form>
+        @endif
         <button
           type="button"
           class="flex mx-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"

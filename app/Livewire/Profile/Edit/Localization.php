@@ -18,6 +18,9 @@ class Localization extends Component
 
     public string $dateFormat = '';
 
+    /**
+     * Mount the component and set the user. Also set the localization settings.
+     */
     public function mount(?Authenticatable $user = null): void
     {
         $this->user = $user;
@@ -29,6 +32,9 @@ class Localization extends Component
         $this->dateFormat = $this->localizationSettings->get('date_format');
     }
 
+    /**
+     * Update the localization settings.
+     */
     public function updateLocalizationSettings(): void
     {
         $user = Auth::user();
@@ -43,6 +49,11 @@ class Localization extends Component
         $this->success('Localization settings updated successfully');
     }
 
+    /**
+     * Render the component.
+     *
+     * @return View
+     */
     public function render()
     {
         return view('livewire.profile.edit.localization');
