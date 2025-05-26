@@ -1,19 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Pages;
 
 use App\Enums\RBAC\Permission;
 use Illuminate\Contracts\Support\Htmlable;
 use ShuvroRoy\FilamentSpatieLaravelBackup\Pages\Backups as BaseBackups;
 
+/**
+ * Backups page for managing application backups.
+ *
+ * This page provides interfaces for:
+ * - Viewing existing backups
+ * - Creating new backups
+ * - Managing backup schedules
+ * - Restoring from backups
+ *
+ * @since 1.0.0
+ */
 class BackupsPage extends BaseBackups
 {
+    /**
+     * The sort order for navigation items.
+     */
     public static ?int $navigationSort = 2;
 
     /**
-     * Determine if the user can access the backups page.
+     * Determine if the current user can access the backups page.
      *
-     * @return bool
+     * @return bool True if the user has permission to access backups
      */
     public static function canAccess(): bool
     {
@@ -21,9 +37,9 @@ class BackupsPage extends BaseBackups
     }
 
     /**
-     * Get the slug for the backups page.
+     * Get the URL slug for the backups page.
      *
-     * @return string
+     * @return string The page slug
      */
     public static function getSlug(): string
     {
@@ -32,9 +48,8 @@ class BackupsPage extends BaseBackups
 
     /**
      * Get the navigation icon for the backups page.
-     * This is based on heroicon components
      *
-     * @return string|Htmlable|null
+     * @return string|Htmlable|null The heroicon component name
      */
     public static function getNavigationIcon(): string|Htmlable|null
     {
@@ -44,7 +59,7 @@ class BackupsPage extends BaseBackups
     /**
      * Get the navigation label for the backups page.
      *
-     * @return string
+     * @return string The navigation label
      */
     public static function getNavigationLabel(): string
     {
@@ -52,9 +67,9 @@ class BackupsPage extends BaseBackups
     }
 
     /**
-     * Get the heading for the backups page.
+     * Get the page heading for the backups page.
      *
-     * @return string
+     * @return string The page heading
      */
     public function getHeading(): string
     {
@@ -62,9 +77,9 @@ class BackupsPage extends BaseBackups
     }
 
     /**
-     * Get the navigation group for the backups page.
+     * Get the navigation group this page belongs to.
      *
-     * @return string|null
+     * @return string|null The navigation group name
      */
     public static function getNavigationGroup(): ?string
     {

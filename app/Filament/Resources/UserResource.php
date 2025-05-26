@@ -1,121 +1,151 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
-use App\Enums\RBAC\Permission;
-use App\Enums\RBAC\Role;
-use App\Filament\Resources\UserResource\Pages\CreateUser;
-use App\Filament\Resources\UserResource\Pages\EditUser;
-use App\Filament\Resources\UserResource\Pages\ListUsers;
-use App\Models\Session;
-use App\Models\User;
+use App\Enums\RBAC\{Permission, Role};
+use App\Filament\Resources\UserResource\Pages\{CreateUser, EditUser, ListUsers};
+use App\Models\{Session, User};
 use DateTime;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\{KeyValue, Repeater, Section, Select, TextInput};
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\{BulkActionGroup, DeleteBulkAction, EditAction};
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
-use Override;
 
+/**
+ * Resource for managing users in the application.
+ *
+ * This resource provides CRUD operations for users, including:
+ * - Creating and editing user profiles
+ * - Managing user roles and permissions
+ * - Viewing session information
+ * - User impersonation functionality
+ *
+ * @since 1.0.0
+ */
 class UserResource extends Resource
 {
-    #region UI Configuration
-
-    // The model the resource corresponds to.
+    /**
+     * The Eloquent model that this resource corresponds to.
+     */
     protected static ?string $model = User::class;
 
-    // The icon of the resource.
+    /**
+     * The navigation icon displayed in the admin panel.
+     */
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    // The text for the navigation label.
-    protected static ?string $navigationLabel = 'Gebruikers';
-
-    // The slug for the resource
+    /**
+     * The URL slug for this resource.
+     */
     protected static ?string $slug = '/users';
 
-    // The label for this resource.
+    /**
+     * Get the navigation label displayed in the admin panel.
+     *
+     * @return string The navigation label
+     */
+    public static function getNavigationLabel(): string
+    {
+        return __('admin.resources.users.label.plural');
+    }
+
+    /**
+     * Get the navigation group this resource belongs to.
+     *
+     * @return string|null The navigation group name
+     */
+    public static function getNavigationGroup(): ?string
+    {
+        return __('admin.navigation.groups.beheer');
+    }
+
+    /**
+     * Get the singular label for this resource.
+     *
+     * @return string The singular model label
+     */
     public static function getModelLabel(): string
     {
-        return 'Gebruiker';
+        return __('admin.resources.users.label.singular');
     }
 
-    // The plural label for this resource.
+    /**
+     * Get the plural label for this resource.
+     *
+     * @return string The plural model label
+     */
     public static function getPluralModelLabel(): string
     {
-        return 'Gebruikers';
+        return __('admin.resources.users.label.plural');
     }
 
-    #endregion
-
-    // Defines the form for viewing user details.
+    /**
+     * Define the form schema for user management.
+     *
+     * @param Form $form The form instance
+     * @return Form The configured form
+     */
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-
-                Section::make('Persoonlijke gegevens')
-                    ->description('Hier bewerk je de persoonlijke informatie van deze gebruiker.')
+                Section::make(__('admin.resources.users.form.sections.personal_information.label'))
+                    ->description(__('admin.resources.users.form.sections.personal_information.description'))
                     ->aside()
                     ->columns(3)
                     ->schema([
-
                         TextInput::make('first_name')
-                            ->label('Voornaam')
+                            ->label(__('admin.resources.users.form.sections.personal_information.first_name'))
                             ->required()
                             ->maxLength(255),
 
                         TextInput::make('last_name_prefix')
-                            ->label('Tussenvoegsel')
+                            ->label(__('admin.resources.users.form.sections.personal_information.last_name_prefix'))
                             ->maxLength(255),
 
                         TextInput::make('last_name')
-                            ->label('Achternaam')
+                            ->label(__('admin.resources.users.form.sections.personal_information.last_name'))
                             ->maxLength(255),
 
                         TextInput::make('email')
-                            ->label('E-mailadres')
+                            ->label(__('admin.resources.users.form.sections.personal_information.email'))
                             ->columnSpan(2)
                             ->required()
                             ->email()
                             ->maxLength(255),
                     ]),
 
-                Section::make('Sessie-informatie')
-                    ->description('Hier vind je informatie over de actieve sessies van de gebruiker.')
+                Section::make(__('admin.resources.users.form.sections.session_information.label'))
+                    ->description(__('admin.resources.users.form.sections.session_information.description'))
                     ->aside()
                     ->hidden(fn(string $operation): bool => $operation !== 'edit')
                     ->schema([
-
                         TextInput::make('last_login_at')
-                            ->label('Laatst ingelogd op')
+                            ->label(__('admin.resources.users.form.sections.session_information.last_login_at'))
                             ->prefixIcon('heroicon-o-calendar')
                             ->formatStateUsing(
                                 fn(?User $record): string => $record?->last_login_at ?
                                     ($record?->last_login_at instanceof DateTime ?
                                         $record?->last_login_at->format('d-m-Y H:i') :
                                         $record?->last_login_at) :
-                                    'Nog niet ingelogd'
+                                    'Not logged in yet'
                             )
                             ->disabled(),
 
                         Repeater::make('sessions')
-                            ->label('Actieve sessies')
+                            ->label(__('admin.resources.users.form.sections.session_information.sessions.label'))
                             ->relationship('sessions')
                             ->columns(2)
                             ->deletable(function (array $state): bool {
-
                                 if (! array_key_exists('id', $state)) {
                                     return false;
                                 }
@@ -135,22 +165,21 @@ class UserResource extends Resource
                             ->reorderable(false)
                             ->addable(false)
                             ->collapsed()
-                            ->itemLabel(fn(array $state): string => array_key_exists('id', $state) ? 'ID: ' . $state['id'] : 'ID onbekend')
+                            ->itemLabel(fn(array $state): string => array_key_exists('id', $state) ? 'ID: ' . $state['id'] : 'ID unknown')
                             ->schema([
-
                                 TextInput::make('ip_address')
-                                    ->label('IP-adres')
+                                    ->label(__('admin.resources.users.form.sections.session_information.sessions.ip_address'))
                                     ->prefixIcon('heroicon-o-globe-alt')
                                     ->disabled(),
 
                                 TextInput::make('expires_at')
-                                    ->label('Verloopt op')
+                                    ->label(__('admin.resources.users.form.sections.session_information.sessions.expires_at'))
                                     ->prefixIcon('heroicon-o-clock')
                                     ->formatStateUsing(fn(?Session $record): ?string => $record?->expires_at)
                                     ->disabled(),
 
                                 KeyValue::make('session_info')
-                                    ->label('Apparaat-info')
+                                    ->label(__('admin.resources.users.form.sections.session_information.sessions.device_info'))
                                     ->addable(false)
                                     ->keyLabel('Type')
                                     ->valueLabel('Details')
@@ -159,26 +188,23 @@ class UserResource extends Resource
                                     ->editableValues(false)
                                     ->columnSpan(2)
                                     ->formatStateUsing(fn(?Session $record): array => [
-                                        'Browser' => $record?->session_info['device']['browser'],
-                                        'Platform' => $record?->session_info['device']['platform'],
-                                        'Apparaat' => match (true) {
-                                            $record?->session_info['device']['is_desktop'] => 'Desktop',
-                                            $record?->session_info['device']['is_mobile'] => 'Mobiel',
-                                            $record?->session_info['device']['is_tablet'] => 'Tablet',
-                                            default => 'Onbekend',
+                                        __('admin.resources.users.form.sections.session_information.sessions.browser') => $record?->session_info['device']['browser'],
+                                        __('admin.resources.users.form.sections.session_information.sessions.platform') => $record?->session_info['device']['platform'],
+                                        __('admin.resources.users.form.sections.session_information.sessions.device') => match (true) {
+                                            $record?->session_info['device']['is_desktop'] => __('admin.resources.users.form.sections.session_information.sessions.desktop'),
+                                            $record?->session_info['device']['is_mobile'] => __('admin.resources.users.form.sections.session_information.sessions.mobile'),
+                                            $record?->session_info['device']['is_tablet'] => __('admin.resources.users.form.sections.session_information.sessions.tablet'),
+                                            default => __('admin.resources.users.form.sections.session_information.sessions.unknown'),
                                         },
                                     ]),
-
                             ]),
-
                     ]),
 
-                Section::make('Toegangscontrole')
-                    ->description('Hier beheer je de toegang van de gebruiker tot de applicatie.')
+                Section::make(__('admin.resources.users.form.sections.access_control.label'))
+                    ->description(__('admin.resources.users.form.sections.access_control.description'))
                     ->aside()
                     ->columns(3)
                     ->schema([
-
                         Select::make('role')
                             ->relationship(name: 'roles', titleAttribute: 'name')
                             ->multiple()
@@ -186,56 +212,53 @@ class UserResource extends Resource
                             ->preload()
                             ->columnSpan(3)
                             ->required()
-                            ->label('Rol'),
+                            ->label(__('admin.resources.users.form.sections.access_control.role')),
 
                         TextInput::make('password')
-                            ->label('Nieuw wachtwoord instellen')
+                            ->label(__('admin.resources.users.form.sections.access_control.new_password'))
                             ->minLength(8)
                             ->password()
                             ->required(fn(string $operation) => $operation === 'create')
                             ->revealable()
                             ->columnSpan(2),
-
                     ]),
-
             ]);
     }
 
-    // Defines the table for displaying users.
+    /**
+     * Define the table schema for displaying users.
+     *
+     * @param Table $table The table instance
+     * @return Table The configured table
+     */
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-
-                // Column for name
                 TextColumn::make('first_name')
-                    ->label('Volledige naam')
+                    ->label(__('admin.resources.users.table.name'))
                     ->formatStateUsing(fn(?User $record): string => sprintf('%s %s %s', $record?->first_name, $record?->last_name_prefix, $record?->last_name))
                     ->searchable()
                     ->sortable(),
 
-                // Column for email
                 TextColumn::make('email')
-                    ->label('E-mailadres')
+                    ->label(__('admin.resources.users.table.email'))
                     ->searchable()
                     ->sortable(),
 
-                // Column for displaying role
                 TextColumn::make('')
-                    ->label('Rol')
-                    ->getStateUsing(fn(?User $record): string => Role::from($record?->roles->first()?->name)->displayName() ?? 'Geen rol')
+                    ->label(__('admin.resources.users.table.role'))
+                    ->getStateUsing(fn(?User $record): string => Role::from($record?->roles->first()?->name)->displayName() ?? 'No role')
                     ->badge(),
-
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\Action::make('impersonate')
-                    ->label('Inloggen als')
+                    ->label(__('admin.resources.users.actions.impersonate'))
                     ->icon('heroicon-o-arrow-left-end-on-rectangle')
                     ->color(function (?User $record): array {
-
                         /** @var User $currentUser */
                         $currentUser = Auth::user();
 
@@ -250,7 +273,6 @@ class UserResource extends Resource
                         return Color::Green;
                     })
                     ->disabled(function (?User $record): bool {
-
                         /** @var User $currentUser */
                         $currentUser = Auth::user();
 
@@ -261,14 +283,13 @@ class UserResource extends Resource
                         return ! $currentUser->hasPermissionTo(Permission::CAN_IMPERSONATE_USERS);
                     })
                     ->action(function (?User $record) {
-
                         /** @var User $currentUser */
                         $currentUser = Auth::user();
 
                         if (! $currentUser || ! $currentUser->hasPermissionTo(Permission::CAN_IMPERSONATE_USERS)) {
                             Notification::make()
-                                ->title('Je hebt geen toegang tot deze actie')
-                                ->body('Je hebt niet de juiste rechten om deze actie uit te voeren.')
+                                ->title(__('admin.resources.users.notifications.impersonate.title'))
+                                ->body(__('admin.resources.users.notifications.impersonate.message'))
                                 ->color(Color::Red)
                                 ->send();
 
@@ -285,7 +306,7 @@ class UserResource extends Resource
                     }),
 
                 EditAction::make()
-                    ->label('Bewerken'),
+                    ->label(__('admin.resources.users.actions.edit')),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
@@ -294,13 +315,21 @@ class UserResource extends Resource
             ]);
     }
 
-    // Returns the related pages for the resource.
+    /**
+     * Get the relation managers for this resource.
+     *
+     * @return array<string> Array of relation manager classes
+     */
     public static function getRelations(): array
     {
         return [];
     }
 
-    // Returns the pages for the resource.
+    /**
+     * Get the pages associated with this resource.
+     *
+     * @return array<string, mixed> Array of page routes
+     */
     public static function getPages(): array
     {
         return [

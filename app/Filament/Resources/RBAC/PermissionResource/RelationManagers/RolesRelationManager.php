@@ -14,7 +14,6 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Override;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -23,9 +22,6 @@ class RolesRelationManager extends RelationManager
 {
     // The name of the relationship.
     protected static string $relationship = 'roles';
-
-    // The title for this relation manager.
-    protected static ?string $title = 'Rollen';
 
     // Label for the attachment button.
     protected static ?string $inverseRelationshipName = 'permissies';
