@@ -7,10 +7,11 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "lint:fix": "vendor\\bin\\php-cs-fixer fix --verbose"
+    "lint:fix": "vendor\\bin\\php-cs-fixer fix --verbose",
+    "pre-push-hook": "node scripts/pre-push-hook.js"
   },
   "simple-git-hooks": {
-    "pre-push": "npm run lint:fix && git commit -am '[HOOK] Ran php-cs-fixer to fix formatting issues'"
+    "pre-push": "npm run pre-push-hook"
   },
   "dependencies": {
     "@sentry/browser": "^9.22.0",
