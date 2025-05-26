@@ -93,7 +93,7 @@
     "extra": {
         "hooks": {
             "pre-push": [
-                "composer run lint:fix",
+                "./vendor/bin/php-cs-fixer fix --verbose",
                 "git commit -am '[HOOK] Ran php-cs-fixer to fix formatting issues'"
             ]
         },
