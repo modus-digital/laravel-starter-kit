@@ -17,7 +17,7 @@ test('user name accessor handles empty names', function () {
         'last_name' => '',
     ]);
 
-        expect($user->name)->toBe('  ');
+    expect($user->name)->toBe('  ');
 });
 
 test('user name accessor includes last name prefix', function () {
