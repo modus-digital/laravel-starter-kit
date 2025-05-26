@@ -43,7 +43,7 @@ class Settings extends BaseSettings
      */
     public static function getNavigationGroup(): ?string
     {
-        return __('admin.navigation.groups.applicatie-info');
+                        return __('admin.navigation.groups.applicatie-info');
     }
 
     /**
