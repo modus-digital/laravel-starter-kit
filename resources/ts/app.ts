@@ -6,18 +6,20 @@ import axios from 'axios';
 axios.get('/api/sentry').then( response => {
     const { environment, sentry, enabled } = response.data;
 
-    const replaysSessionSampleRate: number = environment === 'production' ? 0.1 : 0.75;
-    const replaysOnErrorSampleRate: number = 1.0;
+    if (enabled) {
+        const replaysSessionSampleRate: number = environment === 'production' ? 0.1 : 0.75;
+        const replaysOnErrorSampleRate: number = 1.0;
 
-    const shouldEnableFeedback: boolean = environment !== 'production' || window.location.href.includes('/admin');
-    const feedbackIntegration = shouldEnableFeedback
-        ? [Sentry.feedbackIntegration({ colorScheme: 'system' })]
-        : [];
+        const shouldEnableFeedback: boolean = environment !== 'production' || window.location.href.includes('/admin');
+        const feedbackIntegration = shouldEnableFeedback
+            ? [Sentry.feedbackIntegration({ colorScheme: 'system' })]
+            : [];
 
-    Sentry.init({
-        dsn: sentry.dsn,
-        integrations: [...feedbackIntegration],
-        replaysSessionSampleRate,
-        replaysOnErrorSampleRate,
-    })
+        Sentry.init({
+            dsn: sentry.dsn,
+            integrations: [...feedbackIntegration],
+            replaysSessionSampleRate,
+            replaysOnErrorSampleRate,
+        });
+    }
 })
