@@ -21,7 +21,7 @@ test('user can login with valid credentials', function () {
         ->set('password', 'SecurePassword123!')
         ->call('authenticate');
 
-    $response->assertRedirect(route('app.dashboard'));
+    $response->assertRedirect(route('app.home'));
     assertAuthenticated();
     expect(auth()->id())->toBe($user->id);
 });

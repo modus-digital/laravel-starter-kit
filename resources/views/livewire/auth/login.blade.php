@@ -35,7 +35,7 @@ new #[Layout('components.layouts.guest')] class extends Component
 
             RateLimiter::clear($throttleKey);
 
-            return redirect()->intended(route('app.dashboard'));
+            return redirect()->intended(route('app.home'));
         }
 
         RateLimiter::hit($throttleKey, 60);
