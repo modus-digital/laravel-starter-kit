@@ -1,0 +1,15 @@
+@layer base {
+    [data-theme="yellow"] {
+        --color-primary-50: oklch(0.987 0.026 102.212);
+        --color-primary-100: oklch(0.973 0.071 103.193);
+        --color-primary-200: oklch(0.945 0.129 101.54);
+        --color-primary-300: oklch(0.905 0.182 98.111);
+        --color-primary-400: oklch(0.852 0.199 91.936);
+        --color-primary-500: oklch(0.795 0.184 86.047);
+        --color-primary-600: oklch(0.681 0.162 75.834);
+        --color-primary-700: oklch(0.554 0.135 66.442);
+        --color-primary-800: oklch(0.476 0.114 61.907);
+        --color-primary-900: oklch(0.421 0.095 57.708);
+        --color-primary-950: oklch(0.286 0.066 53.813);
+    }
+}

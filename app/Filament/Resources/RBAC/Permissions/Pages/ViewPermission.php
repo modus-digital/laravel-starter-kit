@@ -1,0 +1,13 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Filament\Resources\RBAC\Permissions\Pages;
+
+use App\Filament\Resources\RBAC\Permissions\PermissionResource;
+use Filament\Resources\Pages\ViewRecord;
+
+final class ViewPermission extends ViewRecord
+{
+    protected static string $resource = PermissionResource::class;
+}
