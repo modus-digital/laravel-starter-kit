@@ -11,7 +11,7 @@
         </title>
     </head>
 
-    <body class="bg-zinc-50 antialiased dark:bg-zinc-900">
+    <body class="h-screen overflow-hidden bg-zinc-50 antialiased dark:bg-zinc-900">
         <x-toaster-hub />
 
         {{ $slot }}
