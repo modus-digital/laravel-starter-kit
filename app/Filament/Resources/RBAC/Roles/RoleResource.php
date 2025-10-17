@@ -1,32 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\RBAC\Roles;
 
-use App\Filament\Resources\RBAC\Roles\Pages\CreateRole;
-use App\Filament\Resources\RBAC\Roles\Pages\EditRole;
 use App\Filament\Resources\RBAC\Roles\Pages\ListRoles;
 use App\Filament\Resources\RBAC\Roles\Pages\ViewRole;
 use App\Filament\Resources\RBAC\Roles\RelationManagers\PermissionRelationManager;
 use App\Filament\Resources\RBAC\Roles\Schemas\RoleForm;
 use App\Filament\Resources\RBAC\Roles\Tables\RolesTable;
-use Spatie\Permission\Models\Role;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Spatie\Permission\Models\Role;
 use UnitEnum;
 
-class RoleResource extends Resource
+final class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-    protected static string|UnitEnum|null $navigationGroup = "System";
-    protected static ?string $navigationParentItem = "Access Control";
-    protected static ?string $navigationLabel = "Roles";
+
+    protected static string|UnitEnum|null $navigationGroup = 'System';
+
+    protected static ?string $navigationParentItem = 'Access Control';
+
+    protected static ?string $navigationLabel = 'Roles';
+
     protected static bool $shouldRegisterNavigation = true;
+
     protected static ?int $navigationSort = 2;
+
     protected static ?string $slug = 'rbac/roles';
 
     public static function form(Schema $schema): Schema

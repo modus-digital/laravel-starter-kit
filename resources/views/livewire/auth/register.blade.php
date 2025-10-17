@@ -67,6 +67,8 @@ new #[Layout('components.layouts.guest')] class extends Component
                 {{ __('auth.register.title') }}
             </h1>
 
+            @renderHook(App\Enums\Hooks::AUTH_REGISTER_FORM_BEFORE)
+
             <form class="space-y-4 md:space-y-6" wire:submit="register">
                 <div>
                     <label for="name" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">{{ __('auth.register.name') }}</label>
@@ -99,6 +101,8 @@ new #[Layout('components.layouts.guest')] class extends Component
                     {{ __('auth.register.already_have_account') }} <a href="{{ route('login') }}" wire:navigate class="font-medium text-primary-600 hover:underline dark:text-primary-500">{{ __('auth.register.sign_in') }}</a>
                 </p>
             </form>
+
+            @renderHook(App\Enums\Hooks::AUTH_REGISTER_FORM_AFTER)
         </div>
     </div>
 </div>

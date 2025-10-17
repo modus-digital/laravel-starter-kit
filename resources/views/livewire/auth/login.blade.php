@@ -59,6 +59,8 @@ new #[Layout('components.layouts.guest')] class extends Component
                 {{ __('auth.login.title') }}
             </h1>
 
+            @renderHook(App\Enums\Hooks::AUTH_LOGIN_FORM_BEFORE)
+
             <form class="space-y-4 md:space-y-6" wire:submit="authenticate">
                 {{-- Email --}}
                 <div>
@@ -96,6 +98,8 @@ new #[Layout('components.layouts.guest')] class extends Component
                     {{ __('auth.login.no_account') }} <a href="{{  route('register') }}" wire:navigate class="font-medium text-primary-600 hover:underline dark:text-primary-500">{{ __('auth.login.sign_up') }}</a>
                 </p>
             </form>
+
+            @renderHook(App\Enums\Hooks::AUTH_LOGIN_FORM_AFTER)
         </div>
     </div>
 </div>

@@ -259,4 +259,3 @@ test('listens to two-factor-updated event', function () {
 
     expect($component)->toBeTruthy();
 });
-

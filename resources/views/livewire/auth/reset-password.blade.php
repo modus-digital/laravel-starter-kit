@@ -86,6 +86,8 @@ new #[Layout('components.layouts.guest')] class extends Component
                 {{ __('auth.reset_password.title') }}
             </h1>
 
+            @renderHook(App\Enums\Hooks::AUTH_RESET_PASSWORD_FORM_BEFORE)
+
             <form class="space-y-4 md:space-y-6" wire:submit="resetPassword">
                 <div>
                     <label for="email" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">{{ __('auth.reset_password.email') }}</label>
@@ -109,6 +111,8 @@ new #[Layout('components.layouts.guest')] class extends Component
                     {{ __('auth.reset_password.reset_password') }}
                 </button>
             </form>
+
+            @renderHook(App\Enums\Hooks::AUTH_RESET_PASSWORD_FORM_AFTER)
         </div>
     </div>
 </div>

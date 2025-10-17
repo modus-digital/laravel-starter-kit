@@ -173,4 +173,3 @@ test('avatar resets after successful save', function () {
         ->call('save')
         ->assertSet('avatar', null);
 });
-

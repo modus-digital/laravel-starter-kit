@@ -213,4 +213,3 @@ test('password last changed timestamp is ISO format', function () {
 
     expect($timestamp)->toMatch('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z$/');
 });
-

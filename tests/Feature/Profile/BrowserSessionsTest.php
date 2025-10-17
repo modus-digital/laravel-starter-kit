@@ -269,4 +269,3 @@ test('uses custom session connection if configured', function () {
 
     expect(DB::table('sessions')->where('user_id', $user->id)->count())->toBe(0);
 });
-

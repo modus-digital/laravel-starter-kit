@@ -51,7 +51,7 @@ final class UsersByRole extends ChartWidget
                 'legend' => [
                     'display' => true,
                     'position' => 'bottom',
-                    'offsetY' => 20
+                    'offsetY' => 20,
                 ],
             ],
             'maintainAspectRatio' => false,

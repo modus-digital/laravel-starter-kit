@@ -152,4 +152,3 @@ test('can update appearance to system', function () {
 
     expect($setting->value['appearance'])->toBe('system');
 });
-

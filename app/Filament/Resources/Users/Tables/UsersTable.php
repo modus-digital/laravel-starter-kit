@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Users\Tables;
 
 use App\Enums\ActivityStatus;
@@ -12,12 +14,13 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Vite;
+use ModusDigital\SocialAuthentication\Enums\AuthenticationProvider;
 
-class UsersTable
+final class UsersTable
 {
     public static function configure(Table $table): Table
     {
@@ -35,6 +38,15 @@ class UsersTable
 
                 TextColumn::make('email')
                     ->label(__('admin.users.table.email'))
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('provider')
+                    ->label(__('admin.users.table.provider'))
+                    ->getStateUsing(fn (?User $record) => $record?->provider ? AuthenticationProvider::from($record?->provider)->getLabel() : 'Email')
+                    ->icon(fn (?User $record) => $record?->provider ? AuthenticationProvider::from($record?->provider)->getIcon() : 'heroicon-o-envelope')
+                    ->color(fn (?User $record) => $record?->provider ? AuthenticationProvider::from($record?->provider)->getColor() : 'primary')
+                    ->badge()
                     ->sortable()
                     ->searchable(),
 

@@ -41,6 +41,7 @@ return [
                 'access_health_check' => 'Access health check',
                 'access_activity_logs' => 'Access activity logs',
                 'manage_settings' => 'Manage settings',
+                'manage_oauth_providers' => 'Manage OAuth providers',
             ],
             'description' => [
                 'access_control_panel' => 'Grants access to the administrative control panel where system management and configuration takes place.',
@@ -49,6 +50,7 @@ return [
                 'access_health_check' => 'Monitor system health, performance metrics, and service availability to maintain application reliability.',
                 'access_activity_logs' => 'Review detailed audit trails of user actions and system events for security and compliance purposes.',
                 'manage_settings' => 'Configure and modify application settings, preferences, and system-wide configuration options.',
+                'manage_oauth_providers' => 'Configure and manage third-party OAuth authentication providers like Google, GitHub, and Facebook.',
             ],
         ],
     ],

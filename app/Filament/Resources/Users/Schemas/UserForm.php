@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Users\Schemas;
 
-use App\Filament\CustomFields\RoleSelect;
 use App\Enums\ActivityStatus;
+use App\Filament\CustomFields\RoleSelect;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -11,7 +13,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
-class UserForm
+final class UserForm
 {
     public static function configure(Schema $schema): Schema
     {
@@ -39,7 +41,7 @@ class UserForm
                                 TextInput::make('email')
                                     ->label(__('admin.users.form.personal_information.email'))
                                     ->required(),
-                            ])
+                            ]),
                     ]),
 
                 Section::make(__('admin.users.form.security.title'))
@@ -58,7 +60,7 @@ class UserForm
                             ->native(false)
                             ->options(ActivityStatus::options())
                             ->required(),
-                    ])
+                    ]),
             ]);
     }
 }

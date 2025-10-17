@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Enums\RBAC\Permission;
 use App\Enums\ActivityStatus;
+use App\Enums\RBAC\Permission;
 use App\Traits\HasSettings;
 use Carbon\CarbonInterface;
 use Filament\Models\Contracts\FilamentUser;
@@ -62,6 +62,8 @@ final class User extends Authenticatable implements FilamentUser, MustVerifyEmai
         'password',
         'avatar_path',
         'status',
+        'provider',
+        'email_verified_at',
     ];
 
     /**

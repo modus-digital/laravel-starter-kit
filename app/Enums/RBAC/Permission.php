@@ -12,6 +12,7 @@ enum Permission: string
     case ACCESS_HEALTH_CHECK = 'can_access_health_check';
     case ACCESS_ACTIVITY_LOGS = 'can_access_activity_logs';
     case MANAGE_SETTINGS = 'can_manage_settings';
+    case MANAGE_OAUTH_PROVIDERS = 'can_manage_oauth_providers';
 
     public function getFilamentColor(): string
     {
@@ -27,6 +28,7 @@ enum Permission: string
             self::ACCESS_HEALTH_CHECK => __('enums.rbac.permission.label.access_health_check'),
             self::ACCESS_ACTIVITY_LOGS => __('enums.rbac.permission.label.access_activity_logs'),
             self::MANAGE_SETTINGS => __('enums.rbac.permission.label.manage_settings'),
+            self::MANAGE_OAUTH_PROVIDERS => __('enums.rbac.permission.label.manage_oauth_providers'),
         };
     }
 
@@ -39,6 +41,7 @@ enum Permission: string
             self::ACCESS_HEALTH_CHECK => __('enums.rbac.permission.description.access_health_check'),
             self::ACCESS_ACTIVITY_LOGS => __('enums.rbac.permission.description.access_activity_logs'),
             self::MANAGE_SETTINGS => __('enums.rbac.permission.description.manage_settings'),
+            self::MANAGE_OAUTH_PROVIDERS => __('enums.rbac.permission.description.manage_oauth_providers'),
         };
     }
 }

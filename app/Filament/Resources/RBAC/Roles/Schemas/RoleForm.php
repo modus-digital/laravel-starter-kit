@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\RBAC\Roles\Schemas;
 
 use App\Enums\RBAC\Role as RBACRole;
@@ -8,7 +10,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Spatie\Permission\Models\Role;
 
-class RoleForm
+final class RoleForm
 {
     public static function configure(Schema $schema): Schema
     {
@@ -26,7 +28,7 @@ class RoleForm
                         TextInput::make('name')
                             ->label(__('admin.rbac.roles.form.name'))
                             ->disabled(),
-                    ])
+                    ]),
             ]);
     }
 }

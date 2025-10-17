@@ -37,6 +37,7 @@ return [
             'avatar' => 'Avatar',
             'name' => 'Name',
             'email' => 'Email',
+            'provider' => 'Via',
             'role' => 'Role',
             'status' => 'Status',
             'created_at' => 'Created At',

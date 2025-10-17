@@ -195,4 +195,3 @@ test('can save preferences with default values', function () {
         ->toHaveKey('date_format')
         ->toHaveKey('time_format');
 });
-

@@ -12,9 +12,13 @@
     </head>
 
     <body class="h-screen overflow-hidden bg-zinc-50 antialiased dark:bg-zinc-900">
+        @renderHook(App\Enums\Hooks::BODY_START)
+
         <x-toaster-hub />
 
         {{ $slot }}
+
+        @renderHook(App\Enums\Hooks::BODY_END)
 
         @vite("resources/js/app.js")
         <script>

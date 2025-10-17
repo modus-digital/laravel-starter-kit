@@ -30,7 +30,7 @@ final class ControlPanelProvider extends PanelProvider
             ->id('control')
             ->path('control')
             ->viteTheme('resources/css/filament/control/theme.css')
-            ->colors([ 'primary' => Color::Amber, ])
+            ->colors(['primary' => Color::Amber])
             ->discoverResources(...$this->discover('resources'))
             ->discoverPages(...$this->discover('pages'))
             ->discoverWidgets(...$this->discover('widgets'))
@@ -43,9 +43,9 @@ final class ControlPanelProvider extends PanelProvider
     private function discover(string $type): array
     {
         return match ($type) {
-            'resources' => [ app_path('Filament/Resources'), 'App\Filament\Resources' ],
-            'pages' => [ app_path('Filament/Pages'), 'App\Filament\Pages' ],
-            'widgets' => [ app_path('Filament/Widgets'), 'App\Filament\Widgets' ],
+            'resources' => [app_path('Filament/Resources'), 'App\Filament\Resources'],
+            'pages' => [app_path('Filament/Pages'), 'App\Filament\Pages'],
+            'widgets' => [app_path('Filament/Widgets'), 'App\Filament\Widgets'],
         };
     }
 

@@ -17,6 +17,8 @@
 
                 {{ __('navigation.sidebar.dashboard') }}
             </x-layouts.navigation.nav-link>
+
+            @renderHook(App\Enums\Hooks::SIDEBAR_MENU)
         </ul>
     </div>
 </aside>

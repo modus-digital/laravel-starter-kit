@@ -23,7 +23,7 @@ beforeEach(function () {
 test('admin can create a new user through filament', function () {
     Notification::fake();
 
-    $roleId = \Spatie\Permission\Models\Role::where('name', Role::USER->value)->first()->id;
+    $roleId = Spatie\Permission\Models\Role::where('name', Role::USER->value)->first()->id;
 
     Livewire::test(CreateUser::class)
         ->fillForm([
@@ -41,7 +41,7 @@ test('admin can create a new user through filament', function () {
 test('password is automatically generated when creating user', function () {
     Notification::fake();
 
-    $roleId = \Spatie\Permission\Models\Role::where('name', Role::USER->value)->first()->id;
+    $roleId = Spatie\Permission\Models\Role::where('name', Role::USER->value)->first()->id;
 
     Livewire::test(CreateUser::class)
         ->fillForm([
@@ -63,7 +63,7 @@ test('password is automatically generated when creating user', function () {
 test('notification is sent with generated password after user creation', function () {
     Notification::fake();
 
-    $roleId = \Spatie\Permission\Models\Role::where('name', Role::USER->value)->first()->id;
+    $roleId = Spatie\Permission\Models\Role::where('name', Role::USER->value)->first()->id;
 
     Livewire::test(CreateUser::class)
         ->fillForm([
@@ -81,7 +81,7 @@ test('notification is sent with generated password after user creation', functio
         $user,
         AccountCreated::class,
         function ($notification) {
-            return strlen($notification->password) === 18;
+            return mb_strlen($notification->password) === 18;
         }
     );
 });
@@ -89,7 +89,7 @@ test('notification is sent with generated password after user creation', functio
 test('user can login with generated password', function () {
     Notification::fake();
 
-    $roleId = \Spatie\Permission\Models\Role::where('name', Role::USER->value)->first()->id;
+    $roleId = Spatie\Permission\Models\Role::where('name', Role::USER->value)->first()->id;
 
     Livewire::test(CreateUser::class)
         ->fillForm([

@@ -20,7 +20,9 @@
         "livewire/livewire": "^3.6",
         "livewire/volt": "^1.7",
         "masmerise/livewire-toaster": "^2.8",
+        "modus-digital/clients": "^0.1.0",
         "modus-digital/livewire-datatables": "^2.0",
+        "modus-digital/social-authentication": "^0.1.0",
         "nunomaduro/essentials": "^1.0",
         "pragmarx/google2fa": "^8.0",
         "shuvroroy/filament-spatie-laravel-backup": "^3.1",
@@ -99,5 +101,14 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "path",
+            "url": "modules/*",
+            "options": {
+                "symlink": true
+            }
+        }
+    ]
 }

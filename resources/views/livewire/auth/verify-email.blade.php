@@ -62,6 +62,8 @@ new #[Layout('components.layouts.guest')] class extends Component
                 </div>
             @enderror
 
+            @renderHook(App\Enums\Hooks::AUTH_VERIFY_EMAIL_FORM_BEFORE)
+
             <button wire:click="resend" type="button" class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                 {{ __('auth.verification.resend') }}
             </button>
@@ -72,6 +74,8 @@ new #[Layout('components.layouts.guest')] class extends Component
                     {{ __('auth.logout') }}
                 </button>
             </form>
+
+            @renderHook(App\Enums\Hooks::AUTH_VERIFY_EMAIL_FORM_AFTER)
         </div>
     </div>
 </div>

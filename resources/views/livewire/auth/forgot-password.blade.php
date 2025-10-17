@@ -56,6 +56,8 @@
             </div>
             @endif
 
+            @renderHook(App\Enums\Hooks::AUTH_FORGOT_PASSWORD_FORM_BEFORE)
+
             <form class="space-y-4 md:space-y-6" wire:submit="sendResetLink">
                 <div>
                     <label for="email" class="block mb-2 text-sm font-medium text-zinc-900 dark:text-white">
@@ -75,6 +77,8 @@
                     </a>
                 </p>
             </form>
+
+            @renderHook(App\Enums\Hooks::AUTH_FORGOT_PASSWORD_FORM_AFTER)
         </div>
     </div>
 </div>

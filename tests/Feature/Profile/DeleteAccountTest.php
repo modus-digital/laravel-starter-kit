@@ -237,4 +237,3 @@ test('account deletion is permanent', function () {
     expect(User::find($userId))->toBeNull();
     assertDatabaseMissing('users', ['email' => 'permanent@example.com']);
 });
-
