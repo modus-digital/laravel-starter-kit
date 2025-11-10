@@ -29,7 +29,7 @@ final class InstallAppModule extends Command
     public function handle()
     {
         $module = $this->argument('module');
-        $modulePath = base_path("modules/{$module}");
+        $modulePath = base_path("app-modules/{$module}");
 
         $this->info("Installing module: {$module} \n\n");
         $this->showRelated($modulePath, $module);

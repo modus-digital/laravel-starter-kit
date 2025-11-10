@@ -1,0 +1,26 @@
+{
+    "name": "modus-digital/clients",
+    "description": "",
+    "type": "library",
+    "version": "1.0",
+    "license": "proprietary",
+    "require": {
+        "filament/filament": "^4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "ModusDigital\\Clients\\": "src/",
+            "ModusDigital\\Clients\\Tests\\": "tests/",
+            "ModusDigital\\Clients\\Database\\Factories\\": "database/factories/",
+            "ModusDigital\\Clients\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ModusDigital\\Clients\\Providers\\ClientServiceProvider"
+            ]
+        }
+    }
+}

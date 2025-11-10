@@ -45,6 +45,13 @@ final class RoleResource extends Resource
         return RolesTable::configure($table);
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        $count = Role::count();
+
+        return $count > 0 ? (string) $count : null;
+    }
+
     public static function getRelations(): array
     {
         return [

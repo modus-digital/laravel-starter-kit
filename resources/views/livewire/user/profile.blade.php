@@ -66,7 +66,7 @@ new #[Layout('components.layouts.app')] class extends Component
                                     {{ $this->user?->name ?? __('user.profile.card.placeholder_name') }}
                                 </h3>
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-400">
-                                    {{ Role::tryFrom($this->user?->roles->first()->name)->getLabel() }}
+                                    {{ Role::tryFrom($this->user?->roles()->first()?->name)->getLabel() }}
                                 </span>
                             </div>
 

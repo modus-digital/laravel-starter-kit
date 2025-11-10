@@ -19,6 +19,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Stringable;
+use ModusDigital\Clients\Traits\HasClients;
 use Spatie\Permission\Traits\HasRoles;
 use Str;
 
@@ -42,9 +43,10 @@ use Str;
  */
 final class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
+    use HasClients;
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
-
     use HasRoles;
     use HasSettings;
     use HasUuids;

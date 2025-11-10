@@ -45,6 +45,13 @@ final class PermissionResource extends Resource
         return PermissionsTable::configure($table);
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        $count = Permission::count();
+
+        return $count > 0 ? (string) $count : null;
+    }
+
     public static function getRelations(): array
     {
         return [

@@ -17,18 +17,18 @@ enum Role: string
     public function getColor(): string
     {
         return match ($this) {
-            self::SUPER_ADMIN => 'green',
+            self::SUPER_ADMIN => 'red',
             self::ADMIN => 'blue',
-            self::USER => 'gray',
+            self::USER => 'green',
         };
     }
 
     public function getFilamentColor(): string
     {
         return match ($this) {
-            self::SUPER_ADMIN => 'success',
+            self::SUPER_ADMIN => 'danger',
             self::ADMIN => 'info',
-            self::USER => 'gray',
+            self::USER => 'success',
         };
     }
 

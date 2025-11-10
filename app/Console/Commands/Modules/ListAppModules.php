@@ -33,7 +33,7 @@ final class ListAppModules extends Command
 
         $composerJson = json_decode(file_get_contents(base_path('composer.json')), true);
 
-        $modulesPath = base_path('modules');
+        $modulesPath = base_path('app-modules');
         $modules = [];
 
         if (is_dir($modulesPath)) {
