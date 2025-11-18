@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Filament\Resources\Core\Users;
+
+use App\Filament\Resources\Core\Users\Pages\CreateUser;
+use App\Filament\Resources\Core\Users\Pages\EditUser;
+use App\Filament\Resources\Core\Users\Pages\ListUsers;
+use App\Filament\Resources\Core\Users\Schemas\UserForm;
+use App\Filament\Resources\Core\Users\Tables\UsersTable;
+use App\Models\User;
+use BackedEnum;
+use UnitEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+class UserResource extends Resource
+{
+    protected static ?string $model = User::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('navigation.groups.system');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('admin.users.navigation_label');
+    }
+
+    protected static bool $shouldRegisterNavigation = true;
+
+    protected static ?int $navigationSort = 1;
+
+    protected static ?string $slug = 'system/users';
+
+    public static function getNavigationBadge(): ?string
+    {
+        $count = User::count();
+
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return UserForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return UsersTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListUsers::route('/'),
+            'create' => CreateUser::route('/create'),
+            'edit' => EditUser::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
+}

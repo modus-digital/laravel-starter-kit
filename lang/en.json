@@ -1,0 +1,548 @@
+{
+    "auth": {
+        "failed": "These credentials do not match our records.",
+        "password": "The provided password is incorrect.",
+        "throttle": "Too many login attempts. Please try again in :seconds seconds.",
+        "pages": {
+            "login": {
+                "title": "Log in to your account",
+                "description": "Enter your email and password below to log in",
+                "page_title": "Log in",
+                "email": "Email address",
+                "email_placeholder": "email@example.com",
+                "password": "Password",
+                "password_placeholder": "Password",
+                "remember_me": "Remember me",
+                "forgot_password": "Forgot password?",
+                "submit": "Log in",
+                "no_account": "Don't have an account?",
+                "sign_up": "Sign up"
+            },
+            "register": {
+                "title": "Create an account",
+                "description": "Enter your details below to create your account",
+                "page_title": "Register",
+                "name": "Name",
+                "name_placeholder": "Full name",
+                "email": "Email address",
+                "email_placeholder": "email@example.com",
+                "password": "Password",
+                "password_placeholder": "Password",
+                "password_confirmation": "Confirm password",
+                "password_confirmation_placeholder": "Confirm password",
+                "submit": "Create account",
+                "have_account": "Already have an account?",
+                "login": "Log in"
+            },
+            "forgot_password": {
+                "title": "Forgot your password?",
+                "description": "No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.",
+                "page_title": "Forgot Password",
+                "email": "Email address",
+                "email_placeholder": "email@example.com",
+                "submit": "Email Password Reset Link",
+                "back_to_login": "Back to login"
+            },
+            "reset_password": {
+                "title": "Reset your password",
+                "description": "Enter your new password below",
+                "page_title": "Reset Password",
+                "email": "Email address",
+                "email_placeholder": "email@example.com",
+                "password": "New Password",
+                "password_placeholder": "New Password",
+                "password_confirmation": "Confirm Password",
+                "password_confirmation_placeholder": "Confirm Password",
+                "submit": "Reset Password"
+            },
+            "confirm_password": {
+                "title": "Confirm your password",
+                "description": "This is a secure area of the application. Please confirm your password before continuing.",
+                "page_title": "Confirm Password",
+                "password": "Password",
+                "password_placeholder": "Password",
+                "submit": "Confirm"
+            },
+            "verify_email": {
+                "title": "Verify your email address",
+                "description": "Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.",
+                "page_title": "Email Verification",
+                "sent": "A new verification link has been sent to your email address.",
+                "resend": "Resend Verification Email",
+                "logout": "Log Out"
+            },
+            "two_factor_challenge": {
+                "title": "Two-factor authentication",
+                "description": "Please confirm access to your account by entering the authentication code provided by your authenticator application.",
+                "recovery_description": "Please confirm access to your account by entering one of your emergency recovery codes.",
+                "page_title": "Two-Factor Challenge",
+                "code": "Code",
+                "code_placeholder": "Authentication code",
+                "recovery_code": "Recovery Code",
+                "recovery_code_placeholder": "Recovery code",
+                "use_recovery_code": "Use a recovery code",
+                "use_authentication_code": "Use an authentication code",
+                "submit": "Verify"
+            }
+        }
+    },
+    "pagination": {
+        "previous": "&laquo; Previous",
+        "next": "Next &raquo;"
+    },
+    "passwords": {
+        "reset": "Your password has been reset.",
+        "sent": "We have emailed your password reset link.",
+        "throttled": "Please wait before retrying.",
+        "token": "This password reset token is invalid.",
+        "user": "We can't find a user with that email address."
+    },
+    "validation": {
+        "accepted": "The :attribute field must be accepted.",
+        "accepted_if": "The :attribute field must be accepted when :other is :value.",
+        "active_url": "The :attribute field must be a valid URL.",
+        "after": "The :attribute field must be a date after :date.",
+        "after_or_equal": "The :attribute field must be a date after or equal to :date.",
+        "alpha": "The :attribute field must only contain letters.",
+        "alpha_dash": "The :attribute field must only contain letters, numbers, dashes, and underscores.",
+        "alpha_num": "The :attribute field must only contain letters and numbers.",
+        "any_of": "The :attribute field is invalid.",
+        "array": "The :attribute field must be an array.",
+        "ascii": "The :attribute field must only contain single-byte alphanumeric characters and symbols.",
+        "before": "The :attribute field must be a date before :date.",
+        "before_or_equal": "The :attribute field must be a date before or equal to :date.",
+        "between": {
+            "array": "The :attribute field must have between :min and :max items.",
+            "file": "The :attribute field must be between :min and :max kilobytes.",
+            "numeric": "The :attribute field must be between :min and :max.",
+            "string": "The :attribute field must be between :min and :max characters."
+        },
+        "boolean": "The :attribute field must be true or false.",
+        "can": "The :attribute field contains an unauthorized value.",
+        "confirmed": "The :attribute field confirmation does not match.",
+        "contains": "The :attribute field is missing a required value.",
+        "current_password": "The password is incorrect.",
+        "date": "The :attribute field must be a valid date.",
+        "date_equals": "The :attribute field must be a date equal to :date.",
+        "date_format": "The :attribute field must match the format :format.",
+        "decimal": "The :attribute field must have :decimal decimal places.",
+        "declined": "The :attribute field must be declined.",
+        "declined_if": "The :attribute field must be declined when :other is :value.",
+        "different": "The :attribute field and :other must be different.",
+        "digits": "The :attribute field must be :digits digits.",
+        "digits_between": "The :attribute field must be between :min and :max digits.",
+        "dimensions": "The :attribute field has invalid image dimensions.",
+        "distinct": "The :attribute field has a duplicate value.",
+        "doesnt_contain": "The :attribute field must not contain any of the following: :values.",
+        "doesnt_end_with": "The :attribute field must not end with one of the following: :values.",
+        "doesnt_start_with": "The :attribute field must not start with one of the following: :values.",
+        "email": "The :attribute field must be a valid email address.",
+        "ends_with": "The :attribute field must end with one of the following: :values.",
+        "enum": "The selected :attribute is invalid.",
+        "exists": "The selected :attribute is invalid.",
+        "extensions": "The :attribute field must have one of the following extensions: :values.",
+        "file": "The :attribute field must be a file.",
+        "filled": "The :attribute field must have a value.",
+        "gt": {
+            "array": "The :attribute field must have more than :value items.",
+            "file": "The :attribute field must be greater than :value kilobytes.",
+            "numeric": "The :attribute field must be greater than :value.",
+            "string": "The :attribute field must be greater than :value characters."
+        },
+        "gte": {
+            "array": "The :attribute field must have :value items or more.",
+            "file": "The :attribute field must be greater than or equal to :value kilobytes.",
+            "numeric": "The :attribute field must be greater than or equal to :value.",
+            "string": "The :attribute field must be greater than or equal to :value characters."
+        },
+        "hex_color": "The :attribute field must be a valid hexadecimal color.",
+        "image": "The :attribute field must be an image.",
+        "in": "The selected :attribute is invalid.",
+        "in_array": "The :attribute field must exist in :other.",
+        "in_array_keys": "The :attribute field must contain at least one of the following keys: :values.",
+        "integer": "The :attribute field must be an integer.",
+        "ip": "The :attribute field must be a valid IP address.",
+        "ipv4": "The :attribute field must be a valid IPv4 address.",
+        "ipv6": "The :attribute field must be a valid IPv6 address.",
+        "json": "The :attribute field must be a valid JSON string.",
+        "list": "The :attribute field must be a list.",
+        "lowercase": "The :attribute field must be lowercase.",
+        "lt": {
+            "array": "The :attribute field must have less than :value items.",
+            "file": "The :attribute field must be less than :value kilobytes.",
+            "numeric": "The :attribute field must be less than :value.",
+            "string": "The :attribute field must be less than :value characters."
+        },
+        "lte": {
+            "array": "The :attribute field must not have more than :value items.",
+            "file": "The :attribute field must be less than or equal to :value kilobytes.",
+            "numeric": "The :attribute field must be less than or equal to :value.",
+            "string": "The :attribute field must be less than or equal to :value characters."
+        },
+        "mac_address": "The :attribute field must be a valid MAC address.",
+        "max": {
+            "array": "The :attribute field must not have more than :max items.",
+            "file": "The :attribute field must not be greater than :max kilobytes.",
+            "numeric": "The :attribute field must not be greater than :max.",
+            "string": "The :attribute field must not be greater than :max characters."
+        },
+        "max_digits": "The :attribute field must not have more than :max digits.",
+        "mimes": "The :attribute field must be a file of type: :values.",
+        "mimetypes": "The :attribute field must be a file of type: :values.",
+        "min": {
+            "array": "The :attribute field must have at least :min items.",
+            "file": "The :attribute field must be at least :min kilobytes.",
+            "numeric": "The :attribute field must be at least :min.",
+            "string": "The :attribute field must be at least :min characters."
+        },
+        "min_digits": "The :attribute field must have at least :min digits.",
+        "missing": "The :attribute field must be missing.",
+        "missing_if": "The :attribute field must be missing when :other is :value.",
+        "missing_unless": "The :attribute field must be missing unless :other is :value.",
+        "missing_with": "The :attribute field must be missing when :values is present.",
+        "missing_with_all": "The :attribute field must be missing when :values are present.",
+        "multiple_of": "The :attribute field must be a multiple of :value.",
+        "not_in": "The selected :attribute is invalid.",
+        "not_regex": "The :attribute field format is invalid.",
+        "numeric": "The :attribute field must be a number.",
+        "password": {
+            "letters": "The :attribute field must contain at least one letter.",
+            "mixed": "The :attribute field must contain at least one uppercase and one lowercase letter.",
+            "numbers": "The :attribute field must contain at least one number.",
+            "symbols": "The :attribute field must contain at least one symbol.",
+            "uncompromised": "The given :attribute has appeared in a data leak. Please choose a different :attribute."
+        },
+        "present": "The :attribute field must be present.",
+        "present_if": "The :attribute field must be present when :other is :value.",
+        "present_unless": "The :attribute field must be present unless :other is :value.",
+        "present_with": "The :attribute field must be present when :values is present.",
+        "present_with_all": "The :attribute field must be present when :values are present.",
+        "prohibited": "The :attribute field is prohibited.",
+        "prohibited_if": "The :attribute field is prohibited when :other is :value.",
+        "prohibited_if_accepted": "The :attribute field is prohibited when :other is accepted.",
+        "prohibited_if_declined": "The :attribute field is prohibited when :other is declined.",
+        "prohibited_unless": "The :attribute field is prohibited unless :other is in :values.",
+        "prohibits": "The :attribute field prohibits :other from being present.",
+        "regex": "The :attribute field format is invalid.",
+        "required": "The :attribute field is required.",
+        "required_array_keys": "The :attribute field must contain entries for: :values.",
+        "required_if": "The :attribute field is required when :other is :value.",
+        "required_if_accepted": "The :attribute field is required when :other is accepted.",
+        "required_if_declined": "The :attribute field is required when :other is declined.",
+        "required_unless": "The :attribute field is required unless :other is in :values.",
+        "required_with": "The :attribute field is required when :values is present.",
+        "required_with_all": "The :attribute field is required when :values are present.",
+        "required_without": "The :attribute field is required when :values is not present.",
+        "required_without_all": "The :attribute field is required when none of :values are present.",
+        "same": "The :attribute field must match :other.",
+        "size": {
+            "array": "The :attribute field must contain :size items.",
+            "file": "The :attribute field must be :size kilobytes.",
+            "numeric": "The :attribute field must be :size.",
+            "string": "The :attribute field must be :size characters."
+        },
+        "starts_with": "The :attribute field must start with one of the following: :values.",
+        "string": "The :attribute field must be a string.",
+        "timezone": "The :attribute field must be a valid timezone.",
+        "unique": "The :attribute has already been taken.",
+        "uploaded": "The :attribute failed to upload.",
+        "uppercase": "The :attribute field must be uppercase.",
+        "url": "The :attribute field must be a valid URL.",
+        "ulid": "The :attribute field must be a valid ULID.",
+        "uuid": "The :attribute field must be a valid UUID."
+    },
+    "enums": {
+        "activity_status": {
+            "active": "Active",
+            "inactive": "Inactive",
+            "suspended": "Suspended",
+            "deleted": "Deleted"
+        },
+        "rbac": {
+            "role": {
+                "super_admin": "Super Admin",
+                "admin": "Admin",
+                "user": "User"
+            },
+            "permission": {
+                "access_control_panel": "Access Control Panel",
+                "impersonate_users": "Impersonate Users",
+                "label": {
+                    "access_control_panel": "Access Control Panel",
+                    "impersonate_users": "Impersonate Users",
+                    "access_backups": "Access Backups",
+                    "access_health_check": "Access Health Check",
+                    "access_activity_logs": "Access Activity Logs",
+                    "manage_settings": "Manage Settings"
+                },
+                "description": {
+                    "access_control_panel": "Allows users to access the admin control panel",
+                    "impersonate_users": "Allows users to impersonate other users",
+                    "access_backups": "Allows users to access and manage backups",
+                    "access_health_check": "Allows users to view health check information",
+                    "access_activity_logs": "Allows users to view activity logs",
+                    "manage_settings": "Allows users to manage application settings"
+                }
+            }
+        }
+    },
+    "navigation": {
+        "groups": {
+            "system": "System",
+            "modules": "Modules"
+        },
+        "labels": {
+            "users": "Users",
+            "roles": "Roles",
+            "permissions": "Permissions",
+            "translation_manager": "Translation Manager",
+            "access_control": "Access Control",
+            "clients": "Clients",
+            "dashboard": "Dashboard",
+            "admin_panel": "Admin Panel"
+        }
+    },
+    "admin": {
+        "rbac": {
+            "roles": {
+                "form": {
+                    "title": "Role Information",
+                    "enum_key": "Enum Key",
+                    "name": "Name"
+                },
+                "table": {
+                    "enum_key": "Enum Key",
+                    "name": "Name",
+                    "linked_to_enum": {
+                        "title": "Linked to Enum",
+                        "tooltip": "Indicates whether this role is linked to an enum",
+                        "true": "Yes",
+                        "false": "No"
+                    },
+                    "permissions_count": "Permissions",
+                    "created_at": "Created At",
+                    "updated_at": "Updated At",
+                    "sync_roles": {
+                        "title": "Sync Roles",
+                        "success": {
+                            "title": "Roles Synced",
+                            "body": "Successfully synced :count role(s)"
+                        }
+                    }
+                },
+                "relation_managers": {
+                    "permission": {
+                        "title": "Permissions",
+                        "inverse_relationship": "roles",
+                        "name": "Name",
+                        "enum_key": "Enum Key",
+                        "linked_to_enum": {
+                            "title": "Linked to Enum",
+                            "true": "Yes",
+                            "false": "No"
+                        },
+                        "add_permissions": "Add Permissions",
+                        "add_permissions_modal_heading": "Add Permissions to Role",
+                        "permissions": "Permissions",
+                        "permissions_placeholder": "Select permissions to add",
+                        "permissions_added": ":count permission(s) added successfully",
+                        "detach_permission": "Detach Permission",
+                        "detach_permission_modal_heading": "Detach Permission",
+                        "detach_permission_modal_description": "Are you sure you want to detach this permission from the role?",
+                        "permission_detached": "Permission :name detached successfully"
+                    }
+                }
+            },
+            "permissions": {
+                "form": {
+                    "title": "Permission Information",
+                    "enum_key": "Enum Key",
+                    "name": "Name"
+                },
+                "table": {
+                    "enum_key": "Enum Key",
+                    "name": "Name",
+                    "linked_to_enum": {
+                        "title": "Linked to Enum",
+                        "tooltip": "Indicates whether this permission is linked to an enum",
+                        "true": "Yes",
+                        "false": "No"
+                    },
+                    "roles_count": "Roles",
+                    "created_at": "Created At",
+                    "updated_at": "Updated At",
+                    "sync_permissions": {
+                        "title": "Sync Permissions",
+                        "success": {
+                            "title": "Permissions Synced",
+                            "body": "Successfully synced :count permission(s)"
+                        }
+                    }
+                },
+                "relation_managers": {
+                    "role": {
+                        "title": "Roles",
+                        "inverse_relationship": "permissions",
+                        "name": "Name",
+                        "enum_key": "Enum Key",
+                        "linked_to_enum": {
+                            "title": "Linked to Enum",
+                            "true": "Yes",
+                            "false": "No"
+                        },
+                        "add_roles": "Add Roles",
+                        "add_roles_modal_heading": "Add Roles to Permission",
+                        "roles": "Roles",
+                        "roles_placeholder": "Select roles to add",
+                        "roles_added": ":count role(s) added successfully",
+                        "detach_role": "Detach Role",
+                        "detach_role_modal_heading": "Detach Role",
+                        "detach_role_modal_description": "Are you sure you want to detach this role from the permission?",
+                        "role_detached": "Role :name detached successfully"
+                    }
+                }
+            }
+        },
+        "users": {
+            "navigation_label": "Users",
+            "form": {
+                "personal_information": {
+                    "title": "Personal Information",
+                    "description": "Here you can edit the user's personal information."
+                },
+                "security": {
+                    "title": "Security",
+                    "description": "Here you can update the user's role and status. Passwords are automatically generated when creating a user."
+                },
+                "name": "Name",
+                "email": "Email",
+                "phone": "Phone",
+                "role": "Role",
+                "status": "Status"
+            },
+            "table": {
+                "name": "Name",
+                "email": "Email",
+                "auth_provider": "Auth Provider",
+                "role": "Role",
+                "two_factor": "2FA",
+                "two_factor_enabled": "Two-factor Enabled",
+                "two_factor_disabled": "Two-factor Disabled",
+                "created_at": "Created At",
+                "updated_at": "Updated At",
+                "no_role": "No role"
+            }
+        },
+        "clients": {
+            "navigation_label": "Clients"
+        }
+    },
+    "settings": {
+        "profile": {
+            "page_title": "Profile settings",
+            "title": "Profile information",
+            "description": "Update your name and email address",
+            "name": "Name",
+            "name_placeholder": "Full name",
+            "email": "Email address",
+            "email_placeholder": "Email address",
+            "unverified": "Your email address is unverified.",
+            "click_to_resend": "Click here to resend the verification email.",
+            "verification_sent": "A new verification link has been sent to your email address.",
+            "save": "Save",
+            "saved": "Saved"
+        },
+        "password": {
+            "page_title": "Password settings",
+            "title": "Update password",
+            "description": "Ensure your account is using a long, random password to stay secure",
+            "current_password": "Current password",
+            "current_password_placeholder": "Current password",
+            "new_password": "New password",
+            "new_password_placeholder": "New password",
+            "confirm_password": "Confirm password",
+            "confirm_password_placeholder": "Confirm password",
+            "save": "Save password",
+            "saved": "Saved"
+        },
+        "two_factor": {
+            "recovery_codes": {
+                "title": "2FA Recovery Codes",
+                "description": "Recovery codes let you regain access if you lose your 2FA device. Store them in a secure password manager.",
+                "view": "View Recovery Codes",
+                "hide": "Hide Recovery Codes",
+                "regenerate": "Regenerate Codes",
+                "warning": "Each recovery code can be used once to access your account and will be removed after use. If you need more, click",
+                "warning_action": "Regenerate Codes"
+            },
+            "setup_modal": {
+                "enabled_title": "Two-Factor Authentication Enabled",
+                "enabled_description": "Two-factor authentication is now enabled. Scan the QR code or enter the setup key in your authenticator app.",
+                "enable_title": "Enable Two-Factor Authentication",
+                "enable_description": "To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app",
+                "verify_title": "Verify Authentication Code",
+                "verify_description": "Enter the 6-digit code from your authenticator app",
+                "manual_entry": "or, enter the code manually",
+                "continue": "Continue",
+                "back": "Back",
+                "confirm": "Confirm",
+                "close": "Close"
+            }
+        },
+        "delete_account": {
+            "title": "Delete account",
+            "description": "Delete your account and all of its resources",
+            "warning_title": "Warning",
+            "warning_message": "Please proceed with caution, this cannot be undone.",
+            "button": "Delete account",
+            "confirm_title": "Are you sure you want to delete your account?",
+            "confirm_description": "Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.",
+            "password": "Password",
+            "password_placeholder": "Password",
+            "cancel": "Cancel"
+        },
+        "appearance": {
+            "page_title": "Appearance settings",
+            "title": "Appearance",
+            "description": "Customize the appearance of the application"
+        }
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "page_title": "Dashboard"
+    },
+    "common": {
+        "actions": {
+            "edit": "Edit",
+            "delete": "Delete",
+            "view": "View",
+            "create": "Create",
+            "cancel": "Cancel",
+            "save": "Save",
+            "back": "Back",
+            "submit": "Submit",
+            "confirm": "Confirm",
+            "close": "Close",
+            "settings": "Settings",
+            "logout": "Log out"
+        },
+        "labels": {
+            "yes": "Yes",
+            "no": "No",
+            "or": "or",
+            "and": "and"
+        },
+        "theme": {
+            "toggle": "Toggle theme",
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+        },
+        "messages": {
+            "success": "Operation completed successfully",
+            "error": "An error occurred",
+            "confirm_delete": "Are you sure you want to delete this item?",
+            "no_results": "No results found"
+        }
+    }
+}
