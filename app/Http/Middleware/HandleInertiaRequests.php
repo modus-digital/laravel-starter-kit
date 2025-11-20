@@ -45,6 +45,7 @@ class HandleInertiaRequests extends Middleware
             'locale' => app()->getLocale(),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'canAccessControlPanel' => $request->user()?->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL) ?? false,
+            'isImpersonating' => $request->session()->has('impersonation') ?? false,
         ];
     }
 }
