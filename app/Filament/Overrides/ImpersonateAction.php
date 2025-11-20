@@ -31,7 +31,7 @@ class ImpersonateAction extends Action
         $this->color(function (?User $record) use ($impersonatableRoles): array {
             $currentUser = Auth::user();
 
-            if ($record?->id === $currentUser?->id || ! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS) ||$record?->status === ActivityStatus::INACTIVE) {
+            if ($record?->id === $currentUser?->id || ! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS) || $record?->status === ActivityStatus::INACTIVE) {
                 return Color::Gray;
             }
 
@@ -45,9 +45,15 @@ class ImpersonateAction extends Action
         $this->disabled(function (?User $record) use ($impersonatableRoles): bool {
             $currentUser = Auth::user();
 
-            if ($record?->id === $currentUser->id) return true;
-            if ($record?->status === ActivityStatus::INACTIVE) return true;
-            if (! in_array($record?->roles->first()?->name, $impersonatableRoles)) return true;
+            if ($record?->id === $currentUser->id) {
+                return true;
+            }
+            if ($record?->status === ActivityStatus::INACTIVE) {
+                return true;
+            }
+            if (! in_array($record?->roles->first()?->name, $impersonatableRoles)) {
+                return true;
+            }
 
             return ! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS);
         });
@@ -62,7 +68,7 @@ class ImpersonateAction extends Action
                     ->color(Color::Red)
                     ->icon(Heroicon::ExclamationTriangle)
                     ->send();
-                
+
                 return null;
             }
 
@@ -85,7 +91,7 @@ class ImpersonateAction extends Action
                     'ip' => request()->ip(),
                     'user_agent' => request()->userAgent(),
                 ])
-                ->log(description: "User impersonation started");
+                ->log(description: 'User impersonation started');
 
             return redirect()->to(path: route('dashboard'));
         });
