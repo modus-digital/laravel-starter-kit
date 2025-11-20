@@ -27,6 +27,7 @@ class ImpersonateAction extends Action
 
         $this->icon(Heroicon::ArrowLeftEndOnRectangle);
         $this->label(__('admin.users.table.impersonate.label'));
+        $this->name('impersonate-action');
         $this->color(function (?User $record) use ($impersonatableRoles): array {
             $currentUser = Auth::user();
 
