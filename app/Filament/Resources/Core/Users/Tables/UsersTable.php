@@ -17,6 +17,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Filament\Support\Colors\Color;
 
 class UsersTable
 {
@@ -57,8 +58,15 @@ class UsersTable
 
                 TextColumn::make('status')
                     ->label(__('admin.users.table.status'))
-                    ->getStateUsing(fn (?User $record): string => ActivityStatus::from($record?->status)->getLabel())
-                    ->color(fn (?User $record): string => ActivityStatus::from($record?->status)->getColor())
+                    ->getStateUsing(fn (?User $record): string => $record->status->getLabel())
+                    ->color(function (?User $record): string {
+                        return match ($record->status) {
+                            ActivityStatus::ACTIVE => 'success',
+                            ActivityStatus::INACTIVE => 'danger',
+                            ActivityStatus::SUSPENDED => 'warning',
+                            ActivityStatus::DELETED => 'danger',
+                        };
+                    })
                     ->badge()
                     ->sortable()
                     ->searchable(),

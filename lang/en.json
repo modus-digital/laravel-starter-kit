@@ -304,7 +304,8 @@
             "access_control": "Access Control",
             "clients": "Clients",
             "dashboard": "Dashboard",
-            "admin_panel": "Admin Panel"
+            "admin_panel": "Admin Panel",
+            "leave_impersonation": "Leave Impersonation"
         }
     },
     "admin": {
@@ -468,6 +469,7 @@
                 "email": "Email",
                 "auth_provider": "Auth Provider",
                 "role": "Role",
+                "status": "Status",
                 "two_factor": "2FA",
                 "two_factor_enabled": "Two-factor Enabled",
                 "two_factor_disabled": "Two-factor Disabled",
