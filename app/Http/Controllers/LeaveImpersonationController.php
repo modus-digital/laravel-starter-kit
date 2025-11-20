@@ -3,24 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 use Spatie\Activitylog\Facades\Activity;
+use Symfony\Component\HttpFoundation\Response;
 
 class LeaveImpersonationController extends Controller
 {
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request): RedirectResponse
+    public function __invoke(Request $request): Response
     {
         $impersonation = collect(session()->get('impersonation'));
         $currentUser = Auth::user();
         $originalUser = User::find($impersonation->get('original_user_id'));
 
-        if (! $impersonation->has('is_impersonating')) return redirect()->to(path: route('login'));
-        if (! $currentUser || ! $originalUser) return redirect()->to(path: route('login'));
+        if (! $impersonation->has('is_impersonating')) {
+            return redirect()->to(path: route('login'));
+        }
+        if (! $currentUser || ! $originalUser) {
+            return redirect()->to(path: route('login'));
+        }
 
         Auth::loginUsingId($originalUser->id);
 
@@ -37,9 +42,7 @@ class LeaveImpersonationController extends Controller
                 'user_agent' => request()->userAgent(),
             ])
             ->log(description: 'User impersonation ended');
-            
-        return redirect(
-            to: $impersonation->get('return_url') ?? route('dashboard')
-        );
+
+        return Inertia::location(url: route('dashboard'));
     }
 }

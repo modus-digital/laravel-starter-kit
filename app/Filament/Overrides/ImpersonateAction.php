@@ -10,7 +10,6 @@ use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\Facades\Activity;
 
@@ -20,9 +19,12 @@ class ImpersonateAction extends Action
     {
         parent::setUp();
 
-        $impersonatableRoles = array_filter(
-            array: Role::cases(),
-            callback: fn (Role $role) => $role !== Role::ADMIN && $role !== Role::SUPER_ADMIN
+        $impersonatableRoles = array_map(
+            callback: fn (Role $role) => $role->value,
+            array: array_filter(
+                array: Role::cases(),
+                callback: fn (Role $role) => $role !== Role::ADMIN && $role !== Role::SUPER_ADMIN
+            )
         );
 
         $this->icon(Heroicon::ArrowLeftEndOnRectangle);
@@ -58,7 +60,7 @@ class ImpersonateAction extends Action
             return ! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS);
         });
 
-        $this->action(function (?User $record): ?RedirectResponse {
+        $this->action(function (?User $record) {
             $currentUser = Auth::user();
 
             if (! $currentUser || ! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS)) {
@@ -69,7 +71,7 @@ class ImpersonateAction extends Action
                     ->icon(Heroicon::ExclamationTriangle)
                     ->send();
 
-                return null;
+                return;
             }
 
             session()->put('impersonation', [

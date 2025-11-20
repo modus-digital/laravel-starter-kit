@@ -305,7 +305,8 @@
             "clients": "Clients",
             "dashboard": "Dashboard",
             "admin_panel": "Admin Panel",
-            "leave_impersonation": "Leave Impersonation"
+            "leave_impersonation": "Leave Impersonation",
+            "currently_viewing_as": "You are currently impersonating as:"
         }
     },
     "admin": {

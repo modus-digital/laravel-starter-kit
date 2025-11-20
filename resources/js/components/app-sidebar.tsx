@@ -1,6 +1,7 @@
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
+import { Icon } from '@/components/icon';
 import {
     Sidebar,
     SidebarContent,
@@ -9,9 +10,11 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarGroup,
+    SidebarGroupContent,
 } from '@/components/ui/sidebar';
 import { SharedData, type NavItem } from '@/types';
-import { Link, usePage } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { LogOut, LayoutGrid, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import AppLogo from './app-logo';
@@ -20,6 +23,7 @@ import AppLogo from './app-logo';
 import { leave as leaveImpersonation } from '@/routes/impersonate';
 import { dashboard as ApplicationDashboard } from '@/routes';
 import { dashboard as ControlPanelDashboard } from '@/routes/filament/control/pages';
+import { Button } from './ui/button';
 
 export function AppSidebar() {
     const { canAccessControlPanel, isImpersonating } = usePage<SharedData>().props;
@@ -34,15 +38,6 @@ export function AppSidebar() {
     ];
 
     const footerNavItems: NavItem[] = [
-        // If the user is impersonating, show the leave impersonation button
-        ...(isImpersonating ? [
-            {
-                title: t('navigation.labels.leave_impersonation'),
-                href: leaveImpersonation(),
-                icon: LogOut,
-            },
-        ] : []),
-
         // If the user is not impersonating, show the admin panel button
         ...(canAccessControlPanel ? [
             {
@@ -72,10 +67,31 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter
-                    items={canAccessControlPanel ? footerNavItems : []}
-                    className="mt-auto"
-                />
+                {isImpersonating && (
+                    <SidebarGroup className="group-data-[collapsible=icon]:p-0 mt-auto">
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                <SidebarMenuItem>
+                                    <Button 
+                                        onClick={() => router.post(leaveImpersonation().url)}
+                                        className="w-full cursor-pointer"
+                                        variant="ghost"
+                                    >
+                                        <Icon
+                                            iconNode={LogOut}
+                                            className="h-5 w-5"
+                                        />
+                                        <span>{t('navigation.labels.leave_impersonation')}</span>
+                                    </Button>
+                                </SidebarMenuItem>
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                )}
+
+                {footerNavItems.length > 0 && (
+                    <NavFooter items={footerNavItems} className="mt-auto" />
+                )}
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
