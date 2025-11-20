@@ -2,6 +2,7 @@
 
 namespace App\Actions\Fortify;
 
+use App\Enums\ActivityStatus;
 use App\Enums\RBAC\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
@@ -35,6 +36,7 @@ class CreateNewUser implements CreatesNewUsers
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
+            'status' => ActivityStatus::ACTIVE,
         ]);
 
         $user->assignRole(Role::USER);

@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 // use App\Traits\HasClients; <-- Uncomment if clients module is enabled in config/modules.php
 
+use App\Enums\ActivityStatus;
 use App\Enums\RBAC\Permission;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -42,6 +43,7 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'status',
         'provider',
     ];
 
@@ -68,6 +70,7 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
+            'status' => ActivityStatus::class,
         ];
     }
 

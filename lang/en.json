@@ -304,7 +304,9 @@
             "access_control": "Access Control",
             "clients": "Clients",
             "dashboard": "Dashboard",
-            "admin_panel": "Admin Panel"
+            "admin_panel": "Admin Panel",
+            "leave_impersonation": "Leave Impersonation",
+            "currently_viewing_as": "You are currently impersonating as:"
         }
     },
     "admin": {
@@ -468,12 +470,20 @@
                 "email": "Email",
                 "auth_provider": "Auth Provider",
                 "role": "Role",
+                "status": "Status",
                 "two_factor": "2FA",
                 "two_factor_enabled": "Two-factor Enabled",
                 "two_factor_disabled": "Two-factor Disabled",
                 "created_at": "Created At",
                 "updated_at": "Updated At",
-                "no_role": "No role"
+                "no_role": "No role",
+                "impersonate": {
+                    "label": "Impersonate",
+                    "error": {
+                        "title": "Impersonation Failed",
+                        "body": "You do not have permission to impersonate users."
+                    }
+                }
             }
         },
         "clients": {

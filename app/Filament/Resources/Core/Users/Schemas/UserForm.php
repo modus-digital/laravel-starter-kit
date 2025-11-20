@@ -41,8 +41,7 @@ class UserForm
                                 TextInput::make('phone')
                                     ->label(__('admin.users.form.phone'))
                                     ->columns(1)
-                                    ->tel()
-                                    ->required(),
+                                    ->tel(),
                             ]),
                     ]),
 

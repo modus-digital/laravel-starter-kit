@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources\Core\Users\Tables;
 
+use App\Enums\ActivityStatus;
 use App\Enums\AuthenticationProvider;
 use App\Enums\RBAC\Role;
+use App\Filament\Overrides\ImpersonateAction;
 use App\Models\User;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -15,6 +17,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Filament\Support\Colors\Color;
 
 class UsersTable
 {
@@ -53,6 +56,21 @@ class UsersTable
                     ->sortable()
                     ->searchable(),
 
+                TextColumn::make('status')
+                    ->label(__('admin.users.table.status'))
+                    ->getStateUsing(fn (?User $record): string => $record->status->getLabel())
+                    ->color(function (?User $record): string {
+                        return match ($record->status) {
+                            ActivityStatus::ACTIVE => 'success',
+                            ActivityStatus::INACTIVE => 'danger',
+                            ActivityStatus::SUSPENDED => 'warning',
+                            ActivityStatus::DELETED => 'danger',
+                        };
+                    })
+                    ->badge()
+                    ->sortable()
+                    ->searchable(),
+
                 IconColumn::make('two_factor_secret')
                     ->label(__('admin.users.table.two_factor'))
                     ->tooltip(fn (?User $record): string => ! empty($record?->two_factor_secret) ? __('admin.users.table.two_factor_enabled') : __('admin.users.table.two_factor_disabled'))
@@ -65,11 +83,7 @@ class UsersTable
 
                 TextColumn::make('created_at')
                     ->label(__('admin.users.table.created_at'))
-                    ->sortable()
-                    ->searchable(),
-
-                TextColumn::make('updated_at')
-                    ->label(__('admin.users.table.updated_at'))
+                    ->date('d-m-Y')
                     ->sortable()
                     ->searchable(),
             ])
@@ -77,6 +91,7 @@ class UsersTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
+                ImpersonateAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([

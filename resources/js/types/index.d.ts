@@ -27,6 +27,7 @@ export interface SharedData {
     auth: Auth;
     sidebarOpen: boolean;
     canAccessControlPanel: boolean;
+    isImpersonating: boolean;
     [key: string]: unknown;
 }
 
