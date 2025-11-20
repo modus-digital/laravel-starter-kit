@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', RedirectToApplicationController::class)->name('app.home');
 
-Route::middleware(middleware: ['auth', 'verified'])
+Route::middleware(['auth', 'verified'])
     ->group(function () {
         Route::get('dashboard', DashboardController::class)
             ->name('dashboard');
