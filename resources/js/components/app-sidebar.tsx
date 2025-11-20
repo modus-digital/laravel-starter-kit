@@ -10,40 +10,56 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
-import control from '@/routes/filament/control';
 import { SharedData, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { LayoutGrid, Shield } from 'lucide-react';
+import { LogOut, LayoutGrid, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import AppLogo from './app-logo';
 
+// Routes
+import { leave as leaveImpersonation } from '@/routes/impersonate';
+import { dashboard as ApplicationDashboard } from '@/routes';
+import { dashboard as ControlPanelDashboard } from '@/routes/filament/control/pages';
+
 export function AppSidebar() {
-    const { canAccessControlPanel } = usePage<SharedData>().props;
+    const { canAccessControlPanel, isImpersonating } = usePage<SharedData>().props;
     const { t } = useTranslation();
 
     const mainNavItems: NavItem[] = [
         {
             title: t('navigation.labels.dashboard'),
-            href: dashboard(),
+            href: ApplicationDashboard(),
             icon: LayoutGrid,
         },
     ];
 
     const footerNavItems: NavItem[] = [
-        {
-            title: t('navigation.labels.admin_panel'),
-            href: control.pages.dashboard(),
-            icon: Shield,
-        },
+        // If the user is impersonating, show the leave impersonation button
+        ...(isImpersonating ? [
+            {
+                title: t('navigation.labels.leave_impersonation'),
+                href: leaveImpersonation(),
+                icon: LogOut,
+            },
+        ] : []),
+
+        // If the user is not impersonating, show the admin panel button
+        ...(canAccessControlPanel ? [
+            {
+                title: t('navigation.labels.admin_panel'),
+                href: ControlPanelDashboard(),
+                icon: Shield,
+            },
+        ] : []),
     ];
+    
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboard()} prefetch>
+                            <Link href={ApplicationDashboard()} prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>

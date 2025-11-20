@@ -1,5 +1,5 @@
 import AppLogoIcon from '@/components/app-logo-icon';
-import { home } from '@/routes';
+import { home } from '@/routes/app';
 import { type SharedData } from '@/types';
 import backgroundImage from '@assets/images/auth_background.webp';
 import { Link, usePage } from '@inertiajs/react';
