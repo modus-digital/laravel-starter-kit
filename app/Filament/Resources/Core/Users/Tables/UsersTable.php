@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Core\Users\Tables;
 
 use App\Enums\RBAC\Role;
+use App\Filament\Overrides\ImpersonateAction;
 use App\Models\User;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -73,6 +74,7 @@ class UsersTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
+                ImpersonateAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([
