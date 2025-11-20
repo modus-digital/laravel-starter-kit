@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Core\Users\Tables;
 
+use App\Enums\ActivityStatus;
 use App\Enums\RBAC\Role;
 use App\Filament\Overrides\ImpersonateAction;
 use App\Models\User;
@@ -46,6 +47,14 @@ class UsersTable
                     ->getStateUsing(fn (?User $record): string => Role::from($record?->roles->first()?->name)->getLabel() ?? __('admin.users.table.no_role'))
                     ->icon(fn (?User $record) => Role::from($record?->roles->first()?->name)->getIcon())
                     ->color(fn (?User $record) => Role::from($record?->roles->first()?->name)->getFilamentColor())
+                    ->badge()
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('status')
+                    ->label(__('admin.users.table.status'))
+                    ->getStateUsing(fn (?User $record): string => ActivityStatus::from($record?->status)->getLabel())
+                    ->color(fn (?User $record): string => ActivityStatus::from($record?->status)->getColor())
                     ->badge()
                     ->sortable()
                     ->searchable(),
