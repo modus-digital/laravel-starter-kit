@@ -81,8 +81,8 @@ class ImpersonateAction extends Action
 
             Auth::login($record);
 
-            Activity::inLog('authentication')
-                ->event('auth.impersonate')
+            Activity::inLog('impersonation')
+                ->event('impersonate.start')
                 ->performedOn($record)
                 ->causedBy($currentUser)
                 ->withProperties([
