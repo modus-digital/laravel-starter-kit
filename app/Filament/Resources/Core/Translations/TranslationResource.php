@@ -7,7 +7,6 @@ use App\Filament\Resources\Core\Translations\Pages\ListTranslations;
 use App\Filament\Resources\Core\Translations\Pages\QuickTranslate;
 use App\Filament\Resources\Core\Translations\Tables\TranslationsTable;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
@@ -20,16 +19,16 @@ class TranslationResource extends Resource
     {
         return __('navigation.groups.system');
     }
-    
+
     public static function getNavigationLabel(): string
     {
         return __('navigation.labels.translation_manager');
     }
-    
+
     protected static bool $shouldRegisterNavigation = true;
-    
+
     protected static ?int $navigationSort = 4;
-    
+
     protected static ?string $slug = 'system/translations';
 
     public static function table(Table $table): Table

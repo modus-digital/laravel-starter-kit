@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Core\RBAC\Permissions\Pages;
 
 use App\Filament\Resources\Core\RBAC\Permissions\PermissionResource;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListPermissions extends ListRecords

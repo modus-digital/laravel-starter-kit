@@ -6,11 +6,12 @@ use Illuminate\Translation\FileLoader;
 
 /**
  * This class is a workaround to load nested JSON files and add support for nested json using __() and trans() helper functions.
- * 
+ *
  * @author Alex van Steenhoven <alex@modus-digital.com>
+ *
  * @version 1.0.0
+ *
  * @since 1.0.0
- * @package App\Translation
  */
 class NestedJsonLoader extends FileLoader
 {

@@ -14,9 +14,9 @@ class AppServiceProvider extends ServiceProvider
     {
         // This is a workaround to load nested JSON files and add support for nested json using __() and trans() helper functions.
         $this->app->extend(
-            abstract: 'translation.loader', 
+            abstract: 'translation.loader',
             closure: fn ($loader, $app): NestedJsonLoader => new NestedJsonLoader(
-                files: $app['files'], 
+                files: $app['files'],
                 path: $app['path.lang']
             )
         );

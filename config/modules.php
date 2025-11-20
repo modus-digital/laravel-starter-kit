@@ -12,11 +12,11 @@ return [
     |
     */
     'socialite' => [
-        'enabled' => false,
+        'enabled' => true,
         'providers' => [
             'google' => true,
-            'github' => false,
-            'microsoft' => false,
+            'github' => true,
+            'microsoft' => true,
         ],
     ],
 
@@ -51,7 +51,9 @@ return [
     | - Multi tenant support
     |
     */
-    'saas' => false,
+    'saas' => [
+        'enabled' => false,
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -60,5 +62,7 @@ return [
     | If this module is enabled we are allowing users to register themselves.
     |
     */
-    'registration' => true,
+    'registration' => [
+        'enabled' => true,
+    ],
 ];

@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Core\Translations\Pages;
 
 use App\Enums\Language;
 use App\Filament\Resources\Core\Translations\TranslationResource;
-use App\Services\TranslationService;
+use App\Filament\Resources\Core\Translations\TranslationService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Textarea;

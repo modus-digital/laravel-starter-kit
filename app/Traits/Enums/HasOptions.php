@@ -13,8 +13,6 @@ trait HasOptions
     /**
      * This method should return the label of the enum.
      * It is used to get the localized label for the enum.
-     *
-     * @return string
      */
     abstract public function getLabel(): string;
 

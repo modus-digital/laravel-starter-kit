@@ -4,8 +4,8 @@ namespace App\Filament\Resources\Core\Translations\Tables;
 
 use App\Enums\Language;
 use App\Filament\Resources\Core\Translations\TranslationResource;
+use App\Filament\Resources\Core\Translations\TranslationService;
 use App\Filament\Resources\Core\Translations\Widgets\LanguageSelector;
-use App\Services\TranslationService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Section;

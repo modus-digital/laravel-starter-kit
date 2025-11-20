@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\TranslationService;
+use App\Filament\Resources\Core\Translations\TranslationService;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 

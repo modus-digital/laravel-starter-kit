@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Models\Modules;
 
-use Illuminate\Database\Eloquent\Model;
 use App\Enums\AuthenticationProvider;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
@@ -21,7 +22,11 @@ use App\Enums\AuthenticationProvider;
  */
 final class SocialiteProvider extends Model
 {
-    protected $table = 'oauth_providers';
+    use HasUuids;
+
+    protected $keyType = 'string';
+
+    public $incrementing = false;
 
     protected $fillable = [
         'client_id',
