@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\ActivityStatus;
 use App\Enums\RBAC\Role;
 use App\Http\Controllers\Controller;
 use App\Models\Modules\SocialiteProvider;
@@ -97,6 +98,7 @@ class OAuthController extends Controller
             'email' => $socialiteUser->getEmail(),
             'password' => Hash::make(Str::random(32)),
             'provider' => $providerName,
+            'status' => ActivityStatus::ACTIVE,
         ]);
 
         $user->assignRole(Role::USER);
