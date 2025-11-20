@@ -35,6 +35,7 @@ class UserForm
                                     ->label(__('admin.users.form.email'))
                                     ->columns(1)
                                     ->email()
+                                    ->unique(ignoreRecord: true)
                                     ->required(),
 
                                 TextInput::make('phone')

@@ -4,16 +4,15 @@ namespace App\Filament\Resources\Core\RBAC\Permissions;
 
 use App\Filament\Resources\Core\RBAC\Permissions\Pages\ListPermissions;
 use App\Filament\Resources\Core\RBAC\Permissions\Pages\ViewPermission;
+use App\Filament\Resources\Core\RBAC\Permissions\RelationManagers\RoleRelationManager;
 use App\Filament\Resources\Core\RBAC\Permissions\Schemas\PermissionForm;
 use App\Filament\Resources\Core\RBAC\Permissions\Tables\PermissionsTable;
-use App\Filament\Resources\Core\RBAC\Permissions\RelationManagers\RoleRelationManager;
-use Spatie\Permission\Models\Permission;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Spatie\Permission\Models\Permission;
 
 class PermissionResource extends Resource
 {

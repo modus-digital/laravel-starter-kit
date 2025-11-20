@@ -3,6 +3,11 @@
         "failed": "These credentials do not match our records.",
         "password": "The provided password is incorrect.",
         "throttle": "Too many login attempts. Please try again in :seconds seconds.",
+        "oauth": {
+            "provider_unavailable": "The :provider authentication provider is not available.",
+            "authentication_failed": "Failed to authenticate with :provider. Please try again.",
+            "registration_disabled": "Registration is currently disabled. Please contact support if you already have an account."
+        },
         "pages": {
             "login": {
                 "title": "Log in to your account",
@@ -303,6 +308,44 @@
         }
     },
     "admin": {
+        "socialite_providers": {
+            "label": "Authentication Provider",
+            "plural_label": "Authentication Providers",
+            "navigation_label": "Authentication Providers",
+            "table": {
+                "name": "Provider Name",
+                "is_enabled": "Enabled",
+                "enable_reorder": "Enable Reordering",
+                "disable_reorder": "Disable Reordering",
+                "reorder_tooltip": "Changes the order of providers on the login page"
+            },
+            "form": {
+                "provider_details": {
+                    "title": "Provider Details",
+                    "description": "Basic information about this authentication provider.",
+                    "name": "Provider Name",
+                    "name_helper": "The name of the authentication provider.",
+                    "is_enabled": "Provider is Enabled",
+                    "is_enabled_helper": "When enabled, users will be able to sign in using this provider on the login page."
+                },
+                "socialite_configuration": {
+                    "title": "OAuth Configuration",
+                    "description": "Configure the OAuth credentials for this provider.",
+                    "client_id": "Client ID",
+                    "client_id_helper": "The OAuth client ID from your provider's developer console.",
+                    "client_secret": "Client Secret",
+                    "client_secret_helper": "The OAuth client secret from your provider's developer console.",
+                    "redirect_uri": "Redirect URI",
+                    "redirect_uri_helper": "Use this URL in your provider's OAuth configuration. Copy it to your provider's settings."
+                },
+                "settings": {
+                    "title": "Settings",
+                    "description": "Control the availability of this authentication provider.",
+                    "is_enabled": "Enable Provider",
+                    "is_enabled_helper": "When enabled, users will be able to sign in using this provider on the login page."
+                }
+            }
+        },
         "rbac": {
             "roles": {
                 "form": {

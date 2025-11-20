@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Core\Users\Tables;
 
 use App\Enums\ActivityStatus;
+use App\Enums\AuthenticationProvider;
 use App\Enums\RBAC\Role;
 use App\Filament\Overrides\ImpersonateAction;
 use App\Models\User;
@@ -35,8 +36,11 @@ class UsersTable
 
                 ...(
                     config(key: 'modules.socialite.enabled', default: false)
-                        ? [TextColumn::make('auth_provider')
+                        ? [TextColumn::make('provider')
                             ->label(__('admin.users.table.auth_provider'))
+                            ->icon(fn (?User $record) => AuthenticationProvider::from($record?->provider)->getIcon())
+                            ->color(fn (?User $record) => AuthenticationProvider::from($record?->provider)->getColor())
+                            ->badge()
                             ->sortable()
                             ->searchable()]
                         : []

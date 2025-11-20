@@ -3,10 +3,10 @@
 namespace App\Filament\Widgets;
 
 use App\Models\User;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RbacStats extends StatsOverviewWidget
 {

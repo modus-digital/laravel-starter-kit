@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Core\Users\Pages;
 
 use App\Filament\Resources\Core\Users\UserResource;
-use App\Notifications\AccountCreated;
+use App\Notifications\Auth\AccountCreated;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Str;
 

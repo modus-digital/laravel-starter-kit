@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Resources\Modules\Clients\ClientResource;
+use App\Filament\Resources\Modules\SocialiteProviders\SocialiteProviderResource;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -58,8 +59,12 @@ class ControlPanelProvider extends PanelProvider
     {
         $resources = [];
 
-        if (config(key: 'modules.clients', default: false)) {
+        if (config(key: 'modules.clients.enabled', default: false)) {
             $resources[] = ClientResource::class;
+        }
+
+        if (config(key: 'modules.socialite.enabled', default: false)) {
+            $resources[] = SocialiteProviderResource::class;
         }
 
         return $resources;

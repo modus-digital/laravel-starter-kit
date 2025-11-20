@@ -2,19 +2,17 @@
 
 namespace App\Filament\Resources\Core\RBAC\Roles;
 
-use App\Filament\Resources\Core\RBAC\Roles\Pages\ViewRole;
 use App\Filament\Resources\Core\RBAC\Roles\Pages\ListRoles;
+use App\Filament\Resources\Core\RBAC\Roles\Pages\ViewRole;
+use App\Filament\Resources\Core\RBAC\Roles\RelationManagers\PermissionRelationManager;
 use App\Filament\Resources\Core\RBAC\Roles\Schemas\RoleForm;
 use App\Filament\Resources\Core\RBAC\Roles\Tables\RolesTable;
-use App\Filament\Resources\Core\RBAC\Roles\RelationManagers\PermissionRelationManager;
-
-use Spatie\Permission\Models\Role;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Spatie\Permission\Models\Role;
 
 class RoleResource extends Resource
 {

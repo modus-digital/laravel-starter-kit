@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Filament\Resources\Core\Translations;
 
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
@@ -105,12 +105,12 @@ class TranslationService
             $target = $target[$group] ?? [];
 
             // Handle cases where the group value is a string instead of an array
-            $englishFlat = is_string($english) 
-                ? [$group => $english] 
+            $englishFlat = is_string($english)
+                ? [$group => $english]
                 : $this->flattenTranslations($english);
 
-            $targetFlat = is_string($target) 
-                ? [$group => $target] 
+            $targetFlat = is_string($target)
+                ? [$group => $target]
                 : $this->flattenTranslations($target);
 
             // Prepend group to keys for consistency
@@ -148,12 +148,12 @@ class TranslationService
         $englishGroup = $english[$group] ?? [];
         $targetGroup = $target[$group] ?? [];
 
-        $englishFlat = is_string($englishGroup) 
-            ? [$group => $englishGroup] 
+        $englishFlat = is_string($englishGroup)
+            ? [$group => $englishGroup]
             : $this->flattenTranslations($englishGroup);
 
-        $targetFlat = is_string($targetGroup) 
-            ? [$group => $targetGroup] 
+        $targetFlat = is_string($targetGroup)
+            ? [$group => $targetGroup]
             : $this->flattenTranslations($targetGroup);
 
         $total = count($englishFlat);
