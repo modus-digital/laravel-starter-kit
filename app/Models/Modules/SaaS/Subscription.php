@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Modules\SaaS;
 
 use App\Enums\ActivityStatus;
@@ -11,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Subscription extends Model
+final class Subscription extends Model
 {
     /** @use HasFactory<\Database\Factories\Modules\SaaS\SubscriptionFactory> */
     use HasFactory;
@@ -19,28 +21,15 @@ class Subscription extends Model
     use HasUuids;
     use SoftDeletes;
 
-    protected $keyType = 'string';
-
     public $incrementing = false;
+
+    protected $keyType = 'string';
 
     protected $fillable = [
         'client_id',
         'plan_id',
         'status',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'status' => ActivityStatus::class,
-            'starts_at' => 'datetime',
-            'ends_at' => 'datetime',
-            'trial_ends_at' => 'datetime',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
-            'deleted_at' => 'datetime',
-        ];
-    }
 
     public function client(): BelongsTo
     {
@@ -55,5 +44,18 @@ class Subscription extends Model
     public function invoices(): HasMany
     {
         return $this->hasMany(related: Invoice::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'status' => ActivityStatus::class,
+            'starts_at' => 'datetime',
+            'ends_at' => 'datetime',
+            'trial_ends_at' => 'datetime',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+            'deleted_at' => 'datetime',
+        ];
     }
 }

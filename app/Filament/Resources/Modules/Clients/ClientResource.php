@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Modules\Clients;
 
 use App\Filament\Resources\Modules\Clients\Pages\CreateClient;
@@ -16,13 +18,15 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ClientResource extends Resource
+final class ClientResource extends Resource
 {
     protected static ?string $model = Client::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::BuildingOffice2;
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    protected static ?int $navigationSort = 1;
 
     public static function getNavigationGroup(): ?string
     {
@@ -33,8 +37,6 @@ class ClientResource extends Resource
     {
         return __('admin.clients.navigation_label');
     }
-
-    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {

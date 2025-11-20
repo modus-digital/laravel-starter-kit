@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Translations\Widgets;
 
 use App\Filament\Resources\Core\Translations\Tables\TranslationsGroupTable as TableDefinition;
@@ -7,7 +9,7 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Livewire\Attributes\On;
 
-class TranslationsGroupTableWidget extends TableWidget
+final class TranslationsGroupTableWidget extends TableWidget
 {
     public string $group;
 

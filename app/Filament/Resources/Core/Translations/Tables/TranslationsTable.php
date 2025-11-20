@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Translations\Tables;
 
 use App\Filament\Resources\Core\Translations\TranslationResource;
 use App\Filament\Resources\Core\Translations\TranslationService;
 use App\Filament\Resources\Core\Translations\Widgets\LanguageSelector;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -15,7 +18,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-class TranslationsTable
+final class TranslationsTable
 {
     public static function configure(Table $table): Table
     {
@@ -37,7 +40,7 @@ class TranslationsTable
             )
             ->paginated(false)
             ->records(
-                fn (?string $search, ?string $sortColumn, ?string $sortDirection) => static::buildKeyRecords(
+                fn (?string $search, ?string $sortColumn, ?string $sortDirection) => self::buildKeyRecords(
                     translationService: $translationService,
                     search: $search,
                     sortColumn: $sortColumn,
@@ -79,7 +82,7 @@ class TranslationsTable
                             ->placeholder('e.g. en, fr, es, etc.')
                             ->helperText('The code for the language you want to create.'),
                     ])
-                    ->action(fn (array $data) => static::createLanguage(data: $data, service: $translationService)),
+                    ->action(fn (array $data) => self::createLanguage(data: $data, service: $translationService)),
             ])
             ->filters([]);
     }
@@ -116,7 +119,7 @@ class TranslationsTable
                 ];
             });
 
-        $descending = strtolower($sortDirection ?? 'asc') === 'desc';
+        $descending = mb_strtolower($sortDirection ?? 'asc') === 'desc';
 
         if ($sortColumn === 'missing') {
             $records = $records->sortBy(
@@ -160,7 +163,7 @@ class TranslationsTable
                 ->send();
 
             return;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Notification::make('language_creation_failed')
                 ->title('Language creation failed')
                 ->body('The language you are trying to create failed to be created.')

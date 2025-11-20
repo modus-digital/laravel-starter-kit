@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Modules\Clients;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -8,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ClientBillingInfo extends Model
+final class ClientBillingInfo extends Model
 {
     /** @use HasFactory<\Database\Factories\Modules\Clients\ClientBillingInfoFactory> */
     use HasFactory;
@@ -16,9 +18,9 @@ class ClientBillingInfo extends Model
     use HasUuids;
     use SoftDeletes;
 
-    protected $keyType = 'string';
-
     public $incrementing = false;
+
+    protected $keyType = 'string';
 
     protected $fillable = [
         'client_id',
@@ -34,6 +36,11 @@ class ClientBillingInfo extends Model
         'notes',
     ];
 
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(related: Client::class);
+    }
+
     protected function casts(): array
     {
         return [
@@ -41,10 +48,5 @@ class ClientBillingInfo extends Model
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',
         ];
-    }
-
-    public function client(): BelongsTo
-    {
-        return $this->belongsTo(related: Client::class);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Modules\SocialiteProviders\Pages;
 
 use App\Filament\Resources\Modules\SocialiteProviders\SocialiteProviderResource;
@@ -7,7 +9,7 @@ use App\Models\Modules\SocialiteProvider;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
-class ViewSocialiteProvider extends ViewRecord
+final class ViewSocialiteProvider extends ViewRecord
 {
     protected static string $resource = SocialiteProviderResource::class;
 

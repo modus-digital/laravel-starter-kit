@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Overrides;
 
 use App\Enums\ActivityStatus;
@@ -13,7 +15,7 @@ use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\Facades\Activity;
 
-class ImpersonateAction extends Action
+final class ImpersonateAction extends Action
 {
     protected function setUp(): void
     {

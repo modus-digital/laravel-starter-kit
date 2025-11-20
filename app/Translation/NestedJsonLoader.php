@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Translation;
 
 use Illuminate\Translation\FileLoader;
@@ -13,7 +15,7 @@ use Illuminate\Translation\FileLoader;
  *
  * @since 1.0.0
  */
-class NestedJsonLoader extends FileLoader
+final class NestedJsonLoader extends FileLoader
 {
     protected function loadJsonPaths($locale)
     {

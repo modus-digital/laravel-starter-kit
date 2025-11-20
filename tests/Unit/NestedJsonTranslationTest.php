@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Translation\NestedJsonLoader;
 
 describe('Nested JSON Translation', function () {

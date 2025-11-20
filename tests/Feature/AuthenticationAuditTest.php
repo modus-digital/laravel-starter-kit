@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Listeners\LogFailedLogin;
 use App\Listeners\LogLogout;
 use App\Listeners\LogSuccessfulLogin;
@@ -21,7 +23,7 @@ test('successful login listener creates audit log', function () {
     Queue::fake();
 
     $event = new Login('web', $this->user, false);
-    $listener = new LogSuccessfulLogin(app(\App\Services\AuditService::class));
+    $listener = new LogSuccessfulLogin(app(App\Services\AuditService::class));
     $listener->handle($event);
 
     $this->assertDatabaseHas('activity_log', [
@@ -49,7 +51,7 @@ test('failed login listener creates audit log with user', function () {
     Queue::fake();
 
     $event = new Failed('web', $this->user, ['email' => 'test@example.com', 'password' => 'wrong-password']);
-    $listener = new LogFailedLogin(app(\App\Services\AuditService::class));
+    $listener = new LogFailedLogin(app(App\Services\AuditService::class));
     $listener->handle($event);
 
     $this->assertDatabaseHas('activity_log', [
@@ -73,7 +75,7 @@ test('failed login listener creates audit log without subject for non-existent u
     Queue::fake();
 
     $event = new Failed('web', null, ['email' => 'nonexistent@example.com', 'password' => 'password']);
-    $listener = new LogFailedLogin(app(\App\Services\AuditService::class));
+    $listener = new LogFailedLogin(app(App\Services\AuditService::class));
     $listener->handle($event);
 
     $this->assertDatabaseHas('activity_log', [
@@ -96,7 +98,7 @@ test('logout listener creates audit log', function () {
     Queue::fake();
 
     $event = new Logout('web', $this->user);
-    $listener = new LogLogout(app(\App\Services\AuditService::class));
+    $listener = new LogLogout(app(App\Services\AuditService::class));
     $listener->handle($event);
 
     $this->assertDatabaseHas('activity_log', [

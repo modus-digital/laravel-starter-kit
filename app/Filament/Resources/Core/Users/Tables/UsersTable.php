@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Users\Tables;
 
 use App\Enums\ActivityStatus;
@@ -17,9 +19,8 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-use Filament\Support\Colors\Color;
 
-class UsersTable
+final class UsersTable
 {
     public static function configure(Table $table): Table
     {

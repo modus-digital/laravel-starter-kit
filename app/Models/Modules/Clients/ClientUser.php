@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Modules\Clients;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class ClientUser extends Pivot
+final class ClientUser extends Pivot
 {
     public $incrementing = false;
 

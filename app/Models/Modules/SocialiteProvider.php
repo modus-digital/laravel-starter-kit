@@ -24,9 +24,9 @@ final class SocialiteProvider extends Model
 {
     use HasUuids;
 
-    protected $keyType = 'string';
-
     public $incrementing = false;
+
+    protected $keyType = 'string';
 
     protected $fillable = [
         'client_id',

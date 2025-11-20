@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Modules\SaaS;
 
 use App\Enums\BillingStatus;
@@ -11,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Invoice extends Model
+final class Invoice extends Model
 {
     /** @use HasFactory<\Database\Factories\Modules\SaaS\InvoiceFactory> */
     use HasFactory;
@@ -19,9 +21,9 @@ class Invoice extends Model
     use HasUuids;
     use SoftDeletes;
 
-    protected $keyType = 'string';
-
     public $incrementing = false;
+
+    protected $keyType = 'string';
 
     protected $fillable = [
         'invoice_id',
@@ -31,18 +33,6 @@ class Invoice extends Model
         'currency',
         'status',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'status' => BillingStatus::class,
-            'paid_at' => 'datetime',
-            'due_date' => 'datetime',
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
-            'deleted_at' => 'datetime',
-        ];
-    }
 
     public function client(): BelongsTo
     {
@@ -57,5 +47,17 @@ class Invoice extends Model
     public function payments(): HasMany
     {
         return $this->hasMany(related: Payment::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'status' => BillingStatus::class,
+            'paid_at' => 'datetime',
+            'due_date' => 'datetime',
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+            'deleted_at' => 'datetime',
+        ];
     }
 }

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Overrides;
 
 use App\Enums\RBAC\Role;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Model;
 
-class RoleSelect extends Select
+final class RoleSelect extends Select
 {
     protected function setUp(): void
     {

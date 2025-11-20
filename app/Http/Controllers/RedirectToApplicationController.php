@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Enums\RBAC\Role;
 use Illuminate\Http\Request;
 
-class RedirectToApplicationController extends Controller
+final class RedirectToApplicationController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -14,8 +16,12 @@ class RedirectToApplicationController extends Controller
     {
         $user = $request->user();
 
-        if (! $user) return to_route(route: 'login');
-        if ($user->hasAnyRole(roles: [Role::SUPER_ADMIN, Role::ADMIN])) return to_route(route: 'filament.control.pages.dashboard');
+        if (! $user) {
+            return to_route(route: 'login');
+        }
+        if ($user->hasAnyRole(roles: [Role::SUPER_ADMIN, Role::ADMIN])) {
+            return to_route(route: 'filament.control.pages.dashboard');
+        }
 
         return to_route(route: 'dashboard');
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Modules\SocialiteProviders\Schemas;
 
 use App\Enums\AuthenticationProvider;
@@ -69,7 +71,7 @@ final class SocialiteProviderForm
                                     ? $record->name->value
                                     : $record->name;
 
-                                $domain = rtrim(config('app.url'), '/');
+                                $domain = mb_rtrim(config('app.url'), '/');
 
                                 return "{$domain}/auth/{$provider}/callback";
                             })

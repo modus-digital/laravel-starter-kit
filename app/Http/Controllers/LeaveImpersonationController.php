@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -9,7 +11,7 @@ use Inertia\Inertia;
 use Spatie\Activitylog\Facades\Activity;
 use Symfony\Component\HttpFoundation\Response;
 
-class LeaveImpersonationController extends Controller
+final class LeaveImpersonationController extends Controller
 {
     /**
      * Handle the incoming request.

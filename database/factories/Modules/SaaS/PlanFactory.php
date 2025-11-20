@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories\Modules\SaaS;
 
 use App\Enums\ActivityStatus;
@@ -9,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<Plan>
  */
-class PlanFactory extends Factory
+final class PlanFactory extends Factory
 {
     /**
      * Define the model's default state.

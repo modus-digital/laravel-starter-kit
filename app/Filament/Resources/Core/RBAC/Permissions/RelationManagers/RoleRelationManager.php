@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\RBAC\Permissions\RelationManagers;
 
 use App\Enums\RBAC\Role as RBACRole;

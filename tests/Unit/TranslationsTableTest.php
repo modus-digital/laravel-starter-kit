@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Filament\Resources\Core\Translations\Tables\TranslationsTable;
 use Illuminate\Support\Collection;
 
 it('builds records with status and missing metadata', function () {
-    $service = new class extends \App\Filament\Resources\Core\Translations\TranslationService
+    $service = new class extends App\Filament\Resources\Core\Translations\TranslationService
     {
         public function __construct(private array $groups = [
             'auth' => ['missing' => 0, 'total' => 2],
@@ -47,7 +49,7 @@ it('builds records with status and missing metadata', function () {
 });
 
 it('filters records when a search term is provided', function () {
-    $service = new class extends \App\Filament\Resources\Core\Translations\TranslationService
+    $service = new class extends App\Filament\Resources\Core\Translations\TranslationService
     {
         public function getRootGroups(): array
         {
@@ -70,7 +72,7 @@ it('filters records when a search term is provided', function () {
 });
 
 it('sorts records by key in descending order', function () {
-    $service = new class extends \App\Filament\Resources\Core\Translations\TranslationService
+    $service = new class extends App\Filament\Resources\Core\Translations\TranslationService
     {
         public function getRootGroups(): array
         {

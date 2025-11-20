@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Translations\Pages;
 
 use App\Enums\Language;
@@ -17,19 +19,19 @@ use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Illuminate\Support\Str;
 
-class QuickTranslate extends Page implements HasForms
+final class QuickTranslate extends Page implements HasForms
 {
     use InteractsWithForms;
-
-    protected static string $resource = TranslationResource::class;
-
-    protected string $view = 'filament.resources.core.translations.pages.quick-translate';
 
     public ?array $data = [];
 
     public array $missingTranslations = [];
 
     public ?string $currentKey = null;
+
+    protected static string $resource = TranslationResource::class;
+
+    protected string $view = 'filament.resources.core.translations.pages.quick-translate';
 
     public function mount(): void
     {
@@ -130,16 +132,6 @@ class QuickTranslate extends Page implements HasForms
         ]);
     }
 
-    protected function getFormActions(): array
-    {
-        return [
-            Action::make('save')
-                ->label('Save & Next')
-                ->color(Color::Green)
-                ->submit('save'),
-        ];
-    }
-
     public function getTitle(): string
     {
         return 'Quick Translate';
@@ -152,6 +144,16 @@ class QuickTranslate extends Page implements HasForms
             TranslationResource::getUrl('index') => 'Translations',
             TranslationResource::getUrl('group', ['group' => request()->route('group')]) => Str::headline(request()->route('group')),
             null => 'Quick Translate',
+        ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [
+            Action::make('save')
+                ->label('Save & Next')
+                ->color(Color::Green)
+                ->submit('save'),
         ];
     }
 }

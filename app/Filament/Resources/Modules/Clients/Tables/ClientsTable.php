@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Modules\Clients\Tables;
 
 use Filament\Actions\BulkActionGroup;
@@ -10,7 +12,7 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
-class ClientsTable
+final class ClientsTable
 {
     public static function configure(Table $table): Table
     {

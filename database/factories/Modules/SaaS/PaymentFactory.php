@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories\Modules\SaaS;
 
 use App\Models\Modules\SaaS\Invoice;
@@ -9,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<Payment>
  */
-class PaymentFactory extends Factory
+final class PaymentFactory extends Factory
 {
     /**
      * Define the model's default state.

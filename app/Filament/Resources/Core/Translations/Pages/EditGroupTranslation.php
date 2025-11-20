@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Translations\Pages;
 
 use App\Filament\Resources\Core\Translations\Tables\TranslationsGroupTable;
@@ -8,7 +10,7 @@ use Filament\Resources\Pages\Page;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
-class EditGroupTranslation extends Page
+final class EditGroupTranslation extends Page
 {
     protected static string $resource = TranslationResource::class;
 

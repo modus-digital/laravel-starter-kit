@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Users\Pages;
 
 use App\Filament\Resources\Core\Users\UserResource;
@@ -7,7 +9,7 @@ use App\Notifications\Auth\AccountCreated;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Str;
 
-class CreateUser extends CreateRecord
+final class CreateUser extends CreateRecord
 {
     protected static string $resource = UserResource::class;
 

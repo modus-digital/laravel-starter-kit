@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Translations\Tables;
 
 use App\Enums\Language;
@@ -17,7 +19,7 @@ use Filament\Widgets\TableWidget;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-class TranslationsGroupTable extends TableWidget
+final class TranslationsGroupTable extends TableWidget
 {
     public static function configure(Table $table, string $group): Table
     {
@@ -32,7 +34,7 @@ class TranslationsGroupTable extends TableWidget
                 ],
             ))
             ->paginated(false)
-            ->records(fn () => static::buildRecords($service, $targetLanguage, $group))
+            ->records(fn () => self::buildRecords($service, $targetLanguage, $group))
             ->columns([
                 TextColumn::make('english')
                     ->label('Base')
@@ -81,7 +83,7 @@ class TranslationsGroupTable extends TableWidget
                             ])
                             ->columns(1),
                     ])
-                    ->action(fn (array $record, array $data) => static::saveTranslation($record, $data)),
+                    ->action(fn (array $record, array $data) => self::saveTranslation($record, $data)),
             ]);
     }
 

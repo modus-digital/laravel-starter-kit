@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Enums\RBAC\Permission as PermissionEnum;
@@ -8,7 +10,7 @@ use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class RolesAndPermissionsSeeder extends Seeder
+final class RolesAndPermissionsSeeder extends Seeder
 {
     /**
      * Run the database seeds.

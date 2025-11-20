@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\RBAC\Roles;
 
 use App\Filament\Resources\Core\RBAC\Roles\Pages\ListRoles;
@@ -14,11 +16,17 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Spatie\Permission\Models\Role;
 
-class RoleResource extends Resource
+final class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+
+    protected static bool $shouldRegisterNavigation = true;
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $slug = 'system/access-control/roles';
 
     public static function getNavigationGroup(): ?string
     {
@@ -34,12 +42,6 @@ class RoleResource extends Resource
     {
         return __('navigation.labels.roles');
     }
-
-    protected static bool $shouldRegisterNavigation = true;
-
-    protected static ?int $navigationSort = 2;
-
-    protected static ?string $slug = 'system/access-control/roles';
 
     public static function form(Schema $schema): Schema
     {

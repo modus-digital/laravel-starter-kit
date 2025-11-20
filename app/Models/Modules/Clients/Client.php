@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Modules\Clients;
 
 use App\Enums\ActivityStatus;
@@ -12,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Client extends Model
+final class Client extends Model
 {
     /** @use HasFactory<\Database\Factories\Modules\Clients\ClientFactory> */
     use HasFactory;
@@ -20,9 +22,9 @@ class Client extends Model
     use HasUuids;
     use SoftDeletes;
 
-    protected $keyType = 'string';
-
     public $incrementing = false;
+
+    protected $keyType = 'string';
 
     protected $fillable = [
         'name',
@@ -35,16 +37,6 @@ class Client extends Model
         'country',
         'status',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'status' => ActivityStatus::class,
-            'created_at' => 'datetime',
-            'updated_at' => 'datetime',
-            'deleted_at' => 'datetime',
-        ];
-    }
 
     public function users(): BelongsToMany
     {
@@ -65,5 +57,15 @@ class Client extends Model
     public function invoices(): HasMany
     {
         return $this->hasMany(related: \App\Models\Modules\SaaS\Invoice::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'status' => ActivityStatus::class,
+            'created_at' => 'datetime',
+            'updated_at' => 'datetime',
+            'deleted_at' => 'datetime',
+        ];
     }
 }

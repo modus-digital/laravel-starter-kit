@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\RBAC\Permissions;
 
 use App\Filament\Resources\Core\RBAC\Permissions\Pages\ListPermissions;
@@ -14,11 +16,17 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Spatie\Permission\Models\Permission;
 
-class PermissionResource extends Resource
+final class PermissionResource extends Resource
 {
     protected static ?string $model = Permission::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
+
+    protected static bool $shouldRegisterNavigation = true;
+
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $slug = 'system/access-control/permissions';
 
     public static function getNavigationGroup(): ?string
     {
@@ -34,12 +42,6 @@ class PermissionResource extends Resource
     {
         return __('navigation.labels.permissions');
     }
-
-    protected static bool $shouldRegisterNavigation = true;
-
-    protected static ?int $navigationSort = 3;
-
-    protected static ?string $slug = 'system/access-control/permissions';
 
     public static function form(Schema $schema): Schema
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\RBAC\Permissions\Schemas;
 
 use App\Enums\RBAC\Permission as RBACPermission;

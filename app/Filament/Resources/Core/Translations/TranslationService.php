@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Translations;
 
 use Illuminate\Support\Facades\File;
@@ -7,7 +9,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
-class TranslationService
+final class TranslationService
 {
     /**
      * Get all available language codes from the lang directory.
@@ -261,7 +263,7 @@ class TranslationService
      *
      * @param  array<string>  $languages
      */
-    protected function determineDefaultTargetLanguage(array $languages): string
+    private function determineDefaultTargetLanguage(array $languages): string
     {
         return collect($languages)
             ->first(fn (string $code) => $code !== 'en') ?? 'en';

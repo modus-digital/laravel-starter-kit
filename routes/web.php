@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeaveImpersonationController;
 use App\Http\Controllers\RedirectToApplicationController;
@@ -17,7 +19,11 @@ Route::middleware(['auth', 'verified'])
     });
 
 // Module routes
-if (config('modules.socialite.enabled')) require __DIR__.'/modules/oauth.php';
-if (config('modules.clients.enabled')) require __DIR__.'/modules/clients.php';
+if (config('modules.socialite.enabled')) {
+    require __DIR__.'/modules/oauth.php';
+}
+if (config('modules.clients.enabled')) {
+    require __DIR__.'/modules/clients.php';
+}
 
 require __DIR__.'/settings.php';

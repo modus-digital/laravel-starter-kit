@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -17,7 +19,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser
+final class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
@@ -28,11 +30,11 @@ class User extends Authenticatable implements FilamentUser
     use SoftDeletes;
     use TwoFactorAuthenticatable;
 
+    public $incrementing = false;
+
     // use HasClients; <-- Uncomment if clients module is enabled in config/modules.php
 
     protected $keyType = 'string';
-
-    public $incrementing = false;
 
     /**
      * The attributes that are mass assignable.
@@ -59,6 +61,11 @@ class User extends Authenticatable implements FilamentUser
         'remember_token',
     ];
 
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL);
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -72,10 +79,5 @@ class User extends Authenticatable implements FilamentUser
             'two_factor_confirmed_at' => 'datetime',
             'status' => ActivityStatus::class,
         ];
-    }
-
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return $this->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL);
     }
 }

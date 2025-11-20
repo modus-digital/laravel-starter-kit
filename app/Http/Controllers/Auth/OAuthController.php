@@ -19,7 +19,7 @@ use Laravel\Socialite\Contracts\User as SocialiteUser;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
 
-class OAuthController extends Controller
+final class OAuthController extends Controller
 {
     public function redirect(string $providerName): RedirectResponse|SymfonyRedirectResponse
     {
