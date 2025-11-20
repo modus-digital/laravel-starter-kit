@@ -1,4 +1,5 @@
 import InputError from '@/components/input-error';
+import SocialAuthButtons from '@/components/social-auth-buttons';
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -11,17 +12,20 @@ import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 import { Form, Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
+import { SocialiteProvider } from '@/types';
 
 interface LoginProps {
     status?: string;
     canResetPassword: boolean;
     canRegister: boolean;
+    authProviders: SocialiteProvider[];
 }
 
 export default function Login({
     status,
     canResetPassword,
     canRegister,
+    authProviders,
 }: LoginProps) {
     const { t } = useTranslation();
 
@@ -31,6 +35,16 @@ export default function Login({
             description={t('auth.pages.login.description')}
         >
             <Head title={t('auth.pages.login.page_title')} />
+
+            <SocialAuthButtons providers={authProviders} />
+
+            <div className="flex items-center mt-2 mb-6">
+                <div className="grow h-px bg-muted" />
+                <span className="mx-4 text-xs text-muted-foreground uppercase">
+                    {t('auth.pages.login.or_continue_with', 'Or continue with')}
+                </span>
+                <div className="grow h-px bg-muted" />
+            </div>
 
             <Form
                 action={store()}

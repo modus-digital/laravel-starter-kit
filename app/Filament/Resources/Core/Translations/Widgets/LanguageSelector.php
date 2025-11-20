@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Core\Translations\Widgets;
 
 use App\Enums\Language;
-use App\Services\TranslationService;
+use App\Filament\Resources\Core\Translations\TranslationService;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;

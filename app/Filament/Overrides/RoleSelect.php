@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Overriddes;
+namespace App\Filament\Overrides;
 
 use App\Enums\RBAC\Role;
 use Filament\Forms\Components\Select;
@@ -37,7 +37,7 @@ class RoleSelect extends Select
                     return [$role->name => $label];
                 })
                 ->all()
-            );
+        );
 
         // Setting up the option label using the enum label
         $this->getOptionLabelUsing(
@@ -54,6 +54,7 @@ class RoleSelect extends Select
             callback: static function (self $component, Model $record, mixed $state): void {
                 if ($state === null) {
                     $record->roles()->detach();
+
                     return;
                 }
 

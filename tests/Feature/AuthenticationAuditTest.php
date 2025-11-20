@@ -1,0 +1,118 @@
+<?php
+
+use App\Listeners\LogFailedLogin;
+use App\Listeners\LogLogout;
+use App\Listeners\LogSuccessfulLogin;
+use App\Models\User;
+use Illuminate\Auth\Events\Failed;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
+use Illuminate\Support\Facades\Queue;
+use Spatie\Activitylog\Models\Activity;
+
+beforeEach(function () {
+    $this->user = User::factory()->create([
+        'email' => 'test@example.com',
+        'password' => bcrypt('password'),
+    ]);
+});
+
+test('successful login listener creates audit log', function () {
+    Queue::fake();
+
+    $event = new Login('web', $this->user, false);
+    $listener = new LogSuccessfulLogin(app(\App\Services\AuditService::class));
+    $listener->handle($event);
+
+    $this->assertDatabaseHas('activity_log', [
+        'log_name' => 'authentication',
+        'subject_type' => User::class,
+        'subject_id' => $this->user->id,
+        'causer_type' => User::class,
+        'causer_id' => $this->user->id,
+    ]);
+
+    $activity = Activity::where('log_name', 'authentication')
+        ->where('subject_id', $this->user->id)
+        ->latest()
+        ->first();
+
+    expect($activity)->not->toBeNull()
+        ->and($activity->properties->get('event'))->toBe('login')
+        ->and($activity->properties->get('ip_address'))->not->toBeNull()
+        ->and($activity->properties->get('user_agent'))->not->toBeNull()
+        ->and($activity->properties->get('guard'))->toBe('web')
+        ->and($activity->properties->get('remember'))->toBe(false);
+});
+
+test('failed login listener creates audit log with user', function () {
+    Queue::fake();
+
+    $event = new Failed('web', $this->user, ['email' => 'test@example.com', 'password' => 'wrong-password']);
+    $listener = new LogFailedLogin(app(\App\Services\AuditService::class));
+    $listener->handle($event);
+
+    $this->assertDatabaseHas('activity_log', [
+        'log_name' => 'authentication',
+        'subject_type' => User::class,
+        'subject_id' => $this->user->id,
+    ]);
+
+    $activity = Activity::where('log_name', 'authentication')
+        ->where('subject_id', $this->user->id)
+        ->latest()
+        ->first();
+
+    expect($activity)->not->toBeNull()
+        ->and($activity->properties->get('event'))->toBe('login_failed')
+        ->and($activity->properties->get('credentials')['email'])->toBe('test@example.com')
+        ->and($activity->properties->get('guard'))->toBe('web');
+});
+
+test('failed login listener creates audit log without subject for non-existent user', function () {
+    Queue::fake();
+
+    $event = new Failed('web', null, ['email' => 'nonexistent@example.com', 'password' => 'password']);
+    $listener = new LogFailedLogin(app(\App\Services\AuditService::class));
+    $listener->handle($event);
+
+    $this->assertDatabaseHas('activity_log', [
+        'log_name' => 'authentication',
+        'subject_type' => null,
+        'subject_id' => null,
+    ]);
+
+    $activity = Activity::where('log_name', 'authentication')
+        ->whereNull('subject_id')
+        ->latest()
+        ->first();
+
+    expect($activity)->not->toBeNull()
+        ->and($activity->properties->get('event'))->toBe('login_failed')
+        ->and($activity->properties->get('credentials')['email'])->toBe('nonexistent@example.com');
+});
+
+test('logout listener creates audit log', function () {
+    Queue::fake();
+
+    $event = new Logout('web', $this->user);
+    $listener = new LogLogout(app(\App\Services\AuditService::class));
+    $listener->handle($event);
+
+    $this->assertDatabaseHas('activity_log', [
+        'log_name' => 'authentication',
+        'subject_type' => User::class,
+        'subject_id' => $this->user->id,
+        'causer_type' => User::class,
+        'causer_id' => $this->user->id,
+    ]);
+
+    $activity = Activity::where('log_name', 'authentication')
+        ->where('subject_id', $this->user->id)
+        ->latest()
+        ->first();
+
+    expect($activity)->not->toBeNull()
+        ->and($activity->properties->get('event'))->toBe('logout')
+        ->and($activity->properties->get('guard'))->toBe('web');
+});

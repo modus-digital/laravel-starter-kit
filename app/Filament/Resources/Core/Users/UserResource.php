@@ -9,7 +9,6 @@ use App\Filament\Resources\Core\Users\Schemas\UserForm;
 use App\Filament\Resources\Core\Users\Tables\UsersTable;
 use App\Models\User;
 use BackedEnum;
-use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;

@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Core\Users\Schemas;
 
 use App\Enums\ActivityStatus;
-use App\Filament\Overriddes\RoleSelect;
+use App\Filament\Overrides\RoleSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Grid;
@@ -35,6 +35,7 @@ class UserForm
                                     ->label(__('admin.users.form.email'))
                                     ->columns(1)
                                     ->email()
+                                    ->unique(ignoreRecord: true)
                                     ->required(),
 
                                 TextInput::make('phone')

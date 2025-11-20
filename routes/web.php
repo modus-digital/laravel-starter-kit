@@ -16,4 +16,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 });
 
+config('modules.socialite.enabled') ? require __DIR__.'/oauth.php' : null;
+
 require __DIR__.'/settings.php';
