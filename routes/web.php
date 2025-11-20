@@ -1,21 +1,23 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LeaveImpersonationController;
+use App\Http\Controllers\RedirectToApplicationController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-use Laravel\Fortify\Features;
 
-Route::get('/', function () {
-    return Inertia::render('welcome', [
-        'canRegister' => Features::enabled(Features::registration()),
-    ]);
-})->name('home');
+Route::get('/', RedirectToApplicationController::class)->name('app.home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
-});
+Route::middleware(middleware: ['auth', 'verified'])
+    ->group(function () {
+        Route::get('dashboard', DashboardController::class)
+            ->name('dashboard');
 
-config('modules.socialite.enabled') ? require __DIR__.'/oauth.php' : null;
+        Route::post('impersonate/leave', LeaveImpersonationController::class)
+            ->name('impersonate.leave');
+    });
+
+// Module routes
+if (config('modules.socialite.enabled')) require __DIR__.'/oauth.php';
+if (config('modules.clients.enabled')) require __DIR__.'/clients.php';
 
 require __DIR__.'/settings.php';
