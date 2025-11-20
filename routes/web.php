@@ -17,7 +17,7 @@ Route::middleware(middleware: ['auth', 'verified'])
     });
 
 // Module routes
-if (config('modules.socialite.enabled')) require __DIR__.'/oauth.php';
-if (config('modules.clients.enabled')) require __DIR__.'/clients.php';
+if (config('modules.socialite.enabled')) require __DIR__.'/modules/oauth.php';
+if (config('modules.clients.enabled')) require __DIR__.'/modules/clients.php';
 
 require __DIR__.'/settings.php';
