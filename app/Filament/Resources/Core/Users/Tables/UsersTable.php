@@ -62,11 +62,7 @@ class UsersTable
 
                 TextColumn::make('created_at')
                     ->label(__('admin.users.table.created_at'))
-                    ->sortable()
-                    ->searchable(),
-
-                TextColumn::make('updated_at')
-                    ->label(__('admin.users.table.updated_at'))
+                    ->date('d-m-Y')
                     ->sortable()
                     ->searchable(),
             ])
