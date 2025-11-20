@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Overriddes;
+namespace App\Filament\Overrides;
 
 use App\Enums\RBAC\Role;
 use Filament\Forms\Components\Select;
