@@ -7,7 +7,6 @@ namespace App\Filament\Resources\Core\Translations\Pages;
 use App\Enums\Language;
 use App\Filament\Resources\Core\Translations\TranslationResource;
 use App\Filament\Resources\Core\Translations\TranslationService;
-use Filament\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -16,7 +15,6 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Colors\Color;
 use Illuminate\Support\Str;
 
 final class QuickTranslate extends Page implements HasForms
@@ -148,5 +146,4 @@ final class QuickTranslate extends Page implements HasForms
             null => 'Quick Translate',
         ];
     }
-
 }

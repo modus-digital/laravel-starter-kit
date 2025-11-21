@@ -380,7 +380,7 @@ final class GenerateTypeScriptTypes extends Command
     }
 
     /**
-     * @param array{name: string, type: string, nullable: bool} $column
+     * @param  array{name: string, type: string, nullable: bool}  $column
      */
     private function getTypeScriptType(array $column, ?string $cast = null): string
     {
@@ -575,7 +575,7 @@ final class GenerateTypeScriptTypes extends Command
     }
 
     /**
-     * @param array<int, class-string> $models
+     * @param  array<int, class-string>  $models
      * @return array<int, string>
      */
     private function collectUsedEnums(array $models): array
@@ -619,7 +619,7 @@ final class GenerateTypeScriptTypes extends Command
     private function getEnumBackingType(string $enumClass): string
     {
         /** @var class-string $enumClass */
-        $reflection = new ReflectionClass($enumClass);
+        new ReflectionClass($enumClass);
         $cases = $enumClass::cases();
 
         if (empty($cases)) {

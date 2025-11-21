@@ -51,7 +51,7 @@ final class UsersTable
                 TextColumn::make('role')
                     ->label(__('admin.users.table.role'))
                     ->getStateUsing(function (?User $record): string {
-                        if (! $record) {
+                        if (! $record instanceof User) {
                             return __('admin.users.table.no_role');
                         }
                         /** @var \Spatie\Permission\Models\Role|null $firstRole */
@@ -63,7 +63,7 @@ final class UsersTable
                         return Role::from($firstRole->name)->getLabel();
                     })
                     ->icon(function (?User $record) {
-                        if (! $record) {
+                        if (! $record instanceof User) {
                             return null;
                         }
                         /** @var \Spatie\Permission\Models\Role|null $firstRole */
@@ -75,7 +75,7 @@ final class UsersTable
                         return Role::from($firstRole->name)->getIcon();
                     })
                     ->color(function (?User $record) {
-                        if (! $record) {
+                        if (! $record instanceof User) {
                             return null;
                         }
                         /** @var \Spatie\Permission\Models\Role|null $firstRole */
@@ -94,7 +94,7 @@ final class UsersTable
                     ->label(__('admin.users.table.status'))
                     ->getStateUsing(fn (?User $record): string => $record?->status->getLabel() ?? '')
                     ->color(function (?User $record): string {
-                        if (! $record) {
+                        if (! $record instanceof User) {
                             return 'gray';
                         }
 

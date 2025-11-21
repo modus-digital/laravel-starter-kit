@@ -110,8 +110,8 @@ final class TranslationsGroupTable extends TableWidget
     }
 
     /**
-     * @param array<string, mixed> $record
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $record
+     * @param  array<string, mixed>  $data
      */
     private static function saveTranslation(array $record, array $data): void
     {

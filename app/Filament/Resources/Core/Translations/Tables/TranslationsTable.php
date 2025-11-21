@@ -126,7 +126,7 @@ final class TranslationsTable
 
         if ($sortColumn === 'missing') {
             $records = $records->sortBy(
-                fn (array $record) => $record['missing'],
+                fn (array $record): int => $record['missing'],
                 descending: $descending,
             );
         } elseif ($sortColumn === 'status') {
@@ -145,7 +145,7 @@ final class TranslationsTable
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     private static function createLanguage(array $data, TranslationService $service): void
     {

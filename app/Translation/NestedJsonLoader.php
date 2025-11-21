@@ -41,7 +41,7 @@ final class NestedJsonLoader extends FileLoader
     }
 
     /**
-     * @param array<string, mixed> $array
+     * @param  array<string, mixed>  $array
      * @return array<string, mixed>
      */
     private function flattenTranslations(array $array, string $prefix = ''): array

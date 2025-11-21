@@ -52,7 +52,7 @@ final class TranslationService
     /**
      * Save a language file with proper formatting.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function saveLanguageFile(string $lang, array $data): void
     {
@@ -84,7 +84,7 @@ final class TranslationService
     /**
      * Flatten nested translations to dot notation.
      *
-     * @param array<string, mixed> $translations
+     * @param  array<string, mixed>  $translations
      * @return array<string, mixed>
      */
     public function flattenTranslations(array $translations, string $prefix = ''): array

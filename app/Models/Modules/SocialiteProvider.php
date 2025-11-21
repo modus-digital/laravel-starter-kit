@@ -36,7 +36,7 @@ final class SocialiteProvider extends Model
     ];
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<self> $query
+     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
      * @return \Illuminate\Database\Eloquent\Builder<self>
      */
     public function scopeEnabled(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
@@ -45,7 +45,7 @@ final class SocialiteProvider extends Model
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<self> $query
+     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
      * @return \Illuminate\Database\Eloquent\Builder<self>
      */
     public function scopeOrdered(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder

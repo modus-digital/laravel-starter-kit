@@ -7,3 +7,28 @@ parameters:
         - app/
 
     level: 8
+
+    ignoreErrors:
+        -
+            message: '#^Access to an undefined property App\\Filament\\Resources\\Core\\Translations\\Pages\\QuickTranslate\:\:\$form\.$#'
+            identifier: property.notFound
+            count: 3
+            path: app/Filament/Resources/Core/Translations/Pages/QuickTranslate.php
+
+        -
+            message: '#^Method App\\Filament\\Resources\\Core\\Translations\\Tables\\TranslationsGroupTable\:\:buildRecords\(\) should return Illuminate\\Support\\Collection\<int, array\<string, mixed\>\> but returns Illuminate\\Support\\Collection\<int, array\{__key\: string, key\: string, english\: mixed, translation\: mixed, full_key\: string\}\>\.$#'
+            identifier: return.type
+            count: 1
+            path: app/Filament/Resources/Core/Translations/Tables/TranslationsGroupTable.php
+
+        -
+            message: '#^Trait App\\Traits\\HasBilling is used zero times and is not analysed\.$#'
+            identifier: trait.unused
+            count: 1
+            path: app/Traits/HasBilling.php
+
+        -
+            message: '#^Trait App\\Traits\\HasClients is used zero times and is not analysed\.$#'
+            identifier: trait.unused
+            count: 1
+            path: app/Traits/HasClients.php
