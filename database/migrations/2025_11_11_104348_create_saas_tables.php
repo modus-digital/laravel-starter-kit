@@ -35,7 +35,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('client_billing', function (Blueprint $table) {
+        Schema::create('client_billing_info', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('client_id')->index();
             $table->string('company');
