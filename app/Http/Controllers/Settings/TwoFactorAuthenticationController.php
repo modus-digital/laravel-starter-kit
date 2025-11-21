@@ -31,8 +31,11 @@ final class TwoFactorAuthenticationController extends Controller implements HasM
     {
         $request->ensureStateIsValid();
 
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+
         return Inertia::render('settings/two-factor', [
-            'twoFactorEnabled' => $request->user()->hasEnabledTwoFactorAuthentication(),
+            'twoFactorEnabled' => $user->hasEnabledTwoFactorAuthentication(),
             'requiresConfirmation' => Features::optionEnabled(Features::twoFactorAuthentication(), 'confirm'),
         ]);
     }

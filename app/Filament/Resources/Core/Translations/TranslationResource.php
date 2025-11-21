@@ -23,7 +23,7 @@ final class TranslationResource extends Resource
 
     protected static ?string $slug = 'system/translations';
 
-    public static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): string
     {
         return __('navigation.groups.system');
     }

@@ -34,6 +34,7 @@ final class AccountCreated extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        /** @var \App\Models\User $notifiable */
         return (new MailMessage)
             ->subject('Your account has been created')
             ->greeting('Hello '.$notifiable->name.'!')

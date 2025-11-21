@@ -87,6 +87,9 @@ final class TranslationsTable
             ->filters([]);
     }
 
+    /**
+     * @return Collection<int, array{__key: string, key: string, status: bool, missing: int, total: int}>
+     */
     public static function buildKeyRecords(
         TranslationService $translationService,
         ?string $search = null,
@@ -107,8 +110,8 @@ final class TranslationsTable
         $records = $groups
             ->map(function (string $group) use ($translationService, $targetLanguage): array {
                 $progress = $translationService->getTranslationProgress($targetLanguage, $group);
-                $missing = $progress['missing'] ?? 0;
-                $total = $progress['total'] ?? 0;
+                $missing = $progress['missing'];
+                $total = $progress['total'];
 
                 return [
                     '__key' => $group,
@@ -141,6 +144,9 @@ final class TranslationsTable
         return $records->values();
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     private static function createLanguage(array $data, TranslationService $service): void
     {
         if ($service->languageExists($data['language_code'])) {

@@ -36,6 +36,9 @@ final class ClientBillingInfo extends Model
         'notes',
     ];
 
+    /**
+     * @return BelongsTo<Client, $this>
+     */
     public function client(): BelongsTo
     {
         return $this->belongsTo(related: Client::class);

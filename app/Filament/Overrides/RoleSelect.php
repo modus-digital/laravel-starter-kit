@@ -16,21 +16,23 @@ final class RoleSelect extends Select
 
         // After state hydrated, set the state to the first role of the record
         $this->afterStateHydrated(callback: static function (self $component): void {
-            /** @var ?Model $record */
+            /** @var ?\App\Models\User $record */
             $record = $component->getRecord();
+            /** @var \Spatie\Permission\Models\Role|null $role */
             $role = $record?->roles->first();
 
             $component->state(state: $role?->name);
         });
 
         // Setting up the options for the select component to display the roles
-        /** @var Model $roleModel */
+        /** @var class-string<Model> $roleModel */
         $roleModel = config(key: 'permission.models.role');
         $this->options(
             options: static fn (): array => $roleModel::query()
                 ->where(column: 'name', operator: '!=', value: Role::SUPER_ADMIN->value)
                 ->get()
-                ->mapWithKeys(callback: static function ($role): array {
+                ->mapWithKeys(callback: static function (Model $role): array {
+                    /** @var \Spatie\Permission\Models\Role $role */
                     $enum = collect(value: Role::cases())
                         ->first(callback: static fn (Role $enum): bool => $enum->value === $role->name);
 
@@ -54,12 +56,14 @@ final class RoleSelect extends Select
         // Setting up the save relationships using the role ids
         $this->saveRelationshipsUsing(
             callback: static function (self $component, Model $record, mixed $state): void {
+                /** @var \App\Models\User $record */
                 if ($state === null) {
                     $record->roles()->detach();
 
                     return;
                 }
 
+                /** @var class-string<Model> $roleModel */
                 $roleModel = config(key: 'permission.models.role');
                 $selectedNames = is_array(value: $state) ? $state : [$state];
 

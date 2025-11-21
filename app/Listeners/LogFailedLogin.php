@@ -15,7 +15,7 @@ final class LogFailedLogin
      */
     public function handle(Failed $event): void
     {
-        /** @var User $user */
+        /** @var User|null $user */
         $user = $event->user;
 
         $properties = [
@@ -28,7 +28,7 @@ final class LogFailedLogin
         ];
 
         // If user exists, log with subject
-        if ($user) {
+        if ($user instanceof User) {
             Activity::inLog('authentication')
                 ->event('auth.login.failed')
                 ->causedBy($user)

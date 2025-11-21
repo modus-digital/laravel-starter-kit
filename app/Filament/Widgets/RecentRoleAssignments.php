@@ -49,7 +49,7 @@ final class RecentRoleAssignments extends BaseWidget
                     ->dateTime()
                     ->sortable()
                     ->since()
-                    ->description(fn (User $record): string => $record->created_at->format('M j, Y H:i')),
+                    ->description(fn (User $record): string => $record->created_at?->format('M j, Y H:i') ?? ''),
             ])
             ->defaultSort('created_at', 'desc')
             ->paginated(false);

@@ -23,8 +23,10 @@ final class QuickTranslate extends Page implements HasForms
 {
     use InteractsWithForms;
 
+    /** @var array<string, mixed> */
     public ?array $data = [];
 
+    /** @var array<string, string> */
     public array $missingTranslations = [];
 
     public ?string $currentKey = null;
@@ -147,13 +149,4 @@ final class QuickTranslate extends Page implements HasForms
         ];
     }
 
-    private function getFormActions(): array
-    {
-        return [
-            Action::make('save')
-                ->label('Save & Next')
-                ->color(Color::Green)
-                ->submit('save'),
-        ];
-    }
 }

@@ -32,6 +32,9 @@ final class Plan extends Model
         'status',
     ];
 
+    /**
+     * @return HasMany<Subscription, $this>
+     */
     public function subscriptions(): HasMany
     {
         return $this->hasMany(related: Subscription::class);

@@ -30,7 +30,7 @@ final class UserResource extends Resource
 
     protected static ?string $slug = 'system/users';
 
-    public static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): string
     {
         return __('navigation.groups.system');
     }
@@ -73,6 +73,9 @@ final class UserResource extends Resource
         ];
     }
 
+    /**
+     * @return Builder<User>
+     */
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return parent::getRecordRouteBindingEloquentQuery()

@@ -27,8 +27,10 @@ final class GenerateTypeScriptTypes extends Command
 
     protected $description = 'Generate TypeScript definitions from Eloquent models and Enums by parsing migrations';
 
+    /** @var array<int, string> */
     private array $processedModels = [];
 
+    /** @var array<string, array<string, array{name: string, type: string, nullable: bool}>> */
     private array $migrationCache = [];
 
     public function handle(): int
@@ -141,6 +143,7 @@ final class GenerateTypeScriptTypes extends Command
 
     private function generateModelInterface(string $modelClass): string
     {
+        /** @var class-string $modelClass */
         $reflection = new ReflectionClass($modelClass);
         $modelName = $reflection->getShortName();
 
@@ -183,7 +186,7 @@ final class GenerateTypeScriptTypes extends Command
             $type = $this->getTypeScriptType($column, $casts[$columnName] ?? null);
 
             // Handle nullable
-            $nullable = $column['nullable'] ?? false;
+            $nullable = $column['nullable'];
             $separator = $nullable ? '?' : '';
 
             $output .= "  {$columnName}{$separator}: {$type};\n";
@@ -252,6 +255,9 @@ final class GenerateTypeScriptTypes extends Command
         }
     }
 
+    /**
+     * @return array<string, array{name: string, type: string, nullable: bool}>
+     */
     private function parseTableDefinition(string $definition): array
     {
         $columns = [];
@@ -365,11 +371,17 @@ final class GenerateTypeScriptTypes extends Command
         return $columns;
     }
 
+    /**
+     * @return array<string, array{name: string, type: string, nullable: bool}>
+     */
     private function getTableColumns(string $tableName): array
     {
         return $this->migrationCache[$tableName] ?? [];
     }
 
+    /**
+     * @param array{name: string, type: string, nullable: bool} $column
+     */
     private function getTypeScriptType(array $column, ?string $cast = null): string
     {
         // If there's a cast, use it
@@ -423,9 +435,13 @@ final class GenerateTypeScriptTypes extends Command
         };
     }
 
+    /**
+     * @return array<int, array{name: string, type: string}>
+     */
     private function getModelRelationships(string $modelClass): array
     {
         $relationships = [];
+        /** @var class-string $modelClass */
         $reflection = new ReflectionClass($modelClass);
 
         foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
@@ -473,6 +489,9 @@ final class GenerateTypeScriptTypes extends Command
         return $relationships;
     }
 
+    /**
+     * @return array{many: bool}|null
+     */
     private function getRelationType(string $returnTypeName): ?array
     {
         return match ($returnTypeName) {
@@ -502,6 +521,9 @@ final class GenerateTypeScriptTypes extends Command
         }
     }
 
+    /**
+     * @return array<int, class-string>
+     */
     private function getModels(string $path): array
     {
         $models = [];
@@ -523,6 +545,9 @@ final class GenerateTypeScriptTypes extends Command
         return $models;
     }
 
+    /**
+     * @return array<int, class-string>
+     */
     private function getEnums(string $path): array
     {
         $enums = [];
@@ -549,12 +574,17 @@ final class GenerateTypeScriptTypes extends Command
         return $enums;
     }
 
+    /**
+     * @param array<int, class-string> $models
+     * @return array<int, string>
+     */
     private function collectUsedEnums(array $models): array
     {
         $usedEnums = [];
 
         foreach ($models as $modelClass) {
             try {
+                /** @var Model $model */
                 $model = new $modelClass;
                 $casts = $model->getCasts();
 
@@ -588,7 +618,8 @@ final class GenerateTypeScriptTypes extends Command
 
     private function getEnumBackingType(string $enumClass): string
     {
-        new ReflectionClass($enumClass);
+        /** @var class-string $enumClass */
+        $reflection = new ReflectionClass($enumClass);
         $cases = $enumClass::cases();
 
         if (empty($cases)) {

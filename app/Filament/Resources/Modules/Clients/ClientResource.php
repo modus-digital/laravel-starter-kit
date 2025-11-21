@@ -28,7 +28,7 @@ final class ClientResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    public static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): string
     {
         return __('navigation.groups.modules');
     }
@@ -64,6 +64,9 @@ final class ClientResource extends Resource
         ];
     }
 
+    /**
+     * @return Builder<Client>
+     */
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return parent::getRecordRouteBindingEloquentQuery()

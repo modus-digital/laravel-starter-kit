@@ -32,6 +32,9 @@ final class Payment extends Model
         'status',
     ];
 
+    /**
+     * @return BelongsTo<Invoice, $this>
+     */
     public function invoice(): BelongsTo
     {
         return $this->belongsTo(related: Invoice::class);

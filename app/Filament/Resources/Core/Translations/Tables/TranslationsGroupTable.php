@@ -109,6 +109,10 @@ final class TranslationsGroupTable extends TableWidget
             ->values();
     }
 
+    /**
+     * @param array<string, mixed> $record
+     * @param array<string, mixed> $data
+     */
     private static function saveTranslation(array $record, array $data): void
     {
         $service = app()->make(TranslationService::class);

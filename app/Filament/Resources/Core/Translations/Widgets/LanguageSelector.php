@@ -16,6 +16,7 @@ final class LanguageSelector extends Widget implements HasSchemas
 {
     use InteractsWithSchemas;
 
+    /** @var array<string, string> */
     public array $languageOptions = [];
 
     public string $language;

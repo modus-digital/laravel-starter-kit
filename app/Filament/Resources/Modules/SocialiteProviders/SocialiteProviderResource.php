@@ -43,7 +43,7 @@ final class SocialiteProviderResource extends Resource
         return __('admin.socialite_providers.navigation_label');
     }
 
-    public static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): string
     {
         return __('navigation.groups.modules');
     }

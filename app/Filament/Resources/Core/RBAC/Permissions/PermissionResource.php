@@ -28,12 +28,12 @@ final class PermissionResource extends Resource
 
     protected static ?string $slug = 'system/access-control/permissions';
 
-    public static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): string
     {
         return __('navigation.groups.system');
     }
 
-    public static function getNavigationParentItem(): ?string
+    public static function getNavigationParentItem(): string
     {
         return __('navigation.labels.access_control');
     }

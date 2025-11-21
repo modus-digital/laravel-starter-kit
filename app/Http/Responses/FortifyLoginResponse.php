@@ -14,9 +14,12 @@ final class FortifyLoginResponse implements Responsable
 {
     public function toResponse($request): Response
     {
+        /** @var \App\Models\User|null $user */
+        $user = $request->user();
+
         Activity::inLog('authentication')
             ->event('auth.login')
-            ->causedBy($request->user())
+            ->causedBy($user)
             ->withProperties([
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent(),
@@ -25,7 +28,7 @@ final class FortifyLoginResponse implements Responsable
             ])
             ->log('User logged in successfully');
 
-        if ($request->user()->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL)) {
+        if ($user && $user->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL)) {
             return Inertia::location(url: route('filament.control.pages.dashboard'));
         }
 

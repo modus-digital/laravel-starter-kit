@@ -15,7 +15,10 @@ final class DashboardController extends Controller
 {
     public function __invoke(Request $request): RedirectResponse|Response
     {
-        if (Auth::user()->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL)) {
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
+
+        if ($user && $user->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL)) {
             return redirect()->to(path: route('filament.control.pages.dashboard', absolute: false));
         }
 

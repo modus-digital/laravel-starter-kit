@@ -67,9 +67,9 @@ final class SocialiteProviderForm
                                     return '';
                                 }
 
-                                $provider = $record->name instanceof AuthenticationProvider
-                                    ? $record->name->value
-                                    : $record->name;
+                                /** @var AuthenticationProvider $providerEnum */
+                                $providerEnum = $record->provider;
+                                $provider = $providerEnum->value;
 
                                 $domain = mb_rtrim(config('app.url'), '/');
 

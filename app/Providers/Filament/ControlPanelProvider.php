@@ -57,6 +57,9 @@ final class ControlPanelProvider extends PanelProvider
             ]);
     }
 
+    /**
+     * @return array<int, class-string>
+     */
     private function registerResources(): array
     {
         $resources = [];

@@ -38,22 +38,34 @@ final class Client extends Model
         'status',
     ];
 
+    /**
+     * @return BelongsToMany<User, $this, ClientUser>
+     */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(related: User::class, table: 'client_users')
             ->using(class: ClientUser::class);
     }
 
+    /**
+     * @return HasOne<ClientBillingInfo, $this>
+     */
     public function billingInfo(): HasOne
     {
         return $this->hasOne(related: ClientBillingInfo::class);
     }
 
+    /**
+     * @return HasMany<\App\Models\Modules\SaaS\Subscription, $this>
+     */
     public function subscriptions(): HasMany
     {
         return $this->hasMany(related: \App\Models\Modules\SaaS\Subscription::class);
     }
 
+    /**
+     * @return HasMany<\App\Models\Modules\SaaS\Invoice, $this>
+     */
     public function invoices(): HasMany
     {
         return $this->hasMany(related: \App\Models\Modules\SaaS\Invoice::class);

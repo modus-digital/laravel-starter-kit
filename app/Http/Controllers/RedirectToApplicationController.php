@@ -12,8 +12,9 @@ final class RedirectToApplicationController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): \Illuminate\Http\RedirectResponse
     {
+        /** @var \App\Models\User|null $user */
         $user = $request->user();
 
         if (! $user) {

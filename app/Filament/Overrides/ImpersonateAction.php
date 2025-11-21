@@ -33,13 +33,16 @@ final class ImpersonateAction extends Action
         $this->label(__('admin.users.table.impersonate.label'));
         $this->name('impersonate-action');
         $this->color(function (?User $record) use ($impersonatableRoles): array {
+            /** @var User|null $currentUser */
             $currentUser = Auth::user();
 
-            if ($record?->id === $currentUser?->id || ! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS) || $record?->status === ActivityStatus::INACTIVE) {
+            if (! $currentUser || ! $record || $record->id === $currentUser->id || ! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS) || $record->status === ActivityStatus::INACTIVE) {
                 return Color::Gray;
             }
 
-            if (! in_array($record?->roles->first()?->name, $impersonatableRoles)) {
+            /** @var \Spatie\Permission\Models\Role|null $firstRole */
+            $firstRole = $record->roles->first();
+            if (! $firstRole || ! in_array($firstRole->name, $impersonatableRoles)) {
                 return Color::Gray;
             }
 
@@ -47,15 +50,22 @@ final class ImpersonateAction extends Action
         });
 
         $this->disabled(function (?User $record) use ($impersonatableRoles): bool {
+            /** @var User|null $currentUser */
             $currentUser = Auth::user();
 
-            if ($record?->id === $currentUser->id) {
+            if (! $currentUser || ! $record) {
                 return true;
             }
-            if ($record?->status === ActivityStatus::INACTIVE) {
+
+            if ($record->id === $currentUser->id) {
                 return true;
             }
-            if (! in_array($record?->roles->first()?->name, $impersonatableRoles)) {
+            if ($record->status === ActivityStatus::INACTIVE) {
+                return true;
+            }
+            /** @var \Spatie\Permission\Models\Role|null $firstRole */
+            $firstRole = $record->roles->first();
+            if (! $firstRole || ! in_array($firstRole->name, $impersonatableRoles)) {
                 return true;
             }
 
@@ -63,9 +73,10 @@ final class ImpersonateAction extends Action
         });
 
         $this->action(function (?User $record) {
+            /** @var User|null $currentUser */
             $currentUser = Auth::user();
 
-            if (! $currentUser || ! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS)) {
+            if (! $currentUser || ! $record || ! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS)) {
                 Notification::make()
                     ->title(__('admin.users.table.impersonate.error.title'))
                     ->body(__('admin.users.table.impersonate.error.body'))

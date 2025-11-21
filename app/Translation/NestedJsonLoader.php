@@ -17,7 +17,10 @@ use Illuminate\Translation\FileLoader;
  */
 final class NestedJsonLoader extends FileLoader
 {
-    protected function loadJsonPaths($locale)
+    /**
+     * @return array<string, mixed>
+     */
+    protected function loadJsonPaths($locale): array
     {
         // Load the JSON file from the main lang path
         $path = $this->paths[0]."/{$locale}.json";
@@ -26,12 +29,21 @@ final class NestedJsonLoader extends FileLoader
             return [];
         }
 
-        $translations = json_decode(file_get_contents($path), true);
+        $content = file_get_contents($path);
+        if ($content === false) {
+            return [];
+        }
+
+        $translations = json_decode($content, true);
 
         // Flatten nested arrays with dot notation
         return $this->flattenTranslations($translations ?? []);
     }
 
+    /**
+     * @param array<string, mixed> $array
+     * @return array<string, mixed>
+     */
     private function flattenTranslations(array $array, string $prefix = ''): array
     {
         $result = [];
