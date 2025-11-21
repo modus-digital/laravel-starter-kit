@@ -1,33 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Filament\Resources\Core\Translations\Tables\TranslationsTable;
+use App\Filament\Resources\Core\Translations\TranslationService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 
 it('builds records with status and missing metadata', function () {
-    $service = new class extends \App\Filament\Resources\Core\Translations\TranslationService
-    {
-        public function __construct(private array $groups = [
-            'auth' => ['missing' => 0, 'total' => 2],
-            'common' => ['missing' => 1, 'total' => 3],
-            'dashboard' => ['missing' => 2, 'total' => 5],
-        ]) {}
+    File::shouldReceive('get')
+        ->with(lang_path('en.json'))
+        ->andReturn(json_encode([
+            'auth' => ['login' => 'Login', 'register' => 'Register'],
+            'common' => ['save' => 'Save', 'cancel' => 'Cancel', 'delete' => 'Delete'],
+            'dashboard' => ['title' => 'Dashboard', 'welcome' => 'Welcome', 'stats' => 'Stats', 'chart' => 'Chart', 'table' => 'Table'],
+        ]));
 
-        public function getRootGroups(): array
-        {
-            return array_keys($this->groups);
-        }
+    File::shouldReceive('get')
+        ->with(lang_path('fr.json'))
+        ->andReturn(json_encode([
+            'auth' => ['login' => 'Connexion', 'register' => 'S\'inscrire'],
+            'common' => ['save' => 'Enregistrer', 'cancel' => 'Annuler'],
+            'dashboard' => ['title' => 'Tableau de bord', 'welcome' => 'Bienvenue', 'stats' => 'Statistiques'],
+        ]));
 
-        public function getTranslationProgress(string $lang, string $group): array
-        {
-            $progress = $this->groups[$group];
+    File::shouldReceive('exists')
+        ->andReturn(true);
 
-            return [
-                'missing' => $progress['missing'],
-                'total' => $progress['total'],
-                'translated' => $progress['total'] - $progress['missing'],
-            ];
-        }
-    };
+    $service = new TranslationService;
 
     $records = TranslationsTable::buildKeyRecords(
         translationService: $service,
@@ -47,18 +47,26 @@ it('builds records with status and missing metadata', function () {
 });
 
 it('filters records when a search term is provided', function () {
-    $service = new class extends \App\Filament\Resources\Core\Translations\TranslationService
-    {
-        public function getRootGroups(): array
-        {
-            return ['auth', 'common', 'dashboard'];
-        }
+    File::shouldReceive('get')
+        ->with(lang_path('en.json'))
+        ->andReturn(json_encode([
+            'auth' => ['login' => 'Login'],
+            'common' => ['save' => 'Save'],
+            'dashboard' => ['title' => 'Dashboard'],
+        ]));
 
-        public function getTranslationProgress(string $lang, string $group): array
-        {
-            return ['missing' => 0, 'total' => 1, 'translated' => 1];
-        }
-    };
+    File::shouldReceive('get')
+        ->with(lang_path('fr.json'))
+        ->andReturn(json_encode([
+            'auth' => ['login' => 'Connexion'],
+            'common' => ['save' => 'Enregistrer'],
+            'dashboard' => ['title' => 'Tableau de bord'],
+        ]));
+
+    File::shouldReceive('exists')
+        ->andReturn(true);
+
+    $service = new TranslationService;
 
     $records = TranslationsTable::buildKeyRecords(
         translationService: $service,
@@ -70,18 +78,26 @@ it('filters records when a search term is provided', function () {
 });
 
 it('sorts records by key in descending order', function () {
-    $service = new class extends \App\Filament\Resources\Core\Translations\TranslationService
-    {
-        public function getRootGroups(): array
-        {
-            return ['auth', 'common', 'dashboard'];
-        }
+    File::shouldReceive('get')
+        ->with(lang_path('en.json'))
+        ->andReturn(json_encode([
+            'auth' => ['login' => 'Login'],
+            'common' => ['save' => 'Save'],
+            'dashboard' => ['title' => 'Dashboard'],
+        ]));
 
-        public function getTranslationProgress(string $lang, string $group): array
-        {
-            return ['missing' => 0, 'total' => 1, 'translated' => 1];
-        }
-    };
+    File::shouldReceive('get')
+        ->with(lang_path('fr.json'))
+        ->andReturn(json_encode([
+            'auth' => ['login' => 'Connexion'],
+            'common' => ['save' => 'Enregistrer'],
+            'dashboard' => ['title' => 'Tableau de bord'],
+        ]));
+
+    File::shouldReceive('exists')
+        ->andReturn(true);
+
+    $service = new TranslationService;
 
     $records = TranslationsTable::buildKeyRecords(
         translationService: $service,

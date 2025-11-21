@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use App\Enums\RBAC\Permission;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
-class HandleInertiaRequests extends Middleware
+final class HandleInertiaRequests extends Middleware
 {
     /**
      * The root template that's loaded on the first page visit.
@@ -44,8 +46,8 @@ class HandleInertiaRequests extends Middleware
             ],
             'locale' => app()->getLocale(),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'canAccessControlPanel' => $request->user()?->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL) ?? false,
-            'isImpersonating' => $request->session()->has('impersonation') ?? false,
+            'canAccessControlPanel' => $request->user()?->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL) ?: false,
+            'isImpersonating' => $request->session()->has('impersonation'),
         ];
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers\Filament;
 
 use App\Filament\Resources\Modules\Clients\ClientResource;
@@ -20,7 +22,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class ControlPanelProvider extends PanelProvider
+final class ControlPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
@@ -55,7 +57,10 @@ class ControlPanelProvider extends PanelProvider
             ]);
     }
 
-    protected function registerResources(): array
+    /**
+     * @return array<int, class-string>
+     */
+    private function registerResources(): array
     {
         $resources = [];
 

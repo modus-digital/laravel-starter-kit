@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Users\Schemas;
 
 use App\Enums\ActivityStatus;
@@ -10,7 +12,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
-class UserForm
+final class UserForm
 {
     public static function configure(Schema $schema): Schema
     {

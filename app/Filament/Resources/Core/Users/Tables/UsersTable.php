@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Users\Tables;
 
 use App\Enums\ActivityStatus;
@@ -17,9 +19,8 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-use Filament\Support\Colors\Color;
 
-class UsersTable
+final class UsersTable
 {
     public static function configure(Table $table): Table
     {
@@ -39,8 +40,8 @@ class UsersTable
                     config(key: 'modules.socialite.enabled', default: false)
                         ? [TextColumn::make('provider')
                             ->label(__('admin.users.table.auth_provider'))
-                            ->icon(fn (?User $record) => AuthenticationProvider::from($record?->provider)->getIcon())
-                            ->color(fn (?User $record) => AuthenticationProvider::from($record?->provider)->getColor())
+                            ->icon(fn (?User $record) => $record?->provider ? AuthenticationProvider::from($record->provider)->getIcon() : null)
+                            ->color(fn (?User $record) => $record?->provider ? AuthenticationProvider::from($record->provider)->getColor() : null)
                             ->badge()
                             ->sortable()
                             ->searchable()]
@@ -49,17 +50,54 @@ class UsersTable
 
                 TextColumn::make('role')
                     ->label(__('admin.users.table.role'))
-                    ->getStateUsing(fn (?User $record): string => Role::from($record?->roles->first()?->name)->getLabel() ?? __('admin.users.table.no_role'))
-                    ->icon(fn (?User $record) => Role::from($record?->roles->first()?->name)->getIcon())
-                    ->color(fn (?User $record) => Role::from($record?->roles->first()?->name)->getFilamentColor())
+                    ->getStateUsing(function (?User $record): string {
+                        if (! $record instanceof User) {
+                            return __('admin.users.table.no_role');
+                        }
+                        /** @var \Spatie\Permission\Models\Role|null $firstRole */
+                        $firstRole = $record->roles->first();
+                        if (! $firstRole) {
+                            return __('admin.users.table.no_role');
+                        }
+
+                        return Role::from($firstRole->name)->getLabel();
+                    })
+                    ->icon(function (?User $record) {
+                        if (! $record instanceof User) {
+                            return null;
+                        }
+                        /** @var \Spatie\Permission\Models\Role|null $firstRole */
+                        $firstRole = $record->roles->first();
+                        if (! $firstRole) {
+                            return null;
+                        }
+
+                        return Role::from($firstRole->name)->getIcon();
+                    })
+                    ->color(function (?User $record) {
+                        if (! $record instanceof User) {
+                            return null;
+                        }
+                        /** @var \Spatie\Permission\Models\Role|null $firstRole */
+                        $firstRole = $record->roles->first();
+                        if (! $firstRole) {
+                            return null;
+                        }
+
+                        return Role::from($firstRole->name)->getFilamentColor();
+                    })
                     ->badge()
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('status')
                     ->label(__('admin.users.table.status'))
-                    ->getStateUsing(fn (?User $record): string => $record->status->getLabel())
+                    ->getStateUsing(fn (?User $record): string => $record?->status->getLabel() ?? '')
                     ->color(function (?User $record): string {
+                        if (! $record instanceof User) {
+                            return 'gray';
+                        }
+
                         return match ($record->status) {
                             ActivityStatus::ACTIVE => 'success',
                             ActivityStatus::INACTIVE => 'danger',
@@ -73,8 +111,8 @@ class UsersTable
 
                 IconColumn::make('two_factor_secret')
                     ->label(__('admin.users.table.two_factor'))
-                    ->tooltip(fn (?User $record): string => ! empty($record?->two_factor_secret) ? __('admin.users.table.two_factor_enabled') : __('admin.users.table.two_factor_disabled'))
-                    ->getStateUsing(fn (?User $record): bool => ! empty($record?->two_factor_secret))
+                    ->tooltip(fn (?User $record): string => empty($record->two_factor_secret) ? __('admin.users.table.two_factor_disabled') : __('admin.users.table.two_factor_enabled'))
+                    ->getStateUsing(fn (?User $record): bool => ! empty($record->two_factor_secret))
                     ->boolean()
                     ->trueIcon(Heroicon::OutlinedCheckCircle)
                     ->falseIcon(Heroicon::OutlinedXCircle)

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Pages;
 
 use BackedEnum;
@@ -7,7 +9,7 @@ use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
 use UnitEnum;
 
-class RbacOverview extends Page
+final class RbacOverview extends Page
 {
     protected string $view = 'filament.pages.rbac-overview';
 

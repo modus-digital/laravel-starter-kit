@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Modules\SaaS;
 
 use App\Enums\ActivityStatus;
@@ -9,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Plan extends Model
+final class Plan extends Model
 {
     /** @use HasFactory<\Database\Factories\Modules\SaaS\PlanFactory> */
     use HasFactory;
@@ -17,9 +19,9 @@ class Plan extends Model
     use HasUuids;
     use SoftDeletes;
 
-    protected $keyType = 'string';
-
     public $incrementing = false;
+
+    protected $keyType = 'string';
 
     protected $fillable = [
         'name',
@@ -30,6 +32,14 @@ class Plan extends Model
         'status',
     ];
 
+    /**
+     * @return HasMany<Subscription, $this>
+     */
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(related: Subscription::class);
+    }
+
     protected function casts(): array
     {
         return [
@@ -38,10 +48,5 @@ class Plan extends Model
             'updated_at' => 'datetime',
             'deleted_at' => 'datetime',
         ];
-    }
-
-    public function subscriptions(): HasMany
-    {
-        return $this->hasMany(related: Subscription::class);
     }
 }

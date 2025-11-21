@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\ActivityStatus;
 use App\Enums\RBAC\Permission;
 use App\Enums\RBAC\Role;

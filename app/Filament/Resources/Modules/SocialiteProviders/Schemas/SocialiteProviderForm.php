@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Modules\SocialiteProviders\Schemas;
 
 use App\Enums\AuthenticationProvider;
@@ -60,16 +62,16 @@ final class SocialiteProviderForm
                             ->label(__('admin.socialite_providers.form.socialite_configuration.redirect_uri'))
                             ->disabled()
                             ->dehydrated(false)
-                            ->formatStateUsing(function (?SocialiteProvider $record) {
-                                if (! $record) {
+                            ->formatStateUsing(function (?SocialiteProvider $record): string {
+                                if (! $record instanceof SocialiteProvider) {
                                     return '';
                                 }
 
-                                $provider = $record->name instanceof AuthenticationProvider
-                                    ? $record->name->value
-                                    : $record->name;
+                                /** @var AuthenticationProvider $providerEnum */
+                                $providerEnum = $record->provider;
+                                $provider = $providerEnum->value;
 
-                                $domain = rtrim(config('app.url'), '/');
+                                $domain = mb_rtrim(config('app.url'), '/');
 
                                 return "{$domain}/auth/{$provider}/callback";
                             })

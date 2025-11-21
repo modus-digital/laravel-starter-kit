@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\RBAC\Permissions\Schemas;
 
 use App\Enums\RBAC\Permission as RBACPermission;
@@ -22,7 +24,7 @@ final class PermissionForm
                             ->label(__('admin.rbac.permissions.form.enum_key'))
                             ->formatStateUsing(function (Permission $record): string {
                                 $enumCases = collect(RBACPermission::cases())
-                                    ->first(fn (RBACPermission $enum) => $enum->value === $record->name);
+                                    ->first(fn (RBACPermission $enum): bool => $enum->value === $record->name);
 
                                 return $enumCases?->getLabel() ?? '-';
                             })

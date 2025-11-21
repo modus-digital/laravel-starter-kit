@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Translations\Tables;
 
 use App\Filament\Resources\Core\Translations\TranslationResource;
 use App\Filament\Resources\Core\Translations\TranslationService;
 use App\Filament\Resources\Core\Translations\Widgets\LanguageSelector;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -15,7 +18,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-class TranslationsTable
+final class TranslationsTable
 {
     public static function configure(Table $table): Table
     {
@@ -23,7 +26,7 @@ class TranslationsTable
         $targetLanguage = $translationService->getTargetLanguage();
 
         return $table
-            ->heading(fn () => view(
+            ->heading(fn (): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view(
                 view: 'filament.resources.core.translations.tables.header-toolbar',
                 data: [
                     'widget' => LanguageSelector::class,
@@ -31,13 +34,13 @@ class TranslationsTable
             ))
             ->recordAction(null)
             ->recordUrl(
-                fn (array $record) => TranslationResource::getUrl('group', [
+                fn (array $record): string => TranslationResource::getUrl('group', [
                     'group' => $record['__key'],
                 ]),
             )
             ->paginated(false)
             ->records(
-                fn (?string $search, ?string $sortColumn, ?string $sortDirection) => static::buildKeyRecords(
+                fn (?string $search, ?string $sortColumn, ?string $sortDirection): Collection => self::buildKeyRecords(
                     translationService: $translationService,
                     search: $search,
                     sortColumn: $sortColumn,
@@ -79,11 +82,14 @@ class TranslationsTable
                             ->placeholder('e.g. en, fr, es, etc.')
                             ->helperText('The code for the language you want to create.'),
                     ])
-                    ->action(fn (array $data) => static::createLanguage(data: $data, service: $translationService)),
+                    ->action(fn (array $data) => self::createLanguage(data: $data, service: $translationService)),
             ])
             ->filters([]);
     }
 
+    /**
+     * @return Collection<int, array{__key: string, key: string, status: bool, missing: int, total: int}>
+     */
     public static function buildKeyRecords(
         TranslationService $translationService,
         ?string $search = null,
@@ -104,8 +110,8 @@ class TranslationsTable
         $records = $groups
             ->map(function (string $group) use ($translationService, $targetLanguage): array {
                 $progress = $translationService->getTranslationProgress($targetLanguage, $group);
-                $missing = $progress['missing'] ?? 0;
-                $total = $progress['total'] ?? 0;
+                $missing = $progress['missing'];
+                $total = $progress['total'];
 
                 return [
                     '__key' => $group,
@@ -116,16 +122,16 @@ class TranslationsTable
                 ];
             });
 
-        $descending = strtolower($sortDirection ?? 'asc') === 'desc';
+        $descending = mb_strtolower($sortDirection ?? 'asc') === 'desc';
 
         if ($sortColumn === 'missing') {
             $records = $records->sortBy(
-                fn (array $record) => $record['missing'],
+                fn (array $record): int => $record['missing'],
                 descending: $descending,
             );
         } elseif ($sortColumn === 'status') {
             $records = $records->sortBy(
-                fn (array $record) => $record['status'] ? 1 : 0,
+                fn (array $record): int => $record['status'] ? 1 : 0,
                 descending: $descending,
             );
         } else {
@@ -138,6 +144,9 @@ class TranslationsTable
         return $records->values();
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     private static function createLanguage(array $data, TranslationService $service): void
     {
         if ($service->languageExists($data['language_code'])) {
@@ -160,7 +169,7 @@ class TranslationsTable
                 ->send();
 
             return;
-        } catch (\Exception $e) {
+        } catch (Exception) {
             Notification::make('language_creation_failed')
                 ->title('Language creation failed')
                 ->body('The language you are trying to create failed to be created.')

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\RBAC\Permissions\Tables;
 
 use App\Enums\RBAC\Permission as RBACPermission;
@@ -15,7 +17,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Spatie\Permission\Models\Permission;
 
-class PermissionsTable
+final class PermissionsTable
 {
     public static function configure(Table $table): Table
     {
@@ -71,7 +73,7 @@ class PermissionsTable
                             return $query;
                         }
 
-                        return $query->where(function (Builder $query) use ($data) {
+                        return $query->where(function (Builder $query) use ($data): void {
                             $values = collect(RBACPermission::cases())
                                 ->map(fn (RBACPermission $enum) => $enum->value)
                                 ->toArray();

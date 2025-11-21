@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Translations\Pages;
 
 use App\Enums\Language;
 use App\Filament\Resources\Core\Translations\TranslationResource;
 use App\Filament\Resources\Core\Translations\TranslationService;
-use Filament\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -14,22 +15,23 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Colors\Color;
 use Illuminate\Support\Str;
 
-class QuickTranslate extends Page implements HasForms
+final class QuickTranslate extends Page implements HasForms
 {
     use InteractsWithForms;
+
+    /** @var array<string, mixed> */
+    public ?array $data = [];
+
+    /** @var array<string, string> */
+    public array $missingTranslations = [];
+
+    public ?string $currentKey = null;
 
     protected static string $resource = TranslationResource::class;
 
     protected string $view = 'filament.resources.core.translations.pages.quick-translate';
-
-    public ?array $data = [];
-
-    public array $missingTranslations = [];
-
-    public ?string $currentKey = null;
 
     public function mount(): void
     {
@@ -39,7 +41,7 @@ class QuickTranslate extends Page implements HasForms
 
         $this->missingTranslations = $service->getMissingTranslations($targetLanguage, $group);
 
-        if (empty($this->missingTranslations)) {
+        if ($this->missingTranslations === []) {
             Notification::make()
                 ->title('All translations complete')
                 ->body('All translations for this group have been completed.')
@@ -107,7 +109,7 @@ class QuickTranslate extends Page implements HasForms
         $this->missingTranslations = $service->getMissingTranslations($targetLanguage, $group);
 
         // Check if there are more translations
-        if (empty($this->missingTranslations)) {
+        if ($this->missingTranslations === []) {
             Notification::make()
                 ->title('All translations complete')
                 ->body('You have successfully translated all missing translations for this group.')
@@ -128,16 +130,6 @@ class QuickTranslate extends Page implements HasForms
             'english' => $this->missingTranslations[$this->currentKey] ?? '',
             'translation' => '',
         ]);
-    }
-
-    protected function getFormActions(): array
-    {
-        return [
-            Action::make('save')
-                ->label('Save & Next')
-                ->color(Color::Green)
-                ->submit('save'),
-        ];
     }
 
     public function getTitle(): string

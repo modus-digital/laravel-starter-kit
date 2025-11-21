@@ -3,7 +3,10 @@
     "name": "laravel/react-starter-kit",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
@@ -25,15 +28,18 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",
         "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.8",
         "laravel/boost": "^1.8",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
+        "nunomaduro/essentials": "^1.0",
         "pestphp/pest": "^4.1",
         "pestphp/pest-plugin-laravel": "^4.0",
-        "pestphp/pest-plugin-livewire": "^4.0"
+        "pestphp/pest-plugin-livewire": "^4.0",
+        "rector/rector": "^2.2"
     },
     "autoload": {
         "psr-4": {
@@ -53,9 +59,22 @@
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate",
             "@php artisan migrate --force",
+            "@php artisan generate:ts-types",
             "npm install",
             "npm run build"
         ],
+        "code:check": [
+            "./vendor/bin/rector --dry-run",
+            "./vendor/bin/pint --test"
+        ],
+        "code:fix": [
+            "./vendor/bin/rector",
+            "./vendor/bin/pint --dirty",
+            "./vendor/bin/phpstan analyse --memory-limit=2G"
+        ],
+        "code:analyze": "./vendor/bin/phpstan analyse --memory-limit=2G",
+        "code:pint": "./vendor/bin/pint",
+        "code:rector": "./vendor/bin/rector",
         "dev": [
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"npm run dev\" --names='server,queue,vite'"

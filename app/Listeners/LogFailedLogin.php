@@ -1,29 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Listeners;
 
 use App\Models\User;
 use Illuminate\Auth\Events\Failed;
 use Spatie\Activitylog\Facades\Activity;
 
-class LogFailedLogin
+final class LogFailedLogin
 {
-    /**
-     * Create the event listener.
-     */
-    public function __construct() {}
-
     /**
      * Handle the event.
      */
     public function handle(Failed $event): void
     {
-
-        /** @var User $user */
+        /** @var User|null $user */
         $user = $event->user;
 
         $properties = [
-            'event' => 'login_failed',
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
             'guard' => $event->guard,
@@ -33,7 +28,7 @@ class LogFailedLogin
         ];
 
         // If user exists, log with subject
-        if ($user) {
+        if ($user instanceof User) {
             Activity::inLog('authentication')
                 ->event('auth.login.failed')
                 ->causedBy($user)

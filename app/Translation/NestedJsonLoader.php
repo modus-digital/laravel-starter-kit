@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Translation;
 
 use Illuminate\Translation\FileLoader;
@@ -13,9 +15,12 @@ use Illuminate\Translation\FileLoader;
  *
  * @since 1.0.0
  */
-class NestedJsonLoader extends FileLoader
+final class NestedJsonLoader extends FileLoader
 {
-    protected function loadJsonPaths($locale)
+    /**
+     * @return array<string, mixed>
+     */
+    protected function loadJsonPaths($locale): array
     {
         // Load the JSON file from the main lang path
         $path = $this->paths[0]."/{$locale}.json";
@@ -24,18 +29,27 @@ class NestedJsonLoader extends FileLoader
             return [];
         }
 
-        $translations = json_decode(file_get_contents($path), true);
+        $content = file_get_contents($path);
+        if ($content === false) {
+            return [];
+        }
+
+        $translations = json_decode($content, true);
 
         // Flatten nested arrays with dot notation
         return $this->flattenTranslations($translations ?? []);
     }
 
-    protected function flattenTranslations(array $array, string $prefix = ''): array
+    /**
+     * @param  array<string, mixed>  $array
+     * @return array<string, mixed>
+     */
+    private function flattenTranslations(array $array, string $prefix = ''): array
     {
         $result = [];
 
         foreach ($array as $key => $value) {
-            $newKey = $prefix ? "{$prefix}.{$key}" : $key;
+            $newKey = $prefix !== '' && $prefix !== '0' ? "{$prefix}.{$key}" : $key;
 
             if (is_array($value)) {
                 $result = array_merge($result, $this->flattenTranslations($value, $newKey));

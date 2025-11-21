@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Widgets;
 
 use App\Models\User;
@@ -8,7 +10,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class RbacStats extends StatsOverviewWidget
+final class RbacStats extends StatsOverviewWidget
 {
     protected static ?int $sort = 1;
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Modules\SocialiteProviders\Tables;
 
 use App\Enums\AuthenticationProvider;
@@ -13,7 +15,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-class SocialiteProvidersTable
+final class SocialiteProvidersTable
 {
     public static function configure(Table $table): Table
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Enums\RBAC\Role;
@@ -7,7 +9,7 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
-class AdminUserSeeder extends Seeder
+final class AdminUserSeeder extends Seeder
 {
     /**
      * Run the database seeds.

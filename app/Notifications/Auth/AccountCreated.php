@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications\Auth;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class AccountCreated extends Notification
+final class AccountCreated extends Notification
 {
     use Queueable;
 
@@ -32,6 +34,7 @@ class AccountCreated extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        /** @var \App\Models\User $notifiable */
         return (new MailMessage)
             ->subject('Your account has been created')
             ->greeting('Hello '.$notifiable->name.'!')

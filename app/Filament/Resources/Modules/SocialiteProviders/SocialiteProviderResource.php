@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Modules\SocialiteProviders;
 
 use App\Filament\Resources\Modules\SocialiteProviders\Pages\EditSocialiteProvider;
@@ -14,7 +16,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
-class SocialiteProviderResource extends Resource
+final class SocialiteProviderResource extends Resource
 {
     protected static ?string $model = SocialiteProvider::class;
 
@@ -41,7 +43,7 @@ class SocialiteProviderResource extends Resource
         return __('admin.socialite_providers.navigation_label');
     }
 
-    public static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): string
     {
         return __('navigation.groups.modules');
     }

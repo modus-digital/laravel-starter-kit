@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\ActivityStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -21,7 +23,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('plans', function (Blueprint $table) {
+        Schema::create('plans', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('name');
             $table->decimal('price', 10, 2);
@@ -33,7 +35,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('client_billing', function (Blueprint $table) {
+        Schema::create('client_billing_info', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->uuid('client_id')->index();
             $table->string('company');
@@ -52,7 +54,7 @@ return new class extends Migration
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
         });
 
-        Schema::create('subscriptions', function (Blueprint $table) {
+        Schema::create('subscriptions', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->uuid('client_id')->index();
             $table->uuid('plan_id')->index();
@@ -67,7 +69,7 @@ return new class extends Migration
             $table->foreign('plan_id')->references('id')->on('plans')->onDelete('restrict');
         });
 
-        Schema::create('invoices', function (Blueprint $table) {
+        Schema::create('invoices', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('invoice_id')->unique();
             $table->uuid('client_id')->index();
@@ -84,7 +86,7 @@ return new class extends Migration
             $table->foreign('subscription_id')->references('id')->on('subscriptions')->onDelete('set null');
         });
 
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->uuid('invoice_id')->index();
             $table->string('provider');

@@ -1,6 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
+
+beforeEach(function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+});
 
 test('profile page is displayed', function () {
     $user = User::factory()->create();
@@ -64,7 +71,8 @@ test('user can delete their account', function () {
         ->assertRedirect(route('home'));
 
     $this->assertGuest();
-    expect($user->fresh())->toBeNull();
+    // User is soft deleted, not hard deleted
+    expect($user->fresh()->trashed())->toBeTrue();
 });
 
 test('correct password must be provided to delete account', function () {

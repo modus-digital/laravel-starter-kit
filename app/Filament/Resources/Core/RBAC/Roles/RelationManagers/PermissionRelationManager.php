@@ -53,9 +53,9 @@ final class PermissionRelationManager extends RelationManager
                 TextColumn::make('enum_key')
                     ->label(__('admin.rbac.roles.relation_managers.permission.enum_key'))
                     ->badge()
-                    ->state(fn (Permission $permission): ?string => self::isLinkedToEnum($permission) ? $permission->name : null)
+                    ->state(fn (Permission $permission): ?string => $this->isLinkedToEnum($permission) ? $permission->name : null)
                     ->formatStateUsing(fn (?string $state): string => $state ? RBACPermission::from($state)->getLabel() : '-')
-                    ->color(fn (Permission $permission): string => self::isLinkedToEnum($permission) ? RBACPermission::from($permission->name)->getFilamentColor() : 'gray'),
+                    ->color(fn (Permission $permission): string => $this->isLinkedToEnum($permission) ? RBACPermission::from($permission->name)->getFilamentColor() : 'gray'),
 
                 TextColumn::make('name')
                     ->label(__('admin.rbac.roles.relation_managers.permission.name'))
@@ -63,7 +63,7 @@ final class PermissionRelationManager extends RelationManager
 
                 IconColumn::make('linked_to_enum')
                     ->label(__('admin.rbac.roles.relation_managers.permission.linked_to_enum.title'))
-                    ->state(fn (Permission $permission): bool => self::isLinkedToEnum($permission))
+                    ->state(fn (Permission $permission): bool => $this->isLinkedToEnum($permission))
                     ->boolean()
                     ->trueIcon(Heroicon::OutlinedCheckCircle)
                     ->falseIcon(Heroicon::OutlinedXCircle)
@@ -81,7 +81,7 @@ final class PermissionRelationManager extends RelationManager
                             return $query;
                         }
 
-                        return $query->where(function (Builder $query) use ($data) {
+                        return $query->where(function (Builder $query) use ($data): void {
                             $values = collect(RBACPermission::cases())
                                 ->map(fn (RBACPermission $enum) => $enum->value)
                                 ->toArray();
@@ -109,8 +109,8 @@ final class PermissionRelationManager extends RelationManager
                                 return Permission::whereNotIn('id', $existingPermissions)
                                     ->orderBy('name')
                                     ->get()
-                                    ->mapWithKeys(function (Permission $permission) {
-                                        $label = self::isLinkedToEnum($permission)
+                                    ->mapWithKeys(function (Permission $permission): array {
+                                        $label = $this->isLinkedToEnum($permission)
                                             ? RBACPermission::from($permission->name)->getLabel()
                                             : $permission->name;
 
@@ -166,7 +166,7 @@ final class PermissionRelationManager extends RelationManager
             ->toolbarActions([]);
     }
 
-    protected static function isLinkedToEnum(Permission $permission): bool
+    private function isLinkedToEnum(Permission $permission): bool
     {
         return collect(RBACPermission::cases())
             ->contains(fn (RBACPermission $enum): bool => $enum->value === $permission->name);

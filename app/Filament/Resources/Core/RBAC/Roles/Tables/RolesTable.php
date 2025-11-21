@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\RBAC\Roles\Tables;
 
 use App\Enums\RBAC\Role as RBACRole;
@@ -71,7 +73,7 @@ final class RolesTable
                             return $query;
                         }
 
-                        return $query->where(function (Builder $query) use ($data) {
+                        return $query->where(function (Builder $query) use ($data): void {
                             $values = collect(RBACRole::cases())
                                 ->map(fn (RBACRole $enum) => $enum->value)
                                 ->toArray();

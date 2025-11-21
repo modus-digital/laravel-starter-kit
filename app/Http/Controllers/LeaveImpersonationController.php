@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -9,15 +11,21 @@ use Inertia\Inertia;
 use Spatie\Activitylog\Facades\Activity;
 use Symfony\Component\HttpFoundation\Response;
 
-class LeaveImpersonationController extends Controller
+final class LeaveImpersonationController extends Controller
 {
     /**
      * Handle the incoming request.
      */
     public function __invoke(Request $request): Response
     {
-        $impersonation = collect(session()->get('impersonation'));
+        /** @var array<string, mixed>|null $impersonationData */
+        $impersonationData = session()->get('impersonation');
+        $impersonation = collect($impersonationData);
+
+        /** @var User|null $currentUser */
         $currentUser = Auth::user();
+
+        /** @var User|null $originalUser */
         $originalUser = User::find($impersonation->get('original_user_id'));
 
         if (! $impersonation->has('is_impersonating')) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Translations;
 
 use Illuminate\Support\Facades\File;
@@ -7,10 +9,12 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
-class TranslationService
+final class TranslationService
 {
     /**
      * Get all available language codes from the lang directory.
+     *
+     * @return array<int, string>
      */
     public function getAvailableLanguages(): array
     {
@@ -29,6 +33,8 @@ class TranslationService
 
     /**
      * Load and decode a language JSON file.
+     *
+     * @return array<string, mixed>
      */
     public function getLanguageFile(string $lang): array
     {
@@ -45,6 +51,8 @@ class TranslationService
 
     /**
      * Save a language file with proper formatting.
+     *
+     * @param  array<string, mixed>  $data
      */
     public function saveLanguageFile(string $lang, array $data): void
     {
@@ -63,6 +71,8 @@ class TranslationService
 
     /**
      * Get root groups (first-level keys) from English JSON.
+     *
+     * @return array<int|string, mixed>
      */
     public function getRootGroups(): array
     {
@@ -73,13 +83,16 @@ class TranslationService
 
     /**
      * Flatten nested translations to dot notation.
+     *
+     * @param  array<string, mixed>  $translations
+     * @return array<string, mixed>
      */
     public function flattenTranslations(array $translations, string $prefix = ''): array
     {
         $result = [];
 
         foreach ($translations as $key => $value) {
-            $newKey = $prefix ? "{$prefix}.{$key}" : $key;
+            $newKey = $prefix !== '' && $prefix !== '0' ? "{$prefix}.{$key}" : $key;
 
             if (is_array($value)) {
                 $result = array_merge($result, $this->flattenTranslations($value, $newKey));
@@ -93,6 +106,8 @@ class TranslationService
 
     /**
      * Get missing translations for a target language.
+     *
+     * @return array<string, mixed>
      */
     public function getMissingTranslations(string $targetLang, ?string $group = null): array
     {
@@ -139,6 +154,8 @@ class TranslationService
 
     /**
      * Get translation progress for a language and group.
+     *
+     * @return array{missing: int, total: int, translated: int}
      */
     public function getTranslationProgress(string $lang, string $group): array
     {
@@ -159,7 +176,7 @@ class TranslationService
         $total = count($englishFlat);
         $translated = 0;
 
-        foreach ($englishFlat as $key => $value) {
+        foreach (array_keys($englishFlat) as $key) {
             if (isset($targetFlat[$key]) && $targetFlat[$key] !== '') {
                 $translated++;
             }
@@ -261,9 +278,9 @@ class TranslationService
      *
      * @param  array<string>  $languages
      */
-    protected function determineDefaultTargetLanguage(array $languages): string
+    private function determineDefaultTargetLanguage(array $languages): string
     {
         return collect($languages)
-            ->first(fn (string $code) => $code !== 'en') ?? 'en';
+            ->first(fn (string $code): bool => $code !== 'en') ?? 'en';
     }
 }

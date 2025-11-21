@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\AuthenticationProvider;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -23,7 +25,7 @@ return new class extends Migration
     public function up(): void
     {
         // Create the base table for the socialite providers
-        Schema::create('socialite_providers', function (Blueprint $table) {
+        Schema::create('socialite_providers', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('name')->unique();
             $table->string('client_id')->nullable();
@@ -35,7 +37,7 @@ return new class extends Migration
         });
 
         // Add the provider column to the users table
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             $table->string('provider')
                 ->nullable()
                 ->after('password')
@@ -59,7 +61,7 @@ return new class extends Migration
     {
         Schema::dropIfExists('socialite_providers');
 
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             $table->dropColumn('provider');
         });
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Translations\Tables;
 
 use App\Enums\Language;
@@ -17,7 +19,7 @@ use Filament\Widgets\TableWidget;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-class TranslationsGroupTable extends TableWidget
+final class TranslationsGroupTable extends TableWidget
 {
     public static function configure(Table $table, string $group): Table
     {
@@ -25,14 +27,14 @@ class TranslationsGroupTable extends TableWidget
         $targetLanguage = $service->getTargetLanguage();
 
         return $table
-            ->heading(fn () => view(
+            ->heading(fn (): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view(
                 view: 'filament.resources.core.translations.tables.header-toolbar',
                 data: [
                     'widget' => LanguageSelector::class,
                 ],
             ))
             ->paginated(false)
-            ->records(fn () => static::buildRecords($service, $targetLanguage, $group))
+            ->records(fn (): Collection => self::buildRecords($service, $targetLanguage, $group))
             ->columns([
                 TextColumn::make('english')
                     ->label('Base')
@@ -81,7 +83,7 @@ class TranslationsGroupTable extends TableWidget
                             ])
                             ->columns(1),
                     ])
-                    ->action(fn (array $record, array $data) => static::saveTranslation($record, $data)),
+                    ->action(fn (array $record, array $data) => self::saveTranslation($record, $data)),
             ]);
     }
 
@@ -97,17 +99,21 @@ class TranslationsGroupTable extends TableWidget
         $targetFlat = $service->flattenTranslations(is_array($targetGroup) ? $targetGroup : []);
 
         return collect($englishFlat)
-            ->map(fn (mixed $value, string $key) => [
+            ->map(fn (mixed $value, string $key): array => [
                 '__key' => $key,
                 'key' => $key,
                 'english' => $value,
                 'translation' => $targetFlat[$key] ?? '',
-                'full_key' => ($group ? $group.'.' : '').$key,
+                'full_key' => ($group !== '' && $group !== '0' ? $group.'.' : '').$key,
             ])
             ->values();
     }
 
-    protected static function saveTranslation(array $record, array $data): void
+    /**
+     * @param  array<string, mixed>  $record
+     * @param  array<string, mixed>  $data
+     */
+    private static function saveTranslation(array $record, array $data): void
     {
         $service = app()->make(TranslationService::class);
 

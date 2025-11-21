@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Modules\Clients;
 
 use App\Filament\Resources\Modules\Clients\Pages\CreateClient;
@@ -16,7 +18,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ClientResource extends Resource
+final class ClientResource extends Resource
 {
     protected static ?string $model = Client::class;
 
@@ -24,7 +26,9 @@ class ClientResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public static function getNavigationGroup(): ?string
+    protected static ?int $navigationSort = 1;
+
+    public static function getNavigationGroup(): string
     {
         return __('navigation.groups.modules');
     }
@@ -33,8 +37,6 @@ class ClientResource extends Resource
     {
         return __('admin.clients.navigation_label');
     }
-
-    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {
@@ -62,6 +64,9 @@ class ClientResource extends Resource
         ];
     }
 
+    /**
+     * @return Builder<Client>
+     */
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return parent::getRecordRouteBindingEloquentQuery()

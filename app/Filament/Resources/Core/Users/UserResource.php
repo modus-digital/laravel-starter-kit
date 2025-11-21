@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Users;
 
 use App\Filament\Resources\Core\Users\Pages\CreateUser;
@@ -16,13 +18,19 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class UserResource extends Resource
+final class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    public static function getNavigationGroup(): ?string
+    protected static bool $shouldRegisterNavigation = true;
+
+    protected static ?int $navigationSort = 1;
+
+    protected static ?string $slug = 'system/users';
+
+    public static function getNavigationGroup(): string
     {
         return __('navigation.groups.system');
     }
@@ -31,12 +39,6 @@ class UserResource extends Resource
     {
         return __('admin.users.navigation_label');
     }
-
-    protected static bool $shouldRegisterNavigation = true;
-
-    protected static ?int $navigationSort = 1;
-
-    protected static ?string $slug = 'system/users';
 
     public static function getNavigationBadge(): ?string
     {
@@ -71,6 +73,9 @@ class UserResource extends Resource
         ];
     }
 
+    /**
+     * @return Builder<User>
+     */
     public static function getRecordRouteBindingEloquentQuery(): Builder
     {
         return parent::getRecordRouteBindingEloquentQuery()

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Translations\Pages;
 
 use App\Filament\Resources\Core\Translations\TranslationResource;
@@ -7,7 +9,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Table;
 use Livewire\Attributes\On;
 
-class ListTranslations extends ListRecords
+final class ListTranslations extends ListRecords
 {
     protected static string $resource = TranslationResource::class;
 

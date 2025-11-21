@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
@@ -10,7 +12,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Fortify\Features;
 
-class TwoFactorAuthenticationController extends Controller implements HasMiddleware
+final class TwoFactorAuthenticationController extends Controller implements HasMiddleware
 {
     /**
      * Get the middleware that should be assigned to the controller.
@@ -29,8 +31,11 @@ class TwoFactorAuthenticationController extends Controller implements HasMiddlew
     {
         $request->ensureStateIsValid();
 
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+
         return Inertia::render('settings/two-factor', [
-            'twoFactorEnabled' => $request->user()->hasEnabledTwoFactorAuthentication(),
+            'twoFactorEnabled' => $user->hasEnabledTwoFactorAuthentication(),
             'requiresConfirmation' => Features::optionEnabled(Features::twoFactorAuthentication(), 'confirm'),
         ]);
     }

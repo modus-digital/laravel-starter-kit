@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Translations\Widgets;
 
 use App\Enums\Language;
@@ -10,22 +12,23 @@ use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Widgets\Widget;
 
-class LanguageSelector extends Widget implements HasSchemas
+final class LanguageSelector extends Widget implements HasSchemas
 {
     use InteractsWithSchemas;
+
+    /** @var array<string, string> */
+    public array $languageOptions = [];
+
+    public string $language;
 
     protected string $view = 'filament.resources.core.translations.widgets.language-selector';
 
     protected int|string|array $columnSpan = 'full';
 
-    public array $languageOptions = [];
-
-    public string $language;
-
     public function mount(TranslationService $service): void
     {
         $this->languageOptions = collect($service->getAvailableLanguages())
-            ->mapWithKeys(fn (string $code) => [$code => Language::from($code)->label()])
+            ->mapWithKeys(fn (string $code): array => [$code => Language::from($code)->label()])
             ->all();
 
         $this->language = $service->getTargetLanguage();
