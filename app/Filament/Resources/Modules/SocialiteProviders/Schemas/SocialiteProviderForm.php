@@ -62,8 +62,8 @@ final class SocialiteProviderForm
                             ->label(__('admin.socialite_providers.form.socialite_configuration.redirect_uri'))
                             ->disabled()
                             ->dehydrated(false)
-                            ->formatStateUsing(function (?SocialiteProvider $record) {
-                                if (! $record) {
+                            ->formatStateUsing(function (?SocialiteProvider $record): string {
+                                if (! $record instanceof SocialiteProvider) {
                                     return '';
                                 }
 

@@ -50,9 +50,9 @@ final class RoleRelationManager extends RelationManager
                 TextColumn::make('enum_key')
                     ->label(__('admin.rbac.permissions.relation_managers.role.enum_key'))
                     ->badge()
-                    ->state(fn (Role $role): ?string => self::isLinkedToEnum($role) ? $role->name : null)
+                    ->state(fn (Role $role): ?string => $this->isLinkedToEnum($role) ? $role->name : null)
                     ->formatStateUsing(fn (?string $state): string => $state ? RBACRole::from($state)->getLabel() : '-')
-                    ->color(fn (Role $role): string => self::isLinkedToEnum($role) ? RBACRole::from($role->name)->getFilamentColor() : 'gray'),
+                    ->color(fn (Role $role): string => $this->isLinkedToEnum($role) ? RBACRole::from($role->name)->getFilamentColor() : 'gray'),
 
                 TextColumn::make('name')
                     ->label(__('admin.rbac.permissions.relation_managers.role.name'))
@@ -60,7 +60,7 @@ final class RoleRelationManager extends RelationManager
 
                 IconColumn::make('linked_to_enum')
                     ->label(__('admin.rbac.permissions.relation_managers.role.linked_to_enum.title'))
-                    ->state(fn (Role $role): bool => self::isLinkedToEnum($role))
+                    ->state(fn (Role $role): bool => $this->isLinkedToEnum($role))
                     ->boolean()
                     ->trueIcon(Heroicon::OutlinedCheckCircle)
                     ->falseIcon(Heroicon::OutlinedXCircle)
@@ -78,7 +78,7 @@ final class RoleRelationManager extends RelationManager
                             return $query;
                         }
 
-                        return $query->where(function (Builder $query) use ($data) {
+                        return $query->where(function (Builder $query) use ($data): void {
                             $values = collect(RBACRole::cases())
                                 ->map(fn (RBACRole $enum) => $enum->value)
                                 ->toArray();
@@ -105,9 +105,9 @@ final class RoleRelationManager extends RelationManager
 
                                 return Role::whereNotIn('id', $existingRoles)
                                     ->get()
-                                    ->mapWithKeys(function ($role) {
+                                    ->mapWithKeys(function ($role): array {
                                         $label = collect(RBACRole::cases())
-                                            ->first(fn (RBACRole $enum) => $enum->value === $role->name)
+                                            ->first(fn (RBACRole $enum): bool => $enum->value === $role->name)
                                             ?->getLabel() ?? $role->name;
 
                                         return [$role->name => $label];
@@ -162,7 +162,7 @@ final class RoleRelationManager extends RelationManager
             ->toolbarActions([]);
     }
 
-    private static function isLinkedToEnum(Role $role): bool
+    private function isLinkedToEnum(Role $role): bool
     {
         return collect(RBACRole::cases())
             ->contains(fn (RBACRole $enum): bool => $enum->value === $role->name);

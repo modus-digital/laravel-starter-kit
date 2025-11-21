@@ -27,7 +27,7 @@ final class LanguageSelector extends Widget implements HasSchemas
     public function mount(TranslationService $service): void
     {
         $this->languageOptions = collect($service->getAvailableLanguages())
-            ->mapWithKeys(fn (string $code) => [$code => Language::from($code)->label()])
+            ->mapWithKeys(fn (string $code): array => [$code => Language::from($code)->label()])
             ->all();
 
         $this->language = $service->getTargetLanguage();

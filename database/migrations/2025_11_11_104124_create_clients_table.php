@@ -22,7 +22,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('clients', function (Blueprint $table) {
+        Schema::create('clients', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('name')->unique();
             $table->string('contact_name');
@@ -37,7 +37,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('client_users', function (Blueprint $table) {
+        Schema::create('client_users', function (Blueprint $table): void {
             $table->uuid('client_id')->index();
             $table->uuid('user_id')->index();
             $table->primary(['client_id', 'user_id']);

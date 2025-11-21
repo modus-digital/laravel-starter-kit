@@ -73,7 +73,7 @@ final class PermissionsTable
                             return $query;
                         }
 
-                        return $query->where(function (Builder $query) use ($data) {
+                        return $query->where(function (Builder $query) use ($data): void {
                             $values = collect(RBACPermission::cases())
                                 ->map(fn (RBACPermission $enum) => $enum->value)
                                 ->toArray();

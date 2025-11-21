@@ -32,12 +32,12 @@ final class NestedJsonLoader extends FileLoader
         return $this->flattenTranslations($translations ?? []);
     }
 
-    protected function flattenTranslations(array $array, string $prefix = ''): array
+    private function flattenTranslations(array $array, string $prefix = ''): array
     {
         $result = [];
 
         foreach ($array as $key => $value) {
-            $newKey = $prefix ? "{$prefix}.{$key}" : $key;
+            $newKey = $prefix !== '' && $prefix !== '0' ? "{$prefix}.{$key}" : $key;
 
             if (is_array($value)) {
                 $result = array_merge($result, $this->flattenTranslations($value, $newKey));

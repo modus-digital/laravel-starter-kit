@@ -58,7 +58,7 @@ final class FortifyServiceProvider extends ServiceProvider
             'canResetPassword' => Features::enabled(Features::resetPasswords()),
             'canRegister' => Features::enabled(Features::registration()),
             'status' => $request->session()->get('status'),
-            'authProviders' => SocialiteProvider::enabled()->get()->map(fn (SocialiteProvider $provider) => [
+            'authProviders' => SocialiteProvider::enabled()->get()->map(fn (SocialiteProvider $provider): array => [
                 'id' => $provider->id,
                 'name' => $provider->name,
             ]),
@@ -89,9 +89,7 @@ final class FortifyServiceProvider extends ServiceProvider
      */
     private function configureRateLimiting(): void
     {
-        RateLimiter::for('two-factor', function (Request $request) {
-            return Limit::perMinute(5)->by($request->session()->get('login.id'));
-        });
+        RateLimiter::for('two-factor', fn (Request $request) => Limit::perMinute(5)->by($request->session()->get('login.id')));
 
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());

@@ -11,11 +11,6 @@ use Spatie\Activitylog\Facades\Activity;
 final class LogFailedLogin
 {
     /**
-     * Create the event listener.
-     */
-    public function __construct() {}
-
-    /**
      * Handle the event.
      */
     public function handle(Failed $event): void

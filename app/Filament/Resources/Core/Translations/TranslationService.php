@@ -81,7 +81,7 @@ final class TranslationService
         $result = [];
 
         foreach ($translations as $key => $value) {
-            $newKey = $prefix ? "{$prefix}.{$key}" : $key;
+            $newKey = $prefix !== '' && $prefix !== '0' ? "{$prefix}.{$key}" : $key;
 
             if (is_array($value)) {
                 $result = array_merge($result, $this->flattenTranslations($value, $newKey));
@@ -161,7 +161,7 @@ final class TranslationService
         $total = count($englishFlat);
         $translated = 0;
 
-        foreach ($englishFlat as $key => $value) {
+        foreach (array_keys($englishFlat) as $key) {
             if (isset($targetFlat[$key]) && $targetFlat[$key] !== '') {
                 $translated++;
             }
@@ -266,6 +266,6 @@ final class TranslationService
     private function determineDefaultTargetLanguage(array $languages): string
     {
         return collect($languages)
-            ->first(fn (string $code) => $code !== 'en') ?? 'en';
+            ->first(fn (string $code): bool => $code !== 'en') ?? 'en';
     }
 }

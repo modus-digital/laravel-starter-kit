@@ -25,7 +25,7 @@ final class ImpersonateAction extends Action
             callback: fn (Role $role) => $role->value,
             array: array_filter(
                 array: Role::cases(),
-                callback: fn (Role $role) => $role !== Role::ADMIN && $role !== Role::SUPER_ADMIN
+                callback: fn (Role $role): bool => $role !== Role::ADMIN && $role !== Role::SUPER_ADMIN
             )
         );
 

@@ -26,7 +26,7 @@ final class TranslationsTable
         $targetLanguage = $translationService->getTargetLanguage();
 
         return $table
-            ->heading(fn () => view(
+            ->heading(fn (): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view(
                 view: 'filament.resources.core.translations.tables.header-toolbar',
                 data: [
                     'widget' => LanguageSelector::class,
@@ -34,13 +34,13 @@ final class TranslationsTable
             ))
             ->recordAction(null)
             ->recordUrl(
-                fn (array $record) => TranslationResource::getUrl('group', [
+                fn (array $record): string => TranslationResource::getUrl('group', [
                     'group' => $record['__key'],
                 ]),
             )
             ->paginated(false)
             ->records(
-                fn (?string $search, ?string $sortColumn, ?string $sortDirection) => self::buildKeyRecords(
+                fn (?string $search, ?string $sortColumn, ?string $sortDirection): Collection => self::buildKeyRecords(
                     translationService: $translationService,
                     search: $search,
                     sortColumn: $sortColumn,
@@ -128,7 +128,7 @@ final class TranslationsTable
             );
         } elseif ($sortColumn === 'status') {
             $records = $records->sortBy(
-                fn (array $record) => $record['status'] ? 1 : 0,
+                fn (array $record): int => $record['status'] ? 1 : 0,
                 descending: $descending,
             );
         } else {
@@ -163,7 +163,7 @@ final class TranslationsTable
                 ->send();
 
             return;
-        } catch (Exception $e) {
+        } catch (Exception) {
             Notification::make('language_creation_failed')
                 ->title('Language creation failed')
                 ->body('The language you are trying to create failed to be created.')

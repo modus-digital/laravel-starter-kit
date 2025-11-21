@@ -27,14 +27,14 @@ final class TranslationsGroupTable extends TableWidget
         $targetLanguage = $service->getTargetLanguage();
 
         return $table
-            ->heading(fn () => view(
+            ->heading(fn (): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view(
                 view: 'filament.resources.core.translations.tables.header-toolbar',
                 data: [
                     'widget' => LanguageSelector::class,
                 ],
             ))
             ->paginated(false)
-            ->records(fn () => self::buildRecords($service, $targetLanguage, $group))
+            ->records(fn (): Collection => self::buildRecords($service, $targetLanguage, $group))
             ->columns([
                 TextColumn::make('english')
                     ->label('Base')
@@ -99,17 +99,17 @@ final class TranslationsGroupTable extends TableWidget
         $targetFlat = $service->flattenTranslations(is_array($targetGroup) ? $targetGroup : []);
 
         return collect($englishFlat)
-            ->map(fn (mixed $value, string $key) => [
+            ->map(fn (mixed $value, string $key): array => [
                 '__key' => $key,
                 'key' => $key,
                 'english' => $value,
                 'translation' => $targetFlat[$key] ?? '',
-                'full_key' => ($group ? $group.'.' : '').$key,
+                'full_key' => ($group !== '' && $group !== '0' ? $group.'.' : '').$key,
             ])
             ->values();
     }
 
-    protected static function saveTranslation(array $record, array $data): void
+    private static function saveTranslation(array $record, array $data): void
     {
         $service = app()->make(TranslationService::class);
 

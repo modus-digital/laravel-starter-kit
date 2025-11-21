@@ -60,13 +60,11 @@ final class UsersTable
                 TextColumn::make('status')
                     ->label(__('admin.users.table.status'))
                     ->getStateUsing(fn (?User $record): string => $record->status->getLabel())
-                    ->color(function (?User $record): string {
-                        return match ($record->status) {
-                            ActivityStatus::ACTIVE => 'success',
-                            ActivityStatus::INACTIVE => 'danger',
-                            ActivityStatus::SUSPENDED => 'warning',
-                            ActivityStatus::DELETED => 'danger',
-                        };
+                    ->color(fn (?User $record): string => match ($record->status) {
+                        ActivityStatus::ACTIVE => 'success',
+                        ActivityStatus::INACTIVE => 'danger',
+                        ActivityStatus::SUSPENDED => 'warning',
+                        ActivityStatus::DELETED => 'danger',
                     })
                     ->badge()
                     ->sortable()
@@ -74,7 +72,7 @@ final class UsersTable
 
                 IconColumn::make('two_factor_secret')
                     ->label(__('admin.users.table.two_factor'))
-                    ->tooltip(fn (?User $record): string => ! empty($record?->two_factor_secret) ? __('admin.users.table.two_factor_enabled') : __('admin.users.table.two_factor_disabled'))
+                    ->tooltip(fn (?User $record): string => empty($record?->two_factor_secret) ? __('admin.users.table.two_factor_disabled') : __('admin.users.table.two_factor_enabled'))
                     ->getStateUsing(fn (?User $record): bool => ! empty($record?->two_factor_secret))
                     ->boolean()
                     ->trueIcon(Heroicon::OutlinedCheckCircle)

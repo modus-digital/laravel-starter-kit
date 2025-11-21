@@ -41,7 +41,7 @@ final class QuickTranslate extends Page implements HasForms
 
         $this->missingTranslations = $service->getMissingTranslations($targetLanguage, $group);
 
-        if (empty($this->missingTranslations)) {
+        if ($this->missingTranslations === []) {
             Notification::make()
                 ->title('All translations complete')
                 ->body('All translations for this group have been completed.')
@@ -109,7 +109,7 @@ final class QuickTranslate extends Page implements HasForms
         $this->missingTranslations = $service->getMissingTranslations($targetLanguage, $group);
 
         // Check if there are more translations
-        if (empty($this->missingTranslations)) {
+        if ($this->missingTranslations === []) {
             Notification::make()
                 ->title('All translations complete')
                 ->body('You have successfully translated all missing translations for this group.')
@@ -147,7 +147,7 @@ final class QuickTranslate extends Page implements HasForms
         ];
     }
 
-    protected function getFormActions(): array
+    private function getFormActions(): array
     {
         return [
             Action::make('save')

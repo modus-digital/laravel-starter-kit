@@ -26,8 +26,6 @@ final class AppServiceProvider extends ServiceProvider
         $this->configureResponses();
     }
 
-    public function boot(): void {}
-
     /**
      * Configure the responses of Filament and Fortify.
      */

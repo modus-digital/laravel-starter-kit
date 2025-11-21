@@ -23,7 +23,7 @@ final class CreateUser extends CreateRecord
         return $data;
     }
 
-    protected function afterCreate(): void
+    private function afterCreate(): void
     {
         if ($this->generatedPassword && $this->record) {
             $this->record->notify(new AccountCreated(password: $this->generatedPassword));

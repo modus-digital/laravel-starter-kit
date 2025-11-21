@@ -25,7 +25,7 @@ final class OAuthController extends Controller
     {
         $provider = $this->findProvider($providerName);
 
-        if (! $provider) {
+        if (! $provider instanceof SocialiteProvider) {
             return redirect()->route('login')
                 ->with('error', __('auth.oauth.provider_unavailable', ['provider' => $providerName]));
         }
@@ -39,7 +39,7 @@ final class OAuthController extends Controller
     {
         $provider = $this->findProvider($providerName);
 
-        if (! $provider) {
+        if (! $provider instanceof SocialiteProvider) {
             return redirect()->route('login')
                 ->with('error', __('auth.oauth.provider_unavailable', ['provider' => $providerName]));
         }
@@ -48,14 +48,14 @@ final class OAuthController extends Controller
 
         try {
             $socialiteUser = Socialite::driver($provider->name)->user();
-        } catch (Exception $e) {
+        } catch (Exception) {
             return redirect()->route('login')
                 ->with('error', __('auth.oauth.authentication_failed', ['provider' => ucfirst($provider->name)]));
         }
 
         $user = $this->findOrCreateUser($socialiteUser, $provider->name);
 
-        if (! $user) {
+        if (! $user instanceof User) {
             return redirect()->route('login')
                 ->with('error', __('auth.oauth.registration_disabled'));
         }

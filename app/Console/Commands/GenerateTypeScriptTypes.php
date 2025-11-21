@@ -47,7 +47,7 @@ final class GenerateTypeScriptTypes extends Command
             File::put($enumPath, $this->generateFileHeader().$this->generateEnumTypes());
 
             $enumCount = count($this->getEnums(app_path('Enums')));
-            $this->components->twoColumnDetail('Enums', (string) $enumCount.' → '.$enumPath);
+            $this->components->twoColumnDetail('Enums', $enumCount.' → '.$enumPath);
         }
 
         if ($generateModels) {
@@ -55,7 +55,7 @@ final class GenerateTypeScriptTypes extends Command
             File::put($modelPath, $this->generateFileHeader().$this->generateModelTypes());
 
             $modelCount = count($this->getModels(app_path('Models')));
-            $this->components->twoColumnDetail('Models', (string) $modelCount.' → '.$modelPath);
+            $this->components->twoColumnDetail('Models', $modelCount.' → '.$modelPath);
         }
 
         $this->components->info('TypeScript definitions generated successfully!');
@@ -72,9 +72,8 @@ final class GenerateTypeScriptTypes extends Command
         $output .= " * \n";
         $output .= ' * Generated at: '.now()->toDateTimeString()."\n";
         $output .= " * Run `php artisan generate:ts-types` to regenerate\n";
-        $output .= " */\n\n";
 
-        return $output;
+        return $output." */\n\n";
     }
 
     private function generateEnumTypes(): string
@@ -90,7 +89,7 @@ final class GenerateTypeScriptTypes extends Command
             // For nested namespaces like App\Enums\RBAC\Role, keep the parent namespace
             // Results in: Role (flat) or RBACRole (nested)
             $namespace = str_replace(['App\\Enums\\', 'App\\Enums'], '', $reflection->getNamespaceName());
-            $fullName = $namespace ? str_replace('\\', '', $namespace).$enumName : $enumName;
+            $fullName = $namespace !== '' && $namespace !== '0' ? str_replace('\\', '', $namespace).$enumName : $enumName;
 
             $cases = $enumClass::cases();
 
@@ -102,7 +101,7 @@ final class GenerateTypeScriptTypes extends Command
             $backingType = $this->getEnumBackingType($enumClass);
 
             // Generate union type
-            $values = array_map(fn ($case) => $this->formatEnumValue($case->value, $backingType), $cases);
+            $values = array_map(fn ($case): string => $this->formatEnumValue($case->value, $backingType), $cases);
             $output .= "export type {$fullName} = ".implode(' | ', $values).";\n\n";
         }
 
@@ -120,7 +119,7 @@ final class GenerateTypeScriptTypes extends Command
         $usedEnums = $this->collectUsedEnums($models);
 
         // Add imports for enum types
-        if (! empty($usedEnums)) {
+        if ($usedEnums !== []) {
             $output .= 'import type {'."\n";
             $output .= '  '.implode(",\n  ", $usedEnums)."\n";
             $output .= "} from './enums';\n\n";
@@ -162,7 +161,7 @@ final class GenerateTypeScriptTypes extends Command
         $columns = $this->getTableColumns($tableName);
 
         // If no columns found, it might be using a custom table name - check variations
-        if (empty($columns)) {
+        if ($columns === []) {
             // Try singular form (e.g., client_billing_info instead of client_billing_infos)
             $singularTableName = mb_rtrim($tableName, 's');
             $columns = $this->getTableColumns($singularTableName);
@@ -192,16 +191,14 @@ final class GenerateTypeScriptTypes extends Command
 
         // Add relationships
         $relationships = $this->getModelRelationships($modelClass);
-        if (! empty($relationships)) {
+        if ($relationships !== []) {
             $output .= "\n  // Relationships\n";
             foreach ($relationships as $relation) {
                 $output .= "  {$relation['name']}?: {$relation['type']};\n";
             }
         }
 
-        $output .= "}\n\n";
-
-        return $output;
+        return $output."}\n\n";
     }
 
     private function loadMigrations(): void
@@ -264,9 +261,16 @@ final class GenerateTypeScriptTypes extends Command
 
         foreach ($lines as $line) {
             $line = mb_trim($line);
-
             // Skip empty lines and comments
-            if (empty($line) || str_starts_with($line, '//')) {
+            if ($line === '') {
+                continue;
+            }
+
+            if ($line === '0') {
+                continue;
+            }
+
+            if (str_starts_with($line, '//')) {
                 continue;
             }
 
@@ -383,7 +387,7 @@ final class GenerateTypeScriptTypes extends Command
                 $enumName = $reflection->getShortName();
                 $namespace = str_replace(['App\\Enums\\', 'App\\Enums'], '', $reflection->getNamespaceName());
 
-                return $namespace ? str_replace('\\', '', $namespace).$enumName : $enumName;
+                return $namespace !== '' && $namespace !== '0' ? str_replace('\\', '', $namespace).$enumName : $enumName;
             }
 
             // Handle other casts
@@ -489,11 +493,11 @@ final class GenerateTypeScriptTypes extends Command
                 return null;
             }
 
-            $relatedClass = get_class($relation->getRelated());
+            $relatedClass = $relation->getRelated()::class;
             $reflection = new ReflectionClass($relatedClass);
 
             return $reflection->getShortName();
-        } catch (Exception $e) {
+        } catch (Exception) {
             return null;
         }
     }
@@ -565,14 +569,14 @@ final class GenerateTypeScriptTypes extends Command
                         $reflection = new ReflectionClass($cast);
                         $enumName = $reflection->getShortName();
                         $namespace = str_replace(['App\\Enums\\', 'App\\Enums'], '', $reflection->getNamespaceName());
-                        $fullName = $namespace ? str_replace('\\', '', $namespace).$enumName : $enumName;
+                        $fullName = $namespace !== '' && $namespace !== '0' ? str_replace('\\', '', $namespace).$enumName : $enumName;
 
                         if (! in_array($fullName, $usedEnums)) {
                             $usedEnums[] = $fullName;
                         }
                     }
                 }
-            } catch (Exception $e) {
+            } catch (Exception) {
                 // Skip models that can't be instantiated
             }
         }
@@ -584,7 +588,7 @@ final class GenerateTypeScriptTypes extends Command
 
     private function getEnumBackingType(string $enumClass): string
     {
-        $reflection = new ReflectionClass($enumClass);
+        new ReflectionClass($enumClass);
         $cases = $enumClass::cases();
 
         if (empty($cases)) {
