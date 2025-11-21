@@ -37,7 +37,8 @@
         "nunomaduro/essentials": "^1.0",
         "pestphp/pest": "^4.1",
         "pestphp/pest-plugin-laravel": "^4.0",
-        "pestphp/pest-plugin-livewire": "^4.0"
+        "pestphp/pest-plugin-livewire": "^4.0",
+        "rector/rector": "^2.2"
     },
     "autoload": {
         "psr-4": {
