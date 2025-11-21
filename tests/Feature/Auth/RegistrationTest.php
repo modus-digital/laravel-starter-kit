@@ -2,6 +2,12 @@
 
 declare(strict_types=1);
 
+use Database\Seeders\RolesAndPermissionsSeeder;
+
+beforeEach(function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+});
+
 test('registration screen can be rendered', function () {
     $response = $this->get(route('register'));
 
@@ -17,5 +23,6 @@ test('new users can register', function () {
     ]);
 
     $this->assertAuthenticated();
+    // User model doesn't implement MustVerifyEmail, so users go straight to dashboard
     $response->assertRedirect(route('dashboard', absolute: false));
 });

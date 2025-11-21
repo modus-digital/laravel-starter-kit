@@ -3,7 +3,12 @@
 declare(strict_types=1);
 
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Inertia\Testing\AssertableInertia as Assert;
+
+beforeEach(function () {
+    $this->seed(RolesAndPermissionsSeeder::class);
+});
 
 test('confirm password screen can be rendered', function () {
     $user = User::factory()->create();

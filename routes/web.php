@@ -7,7 +7,7 @@ use App\Http\Controllers\LeaveImpersonationController;
 use App\Http\Controllers\RedirectToApplicationController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', RedirectToApplicationController::class)->name('app.home');
+Route::get('/', RedirectToApplicationController::class)->name('home');
 
 Route::middleware(['auth', 'verified'])
     ->group(function () {

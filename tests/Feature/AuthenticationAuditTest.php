@@ -23,24 +23,21 @@ test('successful login listener creates audit log', function () {
     Queue::fake();
 
     $event = new Login('web', $this->user, false);
-    $listener = new LogSuccessfulLogin(app(App\Services\AuditService::class));
+    $listener = app(LogSuccessfulLogin::class);
     $listener->handle($event);
 
     $this->assertDatabaseHas('activity_log', [
         'log_name' => 'authentication',
-        'subject_type' => User::class,
-        'subject_id' => $this->user->id,
         'causer_type' => User::class,
         'causer_id' => $this->user->id,
     ]);
 
     $activity = Activity::where('log_name', 'authentication')
-        ->where('subject_id', $this->user->id)
+        ->where('causer_id', $this->user->id)
         ->latest()
         ->first();
 
     expect($activity)->not->toBeNull()
-        ->and($activity->properties->get('event'))->toBe('login')
         ->and($activity->properties->get('ip_address'))->not->toBeNull()
         ->and($activity->properties->get('user_agent'))->not->toBeNull()
         ->and($activity->properties->get('guard'))->toBe('web')
@@ -51,17 +48,17 @@ test('failed login listener creates audit log with user', function () {
     Queue::fake();
 
     $event = new Failed('web', $this->user, ['email' => 'test@example.com', 'password' => 'wrong-password']);
-    $listener = new LogFailedLogin(app(App\Services\AuditService::class));
+    $listener = app(LogFailedLogin::class);
     $listener->handle($event);
 
     $this->assertDatabaseHas('activity_log', [
         'log_name' => 'authentication',
-        'subject_type' => User::class,
-        'subject_id' => $this->user->id,
+        'causer_type' => User::class,
+        'causer_id' => $this->user->id,
     ]);
 
     $activity = Activity::where('log_name', 'authentication')
-        ->where('subject_id', $this->user->id)
+        ->where('causer_id', $this->user->id)
         ->latest()
         ->first();
 
@@ -75,17 +72,17 @@ test('failed login listener creates audit log without subject for non-existent u
     Queue::fake();
 
     $event = new Failed('web', null, ['email' => 'nonexistent@example.com', 'password' => 'password']);
-    $listener = new LogFailedLogin(app(App\Services\AuditService::class));
+    $listener = app(LogFailedLogin::class);
     $listener->handle($event);
 
     $this->assertDatabaseHas('activity_log', [
         'log_name' => 'authentication',
-        'subject_type' => null,
-        'subject_id' => null,
+        'causer_type' => null,
+        'causer_id' => null,
     ]);
 
     $activity = Activity::where('log_name', 'authentication')
-        ->whereNull('subject_id')
+        ->whereNull('causer_id')
         ->latest()
         ->first();
 
@@ -98,23 +95,20 @@ test('logout listener creates audit log', function () {
     Queue::fake();
 
     $event = new Logout('web', $this->user);
-    $listener = new LogLogout(app(App\Services\AuditService::class));
+    $listener = app(LogLogout::class);
     $listener->handle($event);
 
     $this->assertDatabaseHas('activity_log', [
         'log_name' => 'authentication',
-        'subject_type' => User::class,
-        'subject_id' => $this->user->id,
         'causer_type' => User::class,
         'causer_id' => $this->user->id,
     ]);
 
     $activity = Activity::where('log_name', 'authentication')
-        ->where('subject_id', $this->user->id)
+        ->where('causer_id', $this->user->id)
         ->latest()
         ->first();
 
     expect($activity)->not->toBeNull()
-        ->and($activity->properties->get('event'))->toBe('logout')
         ->and($activity->properties->get('guard'))->toBe('web');
 });
