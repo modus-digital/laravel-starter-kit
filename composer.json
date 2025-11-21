@@ -63,6 +63,18 @@
             "npm install",
             "npm run build"
         ],
+        "code:check": [
+            "./vendor/bin/rector --dry-run",
+            "./vendor/bin/pint --test"
+        ],
+        "code:fix": [
+            "./vendor/bin/rector",
+            "./vendor/bin/pint --dirty",
+            "./vendor/bin/phpstan analyse --memory-limit=2G"
+        ],
+        "code:analyze": "./vendor/bin/phpstan analyse --memory-limit=2G",
+        "code:pint": "./vendor/bin/pint",
+        "code:rector": "./vendor/bin/rector",
         "dev": [
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"npm run dev\" --names='server,queue,vite'"
