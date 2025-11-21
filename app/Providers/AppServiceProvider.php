@@ -4,8 +4,16 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Http\Responses\FilamentLogoutResponse;
+use App\Http\Responses\FortifyLoginResponse;
+use App\Http\Responses\FortifyLogoutResponse;
+use App\Http\Responses\FortifyRegisterResponse;
 use App\Translation\NestedJsonLoader;
+use Filament\Auth\Http\Responses\Contracts\LogoutResponse as FilamentLogoutResponseContract;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Fortify\Http\Responses\LoginResponse as FortifyLoginResponseContract;
+use Laravel\Fortify\Http\Responses\LogoutResponse as FortifyLogoutResponseContract;
+use Laravel\Fortify\Http\Responses\RegisterResponse as FortifyRegisterResponseContract;
 
 final class AppServiceProvider extends ServiceProvider
 {
@@ -14,7 +22,31 @@ final class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // This is a workaround to load nested JSON files and add support for nested json using __() and trans() helper functions.
+        $this->configureCustomLoaders();
+        $this->configureResponses();
+    }
+
+    public function boot(): void {}
+
+    /**
+     * Configure the responses of Filament and Fortify.
+     */
+    private function configureResponses(): void
+    {
+        // Filament
+        $this->app->singleton(abstract: FilamentLogoutResponseContract::class, concrete: FilamentLogoutResponse::class);
+
+        // Fortify
+        $this->app->singleton(abstract: FortifyLoginResponseContract::class, concrete: FortifyLoginResponse::class);
+        $this->app->singleton(abstract: FortifyRegisterResponseContract::class, concrete: FortifyRegisterResponse::class);
+        $this->app->singleton(abstract: FortifyLogoutResponseContract::class, concrete: FortifyLogoutResponse::class);
+    }
+
+    /**
+     * Configure the custom loaders for the application.
+     */
+    private function configureCustomLoaders(): void
+    {
         $this->app->extend(
             abstract: 'translation.loader',
             closure: fn ($loader, $app): NestedJsonLoader => new NestedJsonLoader(
@@ -22,13 +54,5 @@ final class AppServiceProvider extends ServiceProvider
                 path: $app['path.lang']
             )
         );
-    }
-
-    /**
-     * Bootstrap any application services.
-     */
-    public function boot(): void
-    {
-        //
     }
 }

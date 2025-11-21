@@ -20,12 +20,10 @@ final class LogFailedLogin
      */
     public function handle(Failed $event): void
     {
-
         /** @var User $user */
         $user = $event->user;
 
         $properties = [
-            'event' => 'login_failed',
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
             'guard' => $event->guard,
