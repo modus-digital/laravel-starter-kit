@@ -7,7 +7,9 @@ namespace App\Filament\Resources\Core\Users\Pages;
 use App\Filament\Resources\Core\Users\UserResource;
 use App\Notifications\Auth\AccountCreated;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\Facades\Activity;
 
 final class CreateUser extends CreateRecord
 {
@@ -30,5 +32,18 @@ final class CreateUser extends CreateRecord
             $record = $this->record;
             $record->notify(new AccountCreated(password: $this->generatedPassword));
         }
+
+        Activity::inLog('administration')
+            ->event('user.created')
+            ->causedBy(Auth::user())
+            ->performedOn($record)
+            ->withProperties([
+                'user_id' => $record->id,
+                'user_name' => $record->name,
+                'user_email' => $record->email,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+            ])
+            ->log('User created successfully');
     }
 }
