@@ -1,0 +1,256 @@
+<x-filament-widgets::widget>
+    <x-filament::section>
+        {{-- Header with dropdown --}}
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Activity Log
+                </h3>
+                <p class="text-xs italic text-gray-600 dark:text-gray-300 mt-1">
+                    Click on the title to show the details
+                </p>
+            </div>
+            <div class="flex items-center gap-3">
+                <label for="log-name-select" class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Filter by Log:
+                </label>
+                <select id="log-name-select" wire:model.live="logName"
+                    class="filament-select-input text-sm rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white focus:border-primary-500 focus:ring-primary-500">
+                    <option value="">All</option>
+                    @foreach($this->logNames as $logName)
+                        <option value="{{ $logName }}">{{ $logName }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        {{-- Timeline --}}
+        <div class="relative">
+            {{-- Vertical line --}}
+            <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-300 dark:bg-gray-700"></div>
+
+            <div class="space-y-6">
+                @forelse($this->activities as $activity)
+                    <div class="relative flex items-start gap-4" wire:key="activity-{{ $activity->id }}">
+                        {{-- Icon circle --}}
+                        <div
+                            class="relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 dark:bg-primary-900 ring-4 ring-white dark:ring-gray-900">
+                            @php
+                                $event = $activity->event ?? 'default';
+                                $icon = match (true) {
+                                    str_starts_with($event, 'created') => 'heroicon-o-plus-circle',
+                                    str_starts_with($event, 'updated') => 'heroicon-o-pencil',
+                                    str_starts_with($event, 'deleted') => 'heroicon-o-trash',
+                                    str_starts_with($event, 'login') => 'heroicon-o-arrow-right-on-rectangle',
+                                    str_starts_with($event, 'logout') => 'heroicon-o-arrow-left-on-rectangle',
+                                    str_starts_with($event, 'auth.') => 'heroicon-o-key',
+                                    str_starts_with($event, 'impersonate.') => 'heroicon-o-user-circle',
+                                    default => 'heroicon-o-information-circle',
+                                };
+                            @endphp
+                            <x-filament::icon :icon="$icon" class="h-4 w-4 text-primary-600 dark:text-primary-400" />
+                        </div>
+
+                        {{-- Content --}}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="flex-1 min-w-0">
+                                    <button type="button" wire:click="openActivityModal({{ $activity->id }})"
+                                        class="text-left hover:text-primary-600 dark:hover:text-primary-400 transition-colors cursor-pointer group">
+                                        <h4 class="text-sm font-medium text-gray-900 dark:text-white group-hover:underline">
+                                            {{ $activity->description ?? 'No description' }}
+                                        </h4>
+                                    </button>
+                                    <div class="mt-1">
+                                        @php
+                                            $event = $activity->event ?? 'unknown';
+                                        @endphp
+                                        <span
+                                            class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset bg-gray-50 text-gray-700 ring-gray-600/20 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20">
+                                            event: {{ $event }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
+                                    {{ $activity->created_at->diffForHumans() }}
+                                    <div class="text-[10px] mt-0.5">
+                                        {{ $activity->created_at->format('M j, Y H:i') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-center py-12">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">No activities found.</p>
+                    </div>
+                @endforelse
+            </div>
+        </div>
+
+        {{-- Pagination --}}
+        @if($this->activities->hasPages())
+            <div class="mt-6">
+                {{ $this->activities->links() }}
+            </div>
+        @endif
+
+        {{-- Sidebar --}}
+        <div x-data="{ open: @entangle('selectedActivityId').live }" x-show="open !== null" x-cloak
+            x-on:keydown.escape.window="@this.closeActivityModal()" class="fixed inset-0 z-50 overflow-hidden"
+            style="display: none;">
+            {{-- Backdrop --}}
+            <div x-show="open !== null" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                class="fixed inset-0 bg-gray-900/50 dark:bg-gray-900/75 transition-opacity"
+                x-on:click="@this.closeActivityModal()"></div>
+
+            {{-- Sidebar Panel --}}
+            <div class="fixed inset-y-0 right-0 flex max-w-full pl-10">
+                <div x-show="open !== null" x-transition:enter="transform transition ease-in-out duration-300"
+                    x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+                    x-transition:leave="transform transition ease-in-out duration-300"
+                    x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
+                    class="w-screen max-w-2xl">
+                    <div class="flex h-full flex-col overflow-y-scroll bg-white dark:bg-gray-800 shadow-xl">
+                        {{-- Header --}}
+                        <div
+                            class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    Activity Details
+                                </h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">
+                                    View detailed information about this activity
+                                </p>
+                            </div>
+                            <button type="button" x-on:click="@this.closeActivityModal()"
+                                class="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+                                <span class="sr-only">Close</span>
+                                <x-filament::icon icon="heroicon-o-x-mark" class="h-6 w-6" />
+                            </button>
+                        </div>
+
+                        {{-- Content --}}
+                        <div class="flex-1 overflow-y-auto px-6 py-4">
+                            @if($this->selectedActivity)
+                                <div class="space-y-6">
+                                    {{-- Description --}}
+                                    <div>
+                                        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Description</h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                                            {{ $this->selectedActivity->description ?? 'No description' }}
+                                        </p>
+                                    </div>
+
+                                    {{-- Event --}}
+                                    <div>
+                                        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Event</h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                                            {{ ucfirst(str_replace(['_', '.'], ' ', $this->selectedActivity->event ?? 'Unknown')) }}
+                                        </p>
+                                    </div>
+
+                                    {{-- Log Name --}}
+                                    @if($this->selectedActivity->log_name)
+                                        <div>
+                                            <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Log Name</h4>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                                {{ $this->selectedActivity->log_name }}
+                                            </p>
+                                        </div>
+                                    @endif
+
+                                    {{-- Causer --}}
+                                    @if($this->selectedActivity->causer)
+                                        <div>
+                                            <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Causer</h4>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                                {{ $this->selectedActivity->causer->name ?? $this->selectedActivity->causer->email ?? 'Unknown' }}
+                                                <span class="text-gray-400">
+                                                    ({{ class_basename($this->selectedActivity->causer_type) }})
+                                                </span>
+                                            </p>
+                                        </div>
+                                    @endif
+
+                                    {{-- Subject --}}
+                                    @if($this->selectedActivity->subject)
+                                        <div>
+                                            <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Subject</h4>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                                {{ class_basename($this->selectedActivity->subject_type) }}
+                                                <span class="text-gray-400">
+                                                    (ID: {{ $this->selectedActivity->subject_id }})
+                                                </span>
+                                            </p>
+                                        </div>
+                                    @endif
+
+                                    {{-- Properties --}}
+                                    @if($this->selectedActivity->properties && $this->selectedActivity->properties->count() > 0)
+                                        <div>
+                                            <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Properties</h4>
+                                            <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+                                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                                    <thead class="bg-gray-50 dark:bg-gray-800">
+                                                        <tr>
+                                                            <th scope="col"
+                                                                class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                                Key</th>
+                                                            <th scope="col"
+                                                                class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                                Value</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody
+                                                        class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                                        @foreach($this->selectedActivity->properties->toArray() as $key => $value)
+                                                            <tr>
+                                                                <td
+                                                                    class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                                                    {{ $key }}
+                                                                </td>
+                                                                <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                                                                    @if(is_array($value) || is_object($value))
+                                                                        <pre
+                                                                            class="text-xs whitespace-pre-wrap wrap-break-word">{{ json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}</pre>
+                                                                    @else
+                                                                        {{ $value }}
+                                                                    @endif
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    @endif
+
+                                    {{-- Timestamp --}}
+                                    <div>
+                                        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Timestamp</h4>
+                                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                                            {{ $this->selectedActivity->created_at->format('M j, Y H:i:s') }}
+                                            <span class="text-gray-400">
+                                                ({{ $this->selectedActivity->created_at->diffForHumans() }})
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- Footer --}}
+                        <div class="border-t border-gray-200 dark:border-gray-700 px-6 py-4">
+                            <x-filament::button x-on:click="@this.closeActivityModal()" color="gray">
+                                Close
+                            </x-filament::button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </x-filament::section>
+</x-filament-widgets::widget>
