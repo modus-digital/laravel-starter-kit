@@ -1,28 +1,16 @@
 <x-filament-widgets::widget>
     <x-filament::section>
-        {{-- Header with dropdown --}}
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                    Activity Log
-                </h3>
-                <p class="text-xs italic text-gray-600 dark:text-gray-300 mt-1">
-                    Click on the title to show the details
-                </p>
-            </div>
-            <div class="flex items-center gap-3">
-                <label for="log-name-select" class="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Filter by Log:
-                </label>
-                <select id="log-name-select" wire:model.live="logName"
-                    class="filament-select-input text-sm rounded-lg border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white focus:border-primary-500 focus:ring-primary-500">
-                    <option value="">All</option>
-                    @foreach($this->logNames as $logName)
-                        <option value="{{ $logName }}">{{ $logName }}</option>
-                    @endforeach
-                </select>
-            </div>
-        </div>
+        <x-slot name="heading">
+            Activity Log
+        </x-slot>
+
+        <x-slot name="description">
+            Click on the title to show the details
+        </x-slot>
+
+        <x-slot name="afterHeader">
+            {{ $this->form }}
+        </x-slot>
 
         {{-- Timeline --}}
         <div class="relative">
@@ -87,13 +75,6 @@
                 @endforelse
             </div>
         </div>
-
-        {{-- Pagination --}}
-        @if($this->activities->hasPages())
-            <div class="mt-6">
-                {{ $this->activities->links() }}
-            </div>
-        @endif
 
         {{-- Sidebar --}}
         <div x-data="{ open: @entangle('selectedActivityId').live }" x-show="open !== null" x-cloak
@@ -252,5 +233,13 @@
                 </div>
             </div>
         </div>
+
+        <x-slot name="footer">
+            <div class="flex justify-end">
+                <x-filament::button :href="$this->getFullPageUrl()" tag="a">
+                    View Full Activity Log
+                </x-filament::button>
+            </div>
+        </x-slot>
     </x-filament::section>
 </x-filament-widgets::widget>

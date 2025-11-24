@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace App\Filament\Widgets;
 
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Concerns\InteractsWithSchemas;
+use Filament\Schemas\Contracts\HasSchemas;
+use Filament\Schemas\Schema;
 use Filament\Widgets\Widget;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity;
 
-final class ActivityLog extends Widget
+final class ActivityLog extends Widget implements HasSchemas
 {
+    use InteractsWithSchemas;
+
     public ?string $logName = null;
 
     public ?int $selectedActivityId = null;
@@ -21,7 +26,27 @@ final class ActivityLog extends Widget
 
     public function mount(): void
     {
-        $this->logName = null;
+        $this->form->fill();
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        $maxLength = $this->logNames->map(fn (string $name): int => mb_strlen($name))->max() ?? 0;
+        $minWidth = max($maxLength, 3) + 4;
+
+        return $schema
+            ->components([
+                Select::make('logName')
+                    ->label('Filter by Log')
+                    ->options(fn (): array => $this->logNames->mapWithKeys(fn (string $name): array => [$name => $name])->all())
+                    ->placeholder('All')
+                    ->native(false)
+                    ->live()
+                    ->afterStateUpdated(fn () => $this->updatedLogName())
+                    ->extraAttributes([
+                        'style' => "min-width: {$minWidth}ch;",
+                    ]),
+            ]);
     }
 
     /**
@@ -37,9 +62,9 @@ final class ActivityLog extends Widget
     }
 
     /**
-     * @return Paginator<Activity>
+     * @return Collection<Activity>
      */
-    public function getActivitiesProperty(): Paginator
+    public function getActivitiesProperty(): Collection
     {
         $query = Activity::query()
             ->with(['causer', 'subject'])
@@ -49,7 +74,7 @@ final class ActivityLog extends Widget
             $query->where('log_name', $this->logName);
         }
 
-        return $query->paginate(10);
+        return $query->limit(5)->get();
     }
 
     public function updatedLogName(): void
@@ -75,5 +100,12 @@ final class ActivityLog extends Widget
 
         return Activity::with(['causer', 'subject'])
             ->find($this->selectedActivityId);
+    }
+
+    public function getFullPageUrl(): string
+    {
+        // TODO: Update this URL when you create the activity log resource page
+        // For example: return route('filament.control.resources.system.activity-logs.index');
+        return '#';
     }
 }
