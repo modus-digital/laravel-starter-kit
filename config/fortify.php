@@ -148,7 +148,7 @@ return [
     */
 
     'features' => array_merge(
-        $modules['registration'] ? [Features::registration()] : [],
+        $modules['registration']['enabled'] ? [Features::registration()] : [],
         [
             Features::resetPasswords(),
             Features::emailVerification(),
