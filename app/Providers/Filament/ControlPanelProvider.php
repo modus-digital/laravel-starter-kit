@@ -34,6 +34,7 @@ final class ControlPanelProvider extends PanelProvider
             ->id(id: 'control')
             ->path(path: 'control')
             ->topbar(false)
+            ->brandLogo(fn () => view('filament.application-logo'))
             ->viteTheme('resources/css/filament/control/theme.css')
             ->maxContentWidth(Width::Full)
             ->colors(colors: [
