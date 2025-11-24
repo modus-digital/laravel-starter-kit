@@ -6,6 +6,8 @@ namespace App\Providers\Filament;
 
 use App\Filament\Resources\Modules\Clients\ClientResource;
 use App\Filament\Resources\Modules\SocialiteProviders\SocialiteProviderResource;
+use App\Filament\Widgets\ActivityLog;
+use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -13,6 +15,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\Width;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -30,7 +33,10 @@ final class ControlPanelProvider extends PanelProvider
             ->default()
             ->id(id: 'control')
             ->path(path: 'control')
+            ->topbar(false)
+            ->brandLogo(fn () => view('filament.application-logo'))
             ->viteTheme('resources/css/filament/control/theme.css')
+            ->maxContentWidth(Width::Full)
             ->colors(colors: [
                 'primary' => Color::Amber,
             ])
@@ -42,7 +48,7 @@ final class ControlPanelProvider extends PanelProvider
             ])
             ->widgets(widgets: [
                 AccountWidget::class,
-                FilamentInfoWidget::class,
+                ActivityLog::class,
             ])
             ->middleware(middleware: [
                 EncryptCookies::class,
@@ -54,6 +60,9 @@ final class ControlPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+            ])
+            ->authMiddleware([
+                Authenticate::class,
             ]);
     }
 

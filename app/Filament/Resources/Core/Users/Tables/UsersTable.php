@@ -9,16 +9,22 @@ use App\Enums\AuthenticationProvider;
 use App\Enums\RBAC\Role;
 use App\Filament\Overrides\ImpersonateAction;
 use App\Models\User;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\Facades\Activity;
 
 final class UsersTable
 {
@@ -129,8 +135,38 @@ final class UsersTable
                 TrashedFilter::make(),
             ])
             ->recordActions([
-                ImpersonateAction::make(),
-                EditAction::make(),
+                ActionGroup::make([
+                    ImpersonateAction::make(),
+                    ViewAction::make(),
+                    EditAction::make(),
+                    RestoreAction::make()
+                        ->visible(fn (?User $record) => $record?->trashed())
+                        ->after(function (?User $record) {
+                            Activity::inLog('administration')
+                                ->event('user.restored')
+                                ->causedBy(Auth::user())
+                                ->performedOn($record)
+                                ->withProperties([
+                                    'user_id' => $record->id,
+                                    'user_name' => $record->name,
+                                    'user_email' => $record->email,
+                                ])
+                                ->log('User restored successfully');
+                        }),
+                    DeleteAction::make()
+                        ->after(function () {
+                            Activity::inLog('administration')
+                                ->event('user.deleted')
+                                ->causedBy(Auth::user())
+                                ->performedOn($this->record)
+                                ->withProperties([
+                                    'user_id' => $this->record->id,
+                                    'user_name' => $this->record->name,
+                                    'user_email' => $this->record->email,
+                                ])
+                                ->log('User deleted successfully');
+                        })
+                ])
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

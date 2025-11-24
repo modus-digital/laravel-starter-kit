@@ -2,3 +2,46 @@
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
+
+.fi {
+    scrollbar-gutter: unset;
+}
+
+.fi-body {
+    @apply bg-gray-50 dark:bg-gray-950;
+}
+
+.fi-layout {
+    @apply p-0;
+}
+
+.fi-sidebar {
+    @apply top-0 bottom-0 start-0 rounded-none bg-gray-50 dark:bg-gray-950;
+    
+    &.fi-sidebar-open {
+        @apply shadow-none;
+    }
+}
+
+:not(.fi-body-has-topbar) .fi-sidebar {
+    @apply top-0 h-screen;
+}
+
+.fi-body-has-topbar .fi-sidebar {
+    @apply top-16 h-[calc(100vh-4rem)];
+}
+
+.fi-main-ctn {
+    @apply pt-3 pb-3 pl-3 pr-3 md:pt-4 md:pb-4 md:pl-4 md:pr-3;
+    /* scrollbar-gutter: stable; */
+}
+
+.fi-main {
+    @apply rounded-lg bg-white border border-gray-200 dark:bg-gray-900/50 dark:border-white/10;
+}
+
+@media (max-width: 1023px) {
+    .fi-main-ctn {
+        @apply pl-3 pr-3;
+    }
+}
