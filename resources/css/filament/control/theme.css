@@ -2,6 +2,7 @@
 
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
+@source '../../../../vendor/jaocero/radio-deck/resources/views';
 
 .fi {
     scrollbar-gutter: unset;
@@ -21,6 +22,10 @@
     &.fi-sidebar-open {
         @apply shadow-none;
     }
+}
+
+.fi-sidebar-nav {
+    @apply mt-6;
 }
 
 :not(.fi-body-has-topbar) .fi-sidebar {
@@ -44,4 +49,11 @@
     .fi-main-ctn {
         @apply pl-3 pr-3;
     }
+}
+
+/* Support for custom branding CSS variables */
+:root {
+    --brand-primary: var(--brand-primary, oklch(0.705 0.213 47.604));
+    --brand-secondary: var(--brand-secondary, oklch(0.551 0.027 264.364));
+    --brand-font-sans: var(--brand-font-sans, ui-sans-serif, system-ui, sans-serif);
 }

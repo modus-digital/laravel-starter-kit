@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "17381ccfc7aab68781247eab22092147",
+    "content-hash": "7f1fef34d66482683cefb7819ce217a8",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -2365,6 +2365,81 @@
             "time": "2025-09-28T21:21:36+00:00"
         },
         {
+            "name": "jaocero/radio-deck",
+            "version": "v2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/199ocero/radio-deck.git",
+                "reference": "15b72137cdc0e91e8f0b98f1f0f7d3f0e1c209b4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/199ocero/radio-deck/zipball/15b72137cdc0e91e8f0b98f1f0f7d3f0e1c209b4",
+                "reference": "15b72137cdc0e91e8f0b98f1f0f7d3f0e1c209b4",
+                "shasum": ""
+            },
+            "require": {
+                "filament/forms": "^4.0",
+                "illuminate/contracts": "^11.0|^12.0",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.15.0"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.24",
+                "nunomaduro/collision": "^8.1",
+                "orchestra/testbench": "^9.0",
+                "pestphp/pest": "^2.0",
+                "pestphp/pest-plugin-arch": "^2.0",
+                "pestphp/pest-plugin-laravel": "^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "JaOcero\\RadioDeck\\RadioDeckServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "JaOcero\\RadioDeck\\": "src/",
+                    "JaOcero\\RadioDeck\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jay-Are Ocero",
+                    "email": "199ocero@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Turn filament default radio button into a selectable card with icons, title and description.",
+            "homepage": "https://github.com/jaocero/radio-deck",
+            "keywords": [
+                "filament-form",
+                "filament-plugin",
+                "filamentphp",
+                "jaocero",
+                "laravel",
+                "radio-deck"
+            ],
+            "support": {
+                "issues": "https://github.com/jaocero/radio-deck/issues",
+                "source": "https://github.com/jaocero/radio-deck"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/jaocero",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-09-14T12:02:21+00:00"
+        },
+        {
             "name": "kirschbaum-development/eloquent-power-joins",
             "version": "4.2.10",
             "source": {
@@ -4657,6 +4732,164 @@
                 }
             ],
             "time": "2025-09-03T16:03:54+00:00"
+        },
+        {
+            "name": "outerweb/filament-settings",
+            "version": "v2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/outer-web/filament-settings.git",
+                "reference": "02b979431d6811f11c603fbda2c6d2cb4c95fdca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/outer-web/filament-settings/zipball/02b979431d6811f11c603fbda2c6d2cb4c95fdca",
+                "reference": "02b979431d6811f11c603fbda2c6d2cb4c95fdca",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^4.0",
+                "outerweb/settings": "^2.0",
+                "php": "^8.4",
+                "spatie/laravel-package-tools": "^1.16"
+            },
+            "require-dev": {
+                "larastan/larastan": "^3.0",
+                "laravel/pint": "^1.14",
+                "nunomaduro/collision": "^8.8",
+                "orchestra/testbench": "^10.0.0||^9.0.0",
+                "pestphp/pest": "^4.0",
+                "pestphp/pest-plugin-arch": "^4.0",
+                "pestphp/pest-plugin-laravel": "^4.0",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan-deprecation-rules": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Outerweb\\FilamentSettings\\FilamentSettingsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Outerweb\\FilamentSettings\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Outerweb",
+                    "email": "info@outerweb.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Filament integration for the outerweb/settings package",
+            "homepage": "https://github.com/outerweb/filament-settings",
+            "keywords": [
+                "Outerweb",
+                "filament-settings",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/outerweb/filament-settings/issues",
+                "source": "https://github.com/outerweb/filament-settings"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/outer-web",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-10-08T20:31:10+00:00"
+        },
+        {
+            "name": "outerweb/settings",
+            "version": "v2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/outer-web/settings.git",
+                "reference": "ea6ab44e4d774864054b69d2419c191be8cd9f08"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/outer-web/settings/zipball/ea6ab44e4d774864054b69d2419c191be8cd9f08",
+                "reference": "ea6ab44e4d774864054b69d2419c191be8cd9f08",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^11.0||^12.0",
+                "illuminate/database": "^11.0||^12.0",
+                "illuminate/support": "^11.0||^12.0",
+                "php": "^8.4",
+                "spatie/laravel-package-tools": "^1.16"
+            },
+            "require-dev": {
+                "larastan/larastan": "^3.0",
+                "laravel/pint": "^1.14",
+                "nunomaduro/collision": "^8.8",
+                "orchestra/testbench": "^10.0.0||^9.0.0",
+                "pestphp/pest": "^4.0",
+                "pestphp/pest-plugin-arch": "^4.0",
+                "pestphp/pest-plugin-laravel": "^4.0",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan-deprecation-rules": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Setting": "Outerweb\\Settings\\Facades\\Setting"
+                    },
+                    "providers": [
+                        "Outerweb\\Settings\\SettingsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/Helpers/helpers.php"
+                ],
+                "psr-4": {
+                    "Outerweb\\Settings\\": "src/",
+                    "Outerweb\\Settings\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Outerweb",
+                    "email": "info@outerweb.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Application wide settings stored in your database",
+            "homepage": "https://github.com/outer-web/settings",
+            "keywords": [
+                "Outerweb",
+                "Settings",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/outer-web/settings/issues",
+                "source": "https://github.com/outer-web/settings/tree/v2.0.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Outerweb",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-10-09T12:02:13+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
