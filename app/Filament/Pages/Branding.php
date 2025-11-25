@@ -14,8 +14,10 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Auth;
 use JaOcero\RadioDeck\Forms\Components\RadioDeck;
 use Outerweb\FilamentSettings\Pages\Settings;
+use Spatie\Activitylog\Facades\Activity;
 use UnitEnum;
 
 final class Branding extends Settings
@@ -130,7 +132,15 @@ final class Branding extends Settings
         return [
             Action::make('save')
                 ->label('Save')
-                ->action('save'),
+                ->action('save')
+                ->after(fn () => Activity::inLog('administration')
+                    ->event('branding.updated')
+                    ->causedBy(Auth::user())
+                    ->withProperties([
+                        'ip_address' => request()->ip(),
+                        'user_agent' => request()->userAgent(),
+                    ])
+                    ->log('Branding updated successfully')),
         ];
     }
 }
