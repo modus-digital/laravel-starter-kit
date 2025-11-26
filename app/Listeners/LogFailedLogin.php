@@ -19,8 +19,6 @@ final class LogFailedLogin
         $user = $event->user;
 
         $properties = [
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent(),
             'guard' => $event->guard,
             'credentials' => [
                 'email' => $event->credentials['email'] ?? null,
@@ -33,13 +31,13 @@ final class LogFailedLogin
                 ->event('auth.login.failed')
                 ->causedBy($user)
                 ->withProperties($properties)
-                ->log('Failed login attempt');
+                ->log('');
         } else {
             // If user doesn't exist, log without subject (attempted login with non-existent email)
             Activity::inLog('authentication')
                 ->event('auth.login.failed')
                 ->withProperties($properties)
-                ->log('Failed login attempt with non-existent user');
+                ->log('');
         }
     }
 }

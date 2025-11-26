@@ -38,12 +38,10 @@ final class CreateUser extends CreateRecord
             ->causedBy(Auth::user())
             ->performedOn($record)
             ->withProperties([
+                'target' => $record->name,
                 'user_id' => $record->id,
-                'user_name' => $record->name,
                 'user_email' => $record->email,
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
             ])
-            ->log('User created successfully');
+            ->log('');
     }
 }

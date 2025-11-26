@@ -6,10 +6,10 @@ use App\Enums\ActivityStatus;
 use App\Enums\RBAC\Permission;
 use App\Enums\RBAC\Role;
 use App\Filament\Resources\Core\Users\Pages\ListUsers;
+use App\Models\Activity;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Support\Facades\Auth;
-use Spatie\Activitylog\Models\Activity;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertAuthenticated;
@@ -124,11 +124,11 @@ test('impersonation start is logged in activity log', function () {
         ->first();
 
     expect($activity)->not->toBeNull()
-        ->and($activity->description)->toBe('User impersonation started')
-        ->and($activity->properties->get('issuer'))->toBe($this->adminUser->name)
+        ->and($activity->description)->toBe('activity.impersonate.start')
         ->and($activity->properties->get('target'))->toBe($this->regularUser->name)
-        ->and($activity->properties->get('ip'))->not->toBeNull()
-        ->and($activity->properties->get('user_agent'))->not->toBeNull();
+        ->and($activity->properties->get('issuer')['name'])->toBe($this->adminUser->name)
+        ->and($activity->properties->get('issuer')['ip_address'])->not->toBeNull()
+        ->and($activity->properties->get('issuer')['user_agent'])->not->toBeNull();
 });
 
 test('user without permission cannot start impersonation', function () {
@@ -213,11 +213,11 @@ test('impersonation stop is logged in activity log', function () {
         ->first();
 
     expect($activity)->not->toBeNull()
-        ->and($activity->description)->toBe('User impersonation ended')
-        ->and($activity->properties->get('issuer'))->toBe($this->adminUser->name)
+        ->and($activity->description)->toBe('activity.impersonate.leave')
         ->and($activity->properties->get('target'))->toBe($this->regularUser->name)
-        ->and($activity->properties->get('ip_address'))->not->toBeNull()
-        ->and($activity->properties->get('user_agent'))->not->toBeNull();
+        ->and($activity->properties->get('issuer')['name'])->toBe($this->adminUser->name)
+        ->and($activity->properties->get('issuer')['ip_address'])->not->toBeNull()
+        ->and($activity->properties->get('issuer')['user_agent'])->not->toBeNull();
 });
 
 test('leaving impersonation without active session redirects to login', function () {

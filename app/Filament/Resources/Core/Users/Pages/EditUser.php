@@ -32,12 +32,10 @@ final class EditUser extends EditRecord
             ->causedBy(Auth::user())
             ->performedOn($this->record)
             ->withProperties([
+                'target' => $this->record->name,
                 'user_id' => $this->record->id,
-                'user_name' => $this->record->name,
                 'user_email' => $this->record->email,
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
             ])
-            ->log('User updated successfully');
+            ->log('');
     }
 }

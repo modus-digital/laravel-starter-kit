@@ -147,11 +147,11 @@ final class UsersTable
                                 ->causedBy(Auth::user())
                                 ->performedOn($record)
                                 ->withProperties([
+                                    'target' => $record->name,
                                     'user_id' => $record->id,
-                                    'user_name' => $record->name,
                                     'user_email' => $record->email,
                                 ])
-                                ->log('User restored successfully');
+                                ->log('');
                         }),
                     DeleteAction::make()
                         ->after(function () {
@@ -160,13 +160,13 @@ final class UsersTable
                                 ->causedBy(Auth::user())
                                 ->performedOn($this->record)
                                 ->withProperties([
+                                    'target' => $this->record->name,
                                     'user_id' => $this->record->id,
-                                    'user_name' => $this->record->name,
                                     'user_email' => $this->record->email,
                                 ])
-                                ->log('User deleted successfully');
-                        })
-                ])
+                                ->log('');
+                        }),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

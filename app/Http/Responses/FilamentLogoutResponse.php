@@ -17,12 +17,10 @@ final class FilamentLogoutResponse implements Responsable
             ->event('auth.logout')
             ->causedBy($request->user())
             ->withProperties([
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
                 'guard' => $request->guard,
                 'remember' => $request->remember,
             ])
-            ->log('User logged out successfully');
+            ->log('');
 
         return Inertia::location(url: route('login'));
     }

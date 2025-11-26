@@ -21,12 +21,10 @@ final class FortifyLoginResponse implements Responsable
             ->event('auth.login')
             ->causedBy($user)
             ->withProperties([
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
                 'guard' => $request->guard,
                 'remember' => $request->remember,
             ])
-            ->log('User logged in successfully');
+            ->log('');
 
         if ($user && $user->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL)) {
             return Inertia::location(url: route('filament.control.pages.dashboard'));

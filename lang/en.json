@@ -597,5 +597,26 @@
             "confirm_delete": "Are you sure you want to delete this item?",
             "no_results": "No results found"
         }
+    },
+    "activity": {
+        "auth": {
+            "login": ":issuer signed in",
+            "login.failed": "Failed sign-in attempt for :email",
+            "logout": ":issuer signed out",
+            "register": ":issuer registered an account"
+        },
+        "impersonate": {
+            "start": ":issuer started impersonating :target",
+            "leave": ":issuer stopped impersonating :target"
+        },
+        "branding": {
+            "updated": ":issuer updated branding settings"
+        },
+        "user": {
+            "created": ":issuer created user :target",
+            "updated": ":issuer updated user :target",
+            "deleted": ":issuer deleted user :target",
+            "restored": ":issuer restored user :target"
+        }
     }
 }

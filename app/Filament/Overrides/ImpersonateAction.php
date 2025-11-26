@@ -101,12 +101,9 @@ final class ImpersonateAction extends Action
                 ->performedOn($record)
                 ->causedBy($currentUser)
                 ->withProperties([
-                    'issuer' => $currentUser->name,
                     'target' => $record->name,
-                    'ip' => request()->ip(),
-                    'user_agent' => request()->userAgent(),
                 ])
-                ->log(description: 'User impersonation started');
+                ->log('');
 
             return redirect()->to(path: route('dashboard'));
         });

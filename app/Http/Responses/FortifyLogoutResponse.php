@@ -16,11 +16,7 @@ final class FortifyLogoutResponse implements Responsable
         Activity::inLog('authentication')
             ->event('auth.logout')
             ->causedBy(auth()->user())
-            ->withProperties([
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
-            ])
-            ->log('User logged out successfully');
+            ->log('');
 
         return Inertia::location(url: route('login'));
     }

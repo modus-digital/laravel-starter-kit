@@ -26,13 +26,14 @@
                             @php
                                 $event = $activity->event ?? 'default';
                                 $icon = match (true) {
-                                    str_starts_with($event, 'created') => 'heroicon-o-plus-circle',
-                                    str_starts_with($event, 'updated') => 'heroicon-o-pencil',
-                                    str_starts_with($event, 'deleted') => 'heroicon-o-trash',
-                                    str_starts_with($event, 'login') => 'heroicon-o-arrow-right-on-rectangle',
-                                    str_starts_with($event, 'logout') => 'heroicon-o-arrow-left-on-rectangle',
-                                    str_starts_with($event, 'auth.') => 'heroicon-o-key',
-                                    str_starts_with($event, 'impersonate.') => 'heroicon-o-user-circle',
+                                    str_contains($event, 'created') => 'heroicon-o-plus-circle',
+                                    str_contains($event, 'updated') => 'heroicon-o-pencil',
+                                    str_contains($event, 'deleted') => 'heroicon-o-trash',
+                                    str_contains($event, 'login') => 'heroicon-o-arrow-right-on-rectangle',
+                                    str_contains($event, 'logout') => 'heroicon-o-arrow-left-on-rectangle',
+                                    str_contains($event, 'branding') => 'heroicon-o-palette',
+                                    str_contains($event, 'rbac') => 'heroicon-o-shield-check',
+                                    str_contains($event, 'impersonate') => 'icon-impersonation',
                                     default => 'heroicon-o-information-circle',
                                 };
                             @endphp
@@ -46,7 +47,7 @@
                                     <button type="button" wire:click="openActivityModal({{ $activity->id }})"
                                         class="text-left hover:text-primary-600 dark:hover:text-primary-400 transition-colors cursor-pointer group">
                                         <h4 class="text-sm font-medium text-gray-900 dark:text-white group-hover:underline">
-                                            {{ $activity->description ?? 'No description' }}
+                                            {{ $activity->getTranslatedDescription() }}
                                         </h4>
                                     </button>
                                     <div class="mt-1">
@@ -93,7 +94,7 @@
                     x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
                     x-transition:leave="transform transition ease-in-out duration-300"
                     x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
-                    class="w-screen max-w-2xl">
+                    class="w-screen max-w-4xl">
                     <div class="flex h-full flex-col overflow-y-scroll bg-white dark:bg-gray-800 shadow-xl">
                         {{-- Header --}}
                         <div
@@ -121,7 +122,7 @@
                                     <div>
                                         <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Description</h4>
                                         <p class="text-sm text-gray-600 dark:text-gray-400">
-                                            {{ $this->selectedActivity->description ?? 'No description' }}
+                                            {{ $this->selectedActivity->getTranslatedDescription() }}
                                         </p>
                                     </div>
 
@@ -190,13 +191,93 @@
                                                         @foreach($this->selectedActivity->properties->toArray() as $key => $value)
                                                             <tr>
                                                                 <td
-                                                                    class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                                                    class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white align-top">
                                                                     {{ $key }}
                                                                 </td>
                                                                 <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                                                                     @if(is_array($value) || is_object($value))
-                                                                        <pre
-                                                                            class="text-xs whitespace-pre-wrap wrap-break-word">{{ json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}</pre>
+                                                                        @php $level1Data = is_object($value) ? (array) $value : $value; @endphp
+                                                                        {{-- Level 1 Nested Table --}}
+                                                                        <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+                                                                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                                                                <thead class="bg-gray-50 dark:bg-gray-800">
+                                                                                    <tr>
+                                                                                        <th scope="col"
+                                                                                            class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                                                            Key</th>
+                                                                                        <th scope="col"
+                                                                                            class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                                                            Value</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                                                                    @foreach($level1Data as $level1Key => $level1Value)
+                                                                                        <tr>
+                                                                                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white align-top">
+                                                                                                {{ $level1Key }}
+                                                                                            </td>
+                                                                                            <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                                                                                                @if(is_array($level1Value) || is_object($level1Value))
+                                                                                                    @php $level2Data = is_object($level1Value) ? (array) $level1Value : $level1Value; @endphp
+                                                                                                    {{-- Level 2 Nested Table --}}
+                                                                                                    <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+                                                                                                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                                                                                            <thead class="bg-gray-50 dark:bg-gray-800">
+                                                                                                                <tr>
+                                                                                                                    <th scope="col"
+                                                                                                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                                                                                        Key</th>
+                                                                                                                    <th scope="col"
+                                                                                                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                                                                                        Value</th>
+                                                                                                                </tr>
+                                                                                                            </thead>
+                                                                                                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                                                                                                @foreach($level2Data as $level2Key => $level2Value)
+                                                                                                                    <tr>
+                                                                                                                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white align-top">
+                                                                                                                            {{ $level2Key }}
+                                                                                                                        </td>
+                                                                                                                        <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
+                                                                                                                            @if(is_array($level2Value) || is_object($level2Value))
+                                                                                                                                {{-- Beyond level 2, show as JSON --}}
+                                                                                                                                <pre class="text-xs whitespace-pre-wrap break-all bg-gray-50 dark:bg-gray-900 p-2 rounded-lg border border-gray-200 dark:border-gray-700">{{ json_encode($level2Value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}</pre>
+                                                                                                                            @elseif(is_bool($level2Value))
+                                                                                                                                <span class="inline-flex items-center rounded px-2 py-1 text-xs font-medium {{ $level2Value ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' }}">
+                                                                                                                                    {{ $level2Value ? 'true' : 'false' }}
+                                                                                                                                </span>
+                                                                                                                            @elseif(is_null($level2Value))
+                                                                                                                                <span class="text-gray-400 dark:text-gray-500 italic">null</span>
+                                                                                                                            @else
+                                                                                                                                {{ $level2Value }}
+                                                                                                                            @endif
+                                                                                                                        </td>
+                                                                                                                    </tr>
+                                                                                                                @endforeach
+                                                                                                            </tbody>
+                                                                                                        </table>
+                                                                                                    </div>
+                                                                                                @elseif(is_bool($level1Value))
+                                                                                                    <span class="inline-flex items-center rounded px-2 py-1 text-xs font-medium {{ $level1Value ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' }}">
+                                                                                                        {{ $level1Value ? 'true' : 'false' }}
+                                                                                                    </span>
+                                                                                                @elseif(is_null($level1Value))
+                                                                                                    <span class="text-gray-400 dark:text-gray-500 italic">null</span>
+                                                                                                @else
+                                                                                                    {{ $level1Value }}
+                                                                                                @endif
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    @endforeach
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
+                                                                    @elseif(is_bool($value))
+                                                                        <span class="inline-flex items-center rounded px-2 py-1 text-xs font-medium {{ $value ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' }}">
+                                                                            {{ $value ? 'true' : 'false' }}
+                                                                        </span>
+                                                                    @elseif(is_null($value))
+                                                                        <span class="text-gray-400 dark:text-gray-500 italic">null</span>
                                                                     @else
                                                                         {{ $value }}
                                                                     @endif

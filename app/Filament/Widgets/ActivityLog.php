@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Filament\Widgets;
 
+use App\Models\Activity;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
-use Spatie\Activitylog\Models\Activity;
 
 final class ActivityLog extends Widget implements HasSchemas
 {

@@ -9,7 +9,6 @@ use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
@@ -140,11 +139,7 @@ final class Branding extends Settings
                     Activity::inLog('administration')
                         ->event('branding.updated')
                         ->causedBy(Auth::user())
-                        ->withProperties([
-                            'ip_address' => request()->ip(),
-                            'user_agent' => request()->userAgent(),
-                        ])
-                        ->log('Branding updated successfully');
+                        ->log('');
 
                     app(BrandingService::class)->clearCache();
                     $this->js('window.location.reload()');

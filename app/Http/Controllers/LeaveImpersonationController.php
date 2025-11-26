@@ -44,12 +44,9 @@ final class LeaveImpersonationController extends Controller
             ->performedOn($currentUser)
             ->causedBy($originalUser)
             ->withProperties([
-                'issuer' => $originalUser->name,
                 'target' => $currentUser->name,
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
             ])
-            ->log(description: 'User impersonation ended');
+            ->log('');
 
         return Inertia::location(url: route('dashboard'));
     }
