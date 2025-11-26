@@ -24,13 +24,13 @@ final class PermissionResource extends Resource
 
     protected static bool $shouldRegisterNavigation = true;
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 8;
 
-    protected static ?string $slug = 'system/access-control/permissions';
+    protected static ?string $slug = 'management/access-control/permissions';
 
     public static function getNavigationGroup(): string
     {
-        return __('navigation.groups.system');
+        return __('navigation.groups.management');
     }
 
     public static function getNavigationParentItem(): string

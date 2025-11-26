@@ -101,7 +101,13 @@ final class ImpersonateAction extends Action
                 ->performedOn($record)
                 ->causedBy($currentUser)
                 ->withProperties([
-                    'target' => $record->name,
+                    'user' => [
+                        'id' => $record->id,
+                        'name' => $record->name,
+                        'email' => $record->email,
+                        'status' => $record->status->getLabel(),
+                        'roles' => Role::from($record->roles->first()->name)->getLabel(),
+                    ]
                 ])
                 ->log('');
 

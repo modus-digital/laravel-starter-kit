@@ -19,7 +19,7 @@ final class TranslationResource extends Resource
 
     protected static bool $shouldRegisterNavigation = true;
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 12;
 
     protected static ?string $slug = 'system/translations';
 

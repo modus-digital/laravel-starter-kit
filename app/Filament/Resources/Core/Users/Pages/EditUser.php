@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Core\Users\Pages;
 
+use App\Enums\RBAC\Role;
 use App\Filament\Resources\Core\Users\UserResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
@@ -32,9 +33,13 @@ final class EditUser extends EditRecord
             ->causedBy(Auth::user())
             ->performedOn($this->record)
             ->withProperties([
-                'target' => $this->record->name,
-                'user_id' => $this->record->id,
-                'user_email' => $this->record->email,
+                'user' => [
+                    'id' => $this->record->id,
+                    'name' => $this->record->name,
+                    'email' => $this->record->email,
+                    'status' => $this->record->status->getLabel(),
+                    'roles' => Role::from($this->record->roles->first()->name)->getLabel(),
+                ]
             ])
             ->log('');
     }

@@ -192,7 +192,7 @@
                                                             <tr>
                                                                 <td
                                                                     class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white align-top">
-                                                                    {{ $key }}
+                                                                    {{ ucfirst(str_replace('_', ' ', $key)) }}
                                                                 </td>
                                                                 <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                                                                     @if(is_array($value) || is_object($value))
@@ -214,7 +214,7 @@
                                                                                     @foreach($level1Data as $level1Key => $level1Value)
                                                                                         <tr>
                                                                                             <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white align-top">
-                                                                                                {{ $level1Key }}
+                                                                                                {{ ucfirst(str_replace('_', ' ', $level1Key)) }}
                                                                                             </td>
                                                                                             <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                                                                                                 @if(is_array($level1Value) || is_object($level1Value))
@@ -236,7 +236,7 @@
                                                                                                                 @foreach($level2Data as $level2Key => $level2Value)
                                                                                                                     <tr>
                                                                                                                         <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white align-top">
-                                                                                                                            {{ $level2Key }}
+                                                                                                                            {{ ucfirst(str_replace('_', ' ', $level2Key)) }}
                                                                                                                         </td>
                                                                                                                         <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400">
                                                                                                                             @if(is_array($level2Value) || is_object($level2Value))

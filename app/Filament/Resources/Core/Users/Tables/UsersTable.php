@@ -147,9 +147,13 @@ final class UsersTable
                                 ->causedBy(Auth::user())
                                 ->performedOn($record)
                                 ->withProperties([
-                                    'target' => $record->name,
-                                    'user_id' => $record->id,
-                                    'user_email' => $record->email,
+                                    'user' => [
+                                        'id' => $record->id,
+                                        'name' => $record->name,
+                                        'email' => $record->email,
+                                        'status' => $record->status->getLabel(),
+                                        'roles' => Role::from($record->roles->first()->name)->getLabel(),
+                                    ]
                                 ])
                                 ->log('');
                         }),
@@ -160,9 +164,13 @@ final class UsersTable
                                 ->causedBy(Auth::user())
                                 ->performedOn($this->record)
                                 ->withProperties([
-                                    'target' => $this->record->name,
-                                    'user_id' => $this->record->id,
-                                    'user_email' => $this->record->email,
+                                    'user' => [
+                                        'id' => $this->record->id,
+                                        'name' => $this->record->name,
+                                        'email' => $this->record->email,
+                                        'status' => $this->record->status->getLabel(),
+                                        'roles' => Role::from($this->record->roles->first()->name)->getLabel(),
+                                    ]
                                 ])
                                 ->log('');
                         }),

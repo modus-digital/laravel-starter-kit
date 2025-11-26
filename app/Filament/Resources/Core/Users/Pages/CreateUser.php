@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Core\Users\Pages;
 
+use App\Enums\RBAC\Role;
 use App\Filament\Resources\Core\Users\UserResource;
 use App\Notifications\Auth\AccountCreated;
 use Filament\Resources\Pages\CreateRecord;
@@ -38,9 +39,13 @@ final class CreateUser extends CreateRecord
             ->causedBy(Auth::user())
             ->performedOn($record)
             ->withProperties([
-                'target' => $record->name,
-                'user_id' => $record->id,
-                'user_email' => $record->email,
+                'user' => [
+                    'id' => $record->id,
+                    'name' => $record->name,
+                    'email' => $record->email,
+                    'status' => $record->status->getLabel(),
+                    'roles' => Role::from($record->roles->first()->name)->getLabel(),
+                ]
             ])
             ->log('');
     }

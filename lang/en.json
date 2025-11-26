@@ -294,12 +294,15 @@
     "navigation": {
         "groups": {
             "system": "System",
-            "modules": "Modules"
+            "logs_and_monitoring": "Logs & Monitoring",
+            "management": "Management",
+            "maintenance": "Maintenance"
         },
         "labels": {
             "users": "Users",
             "roles": "Roles",
             "permissions": "Permissions",
+            "branding": "Branding",
             "translation_manager": "Translation Manager",
             "access_control": "Access Control",
             "clients": "Clients",
@@ -313,7 +316,7 @@
         "socialite_providers": {
             "label": "Authentication Provider",
             "plural_label": "Authentication Providers",
-            "navigation_label": "Authentication Providers",
+            "navigation_label": "Auth Providers",
             "table": {
                 "name": "Provider Name",
                 "is_enabled": "Enabled",
@@ -448,6 +451,16 @@
                 }
             }
         },
+        "activities": {
+            "navigation_label": "Activities",
+            "table": {
+                "log_name": "Log Name",
+                "description": "Description",
+                "causer": "Causer",
+                "subject": "Subject",
+                "created_at": "Created At"
+            }
+        },
         "users": {
             "navigation_label": "Users",
             "form": {
@@ -457,7 +470,7 @@
                 },
                 "security": {
                     "title": "Security",
-                    "description": "Here you can update the user's role and status. Passwords are automatically generated when creating a user."
+                    "description": "Here you can update the user's role and status. Passwords are automatically generated and sent to the user's email address when creating a user."
                 },
                 "name": "Name",
                 "email": "Email",
@@ -606,8 +619,8 @@
             "register": ":issuer registered an account"
         },
         "impersonate": {
-            "start": ":issuer started impersonating :target",
-            "leave": ":issuer stopped impersonating :target"
+            "start": ":issuer started impersonating a user",
+            "leave": ":issuer stopped impersonating a user"
         },
         "branding": {
             "updated": ":issuer updated branding settings"

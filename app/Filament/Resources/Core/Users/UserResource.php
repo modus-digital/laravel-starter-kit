@@ -23,7 +23,7 @@ final class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
     protected static bool $shouldRegisterNavigation = true;
 
@@ -33,7 +33,7 @@ final class UserResource extends Resource
 
     public static function getNavigationGroup(): string
     {
-        return __('navigation.groups.system');
+        return __('navigation.groups.management');
     }
 
     public static function getNavigationLabel(): string

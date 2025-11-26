@@ -24,24 +24,19 @@ use UnitEnum;
 final class Branding extends Settings
 {
     protected string $view = 'filament.pages.branding';
-
-    protected static ?string $title = 'Branding';
-
-    protected static ?string $navigationLabel = 'Branding';
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSparkles;
-
-    protected static string|UnitEnum|null $navigationGroup = 'Modules';
-
     protected static ?int $navigationSort = 10;
-
-    protected static ?string $slug = 'modules/branding';
-
+    protected static ?string $slug = 'system/branding';
     protected ?Alignment $headerActionsAlignment = Alignment::End;
 
-    public function getHeading(): string
+    public static function getNavigationGroup(): string
     {
-        return 'Branding';
+        return __('navigation.groups.system');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('navigation.labels.branding');
     }
 
     public function form(Schema $schema): Schema

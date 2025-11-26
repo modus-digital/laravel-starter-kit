@@ -104,8 +104,6 @@ final class ActivityLog extends Widget implements HasSchemas
 
     public function getFullPageUrl(): string
     {
-        // TODO: Update this URL when you create the activity log resource page
-        // For example: return route('filament.control.resources.system.activity-logs.index');
-        return '#';
+        return route('filament.control.resources.monitoring.activities.index');
     }
 }

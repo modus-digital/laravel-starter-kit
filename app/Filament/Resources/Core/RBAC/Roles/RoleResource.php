@@ -24,13 +24,13 @@ final class RoleResource extends Resource
 
     protected static bool $shouldRegisterNavigation = true;
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 7;
 
-    protected static ?string $slug = 'system/access-control/roles';
+    protected static ?string $slug = 'management/access-control/roles';
 
     public static function getNavigationGroup(): string
     {
-        return __('navigation.groups.system');
+        return __('navigation.groups.management');
     }
 
     public static function getNavigationParentItem(): string
