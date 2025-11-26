@@ -19,14 +19,17 @@ use Illuminate\Support\Facades\Auth;
 use JaOcero\RadioDeck\Forms\Components\RadioDeck;
 use Outerweb\FilamentSettings\Pages\Settings;
 use Spatie\Activitylog\Facades\Activity;
-use UnitEnum;
 
 final class Branding extends Settings
 {
     protected string $view = 'filament.pages.branding';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSparkles;
+
     protected static ?int $navigationSort = 10;
+
     protected static ?string $slug = 'system/branding';
+
     protected ?Alignment $headerActionsAlignment = Alignment::End;
 
     public static function getNavigationGroup(): string
@@ -128,7 +131,7 @@ final class Branding extends Settings
         return [
             Action::make('save')
                 ->label('Save')
-                ->action(function () {
+                ->action(function (): void {
                     $this->save();
 
                     Activity::inLog('administration')

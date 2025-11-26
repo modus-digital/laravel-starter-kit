@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create(Config::string('settings.database.table'), function (Blueprint $table) {
+        Schema::create(Config::string('settings.database.table'), function (Blueprint $table): void {
             $table->id();
             $table->string('key')
                 ->unique()
@@ -22,7 +22,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists(Config::string('settings.database.table'));
     }

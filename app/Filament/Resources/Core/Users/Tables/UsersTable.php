@@ -28,6 +28,8 @@ use Spatie\Activitylog\Facades\Activity;
 
 final class UsersTable
 {
+    public $record;
+
     public static function configure(Table $table): Table
     {
         return $table
@@ -141,7 +143,7 @@ final class UsersTable
                     EditAction::make(),
                     RestoreAction::make()
                         ->visible(fn (?User $record) => $record?->trashed())
-                        ->after(function (?User $record) {
+                        ->after(function (?User $record): void {
                             Activity::inLog('administration')
                                 ->event('user.restored')
                                 ->causedBy(Auth::user())
@@ -153,12 +155,12 @@ final class UsersTable
                                         'email' => $record->email,
                                         'status' => $record->status->getLabel(),
                                         'roles' => Role::from($record->roles->first()->name)->getLabel(),
-                                    ]
+                                    ],
                                 ])
                                 ->log('');
                         }),
                     DeleteAction::make()
-                        ->after(function () {
+                        ->after(function (): void {
                             Activity::inLog('administration')
                                 ->event('user.deleted')
                                 ->causedBy(Auth::user())
@@ -170,7 +172,7 @@ final class UsersTable
                                         'email' => $this->record->email,
                                         'status' => $this->record->status->getLabel(),
                                         'roles' => Role::from($this->record->roles->first()->name)->getLabel(),
-                                    ]
+                                    ],
                                 ])
                                 ->log('');
                         }),

@@ -26,14 +26,12 @@ final class BrandingService
      */
     public function getSettings(): array
     {
-        return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () {
-            return [
-                'primary_color' => $this->getPrimaryColorHex(),
-                'secondary_color' => $this->getSecondaryColorHex(),
-                'font' => $this->getFont(),
-                'logo' => $this->getLogoUrl(),
-            ];
-        });
+        return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, fn (): array => [
+            'primary_color' => $this->getPrimaryColorHex(),
+            'secondary_color' => $this->getSecondaryColorHex(),
+            'font' => $this->getFont(),
+            'logo' => $this->getLogoUrl(),
+        ]);
     }
 
     /**
@@ -49,8 +47,8 @@ final class BrandingService
         }
 
         // Normalize hex color: ensure # prefix and uppercase
-        $hex = str_starts_with($hex, '#') ? $hex : '#'.$hex;
-        $hex = mb_strtoupper($hex);
+        $hex = str_starts_with((string) $hex, '#') ? $hex : '#'.$hex;
+        $hex = mb_strtoupper((string) $hex);
 
         // Validate hex format (6 digits)
         if (! preg_match('/^#[0-9A-F]{6}$/', $hex)) {
@@ -73,8 +71,8 @@ final class BrandingService
         }
 
         // Normalize hex color: ensure # prefix and uppercase
-        $hex = str_starts_with($hex, '#') ? $hex : '#'.$hex;
-        $hex = mb_strtoupper($hex);
+        $hex = str_starts_with((string) $hex, '#') ? $hex : '#'.$hex;
+        $hex = mb_strtoupper((string) $hex);
 
         // Validate hex format (6 digits)
         if (! preg_match('/^#[0-9A-F]{6}$/', $hex)) {
@@ -312,14 +310,14 @@ final class BrandingService
     private function rgbToOklch(int $r, int $g, int $b): array
     {
         // Normalize RGB to 0-1
-        $r = $r / 255.0;
-        $g = $g / 255.0;
-        $b = $b / 255.0;
+        $r /= 255.0;
+        $g /= 255.0;
+        $b /= 255.0;
 
         // Apply gamma correction (sRGB to linear RGB)
-        $r = $r <= 0.04045 ? $r / 12.92 : pow(($r + 0.055) / 1.055, 2.4);
-        $g = $g <= 0.04045 ? $g / 12.92 : pow(($g + 0.055) / 1.055, 2.4);
-        $b = $b <= 0.04045 ? $b / 12.92 : pow(($b + 0.055) / 1.055, 2.4);
+        $r = $r <= 0.04045 ? $r / 12.92 : (($r + 0.055) / 1.055) ** 2.4;
+        $g = $g <= 0.04045 ? $g / 12.92 : (($g + 0.055) / 1.055) ** 2.4;
+        $b = $b <= 0.04045 ? $b / 12.92 : (($b + 0.055) / 1.055) ** 2.4;
 
         // Convert linear RGB to XYZ (D65 illuminant)
         $x = $r * 0.4124564 + $g * 0.3575761 + $b * 0.1804375;
@@ -331,9 +329,9 @@ final class BrandingService
         $m_ = 0.0329845436 * $x + 0.9293118715 * $y + 0.0361456387 * $z;
         $s_ = 0.0482003018 * $x + 0.2643662691 * $y + 0.6338517070 * $z;
 
-        $l_ = $l_ ** (1 / 3);
-        $m_ = $m_ ** (1 / 3);
-        $s_ = $s_ ** (1 / 3);
+        $l_ **= 1 / 3;
+        $m_ **= 1 / 3;
+        $s_ **= 1 / 3;
 
         $L = 0.2104542553 * $l_ + 0.7936177850 * $m_ - 0.0040720468 * $s_;
         $a = 1.9779984951 * $l_ - 2.4285922050 * $m_ + 0.4505937099 * $s_;

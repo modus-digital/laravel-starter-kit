@@ -45,7 +45,7 @@ final class ControlPanelProvider extends PanelProvider
             $brandingService = app(BrandingService::class);
             $settings = $brandingService->getSettings();
             $fontFamily = $fontMap[$settings['font'] ?? 'inter'] ?? 'Inter';
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             $fontFamily = 'Inter';
         }
 
@@ -54,16 +54,16 @@ final class ControlPanelProvider extends PanelProvider
             ->id(id: 'control')
             ->path(path: 'control')
             ->topbar(false)
-            ->brandLogo(fn () => view('filament.application-logo'))
+            ->brandLogo(fn (): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view('filament.application-logo'))
             ->font($fontFamily)
             ->viteTheme('resources/css/filament/control/theme.css')
             ->maxContentWidth(Width::Full)
-            ->colors(colors: fn () => [
+            ->colors(colors: fn (): array => [
                 'primary' => $this->getPrimaryColorPalette(),
             ])
             ->renderHook(
                 \Filament\View\PanelsRenderHook::HEAD_START,
-                fn () => view('filament.branding-styles')
+                fn (): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view('filament.branding-styles')
             )
             ->discoverResources(in: app_path(path: 'Filament/Resources/Core'), for: 'App\Filament\Resources\Core')
             ->resources(resources: $this->registerResources())
@@ -124,7 +124,7 @@ final class ControlPanelProvider extends PanelProvider
     {
         try {
             return app(BrandingService::class)->getFilamentPrimaryColorPalette();
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             // Return default Filament primary color palette if settings not available
             return [
                 50 => 'oklch(0.985 0 0)',

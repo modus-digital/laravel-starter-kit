@@ -1,15 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Activities\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class ActivitiesTable
+final class ActivitiesTable
 {
     public static function configure(Table $table): Table
     {
@@ -24,13 +22,11 @@ class ActivitiesTable
                 TextColumn::make('description')
                     ->label(__('admin.activities.table.description'))
                     ->limit(50)
-                    ->formatStateUsing(function ($state, $record) {
-                        return __($state, [
-                            'issuer' => $record->causer?->name ?? '',
-                            'target' => $record->subject?->name ?? '',
-                            'email' => $record->properties['credentials']['email'] ?? '',
-                        ]);
-                    })
+                    ->formatStateUsing(fn ($state, $record): string|array|null => __($state, [
+                        'issuer' => $record->causer?->name ?? '',
+                        'target' => $record->subject?->name ?? '',
+                        'email' => $record->properties['credentials']['email'] ?? '',
+                    ]))
                     ->searchable()
                     ->sortable(),
 
