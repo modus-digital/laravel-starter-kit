@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Services\BrandingService;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
@@ -132,15 +134,26 @@ final class Branding extends Settings
         return [
             Action::make('save')
                 ->label('Save')
-                ->action('save')
-                ->after(fn () => Activity::inLog('administration')
-                    ->event('branding.updated')
-                    ->causedBy(Auth::user())
-                    ->withProperties([
-                        'ip_address' => request()->ip(),
-                        'user_agent' => request()->userAgent(),
-                    ])
-                    ->log('Branding updated successfully')),
+                ->action(function () {
+                    // Call the parent save method
+                    $this->save();
+
+                    // Log the activity
+                    Activity::inLog('administration')
+                        ->event('branding.updated')
+                        ->causedBy(Auth::user())
+                        ->withProperties([
+                            'ip_address' => request()->ip(),
+                            'user_agent' => request()->userAgent(),
+                        ])
+                        ->log('Branding updated successfully');
+
+                    // Clear the branding cache
+                    app(BrandingService::class)->clearCache();
+
+                    // Force a full page reload to apply the branding changes
+                    $this->js('window.location.reload()');
+                }),
         ];
     }
 }
