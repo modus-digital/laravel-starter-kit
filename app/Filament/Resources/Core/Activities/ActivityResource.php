@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\Core\Activities;
 
 use App\Filament\Resources\Core\Activities\Pages\ListActivities;
@@ -9,14 +11,14 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 
-class ActivityResource extends Resource
+final class ActivityResource extends Resource
 {
     protected static ?string $model = Activity::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'icon-logs';
 
     protected static ?int $navigationSort = 20;
-    
+
     protected static ?string $slug = 'monitoring/activities';
 
     public static function getNavigationLabel(): string

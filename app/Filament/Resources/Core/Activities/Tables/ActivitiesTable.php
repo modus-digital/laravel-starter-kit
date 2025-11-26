@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Core\Activities\Tables;
 
+use App\Models\Activity;
+use Filament\Actions\Action;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -13,41 +16,81 @@ final class ActivitiesTable
     {
         return $table
             ->columns([
-                TextColumn::make('log_name')
-                    ->label(__('admin.activities.table.log_name'))
-                    ->formatStateUsing(fn (string $state): string => ucfirst($state))
-                    ->searchable()
-                    ->sortable(),
-
                 TextColumn::make('description')
                     ->label(__('admin.activities.table.description'))
-                    ->limit(50)
-                    ->formatStateUsing(fn ($state, $record): string|array|null => __($state, [
-                        'issuer' => $record->causer?->name ?? '',
-                        'target' => $record->subject?->name ?? '',
-                        'email' => $record->properties['credentials']['email'] ?? '',
-                    ]))
+                    ->formatStateUsing(fn (Activity $record): string => $record->getTranslatedDescription())
+                    ->searchable()
+                    ->sortable()
+                    ->wrap(),
+
+                TextColumn::make('event')
+                    ->label(__('admin.activities.table.event'))
+                    ->badge()
+                    ->color('gray')
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('causer.name')
                     ->label(__('admin.activities.table.causer'))
+                    ->formatStateUsing(fn (?string $state, Activity $record): string => $record->causer?->name ?? $record->causer?->email ?? 'System')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->default('System'),
 
-                TextColumn::make('subject.name')
+                TextColumn::make('subject')
                     ->label(__('admin.activities.table.subject'))
-                    ->searchable()
-                    ->sortable(),
+                    ->formatStateUsing(function (Activity $record): string {
+                        if (! $record->subject) {
+                            return '-';
+                        }
+
+                        $subjectName = class_basename($record->subject_type);
+
+                        // Try to get a name property from the subject if it exists
+                        if (method_exists($record->subject, 'getNameAttribute') || isset($record->subject->name)) {
+                            $name = $record->subject->name ?? $record->subject->email ?? null;
+                            if ($name) {
+                                return "{$subjectName}: {$name}";
+                            }
+                        }
+
+                        return "{$subjectName} ({$record->subject_id})";
+                    })
+                    ->searchable(query: function ($query, string $search) {
+                        return $query->whereHasMorph('subject', '*', function ($query) use ($search) {
+                            $query->where('name', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                        });
+                    })
+                    ->sortable(query: function ($query, string $direction) {
+                        return $query->orderBy('subject_type', $direction)
+                            ->orderBy('subject_id', $direction);
+                    })
+                    ->default('-'),
 
                 TextColumn::make('created_at')
                     ->label(__('admin.activities.table.created_at'))
                     ->dateTime()
                     ->sortable()
-                    ->since(),
+                    ->since()
+                    ->toggleable(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 //
-            ]);
+            ])
+            ->recordActions([
+                Action::make('view')
+                    ->label(__('common.actions.view'))
+                    ->icon(Heroicon::OutlinedEye)
+                    ->color('gray')
+                    ->modalHeading(__('admin.activities.modal.heading'))
+                    ->modalWidth('4xl')
+                    ->slideOver()
+                    ->modalContent(fn (Activity $record) => view('filament.resources.activities.activity-details', [
+                        'activity' => $record,
+                    ])),
+            ])
+            ->recordAction('view');
     }
 }

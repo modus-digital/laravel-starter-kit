@@ -43,8 +43,8 @@ final class QuickTranslate extends Page implements HasForms
 
         if ($this->missingTranslations === []) {
             Notification::make()
-                ->title('All translations complete')
-                ->body('All translations for this group have been completed.')
+                ->title(__('admin.translations.notifications.all_translations_complete.title'))
+                ->body(__('admin.translations.notifications.all_translations_complete.body'))
                 ->success()
                 ->send();
 
@@ -69,7 +69,7 @@ final class QuickTranslate extends Page implements HasForms
         return $schema
             ->components([
                 Hidden::make('translation_key'),
-                Section::make('Base')
+                Section::make(__('admin.translations.quick_translate.base'))
                     ->description(fn (): ?string => $this->currentKey)
                     ->schema([
                         Textarea::make('english')
@@ -111,8 +111,8 @@ final class QuickTranslate extends Page implements HasForms
         // Check if there are more translations
         if ($this->missingTranslations === []) {
             Notification::make()
-                ->title('All translations complete')
-                ->body('You have successfully translated all missing translations for this group.')
+                ->title(__('admin.translations.notifications.all_translations_complete_group.title'))
+                ->body(__('admin.translations.notifications.all_translations_complete_group.body'))
                 ->success()
                 ->send();
 
@@ -134,16 +134,16 @@ final class QuickTranslate extends Page implements HasForms
 
     public function getTitle(): string
     {
-        return 'Quick Translate';
+        return __('admin.translations.quick_translate.title');
     }
 
     public function getBreadcrumbs(): array
     {
         return [
-            'Translations',
-            TranslationResource::getUrl('index') => 'Translations',
+            __('admin.translations.quick_translate.breadcrumbs.translations'),
+            TranslationResource::getUrl('index') => __('admin.translations.quick_translate.breadcrumbs.translations'),
             TranslationResource::getUrl('group', ['group' => request()->route('group')]) => Str::headline(request()->route('group')),
-            null => 'Quick Translate',
+            null => __('admin.translations.quick_translate.title'),
         ];
     }
 }

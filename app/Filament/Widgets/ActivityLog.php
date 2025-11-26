@@ -37,9 +37,9 @@ final class ActivityLog extends Widget implements HasSchemas
         return $schema
             ->components([
                 Select::make('logName')
-                    ->label('Filter by Log')
+                    ->label(__('admin.widgets.activity_log.filter_placeholder'))
                     ->options(fn (): array => $this->logNames->mapWithKeys(fn (string $name): array => [$name => $name])->all())
-                    ->placeholder('All')
+                    ->placeholder(__('admin.widgets.activity_log.filter_placeholder'))
                     ->native(false)
                     ->live()
                     ->afterStateUpdated(fn () => $this->updatedLogName())

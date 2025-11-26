@@ -313,6 +313,111 @@
         }
     },
     "admin": {
+        "branding": {
+            "sections": {
+                "logo": "Logo",
+                "colors": "Colors",
+                "typography": "Typography"
+            },
+            "descriptions": {
+                "logo": "Upload your brand logo to personalize your application.",
+                "colors": "Choose your primary and secondary brand colors.",
+                "typography": "Select the font that best represents your brand."
+            },
+            "labels": {
+                "logo": "Logo",
+                "primary_color": "Primary Color",
+                "secondary_color": "Secondary Color",
+                "save": "Save"
+            },
+            "helpers": {
+                "logo": "Upload your logo (max 2MB, supports SVG and common image formats)",
+                "primary_color": "In this admin panel, the color will not perfectly match the chosen color. Due to the provider of this panel, the core application will use the correct colors."
+            }
+        },
+        "widgets": {
+            "activity_log": {
+                "heading": "Activity Log",
+                "description": "Click on the title to show the details",
+                "filter_placeholder": "All",
+                "no_activities": "No activities found.",
+                "modal": {
+                    "heading": "Activity Details",
+                    "description": "View detailed information about this activity",
+                    "close": "Close",
+                    "view_full": "View Full Activity Log"
+                }
+            },
+            "recent_role_assignments": {
+                "heading": "Recent User Role Assignments",
+                "description": "Latest users and their assigned roles",
+                "user": "User",
+                "email": "Email",
+                "roles": "Roles",
+                "added": "Added"
+            },
+            "rbac_stats": {
+                "total_users": "Total Users",
+                "total_roles": "Total Roles",
+                "total_permissions": "Total Permissions",
+                "users_description": "Active users in the system",
+                "roles_description": "Defined roles",
+                "permissions_description": "Available permissions"
+            },
+            "role_permission_matrix": {
+                "heading": "Roles & Permissions Matrix",
+                "description": "Overview of which roles have which permissions",
+                "role": "Role",
+                "total_permissions": "Total Permissions",
+                "users": "Users"
+            },
+            "users_by_role": {
+                "heading": "Users by Role"
+            }
+        },
+        "translations": {
+            "table": {
+                "translation_key": "Translation Key",
+                "fully_translated": "Fully Translated",
+                "missing": "Missing",
+                "create_language": "Create Language",
+                "language_code": "Language Code",
+                "language_code_placeholder": "e.g. en, fr, es, etc.",
+                "language_code_helper": "The code for the language you want to create."
+            },
+            "notifications": {
+                "language_exists": {
+                    "title": "Language already exists",
+                    "body": "The language you are trying to create already exists."
+                },
+                "language_created": {
+                    "title": "Language created",
+                    "body": "The language you are trying to create has been created successfully."
+                },
+                "language_creation_failed": {
+                    "title": "Language creation failed",
+                    "body": "The language you are trying to create failed to be created."
+                },
+                "all_translations_complete": {
+                    "title": "All translations complete",
+                    "body": "All translations for this group have been completed."
+                },
+                "all_translations_complete_group": {
+                    "title": "All translations complete",
+                    "body": "You have successfully translated all missing translations for this group."
+                }
+            },
+            "quick_translate": {
+                "title": "Quick Translate",
+                "base": "Base",
+                "quick_translate": "Quick Translate",
+                "edit": "Edit",
+                "base_placeholder": "—",
+                "breadcrumbs": {
+                    "translations": "Translations"
+                }
+            }
+        },
         "socialite_providers": {
             "label": "Authentication Provider",
             "plural_label": "Authentication Providers",
@@ -456,9 +561,22 @@
             "table": {
                 "log_name": "Log Name",
                 "description": "Description",
+                "event": "Event",
                 "causer": "Causer",
                 "subject": "Subject",
                 "created_at": "Created At"
+            },
+            "modal": {
+                "heading": "Activity Details",
+                "description": "Description",
+                "event": "Event",
+                "log_name": "Log Name",
+                "causer": "Causer",
+                "subject": "Subject",
+                "properties": "Properties",
+                "properties_key": "Key",
+                "properties_value": "Value",
+                "timestamp": "Timestamp"
             }
         },
         "users": {

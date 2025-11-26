@@ -19,8 +19,8 @@ final class RecentRoleAssignments extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Recent User Role Assignments')
-            ->description('Latest users and their assigned roles')
+            ->heading(__('admin.widgets.recent_role_assignments.heading'))
+            ->description(__('admin.widgets.recent_role_assignments.description'))
             ->query(
                 User::query()
                     ->with('roles')
@@ -29,23 +29,23 @@ final class RecentRoleAssignments extends BaseWidget
             )
             ->columns([
                 TextColumn::make('name')
-                    ->label('User')
+                    ->label(__('admin.widgets.recent_role_assignments.user'))
                     ->searchable()
                     ->sortable()
                     ->icon('heroicon-o-user'),
                 TextColumn::make('email')
-                    ->label('Email')
+                    ->label(__('admin.widgets.recent_role_assignments.email'))
                     ->searchable()
                     ->icon('heroicon-o-envelope')
                     ->copyable(),
                 TextColumn::make('roles.name')
-                    ->label('Roles')
+                    ->label(__('admin.widgets.recent_role_assignments.roles'))
                     ->badge()
                     ->separator(',')
                     ->formatStateUsing(fn (string $state): string => Role::from($state)->getLabel())
                     ->color('info'),
                 TextColumn::make('created_at')
-                    ->label('Added')
+                    ->label(__('admin.widgets.recent_role_assignments.added'))
                     ->dateTime()
                     ->sortable()
                     ->since()

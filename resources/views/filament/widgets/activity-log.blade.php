@@ -1,11 +1,11 @@
 <x-filament-widgets::widget>
     <x-filament::section>
         <x-slot name="heading">
-            Activity Log
+            {{ __('admin.widgets.activity_log.heading') }}
         </x-slot>
 
         <x-slot name="description">
-            Click on the title to show the details
+            {{ __('admin.widgets.activity_log.description') }}
         </x-slot>
 
         <x-slot name="afterHeader">
@@ -71,7 +71,7 @@
                     </div>
                 @empty
                     <div class="text-center py-12">
-                        <p class="text-sm text-gray-500 dark:text-gray-400">No activities found.</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ __('admin.widgets.activity_log.no_activities') }}</p>
                     </div>
                 @endforelse
             </div>
@@ -101,15 +101,15 @@
                             class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 px-6 py-4">
                             <div>
                                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                                    Activity Details
+                                    {{ __('admin.widgets.activity_log.modal.heading') }}
                                 </h3>
                                 <p class="text-sm text-gray-500 dark:text-gray-400">
-                                    View detailed information about this activity
+                                    {{ __('admin.widgets.activity_log.modal.description') }}
                                 </p>
                             </div>
                             <button type="button" x-on:click="@this.closeActivityModal()"
                                 class="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
-                                <span class="sr-only">Close</span>
+                                <span class="sr-only">{{ __('admin.widgets.activity_log.modal.close') }}</span>
                                 <x-filament::icon icon="heroicon-o-x-mark" class="h-6 w-6" />
                             </button>
                         </div>
@@ -120,7 +120,7 @@
                                 <div class="space-y-6">
                                     {{-- Description --}}
                                     <div>
-                                        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Description</h4>
+                                        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">{{ __('admin.activities.modal.description') }}</h4>
                                         <p class="text-sm text-gray-600 dark:text-gray-400">
                                             {{ $this->selectedActivity->getTranslatedDescription() }}
                                         </p>
@@ -128,7 +128,7 @@
 
                                     {{-- Event --}}
                                     <div>
-                                        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Event</h4>
+                                        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">{{ __('admin.activities.modal.event') }}</h4>
                                         <p class="text-sm text-gray-600 dark:text-gray-400">
                                             {{ ucfirst(str_replace(['_', '.'], ' ', $this->selectedActivity->event ?? 'Unknown')) }}
                                         </p>
@@ -137,7 +137,7 @@
                                     {{-- Log Name --}}
                                     @if($this->selectedActivity->log_name)
                                         <div>
-                                            <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Log Name</h4>
+                                            <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">{{ __('admin.activities.modal.log_name') }}</h4>
                                             <p class="text-sm text-gray-600 dark:text-gray-400">
                                                 {{ $this->selectedActivity->log_name }}
                                             </p>
@@ -147,7 +147,7 @@
                                     {{-- Causer --}}
                                     @if($this->selectedActivity->causer)
                                         <div>
-                                            <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Causer</h4>
+                                            <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">{{ __('admin.activities.modal.causer') }}</h4>
                                             <p class="text-sm text-gray-600 dark:text-gray-400">
                                                 {{ $this->selectedActivity->causer->name ?? $this->selectedActivity->causer->email ?? 'Unknown' }}
                                                 <span class="text-gray-400">
@@ -160,7 +160,7 @@
                                     {{-- Subject --}}
                                     @if($this->selectedActivity->subject)
                                         <div>
-                                            <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Subject</h4>
+                                            <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">{{ __('admin.activities.modal.subject') }}</h4>
                                             <p class="text-sm text-gray-600 dark:text-gray-400">
                                                 {{ class_basename($this->selectedActivity->subject_type) }}
                                                 <span class="text-gray-400">
@@ -173,17 +173,17 @@
                                     {{-- Properties --}}
                                     @if($this->selectedActivity->properties && $this->selectedActivity->properties->count() > 0)
                                         <div>
-                                            <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Properties</h4>
+                                            <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">{{ __('admin.activities.modal.properties') }}</h4>
                                             <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
                                                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                                     <thead class="bg-gray-50 dark:bg-gray-800">
                                                         <tr>
                                                             <th scope="col"
                                                                 class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                                                Key</th>
+                                                                {{ __('admin.activities.modal.properties_key') }}</th>
                                                             <th scope="col"
                                                                 class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                                                Value</th>
+                                                                {{ __('admin.activities.modal.properties_value') }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody
@@ -204,10 +204,10 @@
                                                                                     <tr>
                                                                                         <th scope="col"
                                                                                             class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                                                                            Key</th>
+                                                                                            {{ __('admin.activities.modal.properties_key') }}</th>
                                                                                         <th scope="col"
                                                                                             class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                                                                            Value</th>
+                                                                                            {{ __('admin.activities.modal.properties_value') }}</th>
                                                                                     </tr>
                                                                                 </thead>
                                                                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -224,12 +224,12 @@
                                                                                                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                                                                                             <thead class="bg-gray-50 dark:bg-gray-800">
                                                                                                                 <tr>
-                                                                                                                    <th scope="col"
-                                                                                                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                                                                                                        Key</th>
-                                                                                                                    <th scope="col"
-                                                                                                                        class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                                                                                                                        Value</th>
+                                                                                                            <th scope="col"
+                                                                                                                class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                                                                                {{ __('admin.activities.modal.properties_key') }}</th>
+                                                                                                            <th scope="col"
+                                                                                                                class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                                                                                {{ __('admin.activities.modal.properties_value') }}</th>
                                                                                                                 </tr>
                                                                                                             </thead>
                                                                                                             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -292,7 +292,7 @@
 
                                     {{-- Timestamp --}}
                                     <div>
-                                        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">Timestamp</h4>
+                                        <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">{{ __('admin.activities.modal.timestamp') }}</h4>
                                         <p class="text-sm text-gray-600 dark:text-gray-400">
                                             {{ $this->selectedActivity->created_at->format('M j, Y H:i:s') }}
                                             <span class="text-gray-400">
@@ -307,7 +307,7 @@
                         {{-- Footer --}}
                         <div class="border-t border-gray-200 dark:border-gray-700 px-6 py-4">
                             <x-filament::button x-on:click="@this.closeActivityModal()" color="gray">
-                                Close
+                                {{ __('admin.widgets.activity_log.modal.close') }}
                             </x-filament::button>
                         </div>
                     </div>
@@ -318,7 +318,7 @@
         <x-slot name="footer">
             <div class="flex justify-end">
                 <x-filament::button :href="$this->getFullPageUrl()" tag="a">
-                    View Full Activity Log
+                    {{ __('admin.widgets.activity_log.modal.view_full') }}
                 </x-filament::button>
             </div>
         </x-slot>

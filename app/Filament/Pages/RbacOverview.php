@@ -7,7 +7,6 @@ namespace App\Filament\Pages;
 use BackedEnum;
 use Filament\Pages\Page;
 use Filament\Support\Icons\Heroicon;
-use UnitEnum;
 
 final class RbacOverview extends Page
 {
@@ -23,17 +22,17 @@ final class RbacOverview extends Page
 
     protected static ?string $slug = 'management/access-control';
 
-    public function getHeading(): string
-    {
-        return 'Roles and permissions';
-    }
-
     public static function getNavigationGroup(): string
     {
         return __('navigation.groups.management');
     }
 
     public static function getNavigationLabel(): string
+    {
+        return __('navigation.labels.access_control');
+    }
+
+    public function getHeading(): string
     {
         return __('navigation.labels.access_control');
     }

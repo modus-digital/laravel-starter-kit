@@ -47,33 +47,33 @@ final class Branding extends Settings
         return $this->defaultForm($schema)
             ->columns(1)
             ->components([
-                Section::make('Logo')
-                    ->description('Upload your brand logo to personalize your application.')
+                Section::make(__('admin.branding.sections.logo'))
+                    ->description(__('admin.branding.descriptions.logo'))
                     ->aside()
                     ->schema([
                         FileUpload::make('branding.logo')
-                            ->label('Logo')
+                            ->label(__('admin.branding.labels.logo'))
                             ->disk('public')
                             ->directory('uploads')
                             ->acceptedFileTypes(['image/*', 'image/svg+xml'])
                             ->image()
                             ->maxSize(2048)
-                            ->helperText('Upload your logo (max 2MB, supports SVG and common image formats)'),
+                            ->helperText(__('admin.branding.helpers.logo')),
                     ]),
 
-                Section::make('Colors')
-                    ->description('Choose your primary and secondary brand colors.')
+                Section::make(__('admin.branding.sections.colors'))
+                    ->description(__('admin.branding.descriptions.colors'))
                     ->aside()
                     ->schema([
                         ColorPicker::make('branding.primary_color')
-                            ->label('Primary Color')
-                            ->helperText('In this admin panel, the color will not perfectly match the chosen color. Due to the provider of this panel, the core application will use the correct colors.'),
+                            ->label(__('admin.branding.labels.primary_color'))
+                            ->helperText(__('admin.branding.helpers.primary_color')),
                         ColorPicker::make('branding.secondary_color')
-                            ->label('Secondary Color'),
+                            ->label(__('admin.branding.labels.secondary_color')),
                     ]),
 
-                Section::make('Typography')
-                    ->description('Select the font that best represents your brand.')
+                Section::make(__('admin.branding.sections.typography'))
+                    ->description(__('admin.branding.descriptions.typography'))
                     ->aside()
                     ->schema([
                         RadioDeck::make('branding.font')
@@ -130,7 +130,7 @@ final class Branding extends Settings
     {
         return [
             Action::make('save')
-                ->label('Save')
+                ->label(__('admin.branding.labels.save'))
                 ->action(function (): void {
                     $this->save();
 
