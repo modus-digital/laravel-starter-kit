@@ -135,10 +135,8 @@ final class Branding extends Settings
             Action::make('save')
                 ->label('Save')
                 ->action(function () {
-                    // Call the parent save method
                     $this->save();
 
-                    // Log the activity
                     Activity::inLog('administration')
                         ->event('branding.updated')
                         ->causedBy(Auth::user())
@@ -148,10 +146,7 @@ final class Branding extends Settings
                         ])
                         ->log('Branding updated successfully');
 
-                    // Clear the branding cache
                     app(BrandingService::class)->clearCache();
-
-                    // Force a full page reload to apply the branding changes
                     $this->js('window.location.reload()');
                 }),
         ];
