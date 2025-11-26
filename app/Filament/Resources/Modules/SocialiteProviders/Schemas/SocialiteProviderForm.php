@@ -68,7 +68,7 @@ final class SocialiteProviderForm
                                 }
 
                                 /** @var AuthenticationProvider $providerEnum */
-                                $providerEnum = $record->provider;
+                                $providerEnum = AuthenticationProvider::from($record->name);
                                 $provider = $providerEnum->value;
 
                                 $domain = mb_rtrim(config('app.url'), '/');

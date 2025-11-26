@@ -1,6 +1,14 @@
 import { SVGAttributes } from 'react';
+import { usePage } from '@inertiajs/react';
+import { SharedData } from '@/types';
 
 export default function AppLogoIcon(props: SVGAttributes<SVGElement>) {
+    const { logo } = usePage<SharedData>().props.branding;
+
+    if (logo) {
+        return <img src={logo} alt="App Logo" {...(props as React.ImgHTMLAttributes<HTMLImageElement>)} />;
+    }
+
     return (
         <svg {...props} viewBox="0 0 40 42" xmlns="http://www.w3.org/2000/svg">
             <path

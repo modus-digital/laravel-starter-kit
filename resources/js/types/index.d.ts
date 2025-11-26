@@ -28,6 +28,12 @@ export interface SharedData {
     sidebarOpen: boolean;
     canAccessControlPanel: boolean;
     isImpersonating: boolean;
+    branding: {
+        logo: string;
+        primaryColor: string;
+        secondaryColor: string;
+        font: string;
+    };
     [key: string]: unknown;
 }
 
