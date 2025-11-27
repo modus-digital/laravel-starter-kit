@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Core\Translations;
 
+use App\Filament\Resources\Core\Translations\Concerns\FiltersModuleTranslations;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
@@ -11,6 +12,8 @@ use InvalidArgumentException;
 
 final class TranslationService
 {
+    use FiltersModuleTranslations;
+
     /**
      * Get all available language codes from the lang directory.
      *
@@ -46,7 +49,10 @@ final class TranslationService
 
         $content = File::get($path);
 
-        return json_decode($content, true) ?? [];
+        /** @var array<string, mixed> $decoded */
+        $decoded = json_decode($content, true) ?? [];
+
+        return $decoded;
     }
 
     /**
@@ -119,6 +125,14 @@ final class TranslationService
             $english = $english[$group] ?? [];
             $target = $target[$group] ?? [];
 
+            if (is_array($english)) {
+                $english = $this->filterGroupTranslationsByModules($english, $group);
+            }
+
+            if (is_array($target)) {
+                $target = $this->filterGroupTranslationsByModules($target, $group);
+            }
+
             // Handle cases where the group value is a string instead of an array
             $englishFlat = is_string($english)
                 ? [$group => $english]
@@ -164,6 +178,14 @@ final class TranslationService
 
         $englishGroup = $english[$group] ?? [];
         $targetGroup = $target[$group] ?? [];
+
+        if (is_array($englishGroup)) {
+            $englishGroup = $this->filterGroupTranslationsByModules($englishGroup, $group);
+        }
+
+        if (is_array($targetGroup)) {
+            $targetGroup = $this->filterGroupTranslationsByModules($targetGroup, $group);
+        }
 
         $englishFlat = is_string($englishGroup)
             ? [$group => $englishGroup]

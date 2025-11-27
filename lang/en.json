@@ -313,6 +313,43 @@
         }
     },
     "admin": {
+        "clients": {
+            "navigation_label": "Clients",
+            "table": {
+                "name": "Name",
+                "contact_name": "Contact Person",
+                "status": "Status",
+                "created_at": "Created At"
+            },
+            "form": {
+                "base": {
+                    "title": "Client Information",
+                    "description": "Please enter the name and status of the client.",
+                    "name": "Name",
+                    "status": "Status"
+                },
+                "contact_information": {
+                    "title": "Contact Information",
+                    "description": "Please enter the contact information of the client.",
+                    "contact_name": "Contact Name",
+                    "contact_email": "Contact Email",
+                    "contact_phone": "Contact Phone"
+                },
+                "location": {
+                    "title": "Location",
+                    "description": "Please enter the location of the client.",
+                    "address": "Address",
+                    "postal_code": "Postal Code",
+                    "city": "City",
+                    "country": "Country"
+                },
+                "activity": {
+                    "title": "Activity",
+                    "description": "Recent activity related to this client.",
+                    "empty": "No activity has been recorded for this client yet."
+                }
+            }
+        },
         "branding": {
             "sections": {
                 "logo": "Logo",
@@ -616,9 +653,6 @@
                     }
                 }
             }
-        },
-        "clients": {
-            "navigation_label": "Clients"
         }
     },
     "settings": {
@@ -748,6 +782,12 @@
             "updated": ":issuer updated user :target",
             "deleted": ":issuer deleted user :target",
             "restored": ":issuer restored user :target"
+        },
+        "client": {
+            "created": ":issuer created client :target",
+            "updated": ":issuer updated client :target",
+            "deleted": ":issuer deleted client :target",
+            "restored": ":issuer restored client :target"
         }
     }
 }

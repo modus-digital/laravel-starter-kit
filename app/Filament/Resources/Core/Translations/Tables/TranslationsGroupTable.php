@@ -95,6 +95,14 @@ final class TranslationsGroupTable extends TableWidget
         $englishGroup = data_get($service->getLanguageFile('en'), $group, []);
         $targetGroup = data_get($service->getLanguageFile($targetLanguage), $group, []);
 
+        if (is_array($englishGroup)) {
+            $englishGroup = $service->filterGroupTranslationsByModules($englishGroup, $group);
+        }
+
+        if (is_array($targetGroup)) {
+            $targetGroup = $service->filterGroupTranslationsByModules($targetGroup, $group);
+        }
+
         $englishFlat = $service->flattenTranslations(is_array($englishGroup) ? $englishGroup : []);
         $targetFlat = $service->flattenTranslations(is_array($targetGroup) ? $targetGroup : []);
 

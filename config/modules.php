@@ -38,7 +38,7 @@ return [
     |
     */
     'clients' => [
-        'enabled' => false,
+        'enabled' => true,
         'role_management' => false,
     ],
 
