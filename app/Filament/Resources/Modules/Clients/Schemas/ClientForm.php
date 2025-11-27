@@ -5,18 +5,12 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Modules\Clients\Schemas;
 
 use App\Enums\ActivityStatus;
-use App\Models\Activity;
-use App\Models\Modules\Clients\Client;
 use CountryEnums\Country;
 use Filament\Forms\Components\Select;
-use Filament\Schemas\Schema;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Text;
-use Filament\Schemas\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Support\Enums\FontWeight;
-use Filament\Support\Enums\TextSize;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
 final class ClientForm
 {
@@ -42,11 +36,10 @@ final class ClientForm
                                     $enumState = match (true) {
                                         $state === null, $state === '' => null,
                                         $state instanceof ActivityStatus => $state,
-                                        is_string($state) && ctype_digit($state) => ((int) $state) === 1
+                                        ctype_digit($state) => ((int) $state) === 1
                                             ? ActivityStatus::ACTIVE
                                             : ActivityStatus::INACTIVE,
-                                        is_string($state) => ActivityStatus::from($state),
-                                        default => null,
+                                        default => ActivityStatus::from($state),
                                     };
 
                                     $component->state(

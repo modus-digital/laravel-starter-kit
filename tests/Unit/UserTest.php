@@ -26,5 +26,3 @@ it('has activities morphMany relation on user', function (): void {
         ->toBeInstanceOf(MorphMany::class)
         ->and($user->activities()->getRelated())->toBeInstanceOf(Activity::class);
 });
-
-

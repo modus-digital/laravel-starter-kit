@@ -57,10 +57,11 @@ final class ClientsTable
                         }
 
                         return match ($record->status) {
-                            ActivityStatus::ACTIVE => 'success',
-                            ActivityStatus::INACTIVE => 'danger',
-                            ActivityStatus::SUSPENDED => 'warning',
-                            ActivityStatus::DELETED => 'danger',
+                            ActivityStatus::ACTIVE->value => 'success',
+                            ActivityStatus::INACTIVE->value => 'danger',
+                            ActivityStatus::SUSPENDED->value => 'warning',
+                            ActivityStatus::DELETED->value => 'danger',
+                            default => 'gray',
                         };
                     })
                     ->sortable()
@@ -71,7 +72,7 @@ final class ClientsTable
                     ->date('d-m-Y')
                     ->sortable()
                     ->searchable(),
-                    
+
             ])
             ->filters([
                 TrashedFilter::make(),
@@ -80,7 +81,7 @@ final class ClientsTable
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
-                ])
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Modules\Clients;
 
-use App\Filament\Resources\Modules\Clients\RelationManagers\ActivitiesRelationManager;
 use App\Filament\Resources\Modules\Clients\Pages\CreateClient;
 use App\Filament\Resources\Modules\Clients\Pages\EditClient;
 use App\Filament\Resources\Modules\Clients\Pages\ListClients;
 use App\Filament\Resources\Modules\Clients\Pages\ViewClient;
+use App\Filament\Resources\Modules\Clients\RelationManagers\ActivitiesRelationManager;
 use App\Filament\Resources\Modules\Clients\Schemas\ClientForm;
 use App\Filament\Resources\Modules\Clients\Tables\ClientsTable;
 use App\Models\Modules\Clients\Client;

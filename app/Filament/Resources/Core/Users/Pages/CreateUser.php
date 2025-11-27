@@ -28,9 +28,10 @@ final class CreateUser extends CreateRecord
 
     protected function afterCreate(): void
     {
-        if ($this->generatedPassword && $this->record) {
-            /** @var \App\Models\User $record */
-            $record = $this->record;
+        /** @var \App\Models\User $record */
+        $record = $this->record;
+
+        if ($this->generatedPassword !== '' && $this->generatedPassword !== '0') {
             $record->notify(new AccountCreated(password: $this->generatedPassword));
         }
 
@@ -44,8 +45,10 @@ final class CreateUser extends CreateRecord
                     'name' => $record->name,
                     'email' => $record->email,
                     'status' => $record->status->getLabel(),
-                    'roles' => Role::from($record->roles->first()->name)->getLabel(),
-                ]
+                    'roles' => $record->roles->first()?->name
+                        ? Role::from($record->roles->first()->name)->getLabel()
+                        : null,
+                ],
             ])
             ->log('');
     }

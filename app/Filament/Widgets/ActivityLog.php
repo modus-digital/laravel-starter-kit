@@ -26,19 +26,20 @@ final class ActivityLog extends Widget implements HasSchemas
 
     public function mount(): void
     {
-        $this->form->fill();
+        // Form is handled by InteractsWithSchemas trait
     }
 
     public function form(Schema $schema): Schema
     {
-        $maxLength = $this->logNames->map(fn (string $name): int => mb_strlen($name))->max() ?? 0;
+        $logNames = $this->getLogNamesProperty();
+        $maxLength = $logNames->map(fn (string $name): int => mb_strlen($name))->max() ?? 0;
         $minWidth = max($maxLength, 3) + 4;
 
         return $schema
             ->components([
                 Select::make('logName')
                     ->label(__('admin.widgets.activity_log.filter_placeholder'))
-                    ->options(fn (): array => $this->logNames->mapWithKeys(fn (string $name): array => [$name => $name])->all())
+                    ->options(fn (): array => $logNames->mapWithKeys(fn (string $name): array => [$name => $name])->all())
                     ->placeholder(__('admin.widgets.activity_log.filter_placeholder'))
                     ->native(false)
                     ->live()
@@ -62,7 +63,7 @@ final class ActivityLog extends Widget implements HasSchemas
     }
 
     /**
-     * @return Collection<Activity>
+     * @return Collection<int, Activity>
      */
     public function getActivitiesProperty(): Collection
     {

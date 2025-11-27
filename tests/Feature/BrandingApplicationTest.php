@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Enums\ActivityStatus;
-use App\Enums\RBAC\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -14,7 +12,7 @@ beforeEach(function () {
 });
 
 it('injects branding css variables in app blade template', function () {
-    $user = \App\Models\User::factory()->create();
+    $user = App\Models\User::factory()->create();
 
     $response = $this->actingAs($user)->get(route('dashboard'));
 
@@ -27,7 +25,7 @@ it('injects branding css variables in app blade template', function () {
 });
 
 it('shares branding data with inertia', function () {
-    $user = \App\Models\User::factory()->create();
+    $user = App\Models\User::factory()->create();
 
     $response = $this->actingAs($user)->get(route('dashboard'));
 
@@ -39,7 +37,7 @@ it('shares branding data with inertia', function () {
 });
 
 it('preloads all font options', function () {
-    $user = \App\Models\User::factory()->create();
+    $user = App\Models\User::factory()->create();
 
     $response = $this->actingAs($user)->get(route('dashboard'));
 
@@ -56,7 +54,7 @@ it('preloads all font options', function () {
 });
 
 it('applies custom font via css variable', function () {
-    $user = \App\Models\User::factory()->create();
+    $user = App\Models\User::factory()->create();
 
     $response = $this->actingAs($user)->get(route('dashboard'));
 

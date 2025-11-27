@@ -5,8 +5,8 @@ declare(strict_types=1);
 use App\Filament\Resources\Core\Translations\Tables\TranslationsTable;
 use App\Filament\Resources\Core\Translations\TranslationService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
-use function config;
 
 it('builds records with status and missing metadata', function () {
     File::shouldReceive('get')
@@ -89,7 +89,7 @@ it('does not include disabled module translations in progress calculations', fun
     File::shouldReceive('exists')
         ->andReturn(true);
 
-    config()->set('modules.clients.enabled', false);
+    Config::set('modules.clients.enabled', false);
 
     $service = new TranslationService;
 

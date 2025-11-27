@@ -14,7 +14,7 @@ final class UsersByRole extends ChartWidget
 
     protected static ?int $sort = 2;
 
-    public function getHeading(): ?string
+    public function getHeading(): string
     {
         return __('admin.widgets.users_by_role.heading');
     }

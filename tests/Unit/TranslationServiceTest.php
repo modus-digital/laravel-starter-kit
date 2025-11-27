@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use App\Filament\Resources\Core\Translations\TranslationService;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
-use function config;
 
 beforeEach(function () {
     $this->service = new TranslationService;
@@ -53,7 +53,7 @@ it('rejects unavailable target languages', function () {
 });
 
 it('filters out disabled module translations when calculating missing translations for a group', function () {
-    config()->set('modules.clients.enabled', false);
+    Config::set('modules.clients.enabled', false);
 
     File::put("{$this->temporaryLangPath}/en.json", json_encode([
         'admin' => [

@@ -28,18 +28,23 @@ final class EditUser extends EditRecord
 
     protected function afterSave(): void
     {
+        /** @var \App\Models\User $record */
+        $record = $this->record;
+
         Activity::inLog('administration')
             ->event('user.updated')
             ->causedBy(Auth::user())
-            ->performedOn($this->record)
+            ->performedOn($record)
             ->withProperties([
                 'user' => [
-                    'id' => $this->record->id,
-                    'name' => $this->record->name,
-                    'email' => $this->record->email,
-                    'status' => $this->record->status->getLabel(),
-                    'roles' => Role::from($this->record->roles->first()->name)->getLabel(),
-                ]
+                    'id' => $record->id,
+                    'name' => $record->name,
+                    'email' => $record->email,
+                    'status' => $record->status->getLabel(),
+                    'roles' => $record->roles->first()?->name
+                        ? Role::from($record->roles->first()->name)->getLabel()
+                        : null,
+                ],
             ])
             ->log('');
     }

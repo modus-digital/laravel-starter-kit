@@ -107,7 +107,9 @@ final class ImpersonateAction extends Action
                         'name' => $record->name,
                         'email' => $record->email,
                         'status' => $record->status->getLabel(),
-                        'roles' => Role::from($record->roles->first()->name)->getLabel(),
+                        'roles' => $record->roles->first()?->name
+                            ? Role::from($record->roles->first()->name)->getLabel()
+                            : null,
                     ],
                 ])
                 ->log('');

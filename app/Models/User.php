@@ -6,7 +6,6 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 // use App\Traits\HasClients; <-- Uncomment if clients module is enabled in config/modules.php
-use App\Models\Activity;
 use App\Enums\ActivityStatus;
 use App\Enums\RBAC\Permission;
 use Filament\Models\Contracts\FilamentUser;
@@ -73,6 +72,14 @@ final class User extends Authenticatable implements FilamentUser
     }
 
     /**
+     * @return MorphMany<Activity, $this>
+     */
+    public function activities(): MorphMany
+    {
+        return $this->morphMany(related: Activity::class, name: 'subject');
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -85,13 +92,5 @@ final class User extends Authenticatable implements FilamentUser
             'two_factor_confirmed_at' => 'datetime',
             'status' => ActivityStatus::class,
         ];
-    }
-
-    /**
-     * @return MorphMany<Activity, $this>
-     */
-    public function activities(): MorphMany
-    {
-        return $this->morphMany(related: Activity::class, name: 'subject');
     }
 }

@@ -14,7 +14,7 @@ use Spatie\Activitylog\Models\Activity as BaseActivity;
  *
  * @property string|null $event
  * @property string $description
- * @property Collection $properties
+ * @property Collection<string, mixed> $properties
  * @property User|null $causer
  */
 final class Activity extends BaseActivity
@@ -44,16 +44,14 @@ final class Activity extends BaseActivity
             $causer = $activity->causer;
 
             $issuer = [
-                'name' => $causer?->name ?? 'System',
-                'email' => $causer?->email,
+                'name' => $causer->name ?? 'System',
+                'email' => $causer->email ?? null,
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->userAgent(),
             ];
 
             // Merge issuer details into properties (preserving existing properties)
-            $existingProperties = $activity->properties instanceof Collection
-                ? $activity->properties->toArray()
-                : ($activity->properties ?? []);
+            $existingProperties = $activity->properties->toArray();
 
             // Extract existing issuer data if present
             $existingIssuer = $existingProperties['issuer'] ?? [];
@@ -76,9 +74,7 @@ final class Activity extends BaseActivity
      */
     protected function buildTranslationReplacements(): array
     {
-        $properties = $this->properties instanceof Collection
-            ? $this->properties->toArray()
-            : ($this->properties ?? []);
+        $properties = $this->properties->toArray();
 
         $replacements = [];
 

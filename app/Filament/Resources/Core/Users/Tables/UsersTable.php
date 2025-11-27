@@ -28,7 +28,7 @@ use Spatie\Activitylog\Facades\Activity;
 
 final class UsersTable
 {
-    public $record;
+    public ?User $record = null;
 
     public static function configure(Table $table): Table
     {
@@ -144,6 +144,10 @@ final class UsersTable
                     RestoreAction::make()
                         ->visible(fn (?User $record) => $record?->trashed())
                         ->after(function (?User $record): void {
+                            if (! $record instanceof User) {
+                                return;
+                            }
+
                             Activity::inLog('administration')
                                 ->event('user.restored')
                                 ->causedBy(Auth::user())
@@ -154,24 +158,32 @@ final class UsersTable
                                         'name' => $record->name,
                                         'email' => $record->email,
                                         'status' => $record->status->getLabel(),
-                                        'roles' => Role::from($record->roles->first()->name)->getLabel(),
+                                        'roles' => $record->roles->first()?->name
+                                            ? Role::from($record->roles->first()->name)->getLabel()
+                                            : null,
                                     ],
                                 ])
                                 ->log('');
                         }),
                     DeleteAction::make()
-                        ->after(function (): void {
+                        ->after(function (?User $record): void {
+                            if (! $record instanceof User) {
+                                return;
+                            }
+
                             Activity::inLog('administration')
                                 ->event('user.deleted')
                                 ->causedBy(Auth::user())
-                                ->performedOn($this->record)
+                                ->performedOn($record)
                                 ->withProperties([
                                     'user' => [
-                                        'id' => $this->record->id,
-                                        'name' => $this->record->name,
-                                        'email' => $this->record->email,
-                                        'status' => $this->record->status->getLabel(),
-                                        'roles' => Role::from($this->record->roles->first()->name)->getLabel(),
+                                        'id' => $record->id,
+                                        'name' => $record->name,
+                                        'email' => $record->email,
+                                        'status' => $record->status->getLabel(),
+                                        'roles' => $record->roles->first()?->name
+                                            ? Role::from($record->roles->first()->name)->getLabel()
+                                            : null,
                                     ],
                                 ])
                                 ->log('');

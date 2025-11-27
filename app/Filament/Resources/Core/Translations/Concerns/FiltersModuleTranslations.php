@@ -4,17 +4,25 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Core\Translations\Concerns;
 
-use function collect;
-use function config;
-use function data_forget;
-use function str_contains;
+use Illuminate\Support\Collection;
 
 trait FiltersModuleTranslations
 {
     /**
+     * Apply module-based filtering to a specific root group.
+     *
+     * @param  array<string, mixed>  $groupTranslations
+     * @return array<string, mixed>
+     */
+    public function filterGroupTranslationsByModules(array $groupTranslations, string $group): array
+    {
+        return $this->filterDisabledModuleTranslations($groupTranslations, $group);
+    }
+
+    /**
      * Get explicit translation key mappings for specific modules and groups.
      *
-     * @return array<string, string|array<string, array<int, string>>>
+     * @return array<string, string>
      */
     private function getModuleTranslationKeyMap(): array
     {
@@ -32,15 +40,21 @@ trait FiltersModuleTranslations
      */
     private function filterDisabledModuleTranslations(array $translations, string $group): array
     {
+        /** @var array<string, mixed> $modulesConfig */
+        $modulesConfig = config('modules', []);
+
+        /** @var Collection<string, mixed> $modulesCollection */
+        $modulesCollection = collect($modulesConfig);
+
+        /** @var Collection<string, mixed> $filteredModules */
+        $filteredModules = $modulesCollection->filter(
+            static fn (mixed $moduleConfig): bool => is_array($moduleConfig)
+                && array_key_exists('enabled', $moduleConfig)
+                && $moduleConfig['enabled'] === false
+        );
+
         /** @var array<int, string> $disabledModules */
-        $disabledModules = collect(config('modules', []))
-            ->filter(
-                fn (mixed $moduleConfig): bool => is_array($moduleConfig)
-                    && array_key_exists('enabled', $moduleConfig)
-                    && $moduleConfig['enabled'] === false,
-            )
-            ->keys()
-            ->all();
+        $disabledModules = $filteredModules->keys()->all();
 
         $moduleKeyMap = $this->getModuleTranslationKeyMap();
 
@@ -62,20 +76,8 @@ trait FiltersModuleTranslations
             $mapped = $moduleKeyMap[$module];
 
             // String: treat as pattern and remove any keys that contain it at any nesting level.
-            if (is_string($mapped)) {
-                $translations = $this->forgetKeysContaining($translations, $mapped);
+            $translations = $this->forgetKeysContaining($translations, $mapped);
 
-                continue;
-            }
-
-            // Array: group => [keys...] mapping.
-            if (is_array($mapped)) {
-                $groupSpecificKeys = $mapped[$group] ?? [];
-
-                foreach ($groupSpecificKeys as $key) {
-                    data_forget($translations, $key);
-                }
-            }
         }
 
         return $translations;
@@ -103,16 +105,4 @@ trait FiltersModuleTranslations
 
         return $translations;
     }
-
-    /**
-     * Apply module-based filtering to a specific root group.
-     *
-     * @param  array<string, mixed>  $groupTranslations
-     * @return array<string, mixed>
-     */
-    public function filterGroupTranslationsByModules(array $groupTranslations, string $group): array
-    {
-        return $this->filterDisabledModuleTranslations($groupTranslations, $group);
-    }
 }
-

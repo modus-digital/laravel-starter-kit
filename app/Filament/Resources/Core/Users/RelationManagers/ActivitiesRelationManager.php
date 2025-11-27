@@ -17,6 +17,7 @@ final class ActivitiesRelationManager extends RelationManager
 
     public static function canViewForRecord(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): bool
     {
+        /** @var \App\Models\User $ownerRecord */
         return $ownerRecord->activities()->exists();
     }
 
@@ -45,8 +46,8 @@ final class ActivitiesRelationManager extends RelationManager
                 TextColumn::make('causer.name')
                     ->label(__('admin.activities.table.causer'))
                     ->formatStateUsing(
-                        fn (?string $state, Activity $record): string => $record->causer?->name
-                            ?? $record->causer?->email
+                        fn (?string $state, Activity $record): string => $record->causer->name
+                            ?? $record->causer->email
                             ?? 'System',
                     )
                     ->sortable()
@@ -67,7 +68,7 @@ final class ActivitiesRelationManager extends RelationManager
                     ->modalWidth('4xl')
                     ->slideOver()
                     ->modalContent(
-                        fn (Activity $record) => view(
+                        fn (Activity $record): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view(
                             'filament.resources.activities.activity-details',
                             [
                                 'activity' => $record,
@@ -80,5 +81,3 @@ final class ActivitiesRelationManager extends RelationManager
             ->toolbarActions([]);
     }
 }
-
-

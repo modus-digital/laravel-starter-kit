@@ -27,14 +27,17 @@ final class EditClient extends EditRecord
 
     protected function afterSave(): void
     {
+        /** @var \App\Models\Modules\Clients\Client $record */
+        $record = $this->record;
+
         Activity::inLog('administration')
             ->event('client.updated')
             ->causedBy(Auth::user())
-            ->performedOn($this->record)
+            ->performedOn($record)
             ->withProperties([
                 'client' => [
-                    'id' => $this->record->id,
-                    'name' => $this->record->name,
+                    'id' => $record->id,
+                    'name' => $record->name,
                 ],
             ])
             ->log('');

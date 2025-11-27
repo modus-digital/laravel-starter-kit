@@ -32,7 +32,7 @@ final class ActivitiesTable
 
                 TextColumn::make('causer.name')
                     ->label(__('admin.activities.table.causer'))
-                    ->formatStateUsing(fn (?string $state, Activity $record): string => $record->causer?->name ?? $record->causer?->email ?? 'System')
+                    ->formatStateUsing(fn (?string $state, Activity $record): string => $record->causer->name ?? $record->causer->email ?? 'System')
                     ->searchable()
                     ->sortable()
                     ->default('System'),
@@ -44,7 +44,7 @@ final class ActivitiesTable
                             return '-';
                         }
 
-                        $subjectName = class_basename($record->subject_type);
+                        $subjectName = class_basename($record->subject_type ?? '');
 
                         // Try to get a name property from the subject if it exists
                         if (method_exists($record->subject, 'getNameAttribute') || isset($record->subject->name)) {
@@ -56,16 +56,12 @@ final class ActivitiesTable
 
                         return "{$subjectName} ({$record->subject_id})";
                     })
-                    ->searchable(query: function ($query, string $search) {
-                        return $query->whereHasMorph('subject', '*', function ($query) use ($search) {
-                            $query->where('name', 'like', "%{$search}%")
-                                ->orWhere('email', 'like', "%{$search}%");
-                        });
-                    })
-                    ->sortable(query: function ($query, string $direction) {
-                        return $query->orderBy('subject_type', $direction)
-                            ->orderBy('subject_id', $direction);
-                    })
+                    ->searchable(query: fn ($query, string $search) => $query->whereHasMorph('subject', '*', function ($query) use ($search): void {
+                        $query->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    }))
+                    ->sortable(query: fn ($query, string $direction) => $query->orderBy('subject_type', $direction)
+                        ->orderBy('subject_id', $direction))
                     ->default('-'),
 
                 TextColumn::make('created_at')
@@ -87,7 +83,7 @@ final class ActivitiesTable
                     ->modalHeading(__('admin.activities.modal.heading'))
                     ->modalWidth('4xl')
                     ->slideOver()
-                    ->modalContent(fn (Activity $record) => view('filament.resources.activities.activity-details', [
+                    ->modalContent(fn (Activity $record): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view('filament.resources.activities.activity-details', [
                         'activity' => $record,
                     ])),
             ])
