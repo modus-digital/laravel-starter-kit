@@ -35,6 +35,14 @@ final class BrandingService
     }
 
     /**
+     * Backwards-compatible primary color accessor returning hex.
+     */
+    public function getPrimaryColor(): string
+    {
+        return $this->getPrimaryColorHex();
+    }
+
+    /**
      * Get primary color in hex format.
      */
     public function getPrimaryColorHex(): string
@@ -56,6 +64,14 @@ final class BrandingService
         }
 
         return $hex;
+    }
+
+    /**
+     * Backwards-compatible secondary color accessor returning hex.
+     */
+    public function getSecondaryColor(): string
+    {
+        return $this->getSecondaryColorHex();
     }
 
     /**
@@ -102,6 +118,26 @@ final class BrandingService
         }
 
         return Storage::disk('public')->url($logoFilename);
+    }
+
+    /**
+     * Get primary color as an RGB array.
+     *
+     * @return array{0:int,1:int,2:int}
+     */
+    public function getPrimaryColorRgb(): array
+    {
+        return $this->hexToRgb($this->getPrimaryColorHex());
+    }
+
+    /**
+     * Get secondary color as an RGB array.
+     *
+     * @return array{0:int,1:int,2:int}
+     */
+    public function getSecondaryColorRgb(): array
+    {
+        return $this->hexToRgb($this->getSecondaryColorHex());
     }
 
     /**

@@ -771,8 +771,8 @@
             "register": ":issuer registered an account"
         },
         "impersonate": {
-            "start": ":issuer started impersonating a user",
-            "leave": ":issuer stopped impersonating a user"
+            "start": ":issuer started impersonating :target",
+            "leave": ":issuer stopped impersonating :target"
         },
         "branding": {
             "updated": ":issuer updated branding settings"
