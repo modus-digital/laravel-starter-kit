@@ -92,9 +92,20 @@ final class Activity extends BaseActivity
             $replacements['email'] = $properties['issuer']['email'];
         }
 
-        // Add target (for impersonation, user management)
+        // Add target (for impersonation, user / client management)
         if (isset($properties['target'])) {
             $replacements['target'] = $properties['target'];
+        } elseif (isset($properties['user'])) {
+            // Prefer a human-friendly identifier for users
+            $user = $properties['user'];
+            $replacements['target'] = $user['name']
+                ?? $user['email']
+                ?? (string) ($user['id'] ?? '');
+        } elseif (isset($properties['client'])) {
+            // Prefer a human-friendly identifier for clients
+            $client = $properties['client'];
+            $replacements['target'] = $client['name']
+                ?? (string) ($client['id'] ?? '');
         }
 
         // Add credentials email (for failed login with unknown user)

@@ -6,13 +6,14 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 // use App\Traits\HasClients; <-- Uncomment if clients module is enabled in config/modules.php
-
+use App\Models\Activity;
 use App\Enums\ActivityStatus;
 use App\Enums\RBAC\Permission;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -84,5 +85,13 @@ final class User extends Authenticatable implements FilamentUser
             'two_factor_confirmed_at' => 'datetime',
             'status' => ActivityStatus::class,
         ];
+    }
+
+    /**
+     * @return MorphMany<Activity, $this>
+     */
+    public function activities(): MorphMany
+    {
+        return $this->morphMany(related: Activity::class, name: 'subject');
     }
 }

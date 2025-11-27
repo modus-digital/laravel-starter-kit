@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models\Modules\Clients;
 
 use App\Enums\ActivityStatus;
+use App\Models\Activity;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 final class Client extends Model
@@ -69,6 +71,14 @@ final class Client extends Model
     public function invoices(): HasMany
     {
         return $this->hasMany(related: \App\Models\Modules\SaaS\Invoice::class);
+    }
+
+    /**
+     * @return MorphMany<Activity, $this>
+     */
+    public function activities(): MorphMany
+    {
+        return $this->morphMany(related: Activity::class, name: 'subject');
     }
 
     protected function casts(): array

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Core\Users;
 
+use App\Filament\Resources\Core\Users\RelationManagers\ActivitiesRelationManager;
 use App\Filament\Resources\Core\Users\Pages\CreateUser;
 use App\Filament\Resources\Core\Users\Pages\EditUser;
 use App\Filament\Resources\Core\Users\Pages\ListUsers;
@@ -61,7 +62,7 @@ final class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ActivitiesRelationManager::class,
         ];
     }
 
