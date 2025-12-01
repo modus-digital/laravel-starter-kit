@@ -16,6 +16,16 @@ final class EditClient extends EditRecord
 {
     protected static string $resource = ClientResource::class;
 
+    private array $originalValues = [];
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        // Store the original values before saving
+        $this->originalValues = $this->record->getOriginal();
+
+        return $data;
+    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -30,16 +40,35 @@ final class EditClient extends EditRecord
         /** @var \App\Models\Modules\Clients\Client $record */
         $record = $this->record;
 
-        Activity::inLog('administration')
-            ->event('client.updated')
-            ->causedBy(Auth::user())
-            ->performedOn($record)
-            ->withProperties([
-                'client' => [
-                    'id' => $record->id,
-                    'name' => $record->name,
-                ],
-            ])
-            ->log('');
+        // Get the changes that were made
+        $changes = $record->getChanges();
+
+        // Log activity for each changed field
+        foreach ($changes as $attribute => $newValue) {
+            // Skip timestamps and other fields we don't want to log
+            if (in_array($attribute, ['updated_at', 'created_at', 'deleted_at'])) {
+                continue;
+            }
+
+            $oldValue = $this->originalValues[$attribute] ?? null;
+
+            // Only log if there was an actual change
+            if ($oldValue !== $newValue) {
+                Activity::inLog('administration')
+                    ->event('client.updated')
+                    ->causedBy(Auth::user())
+                    ->performedOn($record)
+                    ->withProperties([
+                        'client' => [
+                            'id' => $record->id,
+                            'name' => $record->name,
+                        ],
+                        'attribute' => $attribute,
+                        'old' => $oldValue,
+                        'new' => $newValue,
+                    ])
+                    ->log('');
+            }
+        }
     }
 }

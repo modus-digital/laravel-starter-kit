@@ -9,6 +9,7 @@ use App\Filament\Resources\Modules\Clients\Pages\EditClient;
 use App\Filament\Resources\Modules\Clients\Pages\ListClients;
 use App\Filament\Resources\Modules\Clients\Pages\ViewClient;
 use App\Filament\Resources\Modules\Clients\RelationManagers\ActivitiesRelationManager;
+use App\Filament\Resources\Modules\Clients\RelationManagers\UsersRelationManager;
 use App\Filament\Resources\Modules\Clients\Schemas\ClientForm;
 use App\Filament\Resources\Modules\Clients\Tables\ClientsTable;
 use App\Models\Modules\Clients\Client;
@@ -64,6 +65,7 @@ final class ClientResource extends Resource
     public static function getRelations(): array
     {
         return [
+            UsersRelationManager::class,
             ActivitiesRelationManager::class,
         ];
     }

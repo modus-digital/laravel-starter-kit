@@ -198,3 +198,65 @@ test('existing issuer properties are preserved and merged', function () {
         ->and($activity->properties->get('issuer')['name'])->toBe('John Doe')
         ->and($activity->properties->get('issuer')['email'])->toBe('john@example.com');
 });
+
+test('getTranslatedDescription works for field updates with attribute changes', function () {
+    Queue::fake();
+
+    $targetUser = User::factory()->create(['name' => 'Test User']);
+
+    ActivityFacade::inLog('administration')
+        ->event('user.updated')
+        ->causedBy($this->user)
+        ->performedOn($targetUser)
+        ->withProperties([
+            'user' => [
+                'id' => $targetUser->id,
+                'name' => $targetUser->name,
+                'email' => $targetUser->email,
+            ],
+            'attribute' => 'name',
+            'old' => 'Old Name',
+            'new' => 'New Name',
+        ])
+        ->log('');
+
+    $activity = Activity::where('log_name', 'administration')
+        ->where('event', 'user.updated')
+        ->latest()
+        ->first();
+
+    $translated = $activity->getTranslatedDescription();
+
+    expect($translated)->toBe('John Doe updated name on Test User from Old Name to New Name');
+});
+
+test('getTranslatedDescription handles null old values as empty', function () {
+    Queue::fake();
+
+    $targetUser = User::factory()->create(['name' => 'Test User']);
+
+    ActivityFacade::inLog('administration')
+        ->event('user.updated')
+        ->causedBy($this->user)
+        ->performedOn($targetUser)
+        ->withProperties([
+            'user' => [
+                'id' => $targetUser->id,
+                'name' => $targetUser->name,
+                'email' => $targetUser->email,
+            ],
+            'attribute' => 'phone',
+            'old' => null,
+            'new' => '+1234567890',
+        ])
+        ->log('');
+
+    $activity = Activity::where('log_name', 'administration')
+        ->where('event', 'user.updated')
+        ->latest()
+        ->first();
+
+    $translated = $activity->getTranslatedDescription();
+
+    expect($translated)->toBe('John Doe updated phone on Test User from empty to +1234567890');
+});

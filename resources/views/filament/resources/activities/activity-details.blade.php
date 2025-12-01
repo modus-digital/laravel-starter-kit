@@ -175,9 +175,9 @@
     <div>
         <h4 class="text-sm font-medium text-gray-900 dark:text-white mb-2">{{ __('admin.activities.modal.timestamp') }}</h4>
         <p class="text-sm text-gray-600 dark:text-gray-400">
-            {{ $activity->created_at->format('M j, Y H:i:s') }}
+            {{ $activity->created_at }}
             <span class="text-gray-400">
-                ({{ $activity->created_at->diffForHumans() }})
+                ({{ $activity->created_at }})
             </span>
         </p>
     </div>

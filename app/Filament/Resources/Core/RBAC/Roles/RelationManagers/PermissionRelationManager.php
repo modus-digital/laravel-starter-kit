@@ -18,6 +18,8 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\Facades\Activity as ActivityFacade;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -136,6 +138,25 @@ final class PermissionRelationManager extends RelationManager
                             $role->givePermissionTo($permission);
                         }
 
+                        // Log activity for each permission added
+                        foreach ($newPermissions as $permission) {
+                            ActivityFacade::inLog('administration')
+                                ->event('rbac.role.permission.attached')
+                                ->causedBy(Auth::user())
+                                ->performedOn($role)
+                                ->withProperties([
+                                    'role' => [
+                                        'id' => $role->id,
+                                        'name' => $role->name,
+                                    ],
+                                    'permission' => [
+                                        'id' => $permission->id,
+                                        'name' => $permission->name,
+                                    ],
+                                ])
+                                ->log('');
+                        }
+
                         Notification::make()
                             ->title(__('admin.rbac.roles.relation_managers.permission.permissions_added', ['count' => count($data['permissions'])]))
                             ->success()
@@ -156,6 +177,23 @@ final class PermissionRelationManager extends RelationManager
 
                         // Detach the permission from the role using revokePermissionTo
                         $role->revokePermissionTo($record);
+
+                        // Log activity for permission detached
+                        ActivityFacade::inLog('administration')
+                            ->event('rbac.role.permission.detached')
+                            ->causedBy(Auth::user())
+                            ->performedOn($role)
+                            ->withProperties([
+                                'role' => [
+                                    'id' => $role->id,
+                                    'name' => $role->name,
+                                ],
+                                'permission' => [
+                                    'id' => $record->id,
+                                    'name' => $record->name,
+                                ],
+                            ])
+                            ->log('');
 
                         Notification::make()
                             ->title(__('admin.rbac.roles.relation_managers.permission.permission_detached', ['name' => $record->name]))

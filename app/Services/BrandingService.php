@@ -26,12 +26,12 @@ final class BrandingService
      */
     public function getSettings(): array
     {
-        return Cache::remember(self::CACHE_KEY, self::CACHE_TTL, fn (): array => [
+        return [
             'primary_color' => $this->getPrimaryColorHex(),
             'secondary_color' => $this->getSecondaryColorHex(),
             'font' => $this->getFont(),
             'logo' => $this->getLogoUrl(),
-        ]);
+        ];
     }
 
     /**

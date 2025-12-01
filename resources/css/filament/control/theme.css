@@ -45,6 +45,11 @@
     @apply rounded-lg bg-white border border-gray-200 dark:bg-gray-900/50 dark:border-white/10;
 }
 
+/* Left-align Filament tabs (e.g. relation manager tabs) instead of centering */
+.fi-tabs:not(.fi-contained) {
+    @apply mx-0 w-fit gap-4;
+}
+
 @media (max-width: 1023px) {
     .fi-main-ctn {
         @apply pl-3 pr-3;

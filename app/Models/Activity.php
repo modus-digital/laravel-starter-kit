@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use BackedEnum;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity as BaseActivity;
+use Throwable;
 
 /**
  * Custom Activity model that automatically:
@@ -24,9 +26,24 @@ final class Activity extends BaseActivity
      */
     public function getTranslatedDescription(): string
     {
-        $replacements = $this->buildTranslationReplacements();
+        try {
+            $replacements = $this->buildTranslationReplacements();
 
-        return __($this->description, $replacements);
+            // Ensure all replacements are strings
+            $stringReplacements = [];
+            foreach ($replacements as $key => $value) {
+                if (is_array($value) || is_object($value)) {
+                    $stringReplacements[$key] = $this->formatValueForDisplay($value);
+                } else {
+                    $stringReplacements[$key] = (string) $value;
+                }
+            }
+
+            return __($this->description, $stringReplacements);
+        } catch (Throwable $e) {
+            // Fallback to the raw description if translation fails
+            return $this->description ?? 'Unknown activity';
+        }
     }
 
     protected static function booted(): void
@@ -80,27 +97,55 @@ final class Activity extends BaseActivity
 
         // Add issuer name
         if (isset($properties['issuer']['name'])) {
-            $replacements['issuer'] = $properties['issuer']['name'];
+            $replacements['issuer'] = (string) $properties['issuer']['name'];
         }
 
         // Add issuer email (for failed login attempts)
         if (isset($properties['issuer']['email'])) {
-            $replacements['email'] = $properties['issuer']['email'];
+            $replacements['email'] = (string) $properties['issuer']['email'];
         }
 
         // Add target (for impersonation, user / client management)
         if (isset($properties['target'])) {
-            $replacements['target'] = $properties['target'];
+            $replacements['target'] = (string) $properties['target'];
         } elseif (isset($properties['user'])) {
             // Prefer a human-friendly identifier for users
             $user = $properties['user'];
-            $replacements['target'] = $user['name']
+            $targetValue = $user['name']
                 ?? $user['email']
                 ?? (string) ($user['id'] ?? '');
+            $replacements['target'] = (string) $targetValue;
         } elseif (isset($properties['client'])) {
             // Prefer a human-friendly identifier for clients
             $client = $properties['client'];
-            $replacements['target'] = $client['name']
+            $targetValue = $client['name']
+                ?? (string) ($client['id'] ?? '');
+            $replacements['target'] = (string) $targetValue;
+        }
+
+        // Add attribute, old, and new values for field updates
+        if (isset($properties['attribute'])) {
+            $replacements['attribute'] = (string) $properties['attribute'];
+        }
+        if (array_key_exists('old', $properties)) {
+            $oldValue = $properties['old'];
+            $replacements['old'] = $oldValue !== null ? $this->formatValueForDisplay($oldValue) : 'empty';
+        }
+        if (array_key_exists('new', $properties)) {
+            $newValue = $properties['new'];
+            $replacements['new'] = $newValue !== null ? $this->formatValueForDisplay($newValue) : 'empty';
+        }
+
+        // Handle :user on :client translations
+        if (isset($properties['user']) && isset($properties['client'])) {
+            $user = $properties['user'];
+            $client = $properties['client'];
+
+            $replacements['user'] = $user['name']
+                ?? $user['email']
+                ?? (string) ($user['id'] ?? '');
+
+            $replacements['client'] = $client['name']
                 ?? (string) ($client['id'] ?? '');
         }
 
@@ -110,5 +155,39 @@ final class Activity extends BaseActivity
         }
 
         return $replacements;
+    }
+
+    /**
+     * Format a value for display in activity logs.
+     */
+    protected function formatValueForDisplay(mixed $value): string
+    {
+        if (is_array($value)) {
+            // For arrays, try to find a more readable representation
+            // Check if it's an enum-like array with 'value' and 'label'
+            if (isset($value['value']) && isset($value['label'])) {
+                return (string) $value['label'];
+            }
+
+            // Otherwise, convert to JSON
+            return json_encode($value);
+        }
+
+        if (is_object($value)) {
+            // If it's an enum or object with __toString, use that
+            if (method_exists($value, '__toString')) {
+                return (string) $value;
+            }
+            // Otherwise, try to get a readable representation
+            if ($value instanceof BackedEnum) {
+                return $value->value;
+            }
+
+            // For other objects, return class name
+            return get_class($value);
+        }
+
+        // For scalars, just cast to string
+        return (string) $value;
     }
 }

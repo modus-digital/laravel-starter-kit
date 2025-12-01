@@ -8,6 +8,7 @@ use App\Enums\ActivityStatus;
 use App\Models\Modules\Clients\Client;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
@@ -57,10 +58,10 @@ final class ClientsTable
                         }
 
                         return match ($record->status) {
-                            ActivityStatus::ACTIVE->value => 'success',
-                            ActivityStatus::INACTIVE->value => 'danger',
-                            ActivityStatus::SUSPENDED->value => 'warning',
-                            ActivityStatus::DELETED->value => 'danger',
+                            ActivityStatus::ACTIVE => 'success',
+                            ActivityStatus::INACTIVE => 'danger',
+                            ActivityStatus::SUSPENDED => 'warning',
+                            ActivityStatus::DELETED => 'danger',
                             default => 'gray',
                         };
                     })
@@ -69,9 +70,10 @@ final class ClientsTable
 
                 TextColumn::make('created_at')
                     ->label(__('admin.clients.table.created_at'))
-                    ->date('d-m-Y')
-                    ->sortable()
-                    ->searchable(),
+                    // ->date('d-m-Y')
+                    // ->dateTime()
+                    // ->sortable()
+                    // ->searchable(),
 
             ])
             ->filters([
@@ -81,6 +83,7 @@ final class ClientsTable
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
+                    // DeleteAction::make()
                 ]),
             ])
             ->toolbarActions([

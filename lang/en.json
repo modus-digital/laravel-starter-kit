@@ -618,6 +618,9 @@
         },
         "users": {
             "navigation_label": "Users",
+            "header_actions": {
+                "create": "Create User"
+            },
             "form": {
                 "personal_information": {
                     "title": "Personal Information",
@@ -779,15 +782,35 @@
         },
         "user": {
             "created": ":issuer created user :target",
-            "updated": ":issuer updated user :target",
+            "updated": ":issuer updated the :attribute on :target from :old to :new",
             "deleted": ":issuer deleted user :target",
             "restored": ":issuer restored user :target"
         },
         "client": {
             "created": ":issuer created client :target",
-            "updated": ":issuer updated client :target",
+            "updated": ":issuer updated the :attribute from :old to :new",
             "deleted": ":issuer deleted client :target",
-            "restored": ":issuer restored client :target"
+            "restored": ":issuer restored client :target",
+            "user": {
+                "created": "Created :user on :client",
+                "updated": "Updated :attribute on :user from :old to :new",
+                "deleted": "Deleted :user on :client",
+                "restored": "Restored :user on :client"
+            }
+        },
+        "rbac": {
+            "role": {
+                "permission": {
+                    "attached": ":issuer attached permission :permission to role :role",
+                    "detached": ":issuer detached permission :permission from role :role"
+                }
+            }
+        },
+        "socialite_provider": {
+            "created": ":issuer created socialite provider :target",
+            "updated": ":issuer updated the credentials for the :target provider",
+            "deleted": ":issuer deleted socialite provider :target",
+            "restored": ":issuer restored socialite provider :target"
         }
     }
 }

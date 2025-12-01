@@ -29,6 +29,7 @@ trait FiltersModuleTranslations
         return [
             'registration' => 'register',
             'socialite' => 'socialite_providers',
+            'clients' => 'client',
         ];
     }
 
@@ -59,14 +60,11 @@ trait FiltersModuleTranslations
         $moduleKeyMap = $this->getModuleTranslationKeyMap();
 
         foreach ($disabledModules as $module) {
-            // Generic convention-based cleanup based on module name.
-            if ($group === 'navigation') {
-                data_forget($translations, "labels.{$module}");
-            }
-
-            if ($group === 'admin') {
-                data_forget($translations, $module);
-            }
+            match ($group) {
+                'navigation' => data_forget($translations, "labels.$module"),
+                'admin' => data_forget($translations, $module),
+                'activity' => data_forget($translations, "activity.$module"),
+            };
 
             // Additional or overridden keys from the lookup table.
             if (! array_key_exists($module, $moduleKeyMap)) {

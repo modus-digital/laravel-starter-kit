@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-// use App\Traits\HasClients; <-- Uncomment if clients module is enabled in config/modules.php
-use App\Enums\ActivityStatus;
+use App\Enums\ActivityStatus; // <-- Uncomment if clients module is enabled in config/modules.php
 use App\Enums\RBAC\Permission;
+use App\Traits\HasClients;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -25,18 +25,17 @@ use Spatie\Permission\Traits\HasRoles;
  */
 final class User extends Authenticatable implements FilamentUser
 {
+    use HasClients;
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
-
     use HasRoles;
     use HasUuids;
     use Notifiable;
     use SoftDeletes;
-    use TwoFactorAuthenticatable;
+    use TwoFactorAuthenticatable; // <-- Uncomment if clients module is enabled in config/modules.php
 
     public $incrementing = false;
-
-    // use HasClients; <-- Uncomment if clients module is enabled in config/modules.php
 
     protected $keyType = 'string';
 
