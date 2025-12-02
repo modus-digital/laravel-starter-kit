@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Enums\ActivityStatus; // <-- Uncomment if clients module is enabled in config/modules.php
+use App\Enums\ActivityStatus;
 use App\Enums\RBAC\Permission;
 use App\Traits\HasClients;
 use Filament\Models\Contracts\FilamentUser;
@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -25,15 +26,25 @@ use Spatie\Permission\Traits\HasRoles;
  */
 final class User extends Authenticatable implements FilamentUser
 {
+    /*
+    |--------------------------------------------------------------------------
+    | Traits
+    |--------------------------------------------------------------------------
+    | 1. Enable HasApiTokens trait if api module is enabled in config/modules.php
+    | 2. Enable HasClients trait if clients module is enabled in config/modules.php
+    |
+    */
+    use HasApiTokens;
     use HasClients;
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
+
     use HasRoles;
     use HasUuids;
     use Notifiable;
     use SoftDeletes;
-    use TwoFactorAuthenticatable; // <-- Uncomment if clients module is enabled in config/modules.php
+    use TwoFactorAuthenticatable;
 
     public $incrementing = false;
 
@@ -51,6 +62,7 @@ final class User extends Authenticatable implements FilamentUser
         'password',
         'status',
         'provider',
+        'email_verified_at',
     ];
 
     /**

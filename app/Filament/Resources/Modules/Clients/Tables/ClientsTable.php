@@ -69,11 +69,11 @@ final class ClientsTable
                     ->searchable(),
 
                 TextColumn::make('created_at')
-                    ->label(__('admin.clients.table.created_at'))
-                    // ->date('d-m-Y')
-                    // ->dateTime()
-                    // ->sortable()
-                    // ->searchable(),
+                    ->label(__('admin.clients.table.created_at')),
+                // ->date('d-m-Y')
+                // ->dateTime()
+                // ->sortable()
+                // ->searchable(),
 
             ])
             ->filters([

@@ -38,7 +38,7 @@ return [
     |
     */
     'clients' => [
-        'enabled' => false,
+        'enabled' => true,
         'role_management' => false,
     ],
 
@@ -66,5 +66,18 @@ return [
     */
     'registration' => [
         'enabled' => true,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | API
+    |--------------------------------------------------------------------------
+    | If this module is enabled we are allowing the API to be used.
+    |
+    */
+    'api' => [
+        'enabled' => true,
+        'documentation_path' => 'scribe/openapi.yaml',
+        'documentation_url' => env('APP_URL').'/api/docs',
     ],
 ];
