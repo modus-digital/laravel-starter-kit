@@ -9,10 +9,16 @@ use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity as BaseActivity;
 use Throwable;
 
+use function in_array;
+use function is_array;
+use function is_object;
+use function is_scalar;
+
 /**
  * Custom Activity model that automatically:
  * - Transforms descriptions into translation keys based on the event field
  * - Injects issuer details (name, email, ip_address, user_agent) into properties
+ * - Dynamically extracts identifiers from nested property arrays for translations
  *
  * @property string|null $event
  * @property string $description
@@ -32,15 +38,13 @@ final class Activity extends BaseActivity
             // Ensure all replacements are strings
             $stringReplacements = [];
             foreach ($replacements as $key => $value) {
-                if (is_array($value) || is_object($value)) {
-                    $stringReplacements[$key] = $this->formatValueForDisplay($value);
-                } else {
-                    $stringReplacements[$key] = (string) $value;
-                }
+                $stringReplacements[$key] = is_array($value) || is_object($value)
+                    ? $this->formatValueForDisplay($value)
+                    : (string) $value;
             }
 
             return __($this->description, $stringReplacements);
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             // Fallback to the raw description if translation fails
             return $this->description ?? 'Unknown activity';
         }
@@ -56,7 +60,7 @@ final class Activity extends BaseActivity
                 $activity->description = "activity.{$activity->event}";
             }
 
-            // Build issuer details from causer or current auth user
+            // Build issuer details from causer
             /** @var User|null $causer */
             $causer = $activity->causer;
 
@@ -69,8 +73,6 @@ final class Activity extends BaseActivity
 
             // Merge issuer details into properties (preserving existing properties)
             $existingProperties = $activity->properties->toArray();
-
-            // Extract existing issuer data if present
             $existingIssuer = $existingProperties['issuer'] ?? [];
             unset($existingProperties['issuer']);
 
@@ -86,75 +88,85 @@ final class Activity extends BaseActivity
 
     /**
      * Build the array of replacements for translation.
+     * Dynamically processes all properties to extract human-friendly identifiers.
      *
      * @return array<string, string>
      */
     protected function buildTranslationReplacements(): array
     {
         $properties = $this->properties->toArray();
-
         $replacements = [];
 
-        // Add issuer name
+        // Process each property dynamically
+        foreach ($properties as $key => $value) {
+            // Skip special properties that need custom handling
+            if (in_array($key, ['issuer', 'credentials', 'changes'], true)) {
+                continue;
+            }
+
+            // Handle nested arrays (like user, client, role, permission, etc.)
+            if (is_array($value)) {
+                $identifier = $this->extractIdentifierFromArray($value);
+                if ($identifier !== null) {
+                    $replacements[$key] = $identifier;
+                }
+            } elseif (is_scalar($value) || $value === null) {
+                // For scalar values, add them directly
+                $replacements[$key] = $value !== null ? $this->formatValueForDisplay($value) : 'empty';
+            }
+        }
+
+        // Special handling for issuer
         if (isset($properties['issuer']['name'])) {
             $replacements['issuer'] = (string) $properties['issuer']['name'];
         }
 
-        // Add issuer email (for failed login attempts)
-        if (isset($properties['issuer']['email'])) {
+        // Add issuer email if not already set
+        if (isset($properties['issuer']['email']) && ! isset($replacements['email'])) {
             $replacements['email'] = (string) $properties['issuer']['email'];
         }
 
-        // Add target (for impersonation, user / client management)
+        // Special handling for target
         if (isset($properties['target'])) {
             $replacements['target'] = (string) $properties['target'];
-        } elseif (isset($properties['user'])) {
-            // Prefer a human-friendly identifier for users
-            $user = $properties['user'];
-            $targetValue = $user['name']
-                ?? $user['email']
-                ?? (string) ($user['id'] ?? '');
-            $replacements['target'] = (string) $targetValue;
-        } elseif (isset($properties['client'])) {
-            // Prefer a human-friendly identifier for clients
-            $client = $properties['client'];
-            $targetValue = $client['name']
-                ?? (string) ($client['id'] ?? '');
-            $replacements['target'] = (string) $targetValue;
+        } elseif (isset($properties['user']) && ! isset($properties['client'])) {
+            // If only user is present (not with client), use it as target
+            $replacements['target'] = $replacements['user'] ?? '';
+        } elseif (isset($properties['client']) && ! isset($properties['user'])) {
+            // If only client is present (not with user), use it as target
+            $replacements['target'] = $replacements['client'] ?? '';
         }
 
-        // Add attribute, old, and new values for field updates
-        if (isset($properties['attribute'])) {
-            $replacements['attribute'] = (string) $properties['attribute'];
-        }
-        if (array_key_exists('old', $properties)) {
-            $oldValue = $properties['old'];
-            $replacements['old'] = $oldValue !== null ? $this->formatValueForDisplay($oldValue) : 'empty';
-        }
-        if (array_key_exists('new', $properties)) {
-            $newValue = $properties['new'];
-            $replacements['new'] = $newValue !== null ? $this->formatValueForDisplay($newValue) : 'empty';
-        }
-
-        // Handle :user on :client translations
-        if (isset($properties['user']) && isset($properties['client'])) {
-            $user = $properties['user'];
-            $client = $properties['client'];
-
-            $replacements['user'] = $user['name']
-                ?? $user['email']
-                ?? (string) ($user['id'] ?? '');
-
-            $replacements['client'] = $client['name']
-                ?? (string) ($client['id'] ?? '');
-        }
-
-        // Add credentials email (for failed login with unknown user)
-        if (isset($properties['credentials']['email'])) {
+        // Add credentials email for failed login attempts
+        if (isset($properties['credentials']['email']) && ! isset($replacements['email'])) {
             $replacements['email'] = $properties['credentials']['email'];
         }
 
         return $replacements;
+    }
+
+    /**
+     * Extract a human-friendly identifier from an array.
+     * Tries to find name, email, or id in order of preference.
+     */
+    protected function extractIdentifierFromArray(array $data): ?string
+    {
+        // Try name first (most human-readable)
+        if (isset($data['name']) && $data['name'] !== null && $data['name'] !== '') {
+            return (string) $data['name'];
+        }
+
+        // Try email second (useful for users)
+        if (isset($data['email']) && $data['email'] !== null && $data['email'] !== '') {
+            return (string) $data['email'];
+        }
+
+        // Try id as last resort
+        if (isset($data['id']) && $data['id'] !== null && $data['id'] !== '') {
+            return (string) $data['id'];
+        }
+
+        return null;
     }
 
     /**
@@ -163,9 +175,8 @@ final class Activity extends BaseActivity
     protected function formatValueForDisplay(mixed $value): string
     {
         if (is_array($value)) {
-            // For arrays, try to find a more readable representation
             // Check if it's an enum-like array with 'value' and 'label'
-            if (isset($value['value']) && isset($value['label'])) {
+            if (isset($value['value'], $value['label'])) {
                 return (string) $value['label'];
             }
 
@@ -178,13 +189,14 @@ final class Activity extends BaseActivity
             if (method_exists($value, '__toString')) {
                 return (string) $value;
             }
-            // Otherwise, try to get a readable representation
+
+            // Handle BackedEnum instances
             if ($value instanceof BackedEnum) {
                 return $value->value;
             }
 
             // For other objects, return class name
-            return get_class($value);
+            return $value::class;
         }
 
         // For scalars, just cast to string

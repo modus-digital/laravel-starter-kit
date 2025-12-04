@@ -15,6 +15,8 @@ use Knuckles\Scribe\Scribe;
 use Laravel\Fortify\Http\Responses\LoginResponse as FortifyLoginResponseContract;
 use Laravel\Fortify\Http\Responses\LogoutResponse as FortifyLogoutResponseContract;
 use Laravel\Fortify\Http\Responses\RegisterResponse as FortifyRegisterResponseContract;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 final class AppServiceProvider extends ServiceProvider
 {
@@ -70,7 +72,7 @@ final class AppServiceProvider extends ServiceProvider
     private function configureScribe(): void
     {
         if (class_exists(Scribe::class)) {
-            Scribe::afterGenerating(function (array $paths) {
+            Scribe::afterGenerating(function (array $paths): void {
                 $scribeDir = base_path('.scribe');
                 if (is_dir($scribeDir)) {
                     // Use PHP's recursive directory removal
@@ -95,14 +97,14 @@ final class AppServiceProvider extends ServiceProvider
      */
     private function removeDirectory(string $dir): void
     {
-        if (!is_dir($dir)) {
+        if (! is_dir($dir)) {
             return;
         }
 
         // Use a more robust approach with error handling
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::CHILD_FIRST
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS),
+            RecursiveIteratorIterator::CHILD_FIRST
         );
 
         foreach ($iterator as $file) {

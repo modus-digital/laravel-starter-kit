@@ -8,7 +8,9 @@ use App\Filament\Pages\Branding;
 use App\Filament\Resources\Modules\Clients\ClientResource;
 use App\Filament\Resources\Modules\SocialiteProviders\SocialiteProviderResource;
 use App\Filament\Widgets\ActivityLog;
+use App\Filament\Widgets\ImpersonationWidget;
 use App\Services\BrandingService;
+use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -17,7 +19,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Enums\Width;
-use Filament\Widgets\AccountWidget;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -72,7 +74,7 @@ final class ControlPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->widgets(widgets: [
-                AccountWidget::class,
+                ImpersonationWidget::class,
                 ActivityLog::class,
             ])
             ->middleware(middleware: [
@@ -91,6 +93,18 @@ final class ControlPanelProvider extends PanelProvider
                     ->pages([
                         Branding::class,
                     ]),
+            ])
+            ->userMenuItems([
+                Action::make('settings')
+                    ->label(__('navigation.labels.update_profile'))
+                    ->url('/settings/profile')
+                    ->icon(Heroicon::PencilSquare),
+
+                'logout' => fn (Action $action): Action => $action
+                    ->label(session()->has('impersonation') ? __('navigation.labels.leave_impersonation') : $action->getLabel())
+                    ->url(session()->has('impersonation') ? route('impersonate.leave') : $action->getUrl())
+                    ->postToUrl(session()->has('impersonation'))
+                    ->icon(session()->has('impersonation') ? Heroicon::ArrowLeftEndOnRectangle : $action->getIcon()),
             ])
             ->authMiddleware([
                 Authenticate::class,

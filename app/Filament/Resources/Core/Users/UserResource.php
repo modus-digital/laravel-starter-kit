@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Core\Users;
 
+use App\Enums\RBAC\Permission;
 use App\Filament\Resources\Core\Users\Pages\CreateUser;
 use App\Filament\Resources\Core\Users\Pages\EditUser;
 use App\Filament\Resources\Core\Users\Pages\ListUsers;
@@ -26,11 +27,45 @@ final class UserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
-    protected static bool $shouldRegisterNavigation = true;
-
     protected static ?int $navigationSort = 1;
 
     protected static ?string $slug = 'system/users';
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::READ_USERS) ?? false;
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::CREATE_USERS) ?? false;
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::UPDATE_USERS) ?? false;
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::DELETE_USERS) ?? false;
+    }
+
+    public static function canRestore($record): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::RESTORE_USERS) ?? false;
+    }
+
+    public static function canForceDelete($record): bool
+    {
+        // Force delete requires delete permission
+        return auth()->user()?->hasPermissionTo(Permission::DELETE_USERS) ?? false;
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::READ_USERS) ?? false;
+    }
 
     public static function getNavigationGroup(): string
     {

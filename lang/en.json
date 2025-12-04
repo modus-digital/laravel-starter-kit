@@ -270,15 +270,34 @@
                 "user": "User"
             },
             "permission": {
-                "access_control_panel": "Access Control Panel",
-                "impersonate_users": "Impersonate Users",
                 "label": {
                     "access_control_panel": "Access Control Panel",
                     "impersonate_users": "Impersonate Users",
                     "access_backups": "Access Backups",
                     "access_health_check": "Access Health Check",
                     "access_activity_logs": "Access Activity Logs",
-                    "manage_settings": "Manage Settings"
+                    "manage_settings": "Manage Settings",
+                    "has_api_access": "Has API Access",
+                    "create_users": "Create Users",
+                    "read_users": "Read Users",
+                    "update_users": "Update Users",
+                    "delete_users": "Delete Users",
+                    "restore_users": "Restore Users",
+                    "create_roles": "Create Roles",
+                    "read_roles": "Read Roles",
+                    "update_roles": "Update Roles",
+                    "delete_roles": "Delete Roles",
+                    "restore_roles": "Restore Roles",
+                    "create_api_tokens": "Create API Tokens",
+                    "read_api_tokens": "Read API Tokens",
+                    "update_api_tokens": "Update API Tokens",
+                    "delete_api_tokens": "Delete API Tokens",
+                    "create_clients": "Create Clients",
+                    "read_clients": "Read Clients",
+                    "update_clients": "Update Clients",
+                    "delete_clients": "Delete Clients",
+                    "restore_clients": "Restore Clients",
+                    "update_socialite_providers": "Update Socialite Providers"
                 },
                 "description": {
                     "access_control_panel": "Allows users to access the admin control panel",
@@ -286,7 +305,28 @@
                     "access_backups": "Allows users to access and manage backups",
                     "access_health_check": "Allows users to view health check information",
                     "access_activity_logs": "Allows users to view activity logs",
-                    "manage_settings": "Allows users to manage application settings"
+                    "manage_settings": "Allows users to manage application settings",
+                    "has_api_access": "Allows users to access the API",
+                    "create_users": "Allows users to create new user accounts",
+                    "read_users": "Allows users to view user information",
+                    "update_users": "Allows users to modify user information",
+                    "delete_users": "Allows users to delete user accounts",
+                    "restore_users": "Allows users to restore deleted user accounts",
+                    "create_roles": "Allows users to create new roles",
+                    "read_roles": "Allows users to view role information",
+                    "update_roles": "Allows users to modify role information and permissions",
+                    "delete_roles": "Allows users to delete roles",
+                    "restore_roles": "Allows users to restore deleted roles",
+                    "create_api_tokens": "Allows users to create API tokens",
+                    "read_api_tokens": "Allows users to view API tokens",
+                    "update_api_tokens": "Allows users to modify API tokens",
+                    "delete_api_tokens": "Allows users to delete API tokens",
+                    "create_clients": "Allows users to create new clients",
+                    "read_clients": "Allows users to view client information",
+                    "update_clients": "Allows users to modify client information",
+                    "delete_clients": "Allows users to delete clients",
+                    "restore_clients": "Allows users to restore deleted clients",
+                    "update_socialite_providers": "Allows users to update socialite provider settings"
                 }
             }
         }
@@ -309,7 +349,8 @@
             "dashboard": "Dashboard",
             "admin_panel": "Admin Panel",
             "leave_impersonation": "Leave Impersonation",
-            "currently_viewing_as": "You are currently impersonating as:"
+            "currently_viewing_as": "You are currently impersonating",
+            "update_profile": "Update Profile"
         }
     },
     "admin": {
@@ -496,11 +537,26 @@
         "rbac": {
             "roles": {
                 "form": {
-                    "title": "Role Information",
-                    "enum_key": "Enum Key",
-                    "name": "Name"
+                    "basic_information": "Basic Information",
+                    "permissions": "Permissions",
+                    "label": "Label",
+                    "name": "Name",
+                    "icon": "Icon",
+                    "color": "Color",
+                    "system_role_indicator": "This is a system role that cannot be modified.",
+                    "super_admin_only_permission": "This is an internal permission and cannot be selected.",
+                    "name_unique": "A role with this name already exists.",
+                    "sections": {
+                        "general": "General Permissions",
+                        "users": "User Management",
+                        "roles": "Role Management",
+                        "api_tokens": "API Tokens",
+                        "clients": "Clients",
+                        "socialite": "Socialite Providers"
+                    }
                 },
                 "table": {
+                    "label": "Role",
                     "enum_key": "Enum Key",
                     "name": "Name",
                     "linked_to_enum": {
@@ -563,6 +619,7 @@
                     "updated_at": "Updated At",
                     "sync_permissions": {
                         "title": "Sync Permissions",
+                        "modal_description": "This will sync all permissions from the Permission enum to the database. Any new permissions will be created.",
                         "success": {
                             "title": "Permissions Synced",
                             "body": "Successfully synced :count permission(s)"
@@ -800,10 +857,18 @@
         },
         "rbac": {
             "role": {
+                "created": ":issuer created role :role",
+                "updated": ":issuer updated role :role",
+                "deleted": ":issuer deleted role :role",
                 "permission": {
                     "attached": ":issuer attached permission :permission to role :role",
                     "detached": ":issuer detached permission :permission from role :role"
                 }
+            },
+            "permission": {
+                "created": ":issuer created permission :permission",
+                "updated": ":issuer updated permission :permission",
+                "deleted": ":issuer deleted permission :permission"
             }
         },
         "socialite_provider": {

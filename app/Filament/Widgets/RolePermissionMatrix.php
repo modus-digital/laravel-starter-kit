@@ -27,7 +27,11 @@ final class RolePermissionMatrix extends BaseWidget
             ->columns([
                 TextColumn::make('name')
                     ->label(__('admin.widgets.role_permission_matrix.role'))
-                    ->formatStateUsing(fn (string $state): string => RBACRole::from($state)->getLabel())
+                    ->formatStateUsing(function (string $state): string {
+                        $enum = RBACRole::tryFrom($state);
+
+                        return $enum?->getLabel() ?? str($state)->headline()->toString();
+                    })
                     ->searchable()
                     ->sortable()
                     ->weight('bold')

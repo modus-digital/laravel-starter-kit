@@ -9,9 +9,7 @@ use Illuminate\Support\Facades\Storage;
 
 final class BrandingService
 {
-    private const CACHE_KEY = 'branding_settings';
-
-    private const CACHE_TTL = 3600; // 1 hour
+    private const CACHE_KEY = 'branding_settings'; // 1 hour
 
     private const DEFAULT_PRIMARY_COLOR = '#f59e0b'; // Amber-500
 

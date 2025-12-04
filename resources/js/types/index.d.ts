@@ -27,6 +27,7 @@ export interface SharedData {
     auth: Auth;
     sidebarOpen: boolean;
     canAccessControlPanel: boolean;
+    canManageApiTokens: boolean;
     isImpersonating: boolean;
     branding: {
         logo: string;
@@ -48,7 +49,6 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
-
 
 export interface SocialiteProvider {
     id: string;

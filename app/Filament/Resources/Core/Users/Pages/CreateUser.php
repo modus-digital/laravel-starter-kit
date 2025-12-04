@@ -46,7 +46,7 @@ final class CreateUser extends CreateRecord
                     'email' => $record->email,
                     'status' => $record->status->getLabel(),
                     'roles' => $record->roles->first()?->name
-                        ? Role::from($record->roles->first()->name)->getLabel()
+                        ? (Role::tryFrom($record->roles->first()->name)?->getLabel() ?? str($record->roles->first()->name)->headline()->toString())
                         : null,
                 ],
             ])

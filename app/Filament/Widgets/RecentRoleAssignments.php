@@ -42,7 +42,11 @@ final class RecentRoleAssignments extends BaseWidget
                     ->label(__('admin.widgets.recent_role_assignments.roles'))
                     ->badge()
                     ->separator(',')
-                    ->formatStateUsing(fn (string $state): string => Role::from($state)->getLabel())
+                    ->formatStateUsing(function (string $state): string {
+                        $enum = Role::tryFrom($state);
+
+                        return $enum?->getLabel() ?? str($state)->headline()->toString();
+                    })
                     ->color('info'),
                 TextColumn::make('created_at')
                     ->label(__('admin.widgets.recent_role_assignments.added'))

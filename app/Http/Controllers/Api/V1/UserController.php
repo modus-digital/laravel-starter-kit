@@ -22,7 +22,9 @@ final class UserController extends Controller
      * Get a paginated list of users with optional filtering and search capabilities.
      *
      * @group User Management
+     *
      * @authenticated
+     *
      * @header Authorization Bearer {token}
      *
      * @queryParam page integer The page number. Example: 1
@@ -65,7 +67,6 @@ final class UserController extends Controller
      *     "next": "http://localhost/api/users?page=2"
      *   }
      * }
-     *
      * @response 401 {
      *   "message": "Unauthenticated."
      * }
@@ -84,7 +85,7 @@ final class UserController extends Controller
 
         if ($request->has('search') && $request->search !== '') {
             $search = $request->search;
-            $query->where(function ($q) use ($search) {
+            $query->where(function ($q) use ($search): void {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");
             });
@@ -111,7 +112,9 @@ final class UserController extends Controller
      * Create a new user account with the specified information and optionally assign roles.
      *
      * @group User Management
+     *
      * @authenticated
+     *
      * @header Authorization Bearer {token}
      *
      * @bodyParam name string required The user's full name. Example: John Doe
@@ -138,14 +141,12 @@ final class UserController extends Controller
      *   "updated_at": "2024-01-01T00:00:00Z",
      *   "deleted_at": null
      * }
-     *
      * @response 422 {
      *   "message": "The given data was invalid.",
      *   "errors": {
      *     "email": ["The email has already been taken."]
      *   }
      * }
-     *
      * @response 401 {
      *   "message": "Unauthenticated."
      * }
@@ -176,7 +177,9 @@ final class UserController extends Controller
      * Retrieve detailed information about a specific user by their ID.
      *
      * @group User Management
+     *
      * @authenticated
+     *
      * @header Authorization Bearer {token}
      *
      * @urlParam user integer required The ID of the user. Example: 1
@@ -196,11 +199,9 @@ final class UserController extends Controller
      *   "updated_at": "2024-01-01T00:00:00Z",
      *   "deleted_at": null
      * }
-     *
      * @response 404 {
      *   "message": "User not found"
      * }
-     *
      * @response 401 {
      *   "message": "Unauthenticated."
      * }
@@ -221,10 +222,13 @@ final class UserController extends Controller
      * Update an existing user's information. Only provided fields will be updated.
      *
      * @group User Management
+     *
      * @authenticated
+     *
      * @header Authorization Bearer {token}
      *
      * @urlParam user integer required The ID of the user to update. Example: 1
+     *
      * @bodyParam name string The user's full name. Example: John Smith
      * @bodyParam email string The user's email address. Must be unique. Example: johnsmith@example.com
      * @bodyParam phone string The user's phone number in E.164 format. Example: +1987654321
@@ -249,18 +253,15 @@ final class UserController extends Controller
      *   "updated_at": "2024-01-02T00:00:00Z",
      *   "deleted_at": null
      * }
-     *
      * @response 422 {
      *   "message": "The given data was invalid.",
      *   "errors": {
      *     "email": ["The email has already been taken."]
      *   }
      * }
-     *
      * @response 404 {
      *   "message": "User not found"
      * }
-     *
      * @response 401 {
      *   "message": "Unauthenticated."
      * }
@@ -316,7 +317,9 @@ final class UserController extends Controller
      * Soft delete a user account. The user can be restored later.
      *
      * @group User Management
+     *
      * @authenticated
+     *
      * @header Authorization Bearer {token}
      *
      * @urlParam user integer required The ID of the user to delete. Example: 1
@@ -324,11 +327,9 @@ final class UserController extends Controller
      * @response 200 {
      *   "message": "User deleted successfully."
      * }
-     *
      * @response 404 {
      *   "message": "User not found"
      * }
-     *
      * @response 401 {
      *   "message": "Unauthenticated."
      * }
@@ -351,7 +352,9 @@ final class UserController extends Controller
      * Restore a previously soft deleted user account.
      *
      * @group User Management
+     *
      * @authenticated
+     *
      * @header Authorization Bearer {token}
      *
      * @urlParam userId integer required The ID of the user to restore. Example: 1
@@ -371,11 +374,9 @@ final class UserController extends Controller
      *   "updated_at": "2024-01-01T00:00:00Z",
      *   "deleted_at": null
      * }
-     *
      * @response 404 {
      *   "message": "User not found"
      * }
-     *
      * @response 401 {
      *   "message": "Unauthenticated."
      * }
@@ -398,7 +399,9 @@ final class UserController extends Controller
      * Permanently delete a user account. This action cannot be undone.
      *
      * @group User Management
+     *
      * @authenticated
+     *
      * @header Authorization Bearer {token}
      *
      * @urlParam userId integer required The ID of the user to permanently delete. Example: 1
@@ -406,11 +409,9 @@ final class UserController extends Controller
      * @response 200 {
      *   "message": "User permanently deleted."
      * }
-     *
      * @response 404 {
      *   "message": "User not found"
      * }
-     *
      * @response 401 {
      *   "message": "Unauthenticated."
      * }

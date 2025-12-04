@@ -55,9 +55,9 @@ final class PermissionRelationManager extends RelationManager
                 TextColumn::make('enum_key')
                     ->label(__('admin.rbac.roles.relation_managers.permission.enum_key'))
                     ->badge()
-                    ->state(fn (Permission $permission): ?string => $this->isLinkedToEnum($permission) ? $permission->name : null)
+                    ->state(fn (Permission $record): ?string => $this->isLinkedToEnum($record) ? $record->name : null)
                     ->formatStateUsing(fn (?string $state): string => $state ? RBACPermission::from($state)->getLabel() : '-')
-                    ->color(fn (Permission $permission): string => $this->isLinkedToEnum($permission) ? RBACPermission::from($permission->name)->getFilamentColor() : 'gray'),
+                    ->color(fn (Permission $record): string => $this->isLinkedToEnum($record) ? RBACPermission::from($record->name)->getFilamentColor() : 'gray'),
 
                 TextColumn::make('name')
                     ->label(__('admin.rbac.roles.relation_managers.permission.name'))
@@ -65,7 +65,7 @@ final class PermissionRelationManager extends RelationManager
 
                 IconColumn::make('linked_to_enum')
                     ->label(__('admin.rbac.roles.relation_managers.permission.linked_to_enum.title'))
-                    ->state(fn (Permission $permission): bool => $this->isLinkedToEnum($permission))
+                    ->state(fn (Permission $record): bool => $this->isLinkedToEnum($record))
                     ->boolean()
                     ->trueIcon(Heroicon::OutlinedCheckCircle)
                     ->falseIcon(Heroicon::OutlinedXCircle)

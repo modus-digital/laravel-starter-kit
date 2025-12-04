@@ -68,7 +68,9 @@ final class UsersTable
                             return __('admin.users.table.no_role');
                         }
 
-                        return Role::from($firstRole->name)->getLabel();
+                        $enum = Role::tryFrom($firstRole->name);
+
+                        return $enum?->getLabel() ?? str($firstRole->name)->headline()->toString();
                     })
                     ->icon(function (?User $record) {
                         if (! $record instanceof User) {
@@ -80,7 +82,9 @@ final class UsersTable
                             return null;
                         }
 
-                        return Role::from($firstRole->name)->getIcon();
+                        $enum = Role::tryFrom($firstRole->name);
+
+                        return $enum?->getIcon();
                     })
                     ->color(function (?User $record) {
                         if (! $record instanceof User) {
@@ -92,7 +96,9 @@ final class UsersTable
                             return null;
                         }
 
-                        return Role::from($firstRole->name)->getFilamentColor();
+                        $enum = Role::tryFrom($firstRole->name);
+
+                        return $enum?->getFilamentColor() ?? 'info';
                     })
                     ->badge()
                     ->sortable()
@@ -159,7 +165,7 @@ final class UsersTable
                                         'email' => $record->email,
                                         'status' => $record->status->getLabel(),
                                         'roles' => $record->roles->first()?->name
-                                            ? Role::from($record->roles->first()->name)->getLabel()
+                                            ? (Role::tryFrom($record->roles->first()->name)?->getLabel() ?? str($record->roles->first()->name)->headline()->toString())
                                             : null,
                                     ],
                                 ])
@@ -182,7 +188,7 @@ final class UsersTable
                                         'email' => $record->email,
                                         'status' => $record->status->getLabel(),
                                         'roles' => $record->roles->first()?->name
-                                            ? Role::from($record->roles->first()->name)->getLabel()
+                                            ? (Role::tryFrom($record->roles->first()->name)?->getLabel() ?? str($record->roles->first()->name)->headline()->toString())
                                             : null,
                                     ],
                                 ])

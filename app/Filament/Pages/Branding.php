@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Enums\RBAC\Permission;
 use App\Services\BrandingService;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -31,6 +32,16 @@ final class Branding extends Settings
     protected static ?string $slug = 'system/branding';
 
     protected ?Alignment $headerActionsAlignment = Alignment::End;
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::MANAGE_SETTINGS) ?? false;
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::MANAGE_SETTINGS) ?? false;
+    }
 
     public static function getNavigationGroup(): string
     {

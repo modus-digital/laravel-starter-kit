@@ -87,7 +87,9 @@ final class UsersRelationManager extends RelationManager
                             return __('admin.users.table.no_role');
                         }
 
-                        return Role::from($firstRole->name)->getLabel();
+                        $enum = Role::tryFrom($firstRole->name);
+
+                        return $enum?->getLabel() ?? str($firstRole->name)->headline()->toString();
                     })
                     ->icon(function (?User $record) {
                         if (! $record instanceof User) {
@@ -99,7 +101,9 @@ final class UsersRelationManager extends RelationManager
                             return null;
                         }
 
-                        return Role::from($firstRole->name)->getIcon();
+                        $enum = Role::tryFrom($firstRole->name);
+
+                        return $enum?->getIcon();
                     })
                     ->color(function (?User $record) {
                         if (! $record instanceof User) {
@@ -111,7 +115,9 @@ final class UsersRelationManager extends RelationManager
                             return null;
                         }
 
-                        return Role::from($firstRole->name)->getFilamentColor();
+                        $enum = Role::tryFrom($firstRole->name);
+
+                        return $enum?->getFilamentColor() ?? 'info';
                     })
                     ->badge()
                     ->sortable(),
@@ -175,11 +181,7 @@ final class UsersRelationManager extends RelationManager
                                     ->options(ActivityStatus::options())
                                     ->required(),
                             ]),
-                    ])->after(function (User $record) {
-                        if (! $record instanceof User) {
-                            return;
-                        }
-
+                    ])->after(function (User $record): void {
                         /** @var Client|null $client */
                         $client = $this->getOwnerRecord();
                         if (! $client instanceof Client) {
@@ -213,11 +215,7 @@ final class UsersRelationManager extends RelationManager
                     ImpersonateAction::make(),
                     ViewAction::make(),
                     EditAction::make()
-                        ->after(function (User $record) {
-                            if (! $record instanceof User) {
-                                return;
-                            }
-
+                        ->after(function (User $record): void {
                             Activity::inLog('administration')
                                 ->event('client.user.updated')
                                 ->causedBy(Auth::user())
@@ -233,11 +231,7 @@ final class UsersRelationManager extends RelationManager
                         }),
                     DeleteAction::make()
                         ->visible(fn (?User $record) => $record?->trashed())
-                        ->after(function (User $record) {
-                            if (! $record instanceof User) {
-                                return;
-                            }
-
+                        ->after(function (User $record): void {
                             Activity::inLog('administration')
                                 ->event('client.user.deleted')
                                 ->causedBy(Auth::user())
@@ -257,11 +251,7 @@ final class UsersRelationManager extends RelationManager
                         }),
                     RestoreAction::make()
                         ->visible(fn (?User $record) => $record?->trashed())
-                        ->after(function (User $record) {
-                            if (! $record instanceof User) {
-                                return;
-                            }
-
+                        ->after(function (User $record): void {
                             Activity::inLog('administration')
                                 ->event('client.user.restored')
                                 ->causedBy(Auth::user())

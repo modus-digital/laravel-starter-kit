@@ -3,6 +3,7 @@
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
 @source '../../../../vendor/jaocero/radio-deck/resources/views';
+@source '../../../../vendor/guava/filament-icon-picker/resources/**/*';
 
 .fi {
     scrollbar-gutter: unset;

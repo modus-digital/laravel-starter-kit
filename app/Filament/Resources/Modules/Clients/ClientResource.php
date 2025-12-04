@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Modules\Clients;
 
+use App\Enums\RBAC\Permission;
 use App\Filament\Resources\Modules\Clients\Pages\CreateClient;
 use App\Filament\Resources\Modules\Clients\Pages\EditClient;
 use App\Filament\Resources\Modules\Clients\Pages\ListClients;
@@ -30,6 +31,43 @@ final class ClientResource extends Resource
     protected static ?int $navigationSort = 1;
 
     protected static ?string $slug = 'management/clients';
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::READ_CLIENTS) ?? false;
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::CREATE_CLIENTS) ?? false;
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::UPDATE_CLIENTS) ?? false;
+    }
+
+    public static function canDelete($record): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::DELETE_CLIENTS) ?? false;
+    }
+
+    public static function canRestore($record): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::RESTORE_CLIENTS) ?? false;
+    }
+
+    public static function canForceDelete($record): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::DELETE_CLIENTS) ?? false;
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Only show if module is enabled and user has permission
+        return config('modules.clients.enabled', false)
+            && (auth()->user()?->hasPermissionTo(Permission::READ_CLIENTS) ?? false);
+    }
 
     public static function getNavigationGroup(): string
     {

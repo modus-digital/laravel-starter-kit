@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Modules\SocialiteProviders;
 
+use App\Enums\RBAC\Permission;
 use App\Filament\Resources\Modules\SocialiteProviders\Pages\EditSocialiteProvider;
 use App\Filament\Resources\Modules\SocialiteProviders\Pages\ListSocialiteProviders;
 use App\Filament\Resources\Modules\SocialiteProviders\Pages\ViewSocialiteProvider;
@@ -24,9 +25,36 @@ final class SocialiteProviderResource extends Resource
 
     protected static ?int $navigationSort = 11;
 
-    protected static bool $shouldRegisterNavigation = true;
-
     protected static ?string $slug = 'system/auth-providers';
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::UPDATE_SOCIALITE_PROVIDERS) ?? false;
+    }
+
+    public static function canCreate(): bool
+    {
+        // Providers are predefined, not created manually
+        return false;
+    }
+
+    public static function canEdit($record): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::UPDATE_SOCIALITE_PROVIDERS) ?? false;
+    }
+
+    public static function canDelete($record): bool
+    {
+        // Providers should not be deleted
+        return false;
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Only show if module is enabled and user has permission
+        return config('modules.socialite.enabled', false)
+            && (auth()->user()?->hasPermissionTo(Permission::UPDATE_SOCIALITE_PROVIDERS) ?? false);
+    }
 
     public static function getModelLabel(): string
     {

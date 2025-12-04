@@ -52,9 +52,23 @@ final class RoleRelationManager extends RelationManager
                 TextColumn::make('enum_key')
                     ->label(__('admin.rbac.permissions.relation_managers.role.enum_key'))
                     ->badge()
-                    ->state(fn (Role $role): ?string => $this->isLinkedToEnum($role) ? $role->name : null)
-                    ->formatStateUsing(fn (?string $state): string => $state ? RBACRole::from($state)->getLabel() : '-')
-                    ->color(fn (Role $role): string => $this->isLinkedToEnum($role) ? RBACRole::from($role->name)->getFilamentColor() : 'gray'),
+                    ->state(fn (Role $record): ?string => $this->isLinkedToEnum($record) ? $record->name : null)
+                    ->formatStateUsing(function (?string $state): string {
+                        if (! $state) {
+                            return '-';
+                        }
+                        $enum = RBACRole::tryFrom($state);
+
+                        return $enum?->getLabel() ?? str($state)->headline()->toString();
+                    })
+                    ->color(function (Role $record): string {
+                        if (! $this->isLinkedToEnum($record)) {
+                            return 'gray';
+                        }
+                        $enum = RBACRole::tryFrom($record->name);
+
+                        return $enum?->getFilamentColor() ?? 'info';
+                    }),
 
                 TextColumn::make('name')
                     ->label(__('admin.rbac.permissions.relation_managers.role.name'))
@@ -62,7 +76,7 @@ final class RoleRelationManager extends RelationManager
 
                 IconColumn::make('linked_to_enum')
                     ->label(__('admin.rbac.permissions.relation_managers.role.linked_to_enum.title'))
-                    ->state(fn (Role $role): bool => $this->isLinkedToEnum($role))
+                    ->state(fn (Role $record): bool => $this->isLinkedToEnum($record))
                     ->boolean()
                     ->trueIcon(Heroicon::OutlinedCheckCircle)
                     ->falseIcon(Heroicon::OutlinedXCircle)

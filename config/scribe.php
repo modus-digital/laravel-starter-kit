@@ -1,21 +1,23 @@
 <?php
 
-use Knuckles\Scribe\Extracting\Strategies;
-use Knuckles\Scribe\Config\Defaults;
+declare(strict_types=1);
+
 use Knuckles\Scribe\Config\AuthIn;
+use Knuckles\Scribe\Config\Defaults;
+use Knuckles\Scribe\Extracting\Strategies;
 
 use function Knuckles\Scribe\Config\configureStrategy;
 
 return [
-    'title' => config('app.name') . ' API Documentation',
+    'title' => config('app.name').' API Documentation',
     'description' => 'Modus API - A comprehensive Laravel starter kit API',
-    'intro_text' => <<<INTRO
+    'intro_text' => <<<'INTRO'
         This documentation aims to provide all the information you need to work with our API.
 
         <aside>As you scroll, you'll see code examples for working with the API in different programming languages in the dark area to the right (or as part of the content on mobile).
         You can switch the language used with the tabs at the top right (or from the nav menu at the top left on mobile).</aside>
     INTRO,
-    'base_url' => config("app.url"),
+    'base_url' => config('app.url'),
     'routes' => [
         [
             'match' => [
@@ -42,7 +44,7 @@ return [
         'middleware' => [],
     ],
     'external' => [
-        'html_attributes' => []
+        'html_attributes' => [],
     ],
     'try_it_out' => [
         'enabled' => true,
@@ -114,7 +116,7 @@ return [
         ),
         'responseFields' => [
             ...Defaults::RESPONSE_FIELDS_STRATEGIES,
-        ]
+        ],
     ],
     'database_connections_to_transact' => [config('database.default')],
     'fractal' => [

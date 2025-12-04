@@ -19,7 +19,9 @@ final class MeController extends Controller
      * roles, permissions, and current access token details.
      *
      * @group User Management
+     *
      * @authenticated
+     *
      * @header Authorization Bearer {token}
      *
      * @response 200 {
@@ -48,7 +50,6 @@ final class MeController extends Controller
      *     "is_expired": false
      *   }
      * }
-     *
      * @response 401 {
      *   "message": "Unauthenticated."
      * }

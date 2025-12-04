@@ -38,7 +38,11 @@ final class UsersByRole extends ChartWidget
                     ],
                 ],
             ],
-            'labels' => $roles->pluck('name')->map(fn (string $name): string => RBACRole::from($name)->getLabel())->toArray(),
+            'labels' => $roles->pluck('name')->map(function (string $name): string {
+                $enum = RBACRole::tryFrom($name);
+
+                return $enum?->getLabel() ?? str($name)->headline()->toString();
+            })->toArray(),
         ];
     }
 
