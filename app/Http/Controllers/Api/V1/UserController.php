@@ -37,16 +37,14 @@ final class UserController extends Controller
      * @response 200 {
      *   "data": [
      *     {
-     *       "id": 1,
+     *       "id": "019ae998-0d67-7f61-a080-0921c763e695",
      *       "name": "John Doe",
      *       "email": "john@example.com",
      *       "phone": "+1234567890",
      *       "status": "active",
-     *       "status_label": "Active",
      *       "email_verified_at": "2024-01-01T00:00:00Z",
      *       "provider": "local",
-     *       "roles": ["admin"],
-     *       "permissions": ["view-users"],
+     *       "role": "admin",
      *       "created_at": "2024-01-01T00:00:00Z",
      *       "updated_at": "2024-01-01T00:00:00Z",
      *       "deleted_at": null
@@ -61,10 +59,10 @@ final class UserController extends Controller
      *     "to": 15
      *   },
      *   "links": {
-     *     "first": "http://localhost/api/users?page=1",
-     *     "last": "http://localhost/api/users?page=5",
+     *     "first": "[[APP_URL]]/api/v1/users?page=1",
+     *     "last": "[[APP_URL]]/api/v1/users?page=5",
      *     "prev": null,
-     *     "next": "http://localhost/api/users?page=2"
+     *     "next": "[[APP_URL]]/api/v1/users?page=2"
      *   }
      * }
      * @response 401 {
@@ -76,7 +74,7 @@ final class UserController extends Controller
         // TODO: Add proper authorization check based on your permission system
         // $this->authorize('viewAny', User::class);
 
-        $query = User::query()->with(['roles', 'permissions']);
+        $query = User::query()->with(['roles']);
 
         // Apply filters
         if ($request->has('status') && $request->status !== '') {
@@ -127,16 +125,14 @@ final class UserController extends Controller
      * @bodyParam roles array Optional array of role names to assign. Example: ["admin", "user"]
      *
      * @response 201 {
-     *   "id": 1,
+     *   "id": "019ae998-0d67-7f61-a080-0921c763e695",
      *   "name": "John Doe",
      *   "email": "john@example.com",
      *   "phone": "+1234567890",
      *   "status": "active",
-     *   "status_label": "Active",
      *   "email_verified_at": "2024-01-01T00:00:00Z",
      *   "provider": "local",
-     *   "roles": ["admin"],
-     *   "permissions": ["view-users", "create-users"],
+     *   "role": "admin",
      *   "created_at": "2024-01-01T00:00:00Z",
      *   "updated_at": "2024-01-01T00:00:00Z",
      *   "deleted_at": null
@@ -168,7 +164,7 @@ final class UserController extends Controller
             $user->syncRoles($request->roles);
         }
 
-        return new UserResource($user->load(['roles', 'permissions']));
+        return new UserResource($user->load(['roles']));
     }
 
     /**
@@ -182,19 +178,17 @@ final class UserController extends Controller
      *
      * @header Authorization Bearer {token}
      *
-     * @urlParam user integer required The ID of the user. Example: 1
+     * @urlParam user string required The ID of the user. Example: 019ae998-0d67-7f61-a080-0921c763e695
      *
      * @response 200 {
-     *   "id": 1,
+     *   "id": "019ae998-0d67-7f61-a080-0921c763e695",
      *   "name": "John Doe",
      *   "email": "john@example.com",
      *   "phone": "+1234567890",
      *   "status": "active",
-     *   "status_label": "Active",
      *   "email_verified_at": "2024-01-01T00:00:00Z",
      *   "provider": "local",
-     *   "roles": ["admin"],
-     *   "permissions": ["view-users", "create-users"],
+     *   "role": "admin",
      *   "created_at": "2024-01-01T00:00:00Z",
      *   "updated_at": "2024-01-01T00:00:00Z",
      *   "deleted_at": null
@@ -227,7 +221,7 @@ final class UserController extends Controller
      *
      * @header Authorization Bearer {token}
      *
-     * @urlParam user integer required The ID of the user to update. Example: 1
+     * @urlParam user string required The ID of the user to update. Example: 019ae998-0d67-7f61-a080-0921c763e695
      *
      * @bodyParam name string The user's full name. Example: John Smith
      * @bodyParam email string The user's email address. Must be unique. Example: johnsmith@example.com
@@ -239,16 +233,14 @@ final class UserController extends Controller
      * @bodyParam roles array Array of role names to assign. Example: ["user"]
      *
      * @response 200 {
-     *   "id": 1,
+     *   "id": "019ae998-0d67-7f61-a080-0921c763e695",
      *   "name": "John Smith",
      *   "email": "johnsmith@example.com",
      *   "phone": "+1987654321",
      *   "status": "inactive",
-     *   "status_label": "Inactive",
      *   "email_verified_at": "2024-01-02T00:00:00Z",
      *   "provider": "google",
-     *   "roles": ["user"],
-     *   "permissions": ["view-profile"],
+     *   "role": "user",
      *   "created_at": "2024-01-01T00:00:00Z",
      *   "updated_at": "2024-01-02T00:00:00Z",
      *   "deleted_at": null
@@ -308,7 +300,7 @@ final class UserController extends Controller
             $user->syncRoles($request->roles);
         }
 
-        return new UserResource($user->load(['roles', 'permissions']));
+        return new UserResource($user->load(['roles']));
     }
 
     /**
@@ -322,7 +314,7 @@ final class UserController extends Controller
      *
      * @header Authorization Bearer {token}
      *
-     * @urlParam user integer required The ID of the user to delete. Example: 1
+     * @urlParam user string required The ID of the user to delete. Example: 019ae998-0d67-7f61-a080-0921c763e695
      *
      * @response 200 {
      *   "message": "User deleted successfully."
@@ -357,19 +349,17 @@ final class UserController extends Controller
      *
      * @header Authorization Bearer {token}
      *
-     * @urlParam userId integer required The ID of the user to restore. Example: 1
+     * @urlParam userId string required The ID of the user to restore. Example: 019ae998-0d67-7f61-a080-0921c763e695
      *
      * @response 200 {
-     *   "id": 1,
+     *   "id": "019ae998-0d67-7f61-a080-0921c763e695",
      *   "name": "John Doe",
      *   "email": "john@example.com",
      *   "phone": "+1234567890",
      *   "status": "active",
-     *   "status_label": "Active",
      *   "email_verified_at": "2024-01-01T00:00:00Z",
      *   "provider": "local",
-     *   "roles": ["admin"],
-     *   "permissions": ["view-users", "create-users"],
+     *   "role": "admin",
      *   "created_at": "2024-01-01T00:00:00Z",
      *   "updated_at": "2024-01-01T00:00:00Z",
      *   "deleted_at": null
@@ -390,7 +380,7 @@ final class UserController extends Controller
 
         $user->restore();
 
-        return new UserResource($user->load(['roles', 'permissions']));
+        return new UserResource($user->load(['roles']));
     }
 
     /**
@@ -404,7 +394,7 @@ final class UserController extends Controller
      *
      * @header Authorization Bearer {token}
      *
-     * @urlParam userId integer required The ID of the user to permanently delete. Example: 1
+     * @urlParam userId string required The ID of the user to permanently delete. Example: 019ae998-0d67-7f61-a080-0921c763e695
      *
      * @response 200 {
      *   "message": "User permanently deleted."
