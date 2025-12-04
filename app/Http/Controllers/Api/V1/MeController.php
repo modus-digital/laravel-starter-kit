@@ -18,7 +18,6 @@ final class MeController extends Controller
      * Returns detailed information about the currently authenticated user including their profile,
      * roles, permissions, and current access token details.
      *
-     * @group User Management
      *
      * @authenticated
      *
@@ -31,11 +30,9 @@ final class MeController extends Controller
      *     "email": "john@example.com",
      *     "phone": "+1234567890",
      *     "status": "active",
-     *     "status_label": "Active",
      *     "email_verified_at": "2024-01-01T00:00:00Z",
      *     "provider": "local",
-     *     "roles": ["admin"],
-     *     "permissions": ["view-users", "create-users"],
+     *     "role": "admin",
      *     "created_at": "2024-01-01T00:00:00Z",
      *     "updated_at": "2024-01-01T00:00:00Z",
      *     "deleted_at": null
@@ -76,7 +73,7 @@ final class MeController extends Controller
         }
 
         return response()->json([
-            'user' => new UserResource($user->load(['roles', 'permissions'])),
+            'user' => new UserResource($user->load(['roles'])),
             'token' => $tokenInfo,
         ]);
     }
