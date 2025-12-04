@@ -13,7 +13,8 @@ import { type PropsWithChildren } from 'react';
 
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
-    const { canManageApiTokens } = usePage<SharedData>().props;
+    const page = usePage<SharedData>();
+    const { permissions } = page.props;
 
     // When server-side rendering, we only render the layout on the client...
     if (typeof window === 'undefined') {
@@ -38,7 +39,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
             href: show(),
             icon: null,
         },
-        ...(canManageApiTokens
+        ...(permissions.canManageApiTokens
             ? [
                   {
                       title: 'API Tokens',
@@ -90,7 +91,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
 
                 <Separator className="my-6 lg:hidden" />
 
-                <div className="flex-1 md:max-w-2xl">
+                <div className="flex-1 md:max-w-4xl">
                     <section className="max-w-xl space-y-12">
                         {children}
                     </section>

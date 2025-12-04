@@ -26,7 +26,8 @@ import { dashboard as ControlPanelDashboard } from '@/routes/filament/control/pa
 import { Button } from './ui/button';
 
 export function AppSidebar() {
-    const { canAccessControlPanel, isImpersonating } = usePage<SharedData>().props;
+    const page = usePage<SharedData>();
+    const { permissions, isImpersonating } = page.props;
     const { t } = useTranslation();
 
     const mainNavItems: NavItem[] = [
@@ -39,7 +40,7 @@ export function AppSidebar() {
 
     const footerNavItems: NavItem[] = [
         // If the user is not impersonating, show the admin panel button
-        ...(canAccessControlPanel ? [
+        ...(permissions.canAccessControlPanel ? [
             {
                 title: t('navigation.labels.admin_panel'),
                 href: ControlPanelDashboard(),

@@ -48,13 +48,7 @@ export default function ApiTokens({
     userPermissions: string[];
 }) {
     const { t } = useTranslation();
-    const page = usePage<
-        SharedData & {
-            token?: string;
-            tokenName?: string;
-            status?: string;
-        }
-    >();
+    const page = usePage<SharedData>();
 
     const [selectedPermissions, setSelectedPermissions] = useState<string[]>(
         [],
@@ -69,11 +63,14 @@ export default function ApiTokens({
         },
     ];
 
+    // Extract token with proper typing
+    const apiToken = page.props.data?.token as string | undefined;
+
     useEffect(() => {
-        if (page.props.token) {
+        if (apiToken) {
             setShowToken(true);
         }
-    }, [page.props.token]);
+    }, [apiToken]);
 
     const handlePermissionToggle = (permission: string) => {
         setSelectedPermissions((prev) =>
@@ -83,9 +80,88 @@ export default function ApiTokens({
         );
     };
 
+    const groupPermissionsByResource = (permissions: Permission[]) => {
+        const groups: Record<string, Permission[]> = {};
+
+        permissions.forEach((permission) => {
+            let groupName = 'General';
+
+            if (permission.value.includes(':users')) {
+                groupName = 'Users';
+            } else if (permission.value.includes(':roles')) {
+                groupName = 'Roles';
+            } else if (permission.value.includes(':api-tokens')) {
+                groupName = 'API Tokens';
+            } else if (permission.value.includes(':clients')) {
+                groupName = 'Clients';
+            } else if (permission.value.includes(':socialite-providers')) {
+                groupName = 'Socialite Providers';
+            }
+
+            if (!groups[groupName]) {
+                groups[groupName] = [];
+            }
+            groups[groupName].push(permission);
+        });
+
+        // Sort permissions within each group (CRUD order: Create, Read, Update, Delete, Restore, then others)
+        const sortOrder = ['create:', 'read:', 'update:', 'delete:', 'restore:'];
+
+        Object.keys(groups).forEach((groupName) => {
+            groups[groupName].sort((a, b) => {
+                const aIndex = sortOrder.findIndex(prefix => a.value.startsWith(prefix));
+                const bIndex = sortOrder.findIndex(prefix => b.value.startsWith(prefix));
+
+                // If both are CRUD permissions, sort by CRUD order
+                if (aIndex !== -1 && bIndex !== -1) {
+                    return aIndex - bIndex;
+                }
+
+                // If only one is CRUD, put CRUD first
+                if (aIndex !== -1) return -1;
+                if (bIndex !== -1) return 1;
+
+                // Otherwise, sort alphabetically
+                return a.label.localeCompare(b.label);
+            });
+        });
+
+        // Sort groups by number of permissions (descending - most permissions first)
+        const sortedGroups: Record<string, Permission[]> = {};
+        Object.keys(groups)
+            .sort((a, b) => groups[b].length - groups[a].length)
+            .forEach((groupName) => {
+                sortedGroups[groupName] = groups[groupName];
+            });
+
+        return sortedGroups;
+    };
+
+    const getPermissionDisplayLabel = (permission: Permission) => {
+        // For CRUD permissions, remove the resource name
+        if (permission.value.startsWith('create:')) {
+            return 'Create';
+        }
+        if (permission.value.startsWith('read:')) {
+            return 'Read';
+        }
+        if (permission.value.startsWith('update:')) {
+            return 'Update';
+        }
+        if (permission.value.startsWith('delete:')) {
+            return 'Delete';
+        }
+        if (permission.value.startsWith('restore:')) {
+            return 'Restore';
+        }
+
+        // For other permissions, keep the original label
+        return permission.label;
+    };
+
     const handleCopyToken = async () => {
-        if (page.props.token) {
-            await navigator.clipboard.writeText(page.props.token);
+        if (apiToken) {
+            await navigator.clipboard.writeText(apiToken);
             setCopiedToken(true);
             setTimeout(() => setCopiedToken(false), 2000);
         }
@@ -114,7 +190,7 @@ export default function ApiTokens({
                         description="Manage your API tokens to access the API programmatically."
                     />
 
-                    {showToken && page.props.token && (
+                    {showToken && apiToken && (
                         <Alert className="border-green-500 bg-green-50 dark:bg-green-950">
                             <Key className="h-4 w-4 text-green-600 dark:text-green-400" />
                             <AlertTitle className="text-green-800 dark:text-green-200">
@@ -127,7 +203,7 @@ export default function ApiTokens({
                                 </p>
                                 <div className="flex items-center gap-2">
                                     <code className="flex-1 rounded bg-green-100 px-3 py-2 text-sm text-green-900 dark:bg-green-900 dark:text-green-100">
-                                        {page.props.token}
+                                        {apiToken}
                                     </code>
                                     <Button
                                         size="sm"
@@ -161,7 +237,9 @@ export default function ApiTokens({
                         <Form
                             {...ApiTokenController.store.form()}
                             disableWhileProcessing
-                            onSuccess={() => setSelectedPermissions([])}
+                            onSuccess={() => {
+                                setSelectedPermissions([]);
+                            }}
                             options={{ preserveScroll: true }}
                             className="space-y-6"
                         >
@@ -192,75 +270,63 @@ export default function ApiTokens({
                                             possess.
                                         </p>
 
-                                        <div className="space-y-3">
-                                            {availablePermissions.map(
-                                                (permission) => {
-                                                    const hasPermission =
-                                                        userPermissions.includes(
-                                                            permission.value,
-                                                        );
-                                                    const isChecked =
-                                                        selectedPermissions.includes(
-                                                            permission.value,
-                                                        );
+                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                            {Object.entries(groupPermissionsByResource(
+                                                availablePermissions.filter(p =>
+                                                    !p.value.startsWith('access:') &&
+                                                    p.value !== 'manage:settings'
+                                                )
+                                            )).map(
+                                                ([groupName, permissions]) => (
+                                                    <div key={groupName} className="space-y-3">
+                                                        <h4 className="text-sm font-medium text-foreground">
+                                                            {groupName}
+                                                        </h4>
+                                                        <div className="space-y-2 pl-4">
+                                                            {permissions.map((permission) => {
+                                                                const hasPermission = userPermissions.includes(
+                                                                    permission.value,
+                                                                );
+                                                                const isChecked = selectedPermissions.includes(
+                                                                    permission.value,
+                                                                );
 
-                                                    return (
-                                                        <div
-                                                            key={
-                                                                permission.value
-                                                            }
-                                                            className="flex items-start space-x-3 rounded-lg border p-4"
-                                                        >
-                                                            <Checkbox
-                                                                id={
-                                                                    permission.value
-                                                                }
-                                                                name="permissions[]"
-                                                                value={
-                                                                    permission.value
-                                                                }
-                                                                checked={
-                                                                    isChecked
-                                                                }
-                                                                disabled={
-                                                                    !hasPermission
-                                                                }
-                                                                onCheckedChange={() =>
-                                                                    handlePermissionToggle(
-                                                                        permission.value,
-                                                                    )
-                                                                }
-                                                            />
-                                                            <div className="flex-1 space-y-1">
-                                                                <Label
-                                                                    htmlFor={
-                                                                        permission.value
-                                                                    }
-                                                                    className={
-                                                                        !hasPermission
-                                                                            ? 'text-muted-foreground'
-                                                                            : ''
-                                                                    }
-                                                                >
-                                                                    {
-                                                                        permission.label
-                                                                    }
-                                                                    {!hasPermission && (
-                                                                        <span className="ml-2 text-xs text-muted-foreground">
-                                                                            (Not
-                                                                            available)
-                                                                        </span>
-                                                                    )}
-                                                                </Label>
-                                                                <p className="text-sm text-muted-foreground">
-                                                                    {
-                                                                        permission.description
-                                                                    }
-                                                                </p>
-                                                            </div>
+                                                                return (
+                                                                    <div
+                                                                        key={permission.value}
+                                                                        className="flex items-center space-x-3"
+                                                                    >
+                                                                        <Checkbox
+                                                                            id={permission.value}
+                                                                            name="permissions[]"
+                                                                            value={permission.value}
+                                                                            checked={isChecked}
+                                                                            disabled={!hasPermission}
+                                                                            onCheckedChange={() =>
+                                                                                handlePermissionToggle(permission.value)
+                                                                            }
+                                                                        />
+                                                                        <Label
+                                                                            htmlFor={permission.value}
+                                                                            className={`text-sm ${
+                                                                                !hasPermission
+                                                                                    ? 'text-muted-foreground'
+                                                                                    : ''
+                                                                            }`}
+                                                                        >
+                                                                            {getPermissionDisplayLabel(permission)}
+                                                                            {!hasPermission && (
+                                                                                <span className="ml-2 text-xs text-muted-foreground">
+                                                                                    (Not available)
+                                                                                </span>
+                                                                            )}
+                                                                        </Label>
+                                                                    </div>
+                                                                );
+                                                            })}
                                                         </div>
-                                                    );
-                                                },
+                                                    </div>
+                                                ),
                                             )}
                                         </div>
 

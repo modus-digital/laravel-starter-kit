@@ -76,9 +76,11 @@ final class ApiTokenController extends Controller
         // Create the token
         $token = $user->createToken($validated['name'], $validPermissions);
 
-        return to_route('api-tokens.index')
-            ->with('token', $token->plainTextToken)
-            ->with('tokenName', $validated['name']);
+        return back()
+            ->with('data', [
+                'token' => $token->plainTextToken,
+                'tokenName' => $validated['name'],
+            ]);
     }
 
     /**
