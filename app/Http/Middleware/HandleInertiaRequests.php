@@ -50,15 +50,26 @@ final class HandleInertiaRequests extends Middleware
             ],
             'locale' => app()->getLocale(),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'canAccessControlPanel' => $request->user()?->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL) ?? false,
-            'canManageApiTokens' => $request->user()?->hasPermissionTo(Permission::HAS_API_ACCESS) ?? false,
+
+            // Manage global layout permissions
+            'permissions' => [
+                'canAccessControlPanel' => $request->user()?->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL) ?? false,
+                'canManageApiTokens' => $request->user()?->hasPermissionTo(Permission::HAS_API_ACCESS) ?? false,
+            ],
+
+            // Check if the user is impersonating another user
             'isImpersonating' => $request->session()->has('impersonation'),
+            
+            // Pass through the branding settings
             'branding' => [
                 'logo' => $branding['logo'],
                 'primaryColor' => $branding['primary_color'],
                 'secondaryColor' => $branding['secondary_color'],
                 'font' => $branding['font'],
             ],
+
+            // This is used to pass data from the controller to the view after a redirect
+            'data' => fn (): array => $request->session()->get('data', []),
         ];
     }
 }

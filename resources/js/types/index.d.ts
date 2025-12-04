@@ -29,12 +29,18 @@ export interface SharedData {
     canAccessControlPanel: boolean;
     canManageApiTokens: boolean;
     isImpersonating: boolean;
+    permissions: {
+        canAccessControlPanel: boolean;
+        canManageApiTokens: boolean;
+        [permission: string]: boolean;
+    };
     branding: {
         logo: string;
         primaryColor: string;
         secondaryColor: string;
         font: string;
     };
+    data?: Record<string, unknown>;
     [key: string]: unknown;
 }
 
