@@ -76,8 +76,8 @@ return [
         'generators' => [],
     ],
     'groups' => [
-        'default' => 'Endpoints',
-        'order' => [],
+        'default' => 'Ungrouped',
+        'order' => ['Ungrouped'],
     ],
     'logo' => false,
     'last_updated' => 'Last updated: {date:F j, Y}',
