@@ -26,21 +26,24 @@ trait ConfiguresScribeDocumentation
                 // Replace [[APP_URL]] placeholders in generated documentation files
                 $this->replaceAppUrlInGeneratedFiles($paths);
 
+
+                // Directories
                 $scribeDir = base_path('.scribe');
-                if (is_dir($scribeDir)) {
-                    // Use PHP's recursive directory removal
-                    $this->removeDirectory($scribeDir);
-                }
-
                 $docsDir = base_path('resources/views/scribe');
-                if (is_dir($docsDir)) {
-                    $this->removeDirectory($docsDir);
+                $publicDir = base_path('public/vendor/scribe');
+
+                if (
+                    !is_dir($scribeDir) || 
+                    !is_dir($docsDir) || 
+                    !is_dir($publicDir)
+                ) {
+                    return;
                 }
 
-                $publicDir = base_path('public/vendor/scribe');
-                if (is_dir($publicDir)) {
-                    $this->removeDirectory($publicDir);
-                }
+                // Use PHP's recursive directory removal
+                $this->removeDirectory($scribeDir);
+                $this->removeDirectory($docsDir);
+                $this->removeDirectory($publicDir);
             });
         }
     }
