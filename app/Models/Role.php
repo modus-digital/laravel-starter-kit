@@ -7,6 +7,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\Permission\Models\Role as SpatieRole;
 
+/**
+ * @property string|null $icon
+ * @property string|null $color
+ */
 final class Role extends SpatieRole
 {
     /**

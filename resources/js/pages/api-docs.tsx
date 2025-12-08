@@ -12,6 +12,7 @@ export default function ApiDocs() {
                     url: apiJson().url,
                     showDeveloperTools: "never",
                     hideDownloadButton: true,
+                    defaultOpenAllTags: false
                 }} />
             </div>
         </>

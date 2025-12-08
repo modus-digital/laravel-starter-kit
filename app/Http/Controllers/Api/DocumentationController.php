@@ -32,6 +32,9 @@ final class DocumentationController extends Controller
 
         // Convert YAML to JSON if needed
         $yaml = file_get_contents($file);
+        if ($yaml === false) {
+            abort(500, 'Unable to read documentation file');
+        }
         $data = Yaml::parse($yaml);
 
         return response()->json($data);

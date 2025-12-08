@@ -20,6 +20,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 final class RoleResource extends Resource
 {
@@ -36,7 +37,7 @@ final class RoleResource extends Resource
         return auth()->user()?->hasPermissionTo(Permission::READ_ROLES) ?? false;
     }
 
-    public static function canDelete($record): bool
+    public static function canDelete(Model $record): bool
     {
         // System roles cannot be deleted
         if ($record instanceof Role) {
@@ -51,12 +52,12 @@ final class RoleResource extends Resource
         return auth()->user()?->hasPermissionTo(Permission::DELETE_ROLES) ?? false;
     }
 
-    public static function canRestore($record): bool
+    public static function canRestore(Model $record): bool
     {
         return auth()->user()?->hasPermissionTo(Permission::RESTORE_ROLES) ?? false;
     }
 
-    public static function canForceDelete($record): bool
+    public static function canForceDelete(Model $record): bool
     {
         // Force delete requires delete permission and cannot be system role
         if ($record instanceof Role) {

@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Enums\RBAC\Permission;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
@@ -21,7 +22,7 @@ final class UserController extends Controller
      *
      * Get a paginated list of users with optional filtering and search capabilities.
      *
-     * @group User Management
+     * @group Admin | Users
      *
      * @authenticated
      *
@@ -59,20 +60,29 @@ final class UserController extends Controller
      *     "to": 15
      *   },
      *   "links": {
-     *     "first": "[[APP_URL]]/api/v1/users?page=1",
-     *     "last": "[[APP_URL]]/api/v1/users?page=5",
+     *     "first": "[[APP_URL]]/api/v1/admin/users?page=1",
+     *     "last": "[[APP_URL]]/api/v1/admin/users?page=5",
      *     "prev": null,
-     *     "next": "[[APP_URL]]/api/v1/users?page=2"
+     *     "next": "[[APP_URL]]/api/v1/admin/users?page=2"
      *   }
      * }
      * @response 401 {
      *   "message": "Unauthenticated."
      * }
+     * @response 403 {
+     *   "message": "Unauthorized"
+     * }
      */
-    public function index(Request $request): UserCollection
+    public function index(Request $request): JsonResponse|UserCollection
     {
-        // TODO: Add proper authorization check based on your permission system
-        // $this->authorize('viewAny', User::class);
+        $user = $request->user();
+        assert($user instanceof User);
+
+        if ($user->tokenCant(Permission::READ_USERS->value)) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 403);
+        }
 
         $query = User::query()->with(['roles']);
 
@@ -109,7 +119,7 @@ final class UserController extends Controller
      *
      * Create a new user account with the specified information and optionally assign roles.
      *
-     * @group User Management
+     * @group Admin | Users
      *
      * @authenticated
      *
@@ -137,18 +147,35 @@ final class UserController extends Controller
      *   "updated_at": "2024-01-01T00:00:00Z",
      *   "deleted_at": null
      * }
+     * @response 401 {
+     *   "message": "Unauthenticated."
+     * }
+     * @response 403 {
+     *   "message": "Unauthorized"
+     * }
      * @response 422 {
      *   "message": "The given data was invalid.",
      *   "errors": {
      *     "email": ["The email has already been taken."]
      *   }
      * }
-     * @response 401 {
-     *   "message": "Unauthenticated."
-     * }
      */
-    public function store(StoreUserRequest $request): UserResource
+    public function store(StoreUserRequest $request): JsonResponse|UserResource
     {
+        $actingUser = $request->user();
+
+        if (! $actingUser instanceof User) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        if ($actingUser->tokenCant(Permission::CREATE_USERS->value)) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 403);
+        }
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -172,7 +199,7 @@ final class UserController extends Controller
      *
      * Retrieve detailed information about a specific user by their ID.
      *
-     * @group User Management
+     * @group Admin | Users
      *
      * @authenticated
      *
@@ -193,16 +220,31 @@ final class UserController extends Controller
      *   "updated_at": "2024-01-01T00:00:00Z",
      *   "deleted_at": null
      * }
-     * @response 404 {
-     *   "message": "User not found"
-     * }
      * @response 401 {
      *   "message": "Unauthenticated."
      * }
+     * @response 403 {
+     *   "message": "Unauthorized"
+     * }
+     * @response 404 {
+     *   "message": "User not found"
+     * }
      */
-    public function show(Request $request, User $user): UserResource
+    public function show(Request $request, User $user): JsonResponse|UserResource
     {
-        // TODO: Add proper authorization check based on your permission system
+        $actingUser = $request->user();
+        if (! $actingUser instanceof User) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        if ($actingUser->tokenCant(Permission::READ_USERS->value)) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 403);
+        }
+
         // $this->authorize('view', $user);
 
         $user->load(['roles', 'permissions']);
@@ -215,7 +257,7 @@ final class UserController extends Controller
      *
      * Update an existing user's information. Only provided fields will be updated.
      *
-     * @group User Management
+     * @group Admin | Users
      *
      * @authenticated
      *
@@ -245,23 +287,36 @@ final class UserController extends Controller
      *   "updated_at": "2024-01-02T00:00:00Z",
      *   "deleted_at": null
      * }
+     * @response 401 {
+     *   "message": "Unauthenticated."
+     * }
+     * @response 403 {
+     *   "message": "Unauthorized"
+     * }
+     * @response 404 {
+     *   "message": "User not found"
+     * }
      * @response 422 {
      *   "message": "The given data was invalid.",
      *   "errors": {
      *     "email": ["The email has already been taken."]
      *   }
      * }
-     * @response 404 {
-     *   "message": "User not found"
-     * }
-     * @response 401 {
-     *   "message": "Unauthenticated."
-     * }
      */
-    public function update(UpdateUserRequest $request, User $user): UserResource
+    public function update(UpdateUserRequest $request, User $user): JsonResponse|UserResource
     {
-        // TODO: Add proper authorization check based on your permission system
-        // $this->authorize('update', $user);
+        $actingUser = $request->user();
+        if (! $actingUser instanceof User) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        if ($actingUser->tokenCant(Permission::UPDATE_USERS->value)) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 403);
+        }
 
         $updateData = [];
 
@@ -308,7 +363,7 @@ final class UserController extends Controller
      *
      * Soft delete a user account. The user can be restored later.
      *
-     * @group User Management
+     * @group Admin | Users
      *
      * @authenticated
      *
@@ -319,17 +374,30 @@ final class UserController extends Controller
      * @response 200 {
      *   "message": "User deleted successfully."
      * }
-     * @response 404 {
-     *   "message": "User not found"
-     * }
      * @response 401 {
      *   "message": "Unauthenticated."
+     * }
+     * @response 403 {
+     *   "message": "Unauthorized"
+     * }
+     * @response 404 {
+     *   "message": "User not found"
      * }
      */
     public function destroy(Request $request, User $user): JsonResponse
     {
-        // TODO: Add proper authorization check based on your permission system
-        // $this->authorize('delete', $user);
+        $actingUser = $request->user();
+        if (! $actingUser instanceof User) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        if ($actingUser->tokenCant(Permission::DELETE_USERS->value)) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 403);
+        }
 
         $user->delete();
 
@@ -343,7 +411,7 @@ final class UserController extends Controller
      *
      * Restore a previously soft deleted user account.
      *
-     * @group User Management
+     * @group Admin | Users
      *
      * @authenticated
      *
@@ -364,23 +432,36 @@ final class UserController extends Controller
      *   "updated_at": "2024-01-01T00:00:00Z",
      *   "deleted_at": null
      * }
-     * @response 404 {
-     *   "message": "User not found"
-     * }
      * @response 401 {
      *   "message": "Unauthenticated."
      * }
+     * @response 403 {
+     *   "message": "Unauthorized"
+     * }
+     * @response 404 {
+     *   "message": "User not found"
+     * }
      */
-    public function restore(Request $request, string $userId): UserResource
+    public function restore(Request $request, string $userId): JsonResponse|UserResource
     {
-        $user = User::withTrashed()->findOrFail($userId);
+        $targetUser = User::withTrashed()->findOrFail($userId);
 
-        // TODO: Add proper authorization check based on your permission system
-        // $this->authorize('restore', $user);
+        $actingUser = $request->user();
+        if (! $actingUser instanceof User) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 401);
+        }
 
-        $user->restore();
+        if ($actingUser->tokenCant(Permission::RESTORE_USERS->value)) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 403);
+        }
 
-        return new UserResource($user->load(['roles']));
+        $targetUser->restore();
+
+        return new UserResource($targetUser->load(['roles']));
     }
 
     /**
@@ -388,7 +469,7 @@ final class UserController extends Controller
      *
      * Permanently delete a user account. This action cannot be undone.
      *
-     * @group User Management
+     * @group Admin | Users
      *
      * @authenticated
      *
@@ -399,21 +480,34 @@ final class UserController extends Controller
      * @response 200 {
      *   "message": "User permanently deleted."
      * }
-     * @response 404 {
-     *   "message": "User not found"
-     * }
      * @response 401 {
      *   "message": "Unauthenticated."
+     * }
+     * @response 403 {
+     *   "message": "Unauthorized"
+     * }
+     * @response 404 {
+     *   "message": "User not found"
      * }
      */
     public function forceDelete(Request $request, string $userId): JsonResponse
     {
-        $user = User::withTrashed()->findOrFail($userId);
+        $targetUser = User::withTrashed()->findOrFail($userId);
 
-        // TODO: Add proper authorization check based on your permission system
-        // $this->authorize('forceDelete', $user);
+        $actingUser = $request->user();
+        if (! $actingUser instanceof User) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 401);
+        }
 
-        $user->forceDelete();
+        if ($actingUser->tokenCant(Permission::DELETE_USERS->value)) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 403);
+        }
+
+        $targetUser->forceDelete();
 
         return response()->json([
             'message' => 'User permanently deleted.',

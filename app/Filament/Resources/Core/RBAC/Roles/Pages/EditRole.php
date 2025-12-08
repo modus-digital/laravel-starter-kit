@@ -4,26 +4,36 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Core\RBAC\Roles\Pages;
 
+use App\Enums\RBAC\Permission;
 use App\Enums\RBAC\Role as RBACRole;
 use App\Filament\Resources\Core\RBAC\Roles\RoleResource;
 use App\Filament\Resources\Core\RBAC\Roles\Schemas\RoleForm;
+use App\Models\Role;
+use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\Facades\Activity;
 
+/**
+ * @property Role $record
+ */
 final class EditRole extends EditRecord
 {
+    /** @var array<string, mixed> */
     public array $originalData = [];
 
     protected static string $resource = RoleResource::class;
 
     protected function authorizeAccess(): void
     {
+        $user = Auth::user();
+
+        assert($user instanceof User);
+
         abort_unless(
-            auth()->user()->can('update:roles'),
+            $user->hasPermissionTo(Permission::UPDATE_ROLES),
             403,
             'You do not have permission to edit roles.'
         );
@@ -75,25 +85,27 @@ final class EditRole extends EditRecord
 
     protected function getHeaderActions(): array
     {
+        $record = $this->record;
+
         return [
             DeleteAction::make()
-                ->visible(fn (): bool => ! $this->isSystemRole($this->record))
+                ->visible(fn (): bool => ! $this->isSystemRole($record))
                 ->requiresConfirmation()
                 ->modalHeading('Delete Role')
                 ->modalDescription('Are you sure you want to delete this role? This action cannot be undone.')
                 ->modalSubmitActionLabel('Delete Role')
-                ->after(function (): void {
+                ->after(function () use ($record): void {
                     Activity::inLog('administration')
                         ->event('rbac.role.deleted')
                         ->causedBy(Auth::user())
-                        ->performedOn($this->record)
+                        ->performedOn($record)
                         ->withProperties([
                             'role' => [
-                                'id' => $this->record->id,
-                                'name' => $this->record->name,
-                                'permissions_count' => $this->record->permissions->count(),
+                                'id' => $record->id,
+                                'name' => $record->name,
+                                'permissions_count' => $record->permissions->count(),
                             ],
-                            'permissions' => $this->record->permissions->pluck('name')->toArray(),
+                            'permissions' => $record->permissions->pluck('name')->toArray(),
                         ])
                         ->log('');
                 }),
@@ -156,7 +168,7 @@ final class EditRole extends EditRecord
         $this->record->syncPermissions($permissions);
     }
 
-    private function isSystemRole(Model $record): bool
+    private function isSystemRole(Role $record): bool
     {
         return collect(RBACRole::cases())
             ->contains(fn (RBACRole $enum): bool => $enum->value === $record->name);

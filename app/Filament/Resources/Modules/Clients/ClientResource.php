@@ -20,6 +20,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 final class ClientResource extends Resource
@@ -42,22 +43,22 @@ final class ClientResource extends Resource
         return auth()->user()?->hasPermissionTo(Permission::CREATE_CLIENTS) ?? false;
     }
 
-    public static function canEdit($record): bool
+    public static function canEdit(Model $record): bool
     {
         return auth()->user()?->hasPermissionTo(Permission::UPDATE_CLIENTS) ?? false;
     }
 
-    public static function canDelete($record): bool
+    public static function canDelete(Model $record): bool
     {
         return auth()->user()?->hasPermissionTo(Permission::DELETE_CLIENTS) ?? false;
     }
 
-    public static function canRestore($record): bool
+    public static function canRestore(Model $record): bool
     {
         return auth()->user()?->hasPermissionTo(Permission::RESTORE_CLIENTS) ?? false;
     }
 
-    public static function canForceDelete($record): bool
+    public static function canForceDelete(Model $record): bool
     {
         return auth()->user()?->hasPermissionTo(Permission::DELETE_CLIENTS) ?? false;
     }

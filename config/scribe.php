@@ -77,7 +77,13 @@ return [
     ],
     'groups' => [
         'default' => 'Ungrouped',
-        'order' => ['Ungrouped'],
+        'order' => [
+            'Ungrouped',
+            'Admin | Users',
+            'Admin | Clients',
+            'Admin | RBAC',
+            'Admin | Activity Logs',
+        ],
     ],
     'logo' => false,
     'last_updated' => 'Last updated: {date:F j, Y}',

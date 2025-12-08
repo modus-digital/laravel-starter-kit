@@ -59,7 +59,7 @@ final class HandleInertiaRequests extends Middleware
 
             // Check if the user is impersonating another user
             'isImpersonating' => $request->session()->has('impersonation'),
-            
+
             // Pass through the branding settings
             'branding' => [
                 'logo' => $branding['logo'],

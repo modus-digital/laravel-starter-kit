@@ -10,18 +10,19 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 final class ActivitiesRelationManager extends RelationManager
 {
     protected static string $relationship = 'activities';
 
-    public static function canViewForRecord(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): bool
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
         /** @var \App\Models\User $ownerRecord */
         return $ownerRecord->activities()->exists();
     }
 
-    public static function getTitle(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): string
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return __('admin.activities.navigation_label');
     }

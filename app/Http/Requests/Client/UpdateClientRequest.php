@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Client;
 
 use App\Enums\ActivityStatus;
+use App\Models\Modules\Clients\Client;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -27,7 +28,8 @@ final class UpdateClientRequest extends FormRequest
      */
     public function rules(): array
     {
-        $clientId = $this->route('client')?->id ?? $this->route('client');
+        $clientRouteParam = $this->route('client');
+        $clientId = $clientRouteParam instanceof Client ? $clientRouteParam->id : $clientRouteParam;
 
         return [
             'name' => ['sometimes', 'string', 'max:255', Rule::unique('clients')->ignore($clientId)],

@@ -43,6 +43,7 @@ final class RolesAndPermissionsSeeder extends Seeder
         $adminRole = Role::where('name', RoleEnum::ADMIN->value)->first();
         $adminRole->syncPermissions([
             PermissionEnum::ACCESS_CONTROL_PANEL->value,
+            PermissionEnum::ACCESS_ACTIVITY_LOGS->value,
             PermissionEnum::IMPERSONATE_USERS->value,
             PermissionEnum::MANAGE_SETTINGS->value,
             PermissionEnum::CREATE_USERS->value,

@@ -26,16 +26,15 @@ trait ConfiguresScribeDocumentation
                 // Replace [[APP_URL]] placeholders in generated documentation files
                 $this->replaceAppUrlInGeneratedFiles($paths);
 
-
                 // Directories
                 $scribeDir = base_path('.scribe');
                 $docsDir = base_path('resources/views/scribe');
                 $publicDir = base_path('public/vendor/scribe');
 
                 if (
-                    !is_dir($scribeDir) || 
-                    !is_dir($docsDir) || 
-                    !is_dir($publicDir)
+                    ! is_dir($scribeDir) ||
+                    ! is_dir($docsDir) ||
+                    ! is_dir($publicDir)
                 ) {
                     return;
                 }
@@ -50,6 +49,8 @@ trait ConfiguresScribeDocumentation
 
     /**
      * Replace [[APP_URL]] placeholders in generated documentation files.
+     *
+     * @param  array<int, string>  $paths
      */
     private function replaceAppUrlInGeneratedFiles(array $paths): void
     {
@@ -57,7 +58,7 @@ trait ConfiguresScribeDocumentation
 
         // Process each generated file path
         foreach ($paths as $path) {
-            if (is_string($path) && file_exists($path)) {
+            if (file_exists($path)) {
                 if (is_dir($path)) {
                     // Handle directories (like js, css, images)
                     $this->processDirectory($path, $appUrl);

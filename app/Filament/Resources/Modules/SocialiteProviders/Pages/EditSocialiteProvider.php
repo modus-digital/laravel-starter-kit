@@ -5,16 +5,21 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Modules\SocialiteProviders\Pages;
 
 use App\Filament\Resources\Modules\SocialiteProviders\SocialiteProviderResource;
+use App\Models\Modules\SocialiteProvider;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\Facades\Activity as ActivityFacade;
 
+/**
+ * @property SocialiteProvider $record
+ */
 final class EditSocialiteProvider extends EditRecord
 {
     protected static string $resource = SocialiteProviderResource::class;
 
+    /** @var array<string, mixed> */
     private array $originalValues = [];
 
     protected function mutateFormDataBeforeSave(array $data): array
@@ -35,7 +40,6 @@ final class EditSocialiteProvider extends EditRecord
 
     protected function afterSave(): void
     {
-        /** @var \App\Models\Modules\SocialiteProvider $record */
         $record = $this->record;
 
         // Get the changes that were made

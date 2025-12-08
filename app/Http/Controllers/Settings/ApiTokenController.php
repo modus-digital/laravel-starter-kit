@@ -27,7 +27,7 @@ final class ApiTokenController extends Controller
             'name' => $token->name,
             'abilities' => $token->abilities,
             'last_used_at' => $token->last_used_at?->toDateTimeString(),
-            'created_at' => $token->created_at->toDateTimeString(),
+            'created_at' => $token->created_at?->toDateTimeString(),
         ]);
 
         // Get all available permissions

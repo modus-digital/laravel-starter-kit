@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Admin;
 
+use App\Enums\RBAC\Permission;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\StoreClientRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
@@ -20,7 +21,7 @@ final class ClientController extends Controller
      *
      * Get a paginated list of clients with optional filtering and search capabilities.
      *
-     * @group Client Management
+     * @group Admin | Clients
      *
      * @authenticated
      *
@@ -60,20 +61,29 @@ final class ClientController extends Controller
      *     "to": 15
      *   },
      *   "links": {
-     *     "first": "[[APP_URL]]/api/v1/clients?page=1",
-     *     "last": "[[APP_URL]]/api/v1/clients?page=5",
+     *     "first": "[[APP_URL]]/api/v1/admin/clients?page=1",
+     *     "last": "[[APP_URL]]/api/v1/admin/clients?page=5",
      *     "prev": null,
-     *     "next": "[[APP_URL]]/api/v1/clients?page=2"
+     *     "next": "[[APP_URL]]/api/v1/admin/clients?page=2"
      *   }
      * }
      * @response 401 {
      *   "message": "Unauthenticated."
      * }
+     * @response 403 {
+     *   "message": "Unauthorized"
+     * }
      */
-    public function index(Request $request): ClientCollection
+    public function index(Request $request): JsonResponse|ClientCollection
     {
-        // TODO: Add proper authorization check based on your permission system
-        // $this->authorize('viewAny', Client::class);
+        $user = $request->user();
+        assert($user instanceof \App\Models\User);
+
+        if ($user->tokenCant(Permission::READ_CLIENTS->value)) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 403);
+        }
 
         $query = Client::query();
 
@@ -110,7 +120,7 @@ final class ClientController extends Controller
      *
      * Create a new client account with the specified information.
      *
-     * @group Client Management
+     * @group Admin | Clients
      *
      * @authenticated
      *
@@ -150,9 +160,20 @@ final class ClientController extends Controller
      * @response 401 {
      *   "message": "Unauthenticated."
      * }
+     * @response 403 {
+     *   "message": "Unauthorized"
+     * }
      */
-    public function store(StoreClientRequest $request): ClientResource
+    public function store(StoreClientRequest $request): JsonResponse|ClientResource
     {
+        $user = $request->user();
+        assert($user instanceof \App\Models\User);
+
+        if ($user->tokenCant(Permission::CREATE_CLIENTS->value)) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 403);
+        }
         $client = Client::create([
             'name' => $request->name,
             'contact_name' => $request->contact_name,
@@ -173,7 +194,7 @@ final class ClientController extends Controller
      *
      * Retrieve detailed information about a specific client by their ID.
      *
-     * @group Client Management
+     * @group Admin | Clients
      *
      * @authenticated
      *
@@ -202,11 +223,20 @@ final class ClientController extends Controller
      * @response 401 {
      *   "message": "Unauthenticated."
      * }
+     * @response 403 {
+     *   "message": "Unauthorized"
+     * }
      */
-    public function show(Request $request, Client $client): ClientResource
+    public function show(Request $request, Client $client): JsonResponse|ClientResource
     {
-        // TODO: Add proper authorization check based on your permission system
-        // $this->authorize('view', $client);
+        $user = $request->user();
+        assert($user instanceof \App\Models\User);
+
+        if ($user->tokenCant(Permission::READ_CLIENTS->value)) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 403);
+        }
 
         return new ClientResource($client);
     }
@@ -216,7 +246,7 @@ final class ClientController extends Controller
      *
      * Update an existing client's information. Only provided fields will be updated.
      *
-     * @group Client Management
+     * @group Admin | Clients
      *
      * @authenticated
      *
@@ -261,11 +291,20 @@ final class ClientController extends Controller
      * @response 401 {
      *   "message": "Unauthenticated."
      * }
+     * @response 403 {
+     *   "message": "Unauthorized"
+     * }
      */
-    public function update(UpdateClientRequest $request, Client $client): ClientResource
+    public function update(UpdateClientRequest $request, Client $client): JsonResponse|ClientResource
     {
-        // TODO: Add proper authorization check based on your permission system
-        // $this->authorize('update', $client);
+        $user = $request->user();
+        assert($user instanceof \App\Models\User);
+
+        if ($user->tokenCant(Permission::UPDATE_CLIENTS->value)) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 403);
+        }
 
         $updateData = [];
 
@@ -315,7 +354,7 @@ final class ClientController extends Controller
      *
      * Soft delete a client account. The client can be restored later.
      *
-     * @group Client Management
+     * @group Admin | Clients
      *
      * @authenticated
      *
@@ -332,11 +371,20 @@ final class ClientController extends Controller
      * @response 401 {
      *   "message": "Unauthenticated."
      * }
+     * @response 403 {
+     *   "message": "Unauthorized"
+     * }
      */
     public function destroy(Request $request, Client $client): JsonResponse
     {
-        // TODO: Add proper authorization check based on your permission system
-        // $this->authorize('delete', $client);
+        $user = $request->user();
+        assert($user instanceof \App\Models\User);
+
+        if ($user->tokenCant(Permission::DELETE_CLIENTS->value)) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 403);
+        }
 
         $client->delete();
 
@@ -350,7 +398,7 @@ final class ClientController extends Controller
      *
      * Restore a previously soft deleted client account.
      *
-     * @group Client Management
+     * @group Admin | Clients
      *
      * @authenticated
      *
@@ -379,13 +427,22 @@ final class ClientController extends Controller
      * @response 401 {
      *   "message": "Unauthenticated."
      * }
+     * @response 403 {
+     *   "message": "Unauthorized"
+     * }
      */
-    public function restore(Request $request, string $clientId): ClientResource
+    public function restore(Request $request, string $clientId): JsonResponse|ClientResource
     {
         $client = Client::withTrashed()->findOrFail($clientId);
 
-        // TODO: Add proper authorization check based on your permission system
-        // $this->authorize('restore', $client);
+        $user = $request->user();
+        assert($user instanceof \App\Models\User);
+
+        if ($user->tokenCant(Permission::RESTORE_CLIENTS->value)) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 403);
+        }
 
         $client->restore();
 
@@ -397,7 +454,7 @@ final class ClientController extends Controller
      *
      * Permanently delete a client account. This action cannot be undone.
      *
-     * @group Client Management
+     * @group Admin | Clients
      *
      * @authenticated
      *
@@ -414,13 +471,22 @@ final class ClientController extends Controller
      * @response 401 {
      *   "message": "Unauthenticated."
      * }
+     * @response 403 {
+     *   "message": "Unauthorized"
+     * }
      */
     public function forceDelete(Request $request, string $clientId): JsonResponse
     {
         $client = Client::withTrashed()->findOrFail($clientId);
 
-        // TODO: Add proper authorization check based on your permission system
-        // $this->authorize('forceDelete', $client);
+        $user = $request->user();
+        assert($user instanceof \App\Models\User);
+
+        if ($user->tokenCant(Permission::DELETE_CLIENTS->value)) {
+            return response()->json([
+                'message' => 'Unauthorized',
+            ], 403);
+        }
 
         $client->forceDelete();
 

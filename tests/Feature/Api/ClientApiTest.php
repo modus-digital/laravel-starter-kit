@@ -14,7 +14,7 @@ it('can list clients', function () {
     $user = User::factory()->create();
     $token = $user->createToken('test-token')->plainTextToken;
 
-    $response = $this->withToken($token)->getJson('/api/v1/clients');
+    $response = $this->withToken($token)->getJson('/api/v1/admin/clients');
 
     $response->assertSuccessful()
         ->assertJsonStructure([
@@ -68,7 +68,7 @@ it('can create a client', function () {
         'status' => 'active',
     ];
 
-    $response = $this->withToken($token)->postJson('/api/v1/clients', $clientData);
+    $response = $this->withToken($token)->postJson('/api/v1/admin/clients', $clientData);
 
     $response->assertCreated()
         ->assertJsonStructure([
@@ -98,7 +98,7 @@ it('can show a client', function () {
     $user = User::factory()->create();
     $token = $user->createToken('test-token')->plainTextToken;
 
-    $response = $this->withToken($token)->getJson("/api/v1/clients/{$client->id}");
+    $response = $this->withToken($token)->getJson("/api/v1/admin/clients/{$client->id}");
 
     $response->assertSuccessful()
         ->assertJsonStructure([
@@ -138,7 +138,7 @@ it('can update a client', function () {
         'contact_email' => 'jane@updated.com',
     ];
 
-    $response = $this->withToken($token)->putJson("/api/v1/clients/{$client->id}", $updatedData);
+    $response = $this->withToken($token)->putJson("/api/v1/admin/clients/{$client->id}", $updatedData);
 
     $response->assertSuccessful()
         ->assertJsonStructure([
@@ -173,7 +173,7 @@ it('can delete a client', function () {
     $user = User::factory()->create();
     $token = $user->createToken('test-token')->plainTextToken;
 
-    $response = $this->withToken($token)->deleteJson("/api/v1/clients/{$client->id}");
+    $response = $this->withToken($token)->deleteJson("/api/v1/admin/clients/{$client->id}");
 
     $response->assertSuccessful()
         ->assertJson([
@@ -192,7 +192,7 @@ it('can restore a deleted client', function () {
     $user = User::factory()->create();
     $token = $user->createToken('test-token')->plainTextToken;
 
-    $response = $this->withToken($token)->patchJson("/api/v1/clients/{$client->id}/restore");
+    $response = $this->withToken($token)->patchJson("/api/v1/admin/clients/{$client->id}/restore");
 
     $response->assertSuccessful()
         ->assertJsonStructure([
@@ -226,7 +226,7 @@ it('can permanently delete a client', function () {
     $user = User::factory()->create();
     $token = $user->createToken('test-token')->plainTextToken;
 
-    $response = $this->withToken($token)->deleteJson("/api/v1/clients/{$client->id}/force-delete");
+    $response = $this->withToken($token)->deleteJson("/api/v1/admin/clients/{$client->id}/force-delete");
 
     $response->assertSuccessful()
         ->assertJson([
@@ -242,7 +242,7 @@ it('validates client creation', function () {
     $user = User::factory()->create();
     $token = $user->createToken('test-token')->plainTextToken;
 
-    $response = $this->withToken($token)->postJson('/api/v1/clients', []);
+    $response = $this->withToken($token)->postJson('/api/v1/admin/clients', []);
 
     $response->assertUnprocessable()
         ->assertJsonValidationErrors(['name', 'status']);
@@ -255,7 +255,7 @@ it('validates client update', function () {
     $user = User::factory()->create();
     $token = $user->createToken('test-token')->plainTextToken;
 
-    $response = $this->withToken($token)->putJson("/api/v1/clients/{$client->id}", [
+    $response = $this->withToken($token)->putJson("/api/v1/admin/clients/{$client->id}", [
         'name' => 'Existing Client', // Duplicate name
     ]);
 
@@ -264,7 +264,7 @@ it('validates client update', function () {
 });
 
 it('requires authentication', function () {
-    $response = $this->getJson('/api/v1/clients');
+    $response = $this->getJson('/api/v1/admin/clients');
 
     $response->assertUnauthorized();
 });

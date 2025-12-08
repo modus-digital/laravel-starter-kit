@@ -64,6 +64,7 @@ trait FiltersModuleTranslations
                 'navigation' => data_forget($translations, "labels.$module"),
                 'admin' => data_forget($translations, $module),
                 'activity' => data_forget($translations, "activity.$module"),
+                default => null,
             };
 
             // Additional or overridden keys from the lookup table.

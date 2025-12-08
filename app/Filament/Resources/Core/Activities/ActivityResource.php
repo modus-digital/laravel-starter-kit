@@ -11,6 +11,7 @@ use App\Models\Activity;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 final class ActivityResource extends Resource
 {
@@ -33,13 +34,13 @@ final class ActivityResource extends Resource
         return false;
     }
 
-    public static function canEdit($record): bool
+    public static function canEdit(Model $record): bool
     {
         // Activities are read-only
         return false;
     }
 
-    public static function canDelete($record): bool
+    public static function canDelete(Model $record): bool
     {
         // Activities should not be deleted manually
         return false;

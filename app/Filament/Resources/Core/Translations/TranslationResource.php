@@ -13,6 +13,7 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 final class TranslationResource extends Resource
 {
@@ -32,12 +33,12 @@ final class TranslationResource extends Resource
         return auth()->user()?->hasPermissionTo(Permission::MANAGE_SETTINGS) ?? false;
     }
 
-    public static function canEdit($record): bool
+    public static function canEdit(Model $record): bool
     {
         return auth()->user()?->hasPermissionTo(Permission::MANAGE_SETTINGS) ?? false;
     }
 
-    public static function canDelete($record): bool
+    public static function canDelete(Model $record): bool
     {
         return auth()->user()?->hasPermissionTo(Permission::MANAGE_SETTINGS) ?? false;
     }

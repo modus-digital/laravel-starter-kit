@@ -54,10 +54,11 @@ final class MeController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         $user = $request->user();
+        assert($user instanceof \App\Models\User);
         $token = $request->bearerToken();
 
         // Get the current token details
-        $accessToken = PersonalAccessToken::findToken($token);
+        $accessToken = $token ? PersonalAccessToken::findToken($token) : null;
 
         $tokenInfo = null;
         if ($accessToken) {
@@ -68,7 +69,7 @@ final class MeController extends Controller
                 'created_at' => $accessToken->created_at,
                 'last_used_at' => $accessToken->last_used_at,
                 'expires_at' => $accessToken->expires_at,
-                'is_expired' => $accessToken->cant('*'),
+                'is_expired' => $accessToken->expires_at && $accessToken->expires_at < now(),
             ];
         }
 

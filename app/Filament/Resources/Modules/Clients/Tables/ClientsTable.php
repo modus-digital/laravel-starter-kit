@@ -57,12 +57,14 @@ final class ClientsTable
                             return 'gray';
                         }
 
-                        return match ($record->status) {
+                        /** @var ActivityStatus $status */
+                        $status = $record->status;
+
+                        return match ($status) {
                             ActivityStatus::ACTIVE => 'success',
                             ActivityStatus::INACTIVE => 'danger',
                             ActivityStatus::SUSPENDED => 'warning',
                             ActivityStatus::DELETED => 'danger',
-                            default => 'gray',
                         };
                     })
                     ->sortable()

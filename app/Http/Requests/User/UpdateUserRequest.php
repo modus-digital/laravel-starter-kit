@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\User;
 
 use App\Enums\ActivityStatus;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
@@ -28,7 +29,8 @@ final class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $userId = $this->route('user')?->id ?? $this->route('user');
+        $userRouteParam = $this->route('user');
+        $userId = $userRouteParam instanceof User ? $userRouteParam->id : $userRouteParam;
 
         return [
             'name' => ['sometimes', 'string', 'max:255'],

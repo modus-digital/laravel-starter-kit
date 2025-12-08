@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Core\Users\Pages;
 
 use App\Filament\Resources\Core\Users\UserResource;
+use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
@@ -12,10 +13,14 @@ use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\Facades\Activity;
 
+/**
+ * @property User $record
+ */
 final class EditUser extends EditRecord
 {
     protected static string $resource = UserResource::class;
 
+    /** @var array<string, mixed> */
     private array $originalValues = [];
 
     protected function mutateFormDataBeforeSave(array $data): array
@@ -37,7 +42,6 @@ final class EditUser extends EditRecord
 
     protected function afterSave(): void
     {
-        /** @var \App\Models\User $record */
         $record = $this->record;
 
         // Get the changes that were made

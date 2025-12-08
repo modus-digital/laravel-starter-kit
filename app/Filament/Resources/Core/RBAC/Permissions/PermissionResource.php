@@ -17,6 +17,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 final class PermissionResource extends Resource
 {
@@ -39,13 +40,13 @@ final class PermissionResource extends Resource
         return false;
     }
 
-    public static function canEdit($record): bool
+    public static function canEdit(Model $record): bool
     {
         // Permissions are managed via enum sync, not edited manually
         return false;
     }
 
-    public static function canDelete($record): bool
+    public static function canDelete(Model $record): bool
     {
         // Only allow deleting permissions that are NOT linked to enum
         if ($record instanceof Permission) {

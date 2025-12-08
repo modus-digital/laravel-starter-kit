@@ -227,7 +227,7 @@ test('getTranslatedDescription works for field updates with attribute changes', 
 
     $translated = $activity->getTranslatedDescription();
 
-    expect($translated)->toBe('John Doe updated name on Test User from Old Name to New Name');
+    expect($translated)->toBe('John Doe updated the name on Test User from Old Name to New Name');
 });
 
 test('getTranslatedDescription handles null old values as empty', function () {
@@ -258,5 +258,5 @@ test('getTranslatedDescription handles null old values as empty', function () {
 
     $translated = $activity->getTranslatedDescription();
 
-    expect($translated)->toBe('John Doe updated phone on Test User from empty to +1234567890');
+    expect($translated)->toBe('John Doe updated the phone on Test User from empty to +1234567890');
 });

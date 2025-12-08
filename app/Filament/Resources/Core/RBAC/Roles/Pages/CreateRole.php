@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Core\RBAC\Roles\Pages;
 
+use App\Enums\RBAC\Permission;
 use App\Filament\Resources\Core\RBAC\Roles\RoleResource;
 use App\Filament\Resources\Core\RBAC\Roles\Schemas\RoleForm;
+use App\Models\User;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\Facades\Activity;
+use Spatie\Permission\Models\Role;
 
 final class CreateRole extends CreateRecord
 {
@@ -16,8 +19,12 @@ final class CreateRole extends CreateRecord
 
     protected function authorizeAccess(): void
     {
+        $user = Auth::user();
+
+        assert($user instanceof User);
+
         abort_unless(
-            auth()->user()->can('create:roles'),
+            $user->hasPermissionTo(Permission::CREATE_ROLES),
             403,
             'You do not have permission to create roles.'
         );
@@ -48,6 +55,8 @@ final class CreateRole extends CreateRecord
 
     private function logActivity(): void
     {
+        assert($this->record instanceof Role);
+
         $permissions = $this->record->permissions->pluck('name')->toArray();
 
         Activity::inLog('administration')
@@ -67,6 +76,8 @@ final class CreateRole extends CreateRecord
 
     private function syncPermissions(): void
     {
+        assert($this->record instanceof Role);
+
         $state = $this->form->getState();
 
         $permissions = collect(RoleForm::PERMISSION_FIELDS)

@@ -12,7 +12,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Guava\IconPicker\Forms\Components\IconPicker;
-use Illuminate\Database\Eloquent\Model;
 use Spatie\Permission\Models\Role;
 
 final class RoleForm
@@ -138,12 +137,15 @@ final class RoleForm
             ]);
     }
 
-    private static function isSystemRole(Model $record): bool
+    private static function isSystemRole(Role $record): bool
     {
         return collect(RBACRole::cases())
             ->contains(fn (RBACRole $enum): bool => $enum->value === $record->name);
     }
 
+    /**
+     * @param  array<int, RBACPermission>  $permissions
+     */
     private static function makePermissionCheckboxList(string $name, array $permissions): CheckboxList
     {
         $options = self::filterAndMapPermissions($permissions);
@@ -186,6 +188,9 @@ final class RoleForm
             );
     }
 
+    /**
+     * @return array<int, RBACPermission>
+     */
     private static function getGeneralPermissionsList(): array
     {
         return [
@@ -199,6 +204,9 @@ final class RoleForm
         ];
     }
 
+    /**
+     * @return array<int, RBACPermission>
+     */
     private static function getUserPermissionsList(): array
     {
         return [
@@ -210,6 +218,9 @@ final class RoleForm
         ];
     }
 
+    /**
+     * @return array<int, RBACPermission>
+     */
     private static function getRolePermissionsList(): array
     {
         return [
@@ -221,6 +232,9 @@ final class RoleForm
         ];
     }
 
+    /**
+     * @return array<int, RBACPermission>
+     */
     private static function getApiTokenPermissionsList(): array
     {
         return [
@@ -231,6 +245,9 @@ final class RoleForm
         ];
     }
 
+    /**
+     * @return array<int, RBACPermission>
+     */
     private static function getClientPermissionsList(): array
     {
         return [
@@ -242,6 +259,9 @@ final class RoleForm
         ];
     }
 
+    /**
+     * @return array<int, RBACPermission>
+     */
     private static function getSocialitePermissionsList(): array
     {
         return [
@@ -249,6 +269,10 @@ final class RoleForm
         ];
     }
 
+    /**
+     * @param  array<int, RBACPermission>  $permissions
+     * @return array<string, string>
+     */
     private static function filterAndMapPermissions(array $permissions): array
     {
         return collect($permissions)

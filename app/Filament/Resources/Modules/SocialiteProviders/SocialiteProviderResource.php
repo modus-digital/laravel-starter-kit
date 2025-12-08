@@ -16,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 final class SocialiteProviderResource extends Resource
 {
@@ -38,12 +39,12 @@ final class SocialiteProviderResource extends Resource
         return false;
     }
 
-    public static function canEdit($record): bool
+    public static function canEdit(Model $record): bool
     {
         return auth()->user()?->hasPermissionTo(Permission::UPDATE_SOCIALITE_PROVIDERS) ?? false;
     }
 
-    public static function canDelete($record): bool
+    public static function canDelete(Model $record): bool
     {
         // Providers should not be deleted
         return false;

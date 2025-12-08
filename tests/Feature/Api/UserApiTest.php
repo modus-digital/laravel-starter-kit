@@ -40,7 +40,7 @@ it('can list users', function () {
     $user = User::factory()->create();
     $token = $user->createToken('test-token')->plainTextToken;
 
-    $response = $this->withToken($token)->getJson('/api/v1/users');
+    $response = $this->withToken($token)->getJson('/api/v1/admin/users');
 
     $response->assertSuccessful()
         ->assertJsonStructure([
@@ -72,7 +72,7 @@ it('can create a user', function () {
         'status' => 'active',
     ];
 
-    $response = $this->withToken($token)->postJson('/api/v1/users', $userData);
+    $response = $this->withToken($token)->postJson('/api/v1/admin/users', $userData);
 
     $response->assertSuccessful()
         ->assertJsonStructure([
@@ -96,7 +96,7 @@ it('can show a user', function () {
 
     $targetUser = User::factory()->create();
 
-    $response = $this->withToken($token)->getJson("/api/v1/users/{$targetUser->id}");
+    $response = $this->withToken($token)->getJson("/api/v1/admin/users/{$targetUser->id}");
 
     $response->assertSuccessful()
         ->assertJsonStructure([
@@ -120,7 +120,7 @@ it('can update a user', function () {
         'email' => 'updated@example.com',
     ];
 
-    $response = $this->withToken($token)->putJson("/api/v1/users/{$targetUser->id}", $updateData);
+    $response = $this->withToken($token)->putJson("/api/v1/admin/users/{$targetUser->id}", $updateData);
 
     $response->assertSuccessful()
         ->assertJsonStructure([
@@ -145,7 +145,7 @@ it('can delete a user', function () {
 
     $targetUser = User::factory()->create();
 
-    $response = $this->withToken($token)->deleteJson("/api/v1/users/{$targetUser->id}");
+    $response = $this->withToken($token)->deleteJson("/api/v1/admin/users/{$targetUser->id}");
 
     $response->assertSuccessful()
         ->assertJson([
@@ -162,7 +162,7 @@ it('can restore a deleted user', function () {
     $targetUser = User::factory()->create();
     $targetUser->delete();
 
-    $response = $this->withToken($token)->patchJson("/api/v1/users/{$targetUser->id}/restore");
+    $response = $this->withToken($token)->patchJson("/api/v1/admin/users/{$targetUser->id}/restore");
 
     $response->assertSuccessful()
         ->assertJsonStructure([
@@ -187,7 +187,7 @@ it('can permanently delete a user', function () {
     $targetUser = User::factory()->create();
     $targetUser->delete();
 
-    $response = $this->withToken($token)->deleteJson("/api/v1/users/{$targetUser->id}/force-delete");
+    $response = $this->withToken($token)->deleteJson("/api/v1/admin/users/{$targetUser->id}/force-delete");
 
     $response->assertSuccessful()
         ->assertJson([

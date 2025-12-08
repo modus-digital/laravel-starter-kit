@@ -31,6 +31,10 @@ final class ImpersonateAction extends Action
         $this->action(fn (?User $record) => $this->impersonate($record));
     }
 
+    /**
+     * @param  array<string>  $roles
+     * @return array<int, mixed>
+     */
     private function colorAction(?User $record, array $roles): array
     {
         /** @var User|null $currentUser */
@@ -49,14 +53,15 @@ final class ImpersonateAction extends Action
         return Color::Green;
     }
 
+    /**
+     * @param  array<string|int, string>  $roles
+     */
     private function disableAction(?User $record, array $roles): bool
     {
         /** @var User|null $currentUser */
         $currentUser = Auth::user();
-
-        if (! $currentUser || ! $record) {
-            return true;
-        }
+        assert($currentUser instanceof User);
+        assert($record instanceof User);
 
         if ($record->id === $currentUser->id) {
             return true;
@@ -66,27 +71,28 @@ final class ImpersonateAction extends Action
         }
         /** @var \Spatie\Permission\Models\Role|null $firstRole */
         $firstRole = $record->roles->first();
-        if (! $firstRole || in_array($firstRole->name, $roles)) {
+        if (! $firstRole || \in_array($firstRole->name, $roles)) {
             return true;
         }
 
         return ! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS);
     }
 
-    private function impersonate(?User $record)
+    private function impersonate(?User $record): void
     {
         /** @var User|null $currentUser */
         $currentUser = Auth::user();
 
-        if (! $currentUser || ! $record || ! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS)) {
+        assert($currentUser instanceof User);
+        assert($record instanceof User);
+
+        if (! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS)) {
             Notification::make()
                 ->title(__('admin.users.table.impersonate.error.title'))
                 ->body(__('admin.users.table.impersonate.error.body'))
                 ->color(Color::Red)
                 ->icon(Heroicon::ExclamationTriangle)
                 ->send();
-
-            return;
         }
 
         // Store impersonation data after migration
@@ -127,6 +133,7 @@ final class ImpersonateAction extends Action
             ])
             ->log('');
 
-        return redirect()->to(path: route('dashboard'));
+        // Redirect to dashboard after successful impersonation
+        $this->redirect(route('dashboard'));
     }
 }

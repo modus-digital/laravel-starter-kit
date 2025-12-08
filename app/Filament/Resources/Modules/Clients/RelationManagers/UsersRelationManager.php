@@ -29,6 +29,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Facades\Activity;
@@ -39,7 +40,7 @@ final class UsersRelationManager extends RelationManager
 
     private string $generatedPassword = '';
 
-    public static function getTitle(\Illuminate\Database\Eloquent\Model $ownerRecord, string $pageClass): string
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return __('admin.users.navigation_label');
     }
@@ -182,11 +183,7 @@ final class UsersRelationManager extends RelationManager
                                     ->required(),
                             ]),
                     ])->after(function (User $record): void {
-                        /** @var Client|null $client */
-                        $client = $this->getOwnerRecord();
-                        if (! $client instanceof Client) {
-                            return;
-                        }
+                        $client = $this->getClientOwner();
 
                         if ($this->generatedPassword !== '' && $this->generatedPassword !== '0') {
                             $record->notify(new AccountCreated(password: $this->generatedPassword));
@@ -243,8 +240,8 @@ final class UsersRelationManager extends RelationManager
                                         'email' => $record->email,
                                     ],
                                     'client' => [
-                                        'id' => $this->getOwnerRecord()->id,
-                                        'name' => $this->getOwnerRecord()->name,
+                                        'id' => $this->getClientOwner()->id,
+                                        'name' => $this->getClientOwner()->name,
                                     ],
                                 ])
                                 ->log('');
@@ -263,8 +260,8 @@ final class UsersRelationManager extends RelationManager
                                         'email' => $record->email,
                                     ],
                                     'client' => [
-                                        'id' => $this->getOwnerRecord()->id,
-                                        'name' => $this->getOwnerRecord()->name,
+                                        'id' => $this->getClientOwner()->id,
+                                        'name' => $this->getClientOwner()->name,
                                     ],
                                 ])
                                 ->log('');
@@ -279,5 +276,13 @@ final class UsersRelationManager extends RelationManager
                     RestoreBulkAction::make(),
                 ]),
             ]);
+    }
+
+    private function getClientOwner(): Client
+    {
+        $owner = $this->getOwnerRecord();
+        assert($owner instanceof Client);
+
+        return $owner;
     }
 }

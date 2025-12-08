@@ -96,12 +96,12 @@ final class ControlPanelProvider extends PanelProvider
             ])
             ->userMenuItems([
                 Action::make('settings')
-                    ->label(__('navigation.labels.update_profile'))
+                    ->label((string) __('navigation.labels.update_profile'))
                     ->url('/settings/profile')
                     ->icon(Heroicon::PencilSquare),
 
                 'logout' => fn (Action $action): Action => $action
-                    ->label(session()->has('impersonation') ? __('navigation.labels.leave_impersonation') : $action->getLabel())
+                    ->label(session()->has('impersonation') ? (string) __('navigation.labels.leave_impersonation') : $action->getLabel())
                     ->url(session()->has('impersonation') ? route('impersonate.leave') : $action->getUrl())
                     ->postToUrl(session()->has('impersonation'))
                     ->icon(session()->has('impersonation') ? Heroicon::ArrowLeftEndOnRectangle : $action->getIcon()),

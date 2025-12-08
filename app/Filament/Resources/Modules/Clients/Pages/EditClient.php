@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Modules\Clients\Pages;
 
 use App\Filament\Resources\Modules\Clients\ClientResource;
+use App\Models\Modules\Clients\Client;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
@@ -12,10 +13,14 @@ use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Activitylog\Facades\Activity;
 
+/**
+ * @property Client $record
+ */
 final class EditClient extends EditRecord
 {
     protected static string $resource = ClientResource::class;
 
+    /** @var array<string, mixed> */
     private array $originalValues = [];
 
     protected function mutateFormDataBeforeSave(array $data): array
@@ -37,7 +42,6 @@ final class EditClient extends EditRecord
 
     protected function afterSave(): void
     {
-        /** @var \App\Models\Modules\Clients\Client $record */
         $record = $this->record;
 
         // Get the changes that were made

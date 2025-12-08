@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use BackedEnum;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity as BaseActivity;
 use Throwable;
@@ -27,6 +28,9 @@ use function is_scalar;
  */
 final class Activity extends BaseActivity
 {
+    /** @use HasFactory<\Database\Factories\ActivityFactory> */
+    use HasFactory;
+
     /**
      * Get the translated description with replacements from properties.
      */
@@ -90,7 +94,7 @@ final class Activity extends BaseActivity
      * Build the array of replacements for translation.
      * Dynamically processes all properties to extract human-friendly identifiers.
      *
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     protected function buildTranslationReplacements(): array
     {
@@ -148,21 +152,23 @@ final class Activity extends BaseActivity
     /**
      * Extract a human-friendly identifier from an array.
      * Tries to find name, email, or id in order of preference.
+     *
+     * @param  array<string, mixed>  $data
      */
     protected function extractIdentifierFromArray(array $data): ?string
     {
         // Try name first (most human-readable)
-        if (isset($data['name']) && $data['name'] !== null && $data['name'] !== '') {
+        if (isset($data['name']) && $data['name'] !== '') {
             return (string) $data['name'];
         }
 
         // Try email second (useful for users)
-        if (isset($data['email']) && $data['email'] !== null && $data['email'] !== '') {
+        if (isset($data['email']) && $data['email'] !== '') {
             return (string) $data['email'];
         }
 
         // Try id as last resort
-        if (isset($data['id']) && $data['id'] !== null && $data['id'] !== '') {
+        if (isset($data['id']) && $data['id'] !== '') {
             return (string) $data['id'];
         }
 
@@ -181,7 +187,7 @@ final class Activity extends BaseActivity
             }
 
             // Otherwise, convert to JSON
-            return json_encode($value);
+            return json_encode($value) ?: '';
         }
 
         if (is_object($value)) {
@@ -192,7 +198,7 @@ final class Activity extends BaseActivity
 
             // Handle BackedEnum instances
             if ($value instanceof BackedEnum) {
-                return $value->value;
+                return (string) $value->value;
             }
 
             // For other objects, return class name

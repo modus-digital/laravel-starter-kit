@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models\Modules;
 
 use App\Enums\AuthenticationProvider;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,19 +37,19 @@ final class SocialiteProvider extends Model
     ];
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<self>
+     * @param  Builder<self>  $query
+     * @return Builder<self>
      */
-    public function scopeEnabled(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopeEnabled(Builder $query): Builder
     {
         return $query->where('is_enabled', true);
     }
 
     /**
-     * @param  \Illuminate\Database\Eloquent\Builder<self>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<self>
+     * @param  Builder<self>  $query
+     * @return Builder<self>
      */
-    public function scopeOrdered(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    public function scopeOrdered(Builder $query): Builder
     {
         return $query->orderBy('sort_order');
     }
