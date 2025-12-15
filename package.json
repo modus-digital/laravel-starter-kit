@@ -44,6 +44,7 @@
         "@radix-ui/react-toggle-group": "^1.1.11",
         "@radix-ui/react-tooltip": "^1.2.8",
         "@scalar/api-reference-react": "^0.8.6",
+        "@tanstack/react-table": "^8.21.3",
         "@types/react": "^19.2.3",
         "@types/react-dom": "^19.2.3",
         "@vitejs/plugin-react": "^5.1.1",
