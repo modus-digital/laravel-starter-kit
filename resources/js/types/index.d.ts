@@ -25,6 +25,7 @@ export interface NavItem {
 export interface SharedData {
     name: string;
     auth: Auth;
+    unreadNotificationsCount?: number;
     sidebarOpen: boolean;
     canAccessControlPanel: boolean;
     canManageApiTokens: boolean;

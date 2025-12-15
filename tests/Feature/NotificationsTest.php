@@ -6,6 +6,7 @@ use App\Enums\RBAC\Permission;
 use App\Models\User;
 use App\Notifications\SimpleDatabaseNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 
 uses(RefreshDatabase::class);
@@ -28,6 +29,18 @@ it('shows notifications for the authenticated user', function (): void {
 
     $response->assertOk()
         ->assertSee('Welcome');
+});
+
+it('shares unread notifications count with inertia views', function (): void {
+    $user = User::factory()->create();
+    $user->notify(new SimpleDatabaseNotification(title: 'New notification'));
+
+    $this->actingAs($user)
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('unreadNotificationsCount', 1)
+        );
 });
 
 it('marks notifications as read and unread', function (): void {

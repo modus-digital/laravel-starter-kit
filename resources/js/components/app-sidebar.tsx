@@ -37,11 +37,6 @@ export function AppSidebar() {
             href: ApplicationDashboard(),
             icon: LayoutGrid,
         },
-        {
-            title: 'Notifications',
-            href: NotificationsIndex().url,
-            icon: Bell,
-        },
     ];
 
     const footerNavItems: NavItem[] = [
