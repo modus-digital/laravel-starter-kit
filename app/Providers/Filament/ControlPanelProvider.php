@@ -56,6 +56,8 @@ final class ControlPanelProvider extends PanelProvider
             ->id(id: 'control')
             ->path(path: 'control')
             ->topbar(false)
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s')
             ->brandLogo(fn (): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view('filament.application-logo'))
             ->font($fontFamily)
             ->viteTheme('resources/css/filament/control/theme.css')
