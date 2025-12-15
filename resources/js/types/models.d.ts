@@ -163,3 +163,13 @@ export interface User {
   permissions?: Permission[];
 }
 
+export interface Notification {
+  id: string;
+  title: string;
+  body: string;
+  action_url?: string;
+  read_at?: string;
+  created_at: string;
+  updated_at: string;
+  deleted_at?: string;
+}

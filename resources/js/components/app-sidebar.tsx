@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { SharedData, type NavItem } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
-import { LogOut, LayoutGrid, Shield } from 'lucide-react';
+import { LogOut, LayoutGrid, Shield, Bell } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import AppLogo from './app-logo';
 
@@ -23,6 +23,7 @@ import AppLogo from './app-logo';
 import { leave as leaveImpersonation } from '@/routes/impersonate';
 import { dashboard as ApplicationDashboard } from '@/routes';
 import { dashboard as ControlPanelDashboard } from '@/routes/filament/control/pages';
+import { index as NotificationsIndex } from '@/routes/notifications';
 import { Button } from './ui/button';
 
 export function AppSidebar() {
@@ -35,6 +36,11 @@ export function AppSidebar() {
             title: t('navigation.labels.dashboard'),
             href: ApplicationDashboard(),
             icon: LayoutGrid,
+        },
+        {
+            title: 'Notifications',
+            href: NotificationsIndex().url,
+            icon: Bell,
         },
     ];
 
