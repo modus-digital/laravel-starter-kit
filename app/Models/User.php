@@ -8,6 +8,7 @@ namespace App\Models;
 use App\Enums\ActivityStatus;
 use App\Enums\RBAC\Permission;
 use App\Traits\HasClients;
+use App\Traits\HasPreferences;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -40,6 +41,7 @@ final class User extends Authenticatable implements FilamentUser
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
 
+    use HasPreferences;
     use HasRoles;
     use HasUuids;
     use Notifiable;
@@ -63,6 +65,7 @@ final class User extends Authenticatable implements FilamentUser
         'status',
         'provider',
         'email_verified_at',
+        'preferences',
     ];
 
     /**
@@ -102,6 +105,7 @@ final class User extends Authenticatable implements FilamentUser
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'status' => ActivityStatus::class,
+            'preferences' => 'array',
         ];
     }
 }

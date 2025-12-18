@@ -80,4 +80,42 @@ return [
         'documentation_path' => 'scribe/openapi.yaml',
         'documentation_url' => env('APP_URL').'/api/docs',
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Comments
+    |--------------------------------------------------------------------------
+    | If this module is enabled we are allowing comments to be used.
+    |
+    */
+    'comments' => [
+        'enabled' => true,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tasks
+    |--------------------------------------------------------------------------
+    | If this module is enabled we are allowing tasks to be used.
+    |
+    */
+    'tasks' => [
+        'enabled' => true,
+        'options' => [
+            'list' => true,
+            'kanban' => true,
+            'calendar' => true,
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Import / Export
+    |--------------------------------------------------------------------------
+    | If this module is enabled we are allowing import / export of data.
+    |
+    */
+    'import_export' => [
+        'enabled' => true,
+    ],
 ];

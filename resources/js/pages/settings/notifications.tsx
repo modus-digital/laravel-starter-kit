@@ -15,18 +15,14 @@ import SettingsLayout from '@/layouts/settings/layout';
 import { type BreadcrumbItem } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Head, router } from '@inertiajs/react';
-import { AtSign, Bell, CheckCircle, MessageSquare, Shield, UserPlus } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { useState } from 'react';
 
 type DeliveryMethod = 'none' | 'email' | 'push' | 'email_push';
 
 type NotificationPreferences = {
-    mentions: DeliveryMethod;
-    direct_messages: DeliveryMethod;
-    comments: DeliveryMethod;
-    reminders: DeliveryMethod;
     security_alerts: DeliveryMethod;
-    team_invites: DeliveryMethod;
+    comments: DeliveryMethod;
 };
 
 type NotificationsSettingsProps = {
@@ -34,12 +30,18 @@ type NotificationsSettingsProps = {
 };
 
 const defaultPreferences: NotificationPreferences = {
-    mentions: 'email_push',
-    direct_messages: 'push',
-    comments: 'email',
-    reminders: 'push',
-    security_alerts: 'email_push',
-    team_invites: 'email',
+    security_alerts: 'email',
+    comments: 'email_push',
+};
+
+const notificationLabels: Record<keyof NotificationPreferences, string> = {
+    security_alerts: 'Security alerts',
+    comments: 'Comments',
+};
+
+const notificationDescriptions: Record<keyof NotificationPreferences, string> = {
+    security_alerts: 'Get notified immediately about security-related activity on your account.',
+    comments: 'Receive updates when someone comments on your content.',
 };
 
 const deliveryOptions: { value: DeliveryMethod; label: string }[] = [
@@ -117,7 +119,7 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
     const handleSave = () => {
         setProcessing(true);
 
-        router.post('/settings/notifications', settings, {
+        router.put('/settings/notifications', settings, {
             preserveScroll: true,
             onSuccess: () => {
                 setRecentlySuccessful(true);
@@ -155,54 +157,17 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
                         <Separator />
                         <CardContent className="pt-2">
                             <div className="divide-y">
-                                <NotificationTypeItem
-                                    id="mentions"
-                                    icon={<AtSign className="size-4" />}
-                                    title="Mentions"
-                                    description="When someone mentions you in a comment or post"
-                                    value={settings.mentions}
-                                    onChange={(value) => updateSetting('mentions', value)}
-                                />
-                                <NotificationTypeItem
-                                    id="direct_messages"
-                                    icon={<MessageSquare className="size-4" />}
-                                    title="Direct messages"
-                                    description="When you receive a new direct message"
-                                    value={settings.direct_messages}
-                                    onChange={(value) => updateSetting('direct_messages', value)}
-                                />
-                                <NotificationTypeItem
-                                    id="comments"
-                                    icon={<MessageSquare className="size-4" />}
-                                    title="Comments"
-                                    description="When someone comments on your content"
-                                    value={settings.comments}
-                                    onChange={(value) => updateSetting('comments', value)}
-                                />
-                                <NotificationTypeItem
-                                    id="reminders"
-                                    icon={<CheckCircle className="size-4" />}
-                                    title="Reminders"
-                                    description="Task and event reminders you've set"
-                                    value={settings.reminders}
-                                    onChange={(value) => updateSetting('reminders', value)}
-                                />
-                                <NotificationTypeItem
-                                    id="security_alerts"
-                                    icon={<Shield className="size-4" />}
-                                    title="Security alerts"
-                                    description="Important security updates and suspicious activity"
-                                    value={settings.security_alerts}
-                                    onChange={(value) => updateSetting('security_alerts', value)}
-                                />
-                                <NotificationTypeItem
-                                    id="team_invites"
-                                    icon={<UserPlus className="size-4" />}
-                                    title="Team invites"
-                                    description="When you're invited to join a team or project"
-                                    value={settings.team_invites}
-                                    onChange={(value) => updateSetting('team_invites', value)}
-                                />
+                                {(Object.entries(defaultPreferences) as [ keyof NotificationPreferences, DeliveryMethod ][]).map(([key]) => (
+                                    <NotificationTypeItem
+                                        key={key}
+                                        id={key}
+                                        icon={<Bell className="size-5" />}
+                                        title={notificationLabels[key]}
+                                        description={notificationDescriptions[key]}
+                                        value={settings[key]}
+                                        onChange={(value) => updateSetting(key, value)}
+                                    />
+                                ))}
                             </div>
                         </CardContent>
                     </Card>

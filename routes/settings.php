@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function () {
         ->name('two-factor.show');
 
     Route::get('settings/notifications', [NotificationController::class, 'index'])->name('notifications.preferences');
+    Route::put('settings/notifications', [NotificationController::class, 'update'])->name('notifications.update');
 
     Route::middleware('can:'.App\Enums\RBAC\Permission::HAS_API_ACCESS->value)->group(function () {
         Route::get('settings/api-tokens', [App\Http\Controllers\Settings\ApiTokenController::class, 'index'])
