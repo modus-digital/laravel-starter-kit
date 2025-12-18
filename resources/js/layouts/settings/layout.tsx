@@ -9,11 +9,13 @@ import { edit as editPassword } from '@/routes/user-password';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
+import { useTranslation } from 'react-i18next';
 import { preferences as notificationsPreferences } from '@/routes/notifications';
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
     const page = usePage<SharedData>();
     const { permissions } = page.props;
+    const { t } = useTranslation();
 
     // When server-side rendering, we only render the layout on the client...
     if (typeof window === 'undefined') {
@@ -24,51 +26,51 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
 
     const sidebarNavItems: NavItem[] = [
         {
-            title: 'Profile',
+            title: t('settings.sidebar.items.profile'),
             href: edit(),
             icon: null,
-            group: 'Account',
+            group: t('settings.sidebar.groups.account'),
         },
         {
-            title: 'Password',
+            title: t('settings.sidebar.items.password'),
             href: editPassword(),
             icon: null,
-            group: 'Security',
+            group: t('settings.sidebar.groups.security'),
         },
         {
-            title: 'Two-Factor Auth',
+            title: t('settings.sidebar.items.two_factor'),
             href: show(),
             icon: null,
-            group: 'Security',
+            group: t('settings.sidebar.groups.security'),
         },
         {
-            title: 'Notifications',
+            title: t('settings.sidebar.items.notifications'),
             href: notificationsPreferences(),
             icon: null,
-            group: 'Preferences',
+            group: t('settings.sidebar.groups.preferences'),
         },
         ...(permissions.canManageApiTokens
             ? [
                   {
-                      title: 'API Tokens',
+                      title: t('settings.sidebar.items.api_tokens'),
                       href: '/settings/api-tokens',
                       icon: null,
-                      group: 'Security',
+                      group: t('settings.sidebar.groups.security'),
                   },
               ]
             : []),
         {
-            title: 'Appearance',
+            title: t('settings.sidebar.items.appearance'),
             href: editAppearance(),
             icon: null,
-            group: 'Preferences',
+            group: t('settings.sidebar.groups.preferences'),
         }
     ];
 
     const groupedSidebarNavItems = sidebarNavItems.reduce<
         Record<string, NavItem[]>
     >((groups, item) => {
-        const groupName = item.group ?? 'General';
+        const groupName = item.group ?? t('settings.sidebar.groups.general');
 
         if (!groups[groupName]) {
             groups[groupName] = [];
@@ -82,8 +84,8 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
     return (
         <div className="px-4 py-6">
             <Heading
-                title="Settings"
-                description="Manage your profile and account settings"
+                title={t('settings.sidebar.heading')}
+                description={t('settings.sidebar.description')}
             />
 
             <div className="flex flex-col lg:flex-row lg:space-x-12">

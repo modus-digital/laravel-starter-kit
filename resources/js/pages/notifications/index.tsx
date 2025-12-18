@@ -15,6 +15,7 @@ import { Head, router } from '@inertiajs/react';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 import { ArrowUpDown, CheckCircle, Clock, EllipsisVertical, Eye, Mail, Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 type NotificationItem = {
     id: string;
@@ -50,6 +51,7 @@ type NotificationsProps = {
 
 export default function Notifications({ notifications, unreadCount, activeTab }: NotificationsProps) {
     const [selectedNotifications, setSelectedNotifications] = useState<NotificationItem[]>([]);
+    const { t } = useTranslation();
 
     const openDetails = (id: string) => {
         router.visit(`/notifications/${id}`);
@@ -77,7 +79,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                             (table.getIsSomePageRowsSelected() && 'indeterminate')
                         }
                         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                        aria-label="Select all"
+                        aria-label={t('notifications.table.select_all')}
                         data-row-select
                     />
                 ),
@@ -85,7 +87,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                     <Checkbox
                         checked={row.getIsSelected()}
                         onCheckedChange={(value) => row.toggleSelected(!!value)}
-                        aria-label="Select row"
+                        aria-label={t('notifications.table.select_row')}
                         data-row-select
                     />
                 ),
@@ -94,7 +96,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
             },
             {
                 id: 'status',
-                accessorFn: (row) => (row.read_at ? 'Read' : 'Unread'),
+                accessorFn: (row) => (row.read_at ? t('notifications.status.read') : t('notifications.status.unread')),
                 header: ({ column }) => (
                     <Button
                         variant="ghost"
@@ -102,7 +104,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                         className="h-8 px-2 text-xs font-medium"
                         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
                     >
-                        <span>Status</span>
+                        <span>{t('notifications.table.status')}</span>
                         <ArrowUpDown className="ml-1 size-3.5" />
                     </Button>
                 ),
@@ -111,7 +113,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
 
                     return (
                         <Badge variant={read ? 'outline' : 'default'}>
-                            {read ? 'Read' : 'Unread'}
+                            {read ? t('notifications.status.read') : t('notifications.status.unread')}
                         </Badge>
                     );
                 },
@@ -126,14 +128,14 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                         className="h-8 px-2 text-xs font-medium"
                         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
                     >
-                        <span>Title</span>
+                        <span>{t('notifications.table.title')}</span>
                         <ArrowUpDown className="ml-1 size-3.5" />
                     </Button>
                 ),
                 cell: ({ row }) => (
                     <div className="flex items-center gap-2">
                         <span className="truncate text-sm font-medium">
-                            {row.original.title || 'Notification'}
+                            {row.original.title || t('notifications.fallback_title')}
                         </span>
                         {row.original.action_url && (
                             <a
@@ -144,7 +146,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                                 data-row-action
                                 onClick={(event) => event.stopPropagation()}
                             >
-                                Open link
+                                {t('notifications.table.open_link')}
                             </a>
                         )}
                     </div>
@@ -159,7 +161,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                         className="ml-auto flex h-8 items-center justify-end px-2 text-xs font-medium"
                         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
                     >
-                        <span className="mr-1">Date</span>
+                        <span className="mr-1">{t('notifications.table.date')}</span>
                         <ArrowUpDown className="size-3.5" />
                     </Button>
                 ),
@@ -190,7 +192,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                                         onClick={(event) => event.stopPropagation()}
                                     >
                                         <EllipsisVertical className="size-4" />
-                                        <span className="sr-only">Open notification actions</span>
+                                        <span className="sr-only">{t('notifications.actions.open_actions')}</span>
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent
@@ -205,7 +207,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                                         }}
                                     >
                                         <Eye className="size-4" />
-                                        <span>View details</span>
+                                        <span>{t('notifications.actions.view_details')}</span>
                                     </DropdownMenuItem>
                                     {!notification.read_at ? (
                                         <DropdownMenuItem
@@ -215,7 +217,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                                             }}
                                         >
                                             <CheckCircle className="size-4" />
-                                            <span>Mark as read</span>
+                                            <span>{t('notifications.actions.mark_as_read')}</span>
                                         </DropdownMenuItem>
                                     ) : (
                                         <DropdownMenuItem
@@ -225,7 +227,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                                             }}
                                         >
                                             <Mail className="size-4" />
-                                            <span>Mark as unread</span>
+                                            <span>{t('notifications.actions.mark_as_unread')}</span>
                                         </DropdownMenuItem>
                                     )}
                                     <DropdownMenuItem
@@ -236,7 +238,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                                         }}
                                     >
                                         <Trash2 className="size-4" />
-                                        <span>Delete</span>
+                                        <span>{t('notifications.actions.delete')}</span>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -291,18 +293,18 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
         <AppLayout
             breadcrumbs={[
                 {
-                    title: 'Notifications',
+                    title: t('notifications.title'),
                     href: '/notifications',
                 },
             ]}
         >
-            <Head title="Notifications" />
+            <Head title={t('notifications.page_title')} />
             <div className="mx-auto my-8 flex w-full max-w-7xl flex-col gap-4">
                 <div className="flex w-full items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <h1 className="text-xl font-semibold">Notifications</h1>
+                        <h1 className="text-xl font-semibold">{t('notifications.title')}</h1>
                         <Badge variant={unreadCount > 0 ? 'default' : 'outline'}>
-                            {unreadCount} unread
+                            {t('notifications.unread_count', { count: unreadCount })}
                         </Badge>
                     </div>
                     <div className="flex gap-2">
@@ -313,7 +315,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                             onClick={clearAll}
                         >
                             <Trash2 className="size-4" />
-                            Clear all
+                            {t('notifications.actions.clear_all')}
                         </Button>
                     </div>
                 </div>
@@ -321,9 +323,9 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                 <Card className="w-full">
                     <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div className="space-y-1">
-                            <CardTitle>Inbox</CardTitle>
+                            <CardTitle>{t('notifications.inbox.title')}</CardTitle>
                             <p className="text-sm text-muted-foreground">
-                                Stay on top of the latest activity from across your projects.
+                                {t('notifications.inbox.description')}
                             </p>
                         </div>
                         <div className="inline-flex items-center rounded-full bg-muted p-1 text-xs">
@@ -348,7 +350,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                                 >
                                     {tab === 'all' ? (
                                         <span className="flex items-center">
-                                            All
+                                                {t('notifications.tabs.all')}
                                             {unreadCount > 0 && (
                                                 <span className="ml-2 inline-flex min-w-[1.5em] items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5">
                                                     {unreadCount}
@@ -356,7 +358,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                                             )}
                                         </span>
                                     ) : (
-                                        'Read'
+                                            t('notifications.tabs.read')
                                     )}
                                 </button>
                             ))}
@@ -368,7 +370,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                             columns={columns}
                             data={notifications.data}
                             searchColumnIds={['title', 'created_at']}
-                            searchPlaceholder="Search by title or date…"
+                            searchPlaceholder={t('notifications.search_placeholder')}
                             enableRowSelection
                             onSelectionChange={setSelectedNotifications}
                             bulkActionsRender={() => (
@@ -378,21 +380,21 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                                         className="w-full px-2 py-1.5 text-left text-sm hover:bg-muted"
                                         onClick={handleBulkMarkRead}
                                     >
-                                        Mark all as read
+                                        {t('notifications.bulk.mark_all_read')}
                                     </button>
                                     <button
                                         type="button"
                                         className="w-full px-2 py-1.5 text-left text-sm hover:bg-muted"
                                         onClick={handleBulkMarkUnread}
                                     >
-                                        Mark all as unread
+                                        {t('notifications.bulk.mark_all_unread')}
                                     </button>
                                     <button
                                         type="button"
                                         className="w-full px-2 py-1.5 text-left text-sm text-destructive hover:bg-destructive/10"
                                         onClick={handleBulkClear}
                                     >
-                                        Clear all
+                                        {t('notifications.bulk.clear_all')}
                                     </button>
                                 </>
                             )}

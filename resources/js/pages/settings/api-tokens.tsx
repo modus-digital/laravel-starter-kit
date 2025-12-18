@@ -58,7 +58,7 @@ export default function ApiTokens({
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
-            title: 'API Tokens',
+            title: t('settings.api_tokens.page_title'),
             href: '/settings/api-tokens',
         },
     ];
@@ -84,18 +84,18 @@ export default function ApiTokens({
         const groups: Record<string, Permission[]> = {};
 
         permissions.forEach((permission) => {
-            let groupName = 'General';
+            let groupName = t('settings.api_tokens.groups.general');
 
             if (permission.value.includes(':users')) {
-                groupName = 'Users';
+                groupName = t('settings.api_tokens.groups.users');
             } else if (permission.value.includes(':roles')) {
-                groupName = 'Roles';
+                groupName = t('settings.api_tokens.groups.roles');
             } else if (permission.value.includes(':api-tokens')) {
-                groupName = 'API Tokens';
+                groupName = t('settings.api_tokens.groups.api_tokens');
             } else if (permission.value.includes(':clients')) {
-                groupName = 'Clients';
+                groupName = t('settings.api_tokens.groups.clients');
             } else if (permission.value.includes(':socialite-providers')) {
-                groupName = 'Socialite Providers';
+                groupName = t('settings.api_tokens.groups.socialite_providers');
             }
 
             if (!groups[groupName]) {
@@ -181,25 +181,24 @@ export default function ApiTokens({
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="API Tokens" />
+            <Head title={t('settings.api_tokens.page_title')} />
 
             <SettingsLayout>
                 <div className="space-y-6">
                     <HeadingSmall
-                        title="API Tokens"
-                        description="Manage your API tokens to access the API programmatically."
+                        title={t('settings.api_tokens.title')}
+                        description={t('settings.api_tokens.description')}
                     />
 
                     {showToken && apiToken && (
                         <Alert className="border-green-500 bg-green-50 dark:bg-green-950">
                             <Key className="h-4 w-4 text-green-600 dark:text-green-400" />
                             <AlertTitle className="text-green-800 dark:text-green-200">
-                                Token Created Successfully
+                                {t('settings.api_tokens.token_created_title')}
                             </AlertTitle>
                             <AlertDescription className="mt-2 space-y-2">
                                 <p className="text-sm text-green-700 dark:text-green-300">
-                                    Please copy your new API token. For security
-                                    reasons, it won't be shown again.
+                                    {t('settings.api_tokens.token_created_description')}
                                 </p>
                                 <div className="flex items-center gap-2">
                                     <code className="flex-1 rounded bg-green-100 px-3 py-2 text-sm text-green-900 dark:bg-green-900 dark:text-green-100">
@@ -214,12 +213,12 @@ export default function ApiTokens({
                                         {copiedToken ? (
                                             <>
                                                 <Check className="h-4 w-4" />
-                                                Copied
+                                                {t('settings.api_tokens.actions.copied')}
                                             </>
                                         ) : (
                                             <>
                                                 <Copy className="h-4 w-4" />
-                                                Copy
+                                                {t('settings.api_tokens.actions.copy')}
                                             </>
                                         )}
                                     </Button>
@@ -230,8 +229,8 @@ export default function ApiTokens({
 
                     <div className="space-y-6">
                         <HeadingSmall
-                            title="Create New Token"
-                            description="Generate a new API token with specific permissions."
+                            title={t('settings.api_tokens.create_title')}
+                            description={t('settings.api_tokens.create_description')}
                         />
 
                         <Form
@@ -247,12 +246,12 @@ export default function ApiTokens({
                                 <>
                                     <div className="grid gap-2">
                                         <Label htmlFor="name">
-                                            Token Name
+                                            {t('settings.api_tokens.form.name')}
                                         </Label>
                                         <Input
                                             id="name"
                                             name="name"
-                                            placeholder="e.g., Mobile App Token"
+                                            placeholder={t('settings.api_tokens.form.name_placeholder')}
                                             required
                                         />
                                         <InputError
@@ -262,12 +261,9 @@ export default function ApiTokens({
                                     </div>
 
                                     <div className="grid gap-4">
-                                        <Label>Permissions</Label>
+                                        <Label>{t('settings.api_tokens.form.permissions')}</Label>
                                         <p className="text-sm text-muted-foreground">
-                                            Select the permissions this token
-                                            should have. You can only assign
-                                            permissions that you currently
-                                            possess.
+                                            {t('settings.api_tokens.form.permissions_helper')}
                                         </p>
 
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -317,7 +313,7 @@ export default function ApiTokens({
                                                                             {getPermissionDisplayLabel(permission)}
                                                                             {!hasPermission && (
                                                                                 <span className="ml-2 text-xs text-muted-foreground">
-                                                                                    (Not available)
+                                                                                    {t('settings.api_tokens.permissions.not_available')}
                                                                                 </span>
                                                                             )}
                                                                         </Label>
@@ -343,7 +339,7 @@ export default function ApiTokens({
                                             selectedPermissions.length === 0
                                         }
                                     >
-                                        Create Token
+                                        {t('common.actions.save')}
                                     </Button>
                                 </>
                             )}
@@ -352,18 +348,18 @@ export default function ApiTokens({
 
                     <div className="space-y-6">
                         <HeadingSmall
-                            title="Existing Tokens"
-                            description="View and manage your existing API tokens."
+                            title={t('settings.api_tokens.existing_title')}
+                            description={t('settings.api_tokens.existing_description')}
                         />
 
                         {tokens.length === 0 ? (
                             <div className="rounded-lg border border-dashed p-8 text-center">
                                 <Key className="mx-auto h-12 w-12 text-muted-foreground" />
                                 <h3 className="mt-4 text-lg font-semibold">
-                                    No API tokens yet
+                                    {t('settings.api_tokens.empty.title')}
                                 </h3>
                                 <p className="mt-2 text-sm text-muted-foreground">
-                                    Create your first API token to get started.
+                                    {t('settings.api_tokens.empty.description')}
                                 </p>
                             </div>
                         ) : (
@@ -371,12 +367,12 @@ export default function ApiTokens({
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>Name</TableHead>
-                                            <TableHead>Permissions</TableHead>
-                                            <TableHead>Last Used</TableHead>
-                                            <TableHead>Created</TableHead>
+                                            <TableHead>{t('settings.api_tokens.table.name')}</TableHead>
+                                            <TableHead>{t('settings.api_tokens.table.permissions')}</TableHead>
+                                            <TableHead>{t('settings.api_tokens.table.last_used')}</TableHead>
+                                            <TableHead>{t('settings.api_tokens.table.created')}</TableHead>
                                             <TableHead className="w-[100px]">
-                                                Actions
+                                                {t('settings.api_tokens.table.actions')}
                                             </TableHead>
                                         </TableRow>
                                     </TableHeader>
@@ -413,17 +409,17 @@ export default function ApiTokens({
                                                     </div>
                                                 </TableCell>
                                                 <TableCell>
-                                                    {token.last_used_at ? (
-                                                        <span className="text-sm">
-                                                            {new Date(
-                                                                token.last_used_at,
-                                                            ).toLocaleDateString()}
-                                                        </span>
-                                                    ) : (
-                                                        <span className="text-sm text-muted-foreground">
-                                                            Never
-                                                        </span>
-                                                    )}
+                                        {token.last_used_at ? (
+                                            <span className="text-sm">
+                                                {new Date(
+                                                    token.last_used_at,
+                                                ).toLocaleDateString()}
+                                            </span>
+                                        ) : (
+                                            <span className="text-sm text-muted-foreground">
+                                                {t('settings.api_tokens.table.never')}
+                                            </span>
+                                        )}
                                                 </TableCell>
                                                 <TableCell>
                                                     <span className="text-sm">

@@ -50,8 +50,8 @@ final class NotificationController extends Controller
 
         return back()->with('data', [
             'toast' => [
-                'title' => 'Saved',
-                'description' => 'Your notification preferences have been updated.',
+                'title' => __('settings.notifications.saved_title'),
+                'description' => __('settings.notifications.saved_description'),
                 'type' => 'success',
             ],
         ]);

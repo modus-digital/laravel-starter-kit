@@ -18,6 +18,7 @@ import { Head, router } from '@inertiajs/react';
 import { Bell } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 type DeliveryMethod = 'none' | 'email' | 'push' | 'email_push';
 
@@ -36,29 +37,23 @@ const defaultPreferences: NotificationPreferences = {
 };
 
 const notificationLabels: Record<keyof NotificationPreferences, string> = {
-    security_alerts: 'Security alerts',
-    comments: 'Comments',
+    security_alerts: 'settings.notifications.security_alerts.label',
+    comments: 'settings.notifications.comments.label',
 };
 
 const notificationDescriptions: Record<keyof NotificationPreferences, string> = {
-    security_alerts: 'Get notified immediately about security-related activity on your account.',
-    comments: 'Receive updates when someone comments on your content.',
+    security_alerts: 'settings.notifications.security_alerts.description',
+    comments: 'settings.notifications.comments.description',
 };
 
 const deliveryOptions: { value: DeliveryMethod; label: string }[] = [
-    { value: 'none', label: 'None' },
-    { value: 'email', label: 'Email only' },
-    { value: 'push', label: 'Push only' },
-    { value: 'email_push', label: 'Email + Push' },
+    { value: 'none', label: 'settings.notifications.delivery.none' },
+    { value: 'email', label: 'settings.notifications.delivery.email' },
+    { value: 'push', label: 'settings.notifications.delivery.push' },
+    { value: 'email_push', label: 'settings.notifications.delivery.email_push' },
 ];
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Notification Preferences',
-        href: '/settings/notifications',
-    },
-];
-
+const breadcrumbs: BreadcrumbItem[] = [];
 type NotificationTypeItemProps = {
     id: keyof NotificationPreferences;
     icon: React.ReactNode;
@@ -76,6 +71,8 @@ function NotificationTypeItem({
     value,
     onChange,
 }: NotificationTypeItemProps) {
+    const { t } = useTranslation();
+
     return (
         <div className="flex items-center gap-4 py-4">
             <div className="flex min-w-0 flex-1 items-start gap-3">
@@ -96,7 +93,7 @@ function NotificationTypeItem({
                 <SelectContent>
                     {deliveryOptions.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
-                            {option.label}
+                            {t(option.label as never)}
                         </SelectItem>
                     ))}
                 </SelectContent>
@@ -106,6 +103,16 @@ function NotificationTypeItem({
 }
 
 export default function NotificationsSettings({ preferences }: NotificationsSettingsProps) {
+    const { t } = useTranslation();
+    const translate = (key: string) => t(key as never);
+
+    const translatedBreadcrumbs: BreadcrumbItem[] = [
+        {
+            title: translate('settings.notifications.title'),
+            href: '/settings/notifications',
+        },
+    ];
+
     const [settings, setSettings] = useState<NotificationPreferences>({
         ...defaultPreferences,
         ...preferences,
@@ -144,14 +151,14 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
     };
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Notification Preferences" />
+        <AppLayout breadcrumbs={translatedBreadcrumbs}>
+            <Head title={translate('settings.notifications.page_title')} />
 
             <SettingsLayout>
                 <div className="space-y-6">
                     <HeadingSmall
-                        title="Notification Preferences"
-                        description="Choose how you want to be notified for each type of activity"
+                        title={translate('settings.notifications.title')}
+                        description={translate('settings.notifications.subtitle')}
                     />
 
                     <Card>
@@ -161,9 +168,9 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
                                     <Bell className="size-5" />
                                 </div>
                                 <div>
-                                    <CardTitle className="text-base">Notification Types</CardTitle>
+                                    <CardTitle className="text-base">{translate('settings.notifications.card_title')}</CardTitle>
                                     <CardDescription>
-                                        Select how you want to receive each type of notification
+                                        {translate('settings.notifications.card_description')}
                                     </CardDescription>
                                 </div>
                             </div>
@@ -176,8 +183,8 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
                                         key={key}
                                         id={key}
                                         icon={<Bell className="size-5" />}
-                                        title={notificationLabels[key]}
-                                        description={notificationDescriptions[key]}
+                                        title={translate(notificationLabels[key])}
+                                        description={translate(notificationDescriptions[key])}
                                         value={settings[key]}
                                         onChange={(value) => updateSetting(key, value)}
                                     />
@@ -189,7 +196,7 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
                     {/* Save Button */}
                     <div className="flex items-center gap-4">
                         <Button onClick={handleSave} disabled={processing}>
-                            {processing ? 'Saving...' : 'Save preferences'}
+                            {processing ? translate('common.saving') : translate('settings.notifications.save')}
                         </Button>
 
                         <Transition
@@ -199,7 +206,7 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
                             leave="transition ease-in-out"
                             leaveTo="opacity-0"
                         >
-                            <p className="text-sm text-neutral-600">Saved.</p>
+                            <p className="text-sm text-neutral-600">{translate('common.saved')}</p>
                         </Transition>
                     </div>
                 </div>

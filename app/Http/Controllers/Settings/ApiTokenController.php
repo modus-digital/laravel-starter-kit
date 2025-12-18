@@ -69,7 +69,7 @@ final class ApiTokenController extends Controller
 
         if ($validPermissions === []) {
             throw ValidationException::withMessages([
-                'permissions' => 'You must select at least one permission that you have access to.',
+                'permissions' => __('settings.api_tokens.validation.permissions_required'),
             ]);
         }
 

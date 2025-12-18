@@ -3,6 +3,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { cn } from '@/lib/utils';
 import { redirect } from '@/routes/oauth';
 import { SocialiteProvider } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 import GithubIcon from '@assets/images/github_icon.svg';
 import GoogleIcon from '@assets/images/google_icon.svg';
@@ -24,6 +25,7 @@ export default function SocialAuthButtons({ providers }: SocialAuthButtonsProps)
     }
 
     const isMultiple = providers.length > 1;
+    const { t } = useTranslation();
 
     return (
         <TooltipProvider>
@@ -49,7 +51,7 @@ export default function SocialAuthButtons({ providers }: SocialAuthButtonsProps)
                                 />
                                 {!isMultiple && (
                                     <span className="ml-2">
-                                        Login with {providerName}
+                                        {t('auth.social.login_with', { provider: providerName })}
                                     </span>
                                 )}
                             </a>
@@ -66,7 +68,7 @@ export default function SocialAuthButtons({ providers }: SocialAuthButtonsProps)
                                 {button}
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>Login with {providerName}</p>
+                                <p>{t('auth.social.login_with', { provider: providerName })}</p>
                             </TooltipContent>
                         </Tooltip>
                     );
