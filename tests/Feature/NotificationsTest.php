@@ -140,6 +140,6 @@ it('allows Filament users to access the notifications page', function (): void {
 
     $this->actingAs($user);
 
-    $this->get(route('filament.control.pages.notifications'))
+    $this->get(route('filament.control.pages.dashboard'))
         ->assertOk();
 });

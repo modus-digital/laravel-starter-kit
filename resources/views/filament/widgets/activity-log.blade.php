@@ -79,14 +79,14 @@
 
         {{-- Sidebar --}}
         <div x-data="{ open: @entangle('selectedActivityId').live }" x-show="open !== null" x-cloak
-            x-on:keydown.escape.window="@this.closeActivityModal()" class="fixed inset-0 z-50 overflow-hidden"
+            x-on:keydown.escape.window="$wire.closeActivityModal()" class="fixed inset-0 z-50 overflow-hidden"
             style="display: none;">
             {{-- Backdrop --}}
             <div x-show="open !== null" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200"
                 x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
                 class="fixed inset-0 bg-gray-900/50 dark:bg-gray-900/75 transition-opacity"
-                x-on:click="@this.closeActivityModal()"></div>
+                x-on:click="$wire.closeActivityModal()"></div>
 
             {{-- Sidebar Panel --}}
             <div class="fixed inset-y-0 right-0 flex max-w-full pl-10">
@@ -107,7 +107,7 @@
                                     {{ __('admin.widgets.activity_log.modal.description') }}
                                 </p>
                             </div>
-                            <button type="button" x-on:click="@this.closeActivityModal()"
+                            <button type="button" x-on:click="$wire.closeActivityModal()"
                                 class="rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
                                 <span class="sr-only">{{ __('admin.widgets.activity_log.modal.close') }}</span>
                                 <x-filament::icon icon="heroicon-o-x-mark" class="h-6 w-6" />
@@ -306,7 +306,7 @@
 
                         {{-- Footer --}}
                         <div class="border-t border-gray-200 dark:border-gray-700 px-6 py-4">
-                            <x-filament::button x-on:click="@this.closeActivityModal()" color="gray">
+                            <x-filament::button x-on:click="$wire.closeActivityModal()" color="gray">
                                 {{ __('admin.widgets.activity_log.modal.close') }}
                             </x-filament::button>
                         </div>
