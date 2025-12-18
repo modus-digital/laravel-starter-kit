@@ -9,8 +9,7 @@ import { edit as editPassword } from '@/routes/user-password';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
-
-
+import { preferences as notificationsPreferences } from '@/routes/notifications';
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
     const page = usePage<SharedData>();
@@ -39,6 +38,11 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
             href: show(),
             icon: null,
         },
+        {
+            title: 'Notifications',
+            href: notificationsPreferences(),
+            icon: null,
+        },
         ...(permissions.canManageApiTokens
             ? [
                   {
@@ -52,7 +56,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
             title: 'Appearance',
             href: editAppearance(),
             icon: null,
-        },
+        }
     ];
 
     return (
@@ -91,8 +95,14 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
 
                 <Separator className="my-6 lg:hidden" />
 
-                <div className="flex-1 md:max-w-4xl">
-                    <section className="max-w-xl space-y-12">
+                <div className={cn(
+                    "flex-1",
+                    currentPath === "/settings/notifications" ? "w-full" : "md:max-w-4xl"
+                )}>
+                    <section className={cn(
+                        "space-y-12",
+                        currentPath === "/settings/notifications" ? "max-w-6xl" : "max-w-xl"
+                    )}>
                         {children}
                     </section>
                 </div>
