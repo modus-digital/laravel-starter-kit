@@ -32,7 +32,11 @@ trait HasPreferences
 
     public function setPreference(string $key, mixed $value): static
     {
-        $preferences = $this->preferences ?? [];
+        $preferences = array_replace_recursive(
+            static::defaultPreferences(),
+            $this->preferences ?? [],
+        );
+
         data_set($preferences, $key, $value);
 
         $this->preferences = $preferences;

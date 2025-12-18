@@ -119,7 +119,7 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
     const handleSave = () => {
         setProcessing(true);
 
-        router.put('/settings/notifications', settings, {
+        router.put('/settings/notifications', { notifications: settings }, {
             preserveScroll: true,
             onSuccess: () => {
                 setRecentlySuccessful(true);

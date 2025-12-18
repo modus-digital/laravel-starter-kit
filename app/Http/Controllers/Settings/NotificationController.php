@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\UpdateNotificationSettingsRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,17 +16,37 @@ final class NotificationController extends Controller
 {
     public function index(Request $request): Response
     {
-        return Inertia::render('settings/notifications');
+        /** @var User $user */
+        $user = $request->user();
+
+        $defaultPreferences = $user::defaultPreferences()['notifications'] ?? [];
+
+        $notificationsPreferences = (array) $user->getPreference(
+            key: 'notifications',
+            default: [],
+        );
+
+        $preferences = array_replace(
+            $defaultPreferences,
+            $notificationsPreferences,
+        );
+
+        return Inertia::render('settings/notifications', [
+            'preferences' => $preferences,
+        ]);
     }
 
     public function update(UpdateNotificationSettingsRequest $request): RedirectResponse
     {
-        $request
-            ->user()
+        /** @var User $user */
+        $user = $request->user();
+
+        $user
             ->setPreference(
                 key: 'notifications',
-                value: $request->input('notifications')
-            );
+                value: $request->input('notifications'),
+            )
+            ->save();
 
         return back()->with('success', 'Notifications updated successfully');
     }
