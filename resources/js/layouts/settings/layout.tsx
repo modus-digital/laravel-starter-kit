@@ -95,14 +95,8 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
 
                 <Separator className="my-6 lg:hidden" />
 
-                <div className={cn(
-                    "flex-1",
-                    currentPath === "/settings/notifications" ? "w-full" : "md:max-w-4xl"
-                )}>
-                    <section className={cn(
-                        "space-y-12",
-                        currentPath === "/settings/notifications" ? "max-w-6xl" : "max-w-xl"
-                    )}>
+                <div className="flex-1 md:max-w-4xl">
+                    <section className="max-w-xl space-y-12">
                         {children}
                     </section>
                 </div>

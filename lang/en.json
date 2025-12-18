@@ -411,7 +411,8 @@
             "admin_panel": "Admin Panel",
             "leave_impersonation": "Leave Impersonation",
             "currently_viewing_as": "You are currently impersonating",
-            "update_profile": "Update Profile"
+            "update_profile": "Update Profile",
+            "notifications": "Notifications"
         }
     },
     "admin": {

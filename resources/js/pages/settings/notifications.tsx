@@ -2,43 +2,52 @@ import HeadingSmall from '@/components/heading-small';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { Switch } from '@/components/ui/switch';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { type BreadcrumbItem } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Head, router } from '@inertiajs/react';
-import { Bell, Mail, MessageSquare, Shield, Sparkles, TrendingUp, Zap } from 'lucide-react';
+import { AtSign, Bell, CheckCircle, MessageSquare, Shield, UserPlus } from 'lucide-react';
 import { useState } from 'react';
 
+type DeliveryMethod = 'none' | 'email' | 'push' | 'email_push';
+
 type NotificationPreferences = {
-    // Email notifications
-    email_marketing: boolean;
-    email_security: boolean;
-    email_product_updates: boolean;
-    email_weekly_digest: boolean;
-    // Push notifications
-    push_mentions: boolean;
-    push_direct_messages: boolean;
-    push_comments: boolean;
-    push_reminders: boolean;
+    mentions: DeliveryMethod;
+    direct_messages: DeliveryMethod;
+    comments: DeliveryMethod;
+    reminders: DeliveryMethod;
+    security_alerts: DeliveryMethod;
+    team_invites: DeliveryMethod;
 };
 
 type NotificationsSettingsProps = {
-    preferences?: NotificationPreferences;
+    preferences?: Partial<NotificationPreferences>;
 };
 
 const defaultPreferences: NotificationPreferences = {
-    email_marketing: false,
-    email_security: true,
-    email_product_updates: true,
-    email_weekly_digest: false,
-    push_mentions: true,
-    push_direct_messages: true,
-    push_comments: true,
-    push_reminders: false,
+    mentions: 'email_push',
+    direct_messages: 'push',
+    comments: 'email',
+    reminders: 'push',
+    security_alerts: 'email_push',
+    team_invites: 'email',
 };
+
+const deliveryOptions: { value: DeliveryMethod; label: string }[] = [
+    { value: 'none', label: 'None' },
+    { value: 'email', label: 'Email only' },
+    { value: 'push', label: 'Push only' },
+    { value: 'email_push', label: 'Email + Push' },
+];
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -47,30 +56,48 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-type PreferenceItemProps = {
-    id: string;
+type NotificationTypeItemProps = {
+    id: keyof NotificationPreferences;
     icon: React.ReactNode;
     title: string;
     description: string;
-    checked: boolean;
-    onCheckedChange: (checked: boolean) => void;
+    value: DeliveryMethod;
+    onChange: (value: DeliveryMethod) => void;
 };
 
-function PreferenceItem({ id, icon, title, description, checked, onCheckedChange }: PreferenceItemProps) {
+function NotificationTypeItem({
+    id,
+    icon,
+    title,
+    description,
+    value,
+    onChange,
+}: NotificationTypeItemProps) {
     return (
-        <div className="flex items-start justify-between gap-4 py-3">
-            <div className="flex items-start gap-3">
-                <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+        <div className="flex items-center gap-4 py-4">
+            <div className="flex min-w-0 flex-1 items-start gap-3">
+                <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
                     {icon}
                 </div>
-                <div className="space-y-0.5">
-                    <Label htmlFor={id} className="cursor-pointer text-sm font-medium leading-none">
+                <div className="min-w-0 flex-1 space-y-0.5">
+                    <Label htmlFor={id} className="text-sm font-medium leading-none">
                         {title}
                     </Label>
-                    <p className="text-sm text-muted-foreground">{description}</p>
+                    <p className="line-clamp-2 text-sm text-muted-foreground">{description}</p>
                 </div>
             </div>
-            <Switch id={id} checked={checked} onCheckedChange={onCheckedChange} />
+            <Select value={value} onValueChange={(v) => onChange(v as DeliveryMethod)}>
+                <SelectTrigger id={id} className="w-36 shrink-0">
+                    <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                    {deliveryOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
         </div>
     );
 }
@@ -83,26 +110,21 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
     const [processing, setProcessing] = useState(false);
     const [recentlySuccessful, setRecentlySuccessful] = useState(false);
 
-    const updateSetting = <K extends keyof NotificationPreferences>(key: K, value: boolean) => {
+    const updateSetting = (key: keyof NotificationPreferences, value: DeliveryMethod) => {
         setSettings((prev) => ({ ...prev, [key]: value }));
     };
 
     const handleSave = () => {
         setProcessing(true);
 
-        // Simulating API call - replace with actual endpoint when available
-        router.post(
-            '/settings/notifications',
-            settings,
-            {
-                preserveScroll: true,
-                onSuccess: () => {
-                    setRecentlySuccessful(true);
-                    setTimeout(() => setRecentlySuccessful(false), 2000);
-                },
-                onFinish: () => setProcessing(false),
+        router.post('/settings/notifications', settings, {
+            preserveScroll: true,
+            onSuccess: () => {
+                setRecentlySuccessful(true);
+                setTimeout(() => setRecentlySuccessful(false), 2000);
             },
-        );
+            onFinish: () => setProcessing(false),
+        });
     };
 
     return (
@@ -113,65 +135,9 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
                 <div className="space-y-6">
                     <HeadingSmall
                         title="Notification Preferences"
-                        description="Choose how and when you want to be notified"
+                        description="Choose how you want to be notified for each type of activity"
                     />
 
-                    <div className="grid gap-6 lg:grid-cols-2">
-                        {/* Email Notifications */}
-                        <Card>
-                        <CardHeader className="pb-4">
-                            <div className="flex items-center gap-2">
-                                <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                                    <Mail className="size-5" />
-                                </div>
-                                <div>
-                                    <CardTitle className="text-base">Email Notifications</CardTitle>
-                                    <CardDescription>
-                                        Manage what emails you receive from us
-                                    </CardDescription>
-                                </div>
-                            </div>
-                        </CardHeader>
-                        <Separator />
-                        <CardContent className="pt-4">
-                            <div className="divide-y">
-                                <PreferenceItem
-                                    id="email_security"
-                                    icon={<Shield className="size-4" />}
-                                    title="Security alerts"
-                                    description="Receive emails about security updates and suspicious activity"
-                                    checked={settings.email_security}
-                                    onCheckedChange={(checked) => updateSetting('email_security', checked)}
-                                />
-                                <PreferenceItem
-                                    id="email_product_updates"
-                                    icon={<Sparkles className="size-4" />}
-                                    title="Product updates"
-                                    description="Get notified about new features and improvements"
-                                    checked={settings.email_product_updates}
-                                    onCheckedChange={(checked) => updateSetting('email_product_updates', checked)}
-                                />
-                                <PreferenceItem
-                                    id="email_weekly_digest"
-                                    icon={<TrendingUp className="size-4" />}
-                                    title="Weekly digest"
-                                    description="Receive a weekly summary of your activity and updates"
-                                    checked={settings.email_weekly_digest}
-                                    onCheckedChange={(checked) => updateSetting('email_weekly_digest', checked)}
-                                />
-                                <PreferenceItem
-                                    id="email_marketing"
-                                    icon={<Zap className="size-4" />}
-                                    title="Marketing emails"
-                                    description="Receive tips, offers, and promotional content"
-                                    checked={settings.email_marketing}
-                                    onCheckedChange={(checked) => updateSetting('email_marketing', checked)}
-                                />
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Push Notifications */}
                     <Card>
                         <CardHeader className="pb-4">
                             <div className="flex items-center gap-2">
@@ -179,52 +145,67 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
                                     <Bell className="size-5" />
                                 </div>
                                 <div>
-                                    <CardTitle className="text-base">Push Notifications</CardTitle>
+                                    <CardTitle className="text-base">Notification Types</CardTitle>
                                     <CardDescription>
-                                        Control your browser and mobile notifications
+                                        Select how you want to receive each type of notification
                                     </CardDescription>
                                 </div>
                             </div>
                         </CardHeader>
                         <Separator />
-                        <CardContent className="pt-4">
+                        <CardContent className="pt-2">
                             <div className="divide-y">
-                                <PreferenceItem
-                                    id="push_mentions"
-                                    icon={<span className="text-sm font-bold">@</span>}
+                                <NotificationTypeItem
+                                    id="mentions"
+                                    icon={<AtSign className="size-4" />}
                                     title="Mentions"
                                     description="When someone mentions you in a comment or post"
-                                    checked={settings.push_mentions}
-                                    onCheckedChange={(checked) => updateSetting('push_mentions', checked)}
+                                    value={settings.mentions}
+                                    onChange={(value) => updateSetting('mentions', value)}
                                 />
-                                <PreferenceItem
-                                    id="push_direct_messages"
+                                <NotificationTypeItem
+                                    id="direct_messages"
                                     icon={<MessageSquare className="size-4" />}
                                     title="Direct messages"
                                     description="When you receive a new direct message"
-                                    checked={settings.push_direct_messages}
-                                    onCheckedChange={(checked) => updateSetting('push_direct_messages', checked)}
+                                    value={settings.direct_messages}
+                                    onChange={(value) => updateSetting('direct_messages', value)}
                                 />
-                                <PreferenceItem
-                                    id="push_comments"
+                                <NotificationTypeItem
+                                    id="comments"
                                     icon={<MessageSquare className="size-4" />}
                                     title="Comments"
                                     description="When someone comments on your content"
-                                    checked={settings.push_comments}
-                                    onCheckedChange={(checked) => updateSetting('push_comments', checked)}
+                                    value={settings.comments}
+                                    onChange={(value) => updateSetting('comments', value)}
                                 />
-                                <PreferenceItem
-                                    id="push_reminders"
-                                    icon={<Bell className="size-4" />}
+                                <NotificationTypeItem
+                                    id="reminders"
+                                    icon={<CheckCircle className="size-4" />}
                                     title="Reminders"
                                     description="Task and event reminders you've set"
-                                    checked={settings.push_reminders}
-                                    onCheckedChange={(checked) => updateSetting('push_reminders', checked)}
+                                    value={settings.reminders}
+                                    onChange={(value) => updateSetting('reminders', value)}
+                                />
+                                <NotificationTypeItem
+                                    id="security_alerts"
+                                    icon={<Shield className="size-4" />}
+                                    title="Security alerts"
+                                    description="Important security updates and suspicious activity"
+                                    value={settings.security_alerts}
+                                    onChange={(value) => updateSetting('security_alerts', value)}
+                                />
+                                <NotificationTypeItem
+                                    id="team_invites"
+                                    icon={<UserPlus className="size-4" />}
+                                    title="Team invites"
+                                    description="When you're invited to join a team or project"
+                                    value={settings.team_invites}
+                                    onChange={(value) => updateSetting('team_invites', value)}
                                 />
                             </div>
                         </CardContent>
                     </Card>
-                    </div>
 
                     {/* Save Button */}
                     <div className="flex items-center gap-4">
@@ -247,4 +228,3 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
         </AppLayout>
     );
 }
-
