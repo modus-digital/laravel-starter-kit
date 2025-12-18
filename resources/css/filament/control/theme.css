@@ -57,6 +57,10 @@
     }
 }
 
+#database-notifications .fi-modal-content {
+    @apply mr-0 pr-0 overflow-auto;
+}
+
 /* Support for custom branding CSS variables */
 :root {
     --brand-primary: var(--brand-primary, oklch(0.705 0.213 47.604));

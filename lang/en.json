@@ -91,6 +91,67 @@
             }
         }
     },
+    "errors": {
+        "status": "Status",
+        "next_steps": "Next steps",
+        "footer": "If this keeps happening, please contact support and include the status code above.",
+        "actions": {
+            "go_back": "Go back",
+            "try_again": "Try again",
+            "sign_in": "Sign in",
+            "home": "Home"
+        },
+        "401": {
+            "title": "Unauthorized",
+            "message": "You need to sign in to access this page.",
+            "hint": "Try signing in, then come back."
+        },
+        "402": {
+            "title": "Payment Required",
+            "message": "This action requires an active subscription.",
+            "hint": "If you think this is a mistake, contact your administrator."
+        },
+        "403": {
+            "title": "Forbidden",
+            "message": "You don't have permission to access this page.",
+            "hint": "Switch accounts or ask an administrator for access."
+        },
+        "404": {
+            "title": "Not Found",
+            "message": "We couldn't find the page you're looking for.",
+            "hint": "Check the URL or head back home."
+        },
+        "419": {
+            "title": "Page Expired",
+            "message": "Your session expired. Please refresh and try again.",
+            "hint": "Refreshing usually fixes this."
+        },
+        "429": {
+            "title": "Too Many Requests",
+            "message": "You are doing that too often. Please try again shortly.",
+            "hint": "Wait a moment, then retry."
+        },
+        "500": {
+            "title": "Server Error",
+            "message": "Something went wrong on our end.",
+            "hint": "Try again in a moment."
+        },
+        "503": {
+            "title": "Service Unavailable",
+            "message": "The service is temporarily unavailable.",
+            "hint": "Please try again shortly."
+        },
+        "504": {
+            "title": "Gateway Timeout",
+            "message": "The server took too long to respond.",
+            "hint": "Please try again shortly."
+        },
+        "default": {
+            "title": "Unexpected Error",
+            "message": "An unexpected error occurred.",
+            "hint": "Please try again."
+        }
+    },
     "pagination": {
         "previous": "&laquo; Previous",
         "next": "Next &raquo;"
