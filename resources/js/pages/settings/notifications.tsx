@@ -12,11 +12,12 @@ import {
 import { Separator } from '@/components/ui/separator';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
-import { type BreadcrumbItem } from '@/types';
+import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Head, router } from '@inertiajs/react';
 import { Bell } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 type DeliveryMethod = 'none' | 'email' | 'push' | 'email_push';
 
@@ -121,9 +122,22 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
 
         router.put('/settings/notifications', { notifications: settings }, {
             preserveScroll: true,
-            onSuccess: () => {
+            onSuccess: (page) => {
                 setRecentlySuccessful(true);
                 setTimeout(() => setRecentlySuccessful(false), 2000);
+
+                const { data } = page.props as unknown as SharedData;
+                const toastData = (data?.toast ?? {}) as {
+                    title?: string;
+                    description?: string;
+                    type?: string;
+                };
+
+                if (toastData.title) {
+                    toast.success(toastData.title, {
+                        description: toastData.description,
+                    });
+                }
             },
             onFinish: () => setProcessing(false),
         });

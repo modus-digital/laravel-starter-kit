@@ -48,6 +48,12 @@ final class NotificationController extends Controller
             )
             ->save();
 
-        return back()->with('success', 'Notifications updated successfully');
+        return back()->with('data', [
+            'toast' => [
+                'title' => 'Saved',
+                'description' => 'Your notification preferences have been updated.',
+                'type' => 'success',
+            ],
+        ]);
     }
 }
