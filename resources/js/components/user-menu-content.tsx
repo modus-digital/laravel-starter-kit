@@ -8,12 +8,13 @@ import {
 import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { logout } from '@/routes';
-import { edit } from '@/routes/profile';
 import { index as NotificationsIndex } from '@/routes/notifications';
+import { edit } from '@/routes/profile';
 import { type User } from '@/types';
 import { Link, router } from '@inertiajs/react';
-import { Bell, LogOut, Settings } from 'lucide-react';
+import { LogOut, Settings } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { UnreadNotificationIcon } from './custom-icons';
 
 interface UserMenuContentProps {
     user: User;
@@ -29,7 +30,9 @@ export function UserMenuContent({
 
     const hasUnreadNotifications = unreadNotificationsCount > 0;
     const unreadNotificationsLabel =
-        unreadNotificationsCount > 9 ? '9+' : unreadNotificationsCount.toString();
+        unreadNotificationsCount > 9
+            ? '9+'
+            : unreadNotificationsCount.toString();
 
     const handleLogout = () => {
         cleanup();
@@ -57,7 +60,7 @@ export function UserMenuContent({
                         prefetch
                         onClick={cleanup}
                     >
-                        <Bell className="mr-2" />
+                        <UnreadNotificationIcon className="mr-2" />
                         {t('navigation.labels.notifications')}
                         {hasUnreadNotifications && (
                             <DropdownMenuShortcut>
