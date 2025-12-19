@@ -1,7 +1,7 @@
 {
     "auth": {
         "social": {
-            "login_with": "Login with {{provider}}"
+            "login_with": "Login with :provider"
         },
         "actions": {
             "login": "Log in",
@@ -976,7 +976,7 @@
     "notifications": {
         "title": "Notifications",
         "page_title": "Notifications",
-        "unread_count": "{{count}} unread",
+        "unread_count": ":count unread",
         "search_placeholder": "Search by title or date…",
         "fallback_title": "Notification",
         "tabs": {
