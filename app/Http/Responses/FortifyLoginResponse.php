@@ -17,14 +17,26 @@ final class FortifyLoginResponse implements Responsable
         /** @var \App\Models\User|null $user */
         $user = $request->user();
 
-        Activity::inLog('authentication')
-            ->event('auth.login')
-            ->causedBy($user)
-            ->withProperties([
-                'guard' => $request->guard,
-                'remember' => $request->remember,
-            ])
-            ->log('');
+        if ($user) {
+            $clientId = $user->clients()
+                ->orderBy('name')
+                ->value('clients.id');
+
+            if ($clientId) {
+                $request->session()->put('current_client_id', $clientId);
+            }
+        }
+
+        if ($user) {
+            Activity::inLog('authentication')
+                ->event('auth.login')
+                ->causedBy($user)
+                ->withProperties([
+                    'guard' => $request->guard,
+                    'remember' => $request->remember,
+                ])
+                ->log('');
+        }
 
         if ($user && $user->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL)) {
             return Inertia::location(url: route('filament.control.pages.dashboard'));

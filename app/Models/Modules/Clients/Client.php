@@ -7,6 +7,7 @@ namespace App\Models\Modules\Clients;
 use App\Enums\ActivityStatus;
 use App\Models\Activity;
 use App\Models\User;
+use App\Traits\HasTasks;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +22,7 @@ final class Client extends Model
     /** @use HasFactory<\Database\Factories\Modules\Clients\ClientFactory> */
     use HasFactory;
 
+    use HasTasks;
     use HasUuids;
     use SoftDeletes;
 

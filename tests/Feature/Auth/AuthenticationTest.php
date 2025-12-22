@@ -29,6 +29,22 @@ test('users can authenticate using the login screen', function () {
     $response->assertRedirect(route('dashboard', absolute: false));
 });
 
+test('login stores the current client in the session when the user has a client', function () {
+    $user = User::factory()->withoutTwoFactor()->create();
+    $client = App\Models\Modules\Clients\Client::factory()->create();
+
+    $user->clients()->attach($client);
+
+    $response = $this->post(route('login.store'), [
+        'email' => $user->email,
+        'password' => 'password',
+    ]);
+
+    $this->assertAuthenticated();
+    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertSessionHas('current_client_id', $client->id);
+});
+
 test('users with two factor enabled are redirected to two factor challenge', function () {
     if (! Features::canManageTwoFactorAuthentication()) {
         $this->markTestSkipped('Two-factor authentication is not enabled.');

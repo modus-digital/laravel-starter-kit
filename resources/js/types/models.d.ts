@@ -32,6 +32,7 @@ export interface Client {
   billingInfo?: ClientBillingInfo;
   subscriptions?: Subscription[];
   invoices?: Invoice[];
+  tasks?: Task[];
 }
 
 export interface ClientBillingInfo {

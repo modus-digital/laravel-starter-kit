@@ -134,9 +134,76 @@
 @layer base {
     * {
         @apply border-border;
+
+        /* System-wide modern scrollbar (Firefox) */
+        scrollbar-width: thin;
+        scrollbar-color: color-mix(in oklch, var(--muted-foreground) 35%, transparent)
+            transparent;
     }
 
     body {
         @apply bg-background text-foreground;
+    }
+
+    /* System-wide modern scrollbar (Chromium/WebKit) */
+    *::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background-color: color-mix(in oklch, var(--muted-foreground) 20%, transparent);
+        border-radius: 9999px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+    }
+
+    *:hover::-webkit-scrollbar-thumb {
+        background-color: color-mix(in oklch, var(--muted-foreground) 45%, transparent);
+    }
+
+    /* Hide native scrollbar buttons/arrows where supported */
+    *::-webkit-scrollbar-button {
+        width: 0;
+        height: 0;
+        background: transparent;
+        border: 0;
+    }
+
+    *::-webkit-scrollbar-button:single-button {
+        width: 0;
+        height: 0;
+        background: transparent;
+        border: 0;
+    }
+
+    *::-webkit-scrollbar-button:horizontal:decrement,
+    *::-webkit-scrollbar-button:horizontal:increment,
+    *::-webkit-scrollbar-button:vertical:decrement,
+    *::-webkit-scrollbar-button:vertical:increment {
+        width: 0;
+        height: 0;
+        background: transparent;
+        border: 0;
+    }
+
+    *::-webkit-scrollbar-corner {
+        background: transparent;
+    }
+}
+
+@layer utilities {
+    .scrollbar-hidden {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .scrollbar-hidden::-webkit-scrollbar {
+        width: 0;
+        height: 0;
     }
 }
