@@ -331,6 +331,19 @@
             "suspended": "Suspended",
             "deleted": "Deleted"
         },
+        "task_type": {
+            "task": "Task",
+            "bug": "Bug",
+            "feature": "Feature",
+            "documentation": "Documentation",
+            "other": "Other"
+        },
+        "task_priority": {
+            "low": "Low",
+            "normal": "Normal",
+            "high": "High",
+            "critical": "Critical"
+        },
         "rbac": {
             "role": {
                 "super_admin": "Super Admin",
