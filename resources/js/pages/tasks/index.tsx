@@ -545,7 +545,7 @@ const Index = () => {
                                             })),
                                         );
                                     }}
-                                    className="min-h-[18rem]"
+                                    className="min-h-72"
                                 >
                                     {(column) => (
                                         <KanbanBoard id={column.id}>
@@ -813,7 +813,7 @@ const Index = () => {
                                 <GanttProvider
                                     range="daily"
                                     zoom={100}
-                                    className="h-[34rem]"
+                                    className="h-136"
                                 >
                                     <GanttSidebar>
                                         {ganttStatuses.map((status) => (
