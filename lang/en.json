@@ -420,6 +420,7 @@
             "maintenance": "Maintenance"
         },
         "labels": {
+            "tasks": "Tasks",
             "users": "Users",
             "roles": "Roles",
             "permissions": "Permissions",
