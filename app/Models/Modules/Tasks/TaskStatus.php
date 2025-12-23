@@ -7,16 +7,19 @@ namespace App\Models\Modules\Tasks;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Model definition
+ * TaskStatus model definition
  *
- * @property-read string $id
+ * @property string $id
  * @property string $name
  * @property string $color
- * @property \Illuminate\Database\Eloquent\Collection<int, Task> $tasks
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property \Carbon\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Task> $tasks
  */
 final class TaskStatus extends Model
 {
@@ -24,6 +27,7 @@ final class TaskStatus extends Model
     use HasFactory;
 
     use HasUuids;
+    use SoftDeletes;
 
     public $incrementing = false;
 
@@ -34,6 +38,9 @@ final class TaskStatus extends Model
         'color',
     ];
 
+    /**
+     * Find an existing status by case-insensitive name, or create a new one.
+     */
     public static function findOrCreateByName(string $name, ?string $color = null): self
     {
         $existing = self::query()
@@ -51,15 +58,8 @@ final class TaskStatus extends Model
     }
 
     /**
-     * @return BelongsToMany<TaskView, $this>
+     * @return HasMany<Task, $this>
      */
-    public function views(): BelongsToMany
-    {
-        return $this->belongsToMany(related: TaskView::class, table: 'task_view_statuses')
-            ->withPivot(['sort_order', 'wip_limit'])
-            ->withTimestamps();
-    }
-
     public function tasks(): HasMany
     {
         return $this->hasMany(related: Task::class, foreignKey: 'status_id');

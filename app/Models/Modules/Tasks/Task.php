@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -19,13 +18,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Task model definition
  *
  * @property string $id
- * @property string|null $taskable_id
- * @property string|null $taskable_type
+ * @property string $taskable_id
+ * @property string $taskable_type
  * @property string $title
  * @property string|null $description
  * @property TaskType $type
  * @property TaskPriority $priority
  * @property string $status_id
+ * @property int|null $order
  * @property \Carbon\Carbon|null $due_date
  * @property \Carbon\Carbon|null $completed_at
  * @property string|null $created_by_id
@@ -33,14 +33,14 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property \Carbon\Carbon|null $deleted_at
- * @property-read Model|null $taskable
+ * @property-read Model $taskable
  * @property-read TaskStatus $status
  * @property-read User|null $createdBy
  * @property-read User|null $assignedTo
  */
 final class Task extends Model
 {
-    /** @use HasFactory<\Database\Factories\Modules\TaskFactory> */
+    /** @use HasFactory<\Database\Factories\Modules\Tasks\TaskFactory> */
     use HasFactory;
 
     use HasUuids;
@@ -51,13 +51,14 @@ final class Task extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'taskable_id',
         'taskable_type',
+        'taskable_id',
         'title',
         'description',
         'type',
         'priority',
         'status_id',
+        'order',
         'due_date',
         'completed_at',
         'created_by_id',
@@ -97,13 +98,8 @@ final class Task extends Model
     }
 
     /**
-     * @return HasMany<TaskViewTaskPosition, $this>
+     * @return array<string, string>
      */
-    public function viewPositions(): HasMany
-    {
-        return $this->hasMany(related: TaskViewTaskPosition::class);
-    }
-
     protected function casts(): array
     {
         return [

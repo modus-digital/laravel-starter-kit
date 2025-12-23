@@ -16,6 +16,8 @@ it('renders the tasks index page', function (): void {
     $user = User::factory()->create();
     $client = Client::factory()->create();
 
+    $client->users()->attach($user->id);
+
     Task::factory()->for($client, 'taskable')->create();
 
     $this->actingAs($user)
@@ -25,5 +27,21 @@ it('renders the tasks index page', function (): void {
         ->assertInertia(fn (Assert $page) => $page
             ->component('tasks/index')
             ->has('tasks', 1)
+        );
+});
+
+it('does not leak tasks when current client is not accessible', function (): void {
+    $user = User::factory()->create();
+    $client = Client::factory()->create();
+
+    Task::factory()->for($client, 'taskable')->create();
+
+    $this->actingAs($user)
+        ->withSession(['current_client_id' => $client->id])
+        ->get(route('tasks.index'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('tasks/index')
+            ->has('tasks', 0)
         );
 });

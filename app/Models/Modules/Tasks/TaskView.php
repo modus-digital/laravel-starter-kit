@@ -4,23 +4,29 @@ declare(strict_types=1);
 
 namespace App\Models\Modules\Tasks;
 
-use App\Models\User;
+use App\Enums\Modules\Tasks\TaskViewType;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
+ * Task view model definition
+ *
  * @property string $id
- * @property string $taskable_id
  * @property string $taskable_type
- * @property string $type
- * @property string $name
+ * @property string $taskable_id
  * @property bool $is_default
+ * @property string $name
+ * @property string $slug
+ * @property TaskViewType $type
+ * @property array|null $metadata
+ * @property-read Model $taskable
+ * @property-read Collection<int, TaskStatus> $statuses
  */
 final class TaskView extends Model
 {
@@ -35,12 +41,13 @@ final class TaskView extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'taskable_id',
         'taskable_type',
-        'type',
-        'name',
-        'created_by_id',
+        'taskable_id',
         'is_default',
+        'name',
+        'slug',
+        'type',
+        'metadata',
     ];
 
     /**
@@ -52,53 +59,68 @@ final class TaskView extends Model
     }
 
     /**
-     * @return BelongsTo<User, $this>
-     */
-    public function createdBy(): BelongsTo
-    {
-        return $this->belongsTo(related: User::class, foreignKey: 'created_by_id');
-    }
-
-    /**
+     * Statuses (columns) enabled for this view.
+     *
      * @return BelongsToMany<TaskStatus, $this>
      */
     public function statuses(): BelongsToMany
     {
-        return $this->belongsToMany(related: TaskStatus::class, table: 'task_view_statuses')
-            ->withPivot(['sort_order', 'wip_limit'])
-            ->withTimestamps()
-            ->orderBy('task_view_statuses.sort_order');
+        return $this->belongsToMany(
+            related: TaskStatus::class,
+            table: 'task_view_statuses',
+            foreignPivotKey: 'task_view_id',
+            relatedPivotKey: 'task_status_id',
+        )->withPivot('position')->orderByPivot('position');
     }
 
     /**
-     * @return HasMany<TaskViewTaskPosition, $this>
-     */
-    public function taskPositions(): HasMany
-    {
-        return $this->hasMany(related: TaskViewTaskPosition::class);
-    }
-
-    /**
-     * Sync statuses for the view using case-insensitive names.
+     * Tasks for this view's taskable, filtered to only those whose status is enabled in this view.
      *
-     * @param  array<int, array{name:string,color?:string,sort_order?:int,wip_limit?:int|null}>  $definitions
+     * @return Builder<Task>
      */
-    public function syncStatusesByNames(array $definitions): void
+    public function tasks(): Builder
+    {
+        $enabledStatusIds = $this->statuses()->pluck('task_statuses.id');
+
+        return Task::query()
+            ->where('taskable_type', $this->taskable_type)
+            ->where('taskable_id', $this->taskable_id)
+            ->whereIn('status_id', $enabledStatusIds)
+            ->orderBy('status_id')
+            ->orderBy('order')
+            ->orderBy('created_at');
+    }
+
+    /**
+     * Sync statuses by name (case-insensitive). Creates missing statuses.
+     *
+     * @param  array<int, array{name: string, color?: string}>  $statuses
+     */
+    public function syncStatusesByNames(array $statuses): void
     {
         $syncData = [];
 
-        foreach ($definitions as $index => $definition) {
+        foreach ($statuses as $position => $statusData) {
             $status = TaskStatus::findOrCreateByName(
-                name: $definition['name'],
-                color: $definition['color'] ?? null,
+                name: $statusData['name'],
+                color: $statusData['color'] ?? null,
             );
 
-            $syncData[$status->id] = [
-                'sort_order' => $definition['sort_order'] ?? $index,
-                'wip_limit' => $definition['wip_limit'] ?? null,
-            ];
+            $syncData[$status->id] = ['position' => $position];
         }
 
         $this->statuses()->sync($syncData);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'type' => TaskViewType::class,
+            'is_default' => 'boolean',
+            'metadata' => 'array',
+        ];
     }
 }

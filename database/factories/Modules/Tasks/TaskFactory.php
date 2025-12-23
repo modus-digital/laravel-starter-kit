@@ -23,6 +23,8 @@ final class TaskFactory extends Factory
     public function definition(): array
     {
         return [
+            'taskable_type' => User::class,
+            'taskable_id' => User::factory(),
             'title' => $this->faker->sentence(),
             'description' => $this->faker->paragraph(),
             'type' => TaskType::TASK,
