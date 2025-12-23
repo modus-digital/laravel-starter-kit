@@ -58,6 +58,9 @@ final class HandleInertiaRequests extends Middleware
                 'canManageApiTokens' => $request->user()?->hasPermissionTo(Permission::HAS_API_ACCESS) ?? false,
             ],
 
+            // Pass through the modules settings
+            'modules' => config('modules'),
+
             // Check if the user is impersonating another user
             'isImpersonating' => $request->session()->has('impersonation'),
 

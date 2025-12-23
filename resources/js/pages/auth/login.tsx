@@ -10,9 +10,9 @@ import AuthLayout from '@/layouts/auth-layout';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
+import { SocialiteProvider } from '@/types/modules';
 import { Form, Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
-import { SocialiteProvider } from '@/types';
 
 interface LoginProps {
     status?: string;
@@ -38,12 +38,12 @@ export default function Login({
 
             <SocialAuthButtons providers={authProviders} />
 
-            <div className="flex items-center mt-2 mb-6">
-                <div className="grow h-px bg-muted" />
+            <div className="mt-2 mb-6 flex items-center">
+                <div className="h-px grow bg-muted" />
                 <span className="mx-4 text-xs text-muted-foreground uppercase">
                     {t('auth.pages.login.or_continue_with', 'Or continue with')}
                 </span>
-                <div className="grow h-px bg-muted" />
+                <div className="h-px grow bg-muted" />
             </div>
 
             <Form
@@ -55,7 +55,9 @@ export default function Login({
                     <>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="email">{t('auth.pages.login.email')}</Label>
+                                <Label htmlFor="email">
+                                    {t('auth.pages.login.email')}
+                                </Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -64,21 +66,27 @@ export default function Login({
                                     autoFocus
                                     tabIndex={1}
                                     autoComplete="email"
-                                    placeholder={t('auth.pages.login.email_placeholder')}
+                                    placeholder={t(
+                                        'auth.pages.login.email_placeholder',
+                                    )}
                                 />
                                 <InputError message={errors.email} />
                             </div>
 
                             <div className="grid gap-2">
                                 <div className="flex items-center">
-                                    <Label htmlFor="password">{t('auth.pages.login.password')}</Label>
+                                    <Label htmlFor="password">
+                                        {t('auth.pages.login.password')}
+                                    </Label>
                                     {canResetPassword && (
                                         <TextLink
                                             href={request()}
                                             className="ml-auto text-sm"
                                             tabIndex={5}
                                         >
-                                            {t('auth.pages.login.forgot_password')}
+                                            {t(
+                                                'auth.pages.login.forgot_password',
+                                            )}
                                         </TextLink>
                                     )}
                                 </div>
@@ -89,7 +97,9 @@ export default function Login({
                                     required
                                     tabIndex={2}
                                     autoComplete="current-password"
-                                    placeholder={t('auth.pages.login.password_placeholder')}
+                                    placeholder={t(
+                                        'auth.pages.login.password_placeholder',
+                                    )}
                                 />
                                 <InputError message={errors.password} />
                             </div>
@@ -100,7 +110,9 @@ export default function Login({
                                     name="remember"
                                     tabIndex={3}
                                 />
-                                <Label htmlFor="remember">{t('auth.pages.login.remember_me')}</Label>
+                                <Label htmlFor="remember">
+                                    {t('auth.pages.login.remember_me')}
+                                </Label>
                             </div>
 
                             <Button

@@ -1,8 +1,13 @@
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { redirect } from '@/routes/oauth';
-import { SocialiteProvider } from '@/types';
+import { SocialiteProvider } from '@/types/modules';
 import { useTranslation } from 'react-i18next';
 
 import GithubIcon from '@assets/images/github_icon.svg';
@@ -19,7 +24,9 @@ const providerIcons: Record<string, string> = {
     microsoft: MicrosoftIcon,
 };
 
-export default function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
+export default function SocialAuthButtons({
+    providers,
+}: SocialAuthButtonsProps) {
     if (providers.length === 0) {
         return null;
     }
@@ -29,15 +36,19 @@ export default function SocialAuthButtons({ providers }: SocialAuthButtonsProps)
 
     return (
         <TooltipProvider>
-            <div className="flex gap-2 w-full mb-4">
+            <div className="mb-4 flex w-full gap-2">
                 {providers.map((provider) => {
                     const icon = providerIcons[provider.name] ?? MicrosoftIcon;
-                    const providerName = provider.name.charAt(0).toUpperCase() + provider.name.slice(1);
+                    const providerName =
+                        provider.name.charAt(0).toUpperCase() +
+                        provider.name.slice(1);
 
                     const button = (
                         <Button
                             variant="outline"
-                            className={cn(isMultiple ? 'flex-1 px-3' : 'w-full')}
+                            className={cn(
+                                isMultiple ? 'flex-1 px-3' : 'w-full',
+                            )}
                             asChild
                         >
                             <a href={redirect.url({ provider: provider.name })}>
@@ -45,13 +56,16 @@ export default function SocialAuthButtons({ providers }: SocialAuthButtonsProps)
                                     src={icon}
                                     alt={provider.name}
                                     className={cn(
-                                        isMultiple ? 'w-6 h-6' : 'w-4 h-4',
-                                        provider.name === 'github' && 'dark:invert'
+                                        isMultiple ? 'h-6 w-6' : 'h-4 w-4',
+                                        provider.name === 'github' &&
+                                            'dark:invert',
                                     )}
                                 />
                                 {!isMultiple && (
                                     <span className="ml-2">
-                                        {t('auth.social.login_with', { provider: providerName })}
+                                        {t('auth.social.login_with', {
+                                            provider: providerName,
+                                        })}
                                     </span>
                                 )}
                             </a>
@@ -59,16 +73,22 @@ export default function SocialAuthButtons({ providers }: SocialAuthButtonsProps)
                     );
 
                     if (!isMultiple) {
-                        return <div key={provider.id} className="w-full">{button}</div>;
+                        return (
+                            <div key={provider.id} className="w-full">
+                                {button}
+                            </div>
+                        );
                     }
 
                     return (
                         <Tooltip key={provider.id}>
-                            <TooltipTrigger asChild>
-                                {button}
-                            </TooltipTrigger>
+                            <TooltipTrigger asChild>{button}</TooltipTrigger>
                             <TooltipContent>
-                                <p>{t('auth.social.login_with', { provider: providerName })}</p>
+                                <p>
+                                    {t('auth.social.login_with', {
+                                        provider: providerName,
+                                    })}
+                                </p>
                             </TooltipContent>
                         </Tooltip>
                     );
@@ -77,4 +97,3 @@ export default function SocialAuthButtons({ providers }: SocialAuthButtonsProps)
         </TooltipProvider>
     );
 }
-
