@@ -1,10 +1,5 @@
 import { Button } from '@/components/ui/button';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { redirect } from '@/routes/oauth';
 import { SocialiteProvider } from '@/types/modules';
@@ -24,9 +19,7 @@ const providerIcons: Record<string, string> = {
     microsoft: MicrosoftIcon,
 };
 
-export default function SocialAuthButtons({
-    providers,
-}: SocialAuthButtonsProps) {
+export default function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
     if (providers.length === 0) {
         return null;
     }
@@ -39,27 +32,15 @@ export default function SocialAuthButtons({
             <div className="mb-4 flex w-full gap-2">
                 {providers.map((provider) => {
                     const icon = providerIcons[provider.name] ?? MicrosoftIcon;
-                    const providerName =
-                        provider.name.charAt(0).toUpperCase() +
-                        provider.name.slice(1);
+                    const providerName = provider.name.charAt(0).toUpperCase() + provider.name.slice(1);
 
                     const button = (
-                        <Button
-                            variant="outline"
-                            className={cn(
-                                isMultiple ? 'flex-1 px-3' : 'w-full',
-                            )}
-                            asChild
-                        >
+                        <Button variant="outline" className={cn(isMultiple ? 'flex-1 px-3' : 'w-full')} asChild>
                             <a href={redirect.url({ provider: provider.name })}>
                                 <img
                                     src={icon}
                                     alt={provider.name}
-                                    className={cn(
-                                        isMultiple ? 'h-6 w-6' : 'h-4 w-4',
-                                        provider.name === 'github' &&
-                                            'dark:invert',
-                                    )}
+                                    className={cn(isMultiple ? 'h-6 w-6' : 'h-4 w-4', provider.name === 'github' && 'dark:invert')}
                                 />
                                 {!isMultiple && (
                                     <span className="ml-2">

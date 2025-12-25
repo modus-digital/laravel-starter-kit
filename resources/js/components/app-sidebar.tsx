@@ -86,24 +86,9 @@ export function AppSidebar() {
                         <SidebarGroupContent>
                             <SidebarMenu>
                                 <SidebarMenuItem>
-                                    <Button
-                                        onClick={() =>
-                                            router.post(
-                                                leaveImpersonation().url,
-                                            )
-                                        }
-                                        className="w-full cursor-pointer"
-                                        variant="ghost"
-                                    >
-                                        <Icon
-                                            iconNode={LogOut}
-                                            className="h-5 w-5"
-                                        />
-                                        <span>
-                                            {t(
-                                                'navigation.labels.leave_impersonation',
-                                            )}
-                                        </span>
+                                    <Button onClick={() => router.post(leaveImpersonation().url)} className="w-full cursor-pointer" variant="ghost">
+                                        <Icon iconNode={LogOut} className="h-5 w-5" />
+                                        <span>{t('navigation.labels.leave_impersonation')}</span>
                                     </Button>
                                 </SidebarMenuItem>
                             </SidebarMenu>
@@ -111,9 +96,7 @@ export function AppSidebar() {
                     </SidebarGroup>
                 )}
 
-                {footerNavItems.length > 0 && (
-                    <NavFooter items={footerNavItems} className="mt-auto" />
-                )}
+                {footerNavItems.length > 0 && <NavFooter items={footerNavItems} className="mt-auto" />}
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
