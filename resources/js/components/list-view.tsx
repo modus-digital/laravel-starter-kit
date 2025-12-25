@@ -1,20 +1,8 @@
 'use client';
 
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-} from '@/components/ui/collapsible';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
-import {
-    DndContext,
-    type DragEndEvent,
-    DragOverlay,
-    type DragStartEvent,
-    rectIntersection,
-    useDraggable,
-    useDroppable,
-} from '@dnd-kit/core';
+import { DndContext, type DragEndEvent, DragOverlay, type DragStartEvent, MouseSensor, rectIntersection, TouchSensor, useDraggable, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { ChevronDown } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -42,9 +30,7 @@ export type ListItemsProps = {
 };
 
 export const ListItems = ({ children, className }: ListItemsProps) => (
-    <div className={cn('flex flex-1 flex-col gap-2 p-3', className)}>
-        {children}
-    </div>
+    <div className={cn('flex flex-1 flex-col gap-2 p-3', className)}>{children}</div>
 );
 
 export type ListHeaderProps =
@@ -61,16 +47,8 @@ export const ListHeader = (props: ListHeaderProps) =>
     'children' in props ? (
         props.children
     ) : (
-        <div
-            className={cn(
-                'flex shrink-0 items-center gap-2 border-b bg-muted/30 p-3',
-                props.className,
-            )}
-        >
-            <div
-                className="h-2 w-2 rounded-full"
-                style={{ backgroundColor: props.color }}
-            />
+        <div className={cn('flex shrink-0 items-center gap-2 border-b bg-muted/30 p-3', props.className)}>
+            <div className="h-2 w-2 rounded-full" style={{ backgroundColor: props.color }} />
             <p className="m-0 text-sm font-semibold">{props.name}</p>
         </div>
     );
@@ -85,44 +63,23 @@ export type ListGroupProps = {
     className?: string;
 };
 
-export const ListGroup = ({
-    id,
-    name,
-    color,
-    collapsible = true,
-    defaultOpen = true,
-    children,
-    className,
-}: ListGroupProps) => {
+export const ListGroup = ({ id, name, color, collapsible = true, defaultOpen = true, children, className }: ListGroupProps) => {
     const { setNodeRef, isOver } = useDroppable({ id });
     const [open, setOpen] = useState(defaultOpen);
 
     const header = (
         <div className="flex min-w-0 items-center gap-2">
-            {color ? (
-                <div
-                    className="h-2 w-2 shrink-0 rounded-full"
-                    style={{ backgroundColor: color }}
-                />
-            ) : null}
-            {name ? (
-                <p className="truncate text-sm font-semibold">{name}</p>
-            ) : null}
+            {color ? <div className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: color }} /> : null}
+            {name ? <p className="truncate text-sm font-semibold">{name}</p> : null}
         </div>
     );
 
-    const containerClassName = cn(
-        'bg-card transition-colors',
-        isOver && 'bg-accent/30',
-        className,
-    );
+    const containerClassName = cn('bg-card transition-colors', isOver && 'bg-accent/30', className);
 
     if (!collapsible) {
         return (
             <div className={containerClassName} ref={setNodeRef}>
-                <div className="flex items-center justify-between border-b bg-muted/30 p-3">
-                    {header}
-                </div>
+                <div className="flex items-center justify-between border-b bg-muted/30 p-3">{header}</div>
                 {children}
             </div>
         );
@@ -132,17 +89,9 @@ export const ListGroup = ({
         <Collapsible open={open} onOpenChange={setOpen}>
             <div className={containerClassName} ref={setNodeRef}>
                 <CollapsibleTrigger asChild>
-                    <button
-                        type="button"
-                        className="flex w-full items-center justify-between gap-2 border-b bg-muted/30 p-3 text-left"
-                    >
+                    <button type="button" className="flex w-full items-center justify-between gap-2 border-b bg-muted/30 p-3 text-left">
                         {header}
-                        <ChevronDown
-                            className={cn(
-                                'size-4 shrink-0 opacity-70 transition-transform',
-                                open && 'rotate-180',
-                            )}
-                        />
+                        <ChevronDown className={cn('size-4 shrink-0 opacity-70 transition-transform', open && 'rotate-180')} />
                     </button>
                 </CollapsibleTrigger>
                 <CollapsibleContent>{children}</CollapsibleContent>
@@ -154,39 +103,31 @@ export const ListGroup = ({
 export type ListItemProps = Pick<Feature, 'id' | 'name'> & {
     readonly index: number;
     readonly parent: string;
+    readonly onSelectItem?: (id: string) => void;
     readonly children?: ReactNode;
     readonly className?: string;
 };
 
-export const ListItem = ({
-    id,
-    name,
-    index,
-    parent,
-    children,
-    className,
-}: ListItemProps) => {
-    const { attributes, listeners, setNodeRef, transform, isDragging } =
-        useDraggable({
-            id,
-            data: { index, parent, name },
-        });
+export const ListItem = ({ id, name, index, parent, onSelectItem, children, className }: ListItemProps) => {
+    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+        id,
+        data: { index, parent, name },
+    });
 
     return (
         <div
             className={cn(
-                'flex cursor-grab items-center gap-2 rounded-md border border-border bg-background p-2 shadow-sm transition-colors select-none hover:bg-muted/20',
+                'flex cursor-pointer items-center gap-2 rounded-md border border-border bg-background p-2 shadow-sm transition-colors select-none hover:bg-muted/40 hover:border-ring',
                 isDragging && 'cursor-grabbing opacity-90',
                 className,
             )}
             style={{
-                transform: transform
-                    ? `translateX(${transform.x}px) translateY(${transform.y}px)`
-                    : 'none',
+                transform: transform ? `translateX(${transform.x}px) translateY(${transform.y}px)` : 'none',
             }}
             {...listeners}
             {...attributes}
             ref={setNodeRef}
+            onClick={() => onSelectItem?.(id)}
         >
             {children ?? <p className="m-0 text-sm font-medium">{name}</p>}
         </div>
@@ -199,15 +140,16 @@ export type ListProviderProps = {
     className?: string;
 };
 
-export const ListProvider = ({
-    children,
-    onDragEnd,
-    className,
-}: ListProviderProps) => {
+export const ListProvider = ({ children, onDragEnd, className }: ListProviderProps) => {
     const [activeItem, setActiveItem] = useState<{
         id: string;
         name?: string;
     } | null>(null);
+
+    const sensors = useSensors(
+        useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
+        useSensor(TouchSensor, { activationConstraint: { distance: 8 } }),
+    );
 
     const handleDragStart = ({ active }: DragStartEvent) => {
         setActiveItem({
@@ -227,22 +169,19 @@ export const ListProvider = ({
 
     return (
         <DndContext
+            sensors={sensors}
             collisionDetection={rectIntersection}
             modifiers={[restrictToVerticalAxis]}
             onDragStart={handleDragStart}
             onDragCancel={handleDragCancel}
             onDragEnd={handleDragEnd}
         >
-            <div className={cn('flex size-full flex-col', className)}>
-                {children}
-            </div>
+            <div className={cn('flex size-full flex-col', className)}>{children}</div>
 
             <DragOverlay>
                 {activeItem ? (
                     <div className="flex items-center gap-2 rounded-md border border-border bg-background p-2 shadow-md">
-                        <p className="m-0 text-sm font-medium">
-                            {activeItem.name ?? ''}
-                        </p>
+                        <p className="m-0 text-sm font-medium">{activeItem.name ?? ''}</p>
                     </div>
                 ) : null}
             </DragOverlay>
