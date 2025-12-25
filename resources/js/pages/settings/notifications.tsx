@@ -2,13 +2,7 @@ import HeadingSmall from '@/components/heading-small';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
@@ -17,8 +11,8 @@ import { Transition } from '@headlessui/react';
 import { Head, router } from '@inertiajs/react';
 import { Bell } from 'lucide-react';
 import { useState } from 'react';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 type DeliveryMethod = 'none' | 'email' | 'push' | 'email_push';
 
@@ -63,24 +57,15 @@ type NotificationTypeItemProps = {
     onChange: (value: DeliveryMethod) => void;
 };
 
-function NotificationTypeItem({
-    id,
-    icon,
-    title,
-    description,
-    value,
-    onChange,
-}: NotificationTypeItemProps) {
+function NotificationTypeItem({ id, icon, title, description, value, onChange }: NotificationTypeItemProps) {
     const { t } = useTranslation();
 
     return (
         <div className="flex items-center gap-4 py-4">
             <div className="flex min-w-0 flex-1 items-start gap-3">
-                <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                    {icon}
-                </div>
+                <div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">{icon}</div>
                 <div className="min-w-0 flex-1 space-y-0.5">
-                    <Label htmlFor={id} className="text-sm font-medium leading-none">
+                    <Label htmlFor={id} className="text-sm leading-none font-medium">
                         {title}
                     </Label>
                     <p className="line-clamp-2 text-sm text-muted-foreground">{description}</p>
@@ -127,27 +112,31 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
     const handleSave = () => {
         setProcessing(true);
 
-        router.put('/settings/notifications', { notifications: settings }, {
-            preserveScroll: true,
-            onSuccess: (page) => {
-                setRecentlySuccessful(true);
-                setTimeout(() => setRecentlySuccessful(false), 2000);
+        router.put(
+            '/settings/notifications',
+            { notifications: settings },
+            {
+                preserveScroll: true,
+                onSuccess: (page) => {
+                    setRecentlySuccessful(true);
+                    setTimeout(() => setRecentlySuccessful(false), 2000);
 
-                const { data } = page.props as unknown as SharedData;
-                const toastData = (data?.toast ?? {}) as {
-                    title?: string;
-                    description?: string;
-                    type?: string;
-                };
+                    const { data } = page.props as unknown as SharedData;
+                    const toastData = (data?.toast ?? {}) as {
+                        title?: string;
+                        description?: string;
+                        type?: string;
+                    };
 
-                if (toastData.title) {
-                    toast.success(toastData.title, {
-                        description: toastData.description,
-                    });
-                }
+                    if (toastData.title) {
+                        toast.success(toastData.title, {
+                            description: toastData.description,
+                        });
+                    }
+                },
+                onFinish: () => setProcessing(false),
             },
-            onFinish: () => setProcessing(false),
-        });
+        );
     };
 
     return (
@@ -156,10 +145,7 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <HeadingSmall
-                        title={translate('settings.notifications.title')}
-                        description={translate('settings.notifications.subtitle')}
-                    />
+                    <HeadingSmall title={translate('settings.notifications.title')} description={translate('settings.notifications.subtitle')} />
 
                     <Card>
                         <CardHeader className="pb-4">
@@ -169,16 +155,14 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
                                 </div>
                                 <div>
                                     <CardTitle className="text-base">{translate('settings.notifications.card_title')}</CardTitle>
-                                    <CardDescription>
-                                        {translate('settings.notifications.card_description')}
-                                    </CardDescription>
+                                    <CardDescription>{translate('settings.notifications.card_description')}</CardDescription>
                                 </div>
                             </div>
                         </CardHeader>
                         <Separator />
                         <CardContent className="pt-2">
                             <div className="divide-y">
-                                {(Object.entries(defaultPreferences) as [ keyof NotificationPreferences, DeliveryMethod ][]).map(([key]) => (
+                                {(Object.entries(defaultPreferences) as [keyof NotificationPreferences, DeliveryMethod][]).map(([key]) => (
                                     <NotificationTypeItem
                                         key={key}
                                         id={key}

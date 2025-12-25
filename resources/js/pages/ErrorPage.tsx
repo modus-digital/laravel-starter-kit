@@ -1,25 +1,12 @@
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { home, login } from '@/routes';
 import { Head, Link } from '@inertiajs/react';
-import {
-    ArrowLeft,
-    Home,
-    LogIn,
-    RefreshCcw,
-    TriangleAlert,
-} from 'lucide-react';
+import { ArrowLeft, Home, LogIn, RefreshCcw, TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 type ErrorPageProps = {
@@ -149,26 +136,20 @@ export default function ErrorPage({ status }: ErrorPageProps) {
                                 </div>
 
                                 <div className="space-y-1">
-                                    <div className="text-[72px] leading-none font-semibold tracking-tight sm:text-[88px]">
-                                        {status}
-                                    </div>
-                                    <CardTitle className="text-xl font-medium sm:text-2xl">
-                                        {meta.title}
-                                    </CardTitle>
-                                    <CardDescription className="text-sm sm:text-base">
-                                        {meta.message}
-                                    </CardDescription>
+                                    <div className="text-[72px] leading-none font-semibold tracking-tight sm:text-[88px]">{status}</div>
+                                    <CardTitle className="text-xl font-medium sm:text-2xl">{meta.title}</CardTitle>
+                                    <CardDescription className="text-sm sm:text-base">{meta.message}</CardDescription>
                                 </div>
                             </CardHeader>
 
                             <CardContent className="space-y-4 px-8 sm:px-12">
-                            {meta.hint && (
-                                <Alert>
-                                    <TriangleAlert className="size-4" />
-                                    <AlertTitle>{tt('errors.next_steps', 'Next steps')}</AlertTitle>
-                                    <AlertDescription>{meta.hint}</AlertDescription>
-                                </Alert>
-                            )}
+                                {meta.hint && (
+                                    <Alert>
+                                        <TriangleAlert className="size-4" />
+                                        <AlertTitle>{tt('errors.next_steps', 'Next steps')}</AlertTitle>
+                                        <AlertDescription>{meta.hint}</AlertDescription>
+                                    </Alert>
+                                )}
                             </CardContent>
 
                             <Separator className="opacity-70" />
@@ -195,11 +176,7 @@ export default function ErrorPage({ status }: ErrorPageProps) {
                                     </Button>
                                 )}
 
-                                <Button
-                                    asChild
-                                    variant={isAuthError ? 'outline' : 'default'}
-                                    className="w-full sm:w-auto"
-                                >
+                                <Button asChild variant={isAuthError ? 'outline' : 'default'} className="w-full sm:w-auto">
                                     <Link href={home()}>
                                         <Home className="size-4" />
                                         {tt('errors.actions.home', 'Home')}
@@ -210,10 +187,7 @@ export default function ErrorPage({ status }: ErrorPageProps) {
                     </div>
 
                     <p className="mt-6 text-center text-sm text-muted-foreground">
-                        {tt(
-                            'errors.footer',
-                            'If this keeps happening, please contact support and include the status code above.',
-                        )}
+                        {tt('errors.footer', 'If this keeps happening, please contact support and include the status code above.')}
                     </p>
                 </div>
             </main>

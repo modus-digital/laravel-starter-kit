@@ -32,21 +32,14 @@ export default function Password() {
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <HeadingSmall
-                        title={t('settings.password.title')}
-                        description={t('settings.password.description')}
-                    />
+                    <HeadingSmall title={t('settings.password.title')} description={t('settings.password.description')} />
 
                     <Form
                         {...PasswordController.update.form()}
                         options={{
                             preserveScroll: true,
                         }}
-                        resetOnError={[
-                            'password',
-                            'password_confirmation',
-                            'current_password',
-                        ]}
+                        resetOnError={['password', 'password_confirmation', 'current_password']}
                         resetOnSuccess
                         onError={(errors) => {
                             if (errors.password) {
@@ -62,9 +55,7 @@ export default function Password() {
                         {({ errors, processing, recentlySuccessful }) => (
                             <>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="current_password">
-                                        {t('settings.password.current_password')}
-                                    </Label>
+                                    <Label htmlFor="current_password">{t('settings.password.current_password')}</Label>
 
                                     <Input
                                         id="current_password"
@@ -76,15 +67,11 @@ export default function Password() {
                                         placeholder={t('settings.password.current_password_placeholder')}
                                     />
 
-                                    <InputError
-                                        message={errors.current_password}
-                                    />
+                                    <InputError message={errors.current_password} />
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="password">
-                                        {t('settings.password.new_password')}
-                                    </Label>
+                                    <Label htmlFor="password">{t('settings.password.new_password')}</Label>
 
                                     <Input
                                         id="password"
@@ -100,9 +87,7 @@ export default function Password() {
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="password_confirmation">
-                                        {t('settings.password.confirm_password')}
-                                    </Label>
+                                    <Label htmlFor="password_confirmation">{t('settings.password.confirm_password')}</Label>
 
                                     <Input
                                         id="password_confirmation"
@@ -113,16 +98,11 @@ export default function Password() {
                                         placeholder={t('settings.password.confirm_password_placeholder')}
                                     />
 
-                                    <InputError
-                                        message={errors.password_confirmation}
-                                    />
+                                    <InputError message={errors.password_confirmation} />
                                 </div>
 
                                 <div className="flex items-center gap-4">
-                                    <Button
-                                        disabled={processing}
-                                        data-test="update-password-button"
-                                    >
+                                    <Button disabled={processing} data-test="update-password-button">
                                         {t('settings.password.save')}
                                     </Button>
 
@@ -133,9 +113,7 @@ export default function Password() {
                                         leave="transition ease-in-out"
                                         leaveTo="opacity-0"
                                     >
-                                        <p className="text-sm text-neutral-600">
-                                            {t('settings.password.saved')}
-                                        </p>
+                                        <p className="text-sm text-neutral-600">{t('settings.password.saved')}</p>
                                     </Transition>
                                 </div>
                             </>

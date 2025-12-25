@@ -1,20 +1,15 @@
+import { DataTable } from '@/components/data-table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DataTable } from '@/components/data-table';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import AppLayout from '@/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
 import { type ColumnDef } from '@tanstack/react-table';
-import { useMemo, useState } from 'react';
 import { ArrowUpDown, CheckCircle, Clock, EllipsisVertical, Eye, Mail, Trash2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 type NotificationItem = {
@@ -57,14 +52,11 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
         router.visit(`/notifications/${id}`);
     };
 
-    const markRead = (id: string) =>
-        router.post(`/notifications/${id}/read`, undefined, { preserveScroll: true, preserveState: true });
+    const markRead = (id: string) => router.post(`/notifications/${id}/read`, undefined, { preserveScroll: true, preserveState: true });
 
-    const markUnread = (id: string) =>
-        router.post(`/notifications/${id}/unread`, undefined, { preserveScroll: true, preserveState: true });
+    const markUnread = (id: string) => router.post(`/notifications/${id}/unread`, undefined, { preserveScroll: true, preserveState: true });
 
-    const remove = (id: string) =>
-        router.delete(`/notifications/${id}`, { preserveScroll: true, preserveState: true });
+    const remove = (id: string) => router.delete(`/notifications/${id}`, { preserveScroll: true, preserveState: true });
 
     const clearAll = () => router.delete('/notifications', { preserveScroll: true, preserveState: true });
 
@@ -74,10 +66,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                 id: 'select',
                 header: ({ table }) => (
                     <Checkbox
-                        checked={
-                            table.getIsAllPageRowsSelected() ||
-                            (table.getIsSomePageRowsSelected() && 'indeterminate')
-                        }
+                        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
                         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
                         aria-label={t('notifications.table.select_all')}
                         data-row-select
@@ -134,9 +123,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                 ),
                 cell: ({ row }) => (
                     <div className="flex items-center gap-2">
-                        <span className="truncate text-sm font-medium">
-                            {row.original.title || t('notifications.fallback_title')}
-                        </span>
+                        <span className="truncate text-sm font-medium">{row.original.title || t('notifications.fallback_title')}</span>
                         {row.original.action_url && (
                             <a
                                 href={row.original.action_url}
@@ -168,9 +155,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                 cell: ({ row }) => (
                     <div className="flex items-center justify-end gap-1.5 text-xs text-muted-foreground">
                         <Clock className="size-4" />
-                        <time dateTime={row.original.created_at}>
-                            {new Date(row.original.created_at).toLocaleString()}
-                        </time>
+                        <time dateTime={row.original.created_at}>{new Date(row.original.created_at).toLocaleString()}</time>
                     </div>
                 ),
             },
@@ -195,11 +180,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                                         <span className="sr-only">{t('notifications.actions.open_actions')}</span>
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent
-                                    align="end"
-                                    className="w-44"
-                                    onClick={(event) => event.stopPropagation()}
-                                >
+                                <DropdownMenuContent align="end" className="w-44" onClick={(event) => event.stopPropagation()}>
                                     <DropdownMenuItem
                                         onClick={(event) => {
                                             event.stopPropagation();
@@ -303,17 +284,10 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                 <div className="flex w-full items-center justify-between">
                     <div className="flex items-center gap-2">
                         <h1 className="text-xl font-semibold">{t('notifications.title')}</h1>
-                        <Badge variant={unreadCount > 0 ? 'default' : 'outline'}>
-                            {t('notifications.unread_count', { count: unreadCount })}
-                        </Badge>
+                        <Badge variant={unreadCount > 0 ? 'default' : 'outline'}>{t('notifications.unread_count', { count: unreadCount })}</Badge>
                     </div>
                     <div className="flex gap-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            disabled={notifications.data.length === 0}
-                            onClick={clearAll}
-                        >
+                        <Button variant="outline" size="sm" disabled={notifications.data.length === 0} onClick={clearAll}>
                             <Trash2 className="size-4" />
                             {t('notifications.actions.clear_all')}
                         </Button>
@@ -324,9 +298,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                     <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div className="space-y-1">
                             <CardTitle>{t('notifications.inbox.title')}</CardTitle>
-                            <p className="text-sm text-muted-foreground">
-                                {t('notifications.inbox.description')}
-                            </p>
+                            <p className="text-sm text-muted-foreground">{t('notifications.inbox.description')}</p>
                         </div>
                         <div className="inline-flex items-center rounded-full bg-muted p-1 text-xs">
                             {(['all', 'read'] as const).map((tab) => (
@@ -334,31 +306,26 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                                     key={tab}
                                     type="button"
                                     onClick={() =>
-                                        router.visit(
-                                            tab === 'all' ? '/notifications' : `/notifications?tab=${tab}`,
-                                            {
-                                                preserveScroll: true,
-                                                preserveState: true,
-                                            },
-                                        )
+                                        router.visit(tab === 'all' ? '/notifications' : `/notifications?tab=${tab}`, {
+                                            preserveScroll: true,
+                                            preserveState: true,
+                                        })
                                     }
                                     className={`flex items-center rounded-full px-3 py-1.5 text-xs font-medium capitalize transition-colors ${
-                                        activeTab === tab
-                                            ? 'bg-background text-foreground shadow-sm'
-                                            : 'text-muted-foreground hover:text-foreground'
+                                        activeTab === tab ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
                                     }`}
                                 >
                                     {tab === 'all' ? (
                                         <span className="flex items-center">
-                                                {t('notifications.tabs.all')}
+                                            {t('notifications.tabs.all')}
                                             {unreadCount > 0 && (
-                                                <span className="ml-2 inline-flex min-w-[1.5em] items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px] font-bold px-1.5 py-0.5">
+                                                <span className="ml-2 inline-flex min-w-[1.5em] items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
                                                     {unreadCount}
                                                 </span>
                                             )}
                                         </span>
                                     ) : (
-                                            t('notifications.tabs.read')
+                                        t('notifications.tabs.read')
                                     )}
                                 </button>
                             ))}
@@ -405,9 +372,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                                 total: notifications.total,
                                 onPageChange: (page) =>
                                     router.visit(
-                                        activeTab === 'all'
-                                            ? `/notifications?page=${page}`
-                                            : `/notifications?tab=${activeTab}&page=${page}`,
+                                        activeTab === 'all' ? `/notifications?page=${page}` : `/notifications?tab=${activeTab}&page=${page}`,
                                         {
                                             preserveScroll: true,
                                             preserveState: true,
