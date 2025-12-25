@@ -1,6 +1,6 @@
+import { ModulesConfig } from '@/types/modules';
 import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
-import { ModulesConfig } from '@/types/modules';
 
 export interface Auth {
     user: User;

@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -8,9 +8,17 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-    --font-sans: var(--brand-font-sans, 'Inter', ui-sans-serif, system-ui, sans-serif,
-        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-        'Noto Color Emoji');
+    --font-sans: var(
+        --brand-font-sans,
+        'Inter',
+        ui-sans-serif,
+        system-ui,
+        sans-serif,
+        'Apple Color Emoji',
+        'Segoe UI Emoji',
+        'Segoe UI Symbol',
+        'Noto Color Emoji'
+    );
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -137,8 +145,7 @@
 
         /* System-wide modern scrollbar (Firefox) */
         scrollbar-width: thin;
-        scrollbar-color: color-mix(in oklch, var(--muted-foreground) 35%, transparent)
-            transparent;
+        scrollbar-color: color-mix(in oklch, var(--muted-foreground) 35%, transparent) transparent;
     }
 
     body {
