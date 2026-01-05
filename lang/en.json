@@ -331,6 +331,19 @@
             "suspended": "Suspended",
             "deleted": "Deleted"
         },
+        "task_type": {
+            "task": "Task",
+            "bug": "Bug",
+            "feature": "Feature",
+            "documentation": "Documentation",
+            "other": "Other"
+        },
+        "task_priority": {
+            "low": "Low",
+            "normal": "Normal",
+            "high": "High",
+            "critical": "Critical"
+        },
         "rbac": {
             "role": {
                 "super_admin": "Super Admin",
@@ -407,6 +420,7 @@
             "maintenance": "Maintenance"
         },
         "labels": {
+            "tasks": "Tasks",
             "users": "Users",
             "roles": "Roles",
             "permissions": "Permissions",
@@ -1102,6 +1116,27 @@
             "updated": ":issuer updated the credentials for the :target provider",
             "deleted": ":issuer deleted socialite provider :target",
             "restored": ":issuer restored socialite provider :target"
+        },
+        "tasks": {
+            "created": "created this task",
+            "deleted": "deleted this task",
+            "restored": "restored this task",
+            "title_changed": "changed the title from :old to :new",
+            "description_changed": "updated the description",
+            "status_changed": "changed status from :old to :new",
+            "priority_changed": "changed priority from :old to :new",
+            "type_changed": "changed type from :old to :new",
+            "due_date_set": "set due date to :new",
+            "due_date_changed": "changed due date from :old to :new",
+            "due_date_removed": "removed the due date",
+            "assigned": "assigned this task to :new",
+            "unassigned": "unassigned :old from this task",
+            "reassigned": "reassigned this task from :old to :new",
+            "assigned_changed": "changed assignment from :old to :new",
+            "field_changed": "changed :field from :old to :new",
+            "comments": {
+                "created": "added a comment to this task"
+            }
         }
     }
 }

@@ -1,19 +1,11 @@
 import { Button } from '@/components/ui/button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useAppearance } from '@/hooks/use-appearance';
 import { Monitor, Moon, Sun } from 'lucide-react';
 import { HTMLAttributes } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function AppearanceToggleDropdown({
-    className = '',
-    ...props
-}: HTMLAttributes<HTMLDivElement>) {
+export default function AppearanceToggleDropdown({ className = '', ...props }: HTMLAttributes<HTMLDivElement>) {
     const { t } = useTranslation();
     const { appearance, updateAppearance } = useAppearance();
 
@@ -32,11 +24,7 @@ export default function AppearanceToggleDropdown({
         <div className={className} {...props}>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-9 w-9 rounded-md"
-                    >
+                    <Button variant="ghost" size="icon" className="h-9 w-9 rounded-md">
                         {getCurrentIcon()}
                         <span className="sr-only">{t('common.theme.toggle')}</span>
                     </Button>
@@ -54,9 +42,7 @@ export default function AppearanceToggleDropdown({
                             {t('common.theme.dark')}
                         </span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={() => updateAppearance('system')}
-                    >
+                    <DropdownMenuItem onClick={() => updateAppearance('system')}>
                         <span className="flex items-center gap-2">
                             <Monitor className="h-5 w-5" />
                             {t('common.theme.system')}

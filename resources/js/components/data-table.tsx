@@ -1,23 +1,19 @@
 import {
     type ColumnDef,
     type ColumnFiltersState,
-    type PaginationState,
     type RowSelectionState,
     type SortingState,
     type VisibilityState,
     flexRender,
     getCoreRowModel,
     getFilteredRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from '@tanstack/react-table';
 import { ChevronLeft, ChevronRight, Settings2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -26,14 +22,9 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 
 type DataTableProps<TData, TValue> = {
     columns: ColumnDef<TData, TValue>[];
@@ -91,10 +82,7 @@ export function DataTable<TData, TValue>({
         getFilteredRowModel: getFilteredRowModel(),
     });
 
-    const selectedRows = useMemo(
-        () => table.getSelectedRowModel().rows.map((row) => row.original),
-        [rowSelection, table],
-    );
+    const selectedRows = useMemo(() => table.getSelectedRowModel().rows.map((row) => row.original), [rowSelection, table]);
 
     useEffect(() => {
         if (!enableRowSelection || !onSelectionChange) {
@@ -105,9 +93,7 @@ export function DataTable<TData, TValue>({
     }, [enableRowSelection, onSelectionChange, rowSelection, selectedRows]);
 
     const searchValue =
-        searchColumnIds && searchColumnIds.length > 0
-            ? ((table.getColumn(searchColumnIds[0])?.getFilterValue() as string) ?? '')
-            : '';
+        searchColumnIds && searchColumnIds.length > 0 ? ((table.getColumn(searchColumnIds[0])?.getFilterValue() as string) ?? '') : '';
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (!searchColumnIds?.length) {
@@ -129,16 +115,10 @@ export function DataTable<TData, TValue>({
         <div className="space-y-3">
             {searchColumnIds && searchColumnIds.length > 0 && (
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <Input
-                        placeholder={searchPlaceholder}
-                        value={searchValue}
-                        onChange={handleSearchChange}
-                        className="h-8 max-w-xs"
-                    />
-                    <div className="mt-1 flex items-center justify-between gap-2 text-xs text-muted-foreground sm:ml-auto sm:mt-0">
+                    <Input placeholder={searchPlaceholder} value={searchValue} onChange={handleSearchChange} className="h-8 max-w-xs" />
+                    <div className="mt-1 flex items-center justify-between gap-2 text-xs text-muted-foreground sm:mt-0 sm:ml-auto">
                         <span>
-                            {table.getFilteredRowModel().rows.length} of{' '}
-                            {pagination?.total ?? data.length} row
+                            {table.getFilteredRowModel().rows.length} of {pagination?.total ?? data.length} row
                             {table.getFilteredRowModel().rows.length === 1 ? '' : 's'}
                         </span>
                         <div className="flex items-center gap-2">
@@ -161,11 +141,7 @@ export function DataTable<TData, TValue>({
                             )}
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="hidden h-8 gap-1 px-2 sm:inline-flex"
-                                    >
+                                    <Button variant="outline" size="sm" className="hidden h-8 gap-1 px-2 sm:inline-flex">
                                         <Settings2 className="size-3.5" />
                                         <span>View</span>
                                     </Button>
@@ -175,10 +151,7 @@ export function DataTable<TData, TValue>({
                                     <DropdownMenuSeparator />
                                     {table
                                         .getAllColumns()
-                                        .filter(
-                                            (column) =>
-                                                typeof column.accessorFn !== 'undefined' && column.getCanHide(),
-                                        )
+                                        .filter((column) => typeof column.accessorFn !== 'undefined' && column.getCanHide())
                                         .map((column) => (
                                             <DropdownMenuCheckboxItem
                                                 key={column.id}
@@ -203,9 +176,7 @@ export function DataTable<TData, TValue>({
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
                                     <TableHead key={header.id}>
-                                        {header.isPlaceholder
-                                            ? null
-                                            : flexRender(header.column.columnDef.header, header.getContext())}
+                                        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                                     </TableHead>
                                 ))}
                             </TableRow>
@@ -222,11 +193,7 @@ export function DataTable<TData, TValue>({
                                         onRowClick
                                             ? (event) => {
                                                   // Allow inner elements to stop propagation.
-                                      if (
-                                          (event.target as HTMLElement).closest(
-                                              '[data-row-action],[data-row-select]',
-                                          )
-                                      ) {
+                                                  if ((event.target as HTMLElement).closest('[data-row-action],[data-row-select]')) {
                                                       return;
                                                   }
 
@@ -247,18 +214,13 @@ export function DataTable<TData, TValue>({
                                     tabIndex={onRowClick ? 0 : -1}
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id}>
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </TableCell>
+                                        <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                                     ))}
                                 </TableRow>
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell
-                                    colSpan={table.getAllColumns().length}
-                                    className="h-24 text-center text-sm text-muted-foreground"
-                                >
+                                <TableCell colSpan={table.getAllColumns().length} className="h-24 text-center text-sm text-muted-foreground">
                                     No results found.
                                 </TableCell>
                             </TableRow>
@@ -298,5 +260,3 @@ export function DataTable<TData, TValue>({
         </div>
     );
 }
-
-

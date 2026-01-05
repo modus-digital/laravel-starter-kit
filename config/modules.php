@@ -5,6 +5,17 @@ declare(strict_types=1);
 return [
     /*
     |--------------------------------------------------------------------------
+    | Activity Logs
+    |--------------------------------------------------------------------------
+    | This is used for an allowlist for the admin panel to see activity logs.
+    |
+    */
+    'activity_logs' => [
+        'banlist' => ['tasks', 'comments'],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Socialite
     |--------------------------------------------------------------------------
     | If this module is enabled we allow an admin to configure

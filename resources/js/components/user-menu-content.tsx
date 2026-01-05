@@ -1,10 +1,4 @@
-import {
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
-} from '@/components/ui/dropdown-menu';
+import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut } from '@/components/ui/dropdown-menu';
 import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { logout } from '@/routes';
@@ -21,18 +15,12 @@ interface UserMenuContentProps {
     unreadNotificationsCount?: number;
 }
 
-export function UserMenuContent({
-    user,
-    unreadNotificationsCount = 0,
-}: UserMenuContentProps) {
+export function UserMenuContent({ user, unreadNotificationsCount = 0 }: UserMenuContentProps) {
     const cleanup = useMobileNavigation();
     const { t } = useTranslation();
 
     const hasUnreadNotifications = unreadNotificationsCount > 0;
-    const unreadNotificationsLabel =
-        unreadNotificationsCount > 9
-            ? '9+'
-            : unreadNotificationsCount.toString();
+    const unreadNotificationsLabel = unreadNotificationsCount > 9 ? '9+' : unreadNotificationsCount.toString();
 
     const handleLogout = () => {
         cleanup();
@@ -43,41 +31,21 @@ export function UserMenuContent({
         <>
             <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    <UserInfo
-                        user={user}
-                        showEmail={true}
-                        hasUnreadNotifications={hasUnreadNotifications}
-                    />
+                    <UserInfo user={user} showEmail={true} hasUnreadNotifications={hasUnreadNotifications} />
                 </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
-                    <Link
-                        className="flex w-full items-center"
-                        href={NotificationsIndex().url}
-                        as="button"
-                        prefetch
-                        onClick={cleanup}
-                    >
+                    <Link className="flex w-full items-center" href={NotificationsIndex().url} as="button" prefetch onClick={cleanup}>
                         <UnreadNotificationIcon className="mr-2" />
                         {t('navigation.labels.notifications')}
-                        {hasUnreadNotifications && (
-                            <DropdownMenuShortcut>
-                                {unreadNotificationsLabel}
-                            </DropdownMenuShortcut>
-                        )}
+                        {hasUnreadNotifications && <DropdownMenuShortcut>{unreadNotificationsLabel}</DropdownMenuShortcut>}
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                    <Link
-                        className="block w-full"
-                        href={edit()}
-                        as="button"
-                        prefetch
-                        onClick={cleanup}
-                    >
+                    <Link className="block w-full" href={edit()} as="button" prefetch onClick={cleanup}>
                         <Settings className="mr-2" />
                         {t('common.actions.settings')}
                     </Link>
@@ -85,13 +53,7 @@ export function UserMenuContent({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-                <Link
-                    className="block w-full"
-                    href={logout()}
-                    as="button"
-                    onClick={handleLogout}
-                    data-test="logout-button"
-                >
+                <Link className="block w-full" href={logout()} as="button" onClick={handleLogout} data-test="logout-button">
                     <LogOut className="mr-2" />
                     {t('common.actions.logout')}
                 </Link>

@@ -61,17 +61,6 @@ final class ActivityResource extends Resource
         return __('navigation.groups.logs_and_monitoring');
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        $count = Activity::count();
-
-        if ($count > 100) {
-            return '99+';
-        }
-
-        return $count > 0 ? (string) $count : null;
-    }
-
     public static function table(Table $table): Table
     {
         return ActivitiesTable::configure($table);

@@ -1,3 +1,4 @@
+import { ModulesConfig } from '@/types/modules';
 import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
 
@@ -28,14 +29,13 @@ export interface SharedData {
     auth: Auth;
     unreadNotificationsCount?: number;
     sidebarOpen: boolean;
-    canAccessControlPanel: boolean;
-    canManageApiTokens: boolean;
     isImpersonating: boolean;
     permissions: {
         canAccessControlPanel: boolean;
         canManageApiTokens: boolean;
         [permission: string]: boolean;
     };
+    modules: ModulesConfig;
     branding: {
         logo: string;
         primaryColor: string;
@@ -56,9 +56,4 @@ export interface User {
     created_at: string;
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
-}
-
-export interface SocialiteProvider {
-    id: string;
-    name: string;
 }

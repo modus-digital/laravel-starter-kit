@@ -57,6 +57,7 @@ final class ActivityLog extends Widget implements HasSchemas
     {
         return Activity::query()
             ->distinct()
+            ->whereNotIn('log_name', config('modules.activity_logs.banlist', []))
             ->whereNotNull('log_name')
             ->orderBy('log_name')
             ->pluck('log_name');
@@ -69,6 +70,7 @@ final class ActivityLog extends Widget implements HasSchemas
     {
         $query = Activity::query()
             ->with(['causer', 'subject'])
+            ->whereNotIn('log_name', config('modules.activity_logs.banlist', []))
             ->latest('created_at');
 
         if ($this->logName !== null && $this->logName !== '') {

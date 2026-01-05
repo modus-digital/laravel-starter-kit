@@ -1,13 +1,7 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertCircleIcon } from 'lucide-react';
 
-export default function AlertError({
-    errors,
-    title,
-}: {
-    errors: string[];
-    title?: string;
-}) {
+export default function AlertError({ errors, title }: { errors: string[]; title?: string }) {
     return (
         <Alert variant="destructive">
             <AlertCircleIcon />

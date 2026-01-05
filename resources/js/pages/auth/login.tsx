@@ -10,9 +10,9 @@ import AuthLayout from '@/layouts/auth-layout';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
+import { SocialiteProvider } from '@/types/modules';
 import { Form, Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
-import { SocialiteProvider } from '@/types';
 
 interface LoginProps {
     status?: string;
@@ -21,36 +21,22 @@ interface LoginProps {
     authProviders: SocialiteProvider[];
 }
 
-export default function Login({
-    status,
-    canResetPassword,
-    canRegister,
-    authProviders,
-}: LoginProps) {
+export default function Login({ status, canResetPassword, canRegister, authProviders }: LoginProps) {
     const { t } = useTranslation();
 
     return (
-        <AuthLayout
-            title={t('auth.pages.login.title')}
-            description={t('auth.pages.login.description')}
-        >
+        <AuthLayout title={t('auth.pages.login.title')} description={t('auth.pages.login.description')}>
             <Head title={t('auth.pages.login.page_title')} />
 
             <SocialAuthButtons providers={authProviders} />
 
-            <div className="flex items-center mt-2 mb-6">
-                <div className="grow h-px bg-muted" />
-                <span className="mx-4 text-xs text-muted-foreground uppercase">
-                    {t('auth.pages.login.or_continue_with', 'Or continue with')}
-                </span>
-                <div className="grow h-px bg-muted" />
+            <div className="mt-2 mb-6 flex items-center">
+                <div className="h-px grow bg-muted" />
+                <span className="mx-4 text-xs text-muted-foreground uppercase">{t('auth.pages.login.or_continue_with', 'Or continue with')}</span>
+                <div className="h-px grow bg-muted" />
             </div>
 
-            <Form
-                action={store()}
-                resetOnSuccess={['password']}
-                className="flex flex-col gap-6"
-            >
+            <Form action={store()} resetOnSuccess={['password']} className="flex flex-col gap-6">
                 {({ processing, errors }) => (
                     <>
                         <div className="grid gap-6">
@@ -73,11 +59,7 @@ export default function Login({
                                 <div className="flex items-center">
                                     <Label htmlFor="password">{t('auth.pages.login.password')}</Label>
                                     {canResetPassword && (
-                                        <TextLink
-                                            href={request()}
-                                            className="ml-auto text-sm"
-                                            tabIndex={5}
-                                        >
+                                        <TextLink href={request()} className="ml-auto text-sm" tabIndex={5}>
                                             {t('auth.pages.login.forgot_password')}
                                         </TextLink>
                                     )}
@@ -95,21 +77,11 @@ export default function Login({
                             </div>
 
                             <div className="flex items-center space-x-3">
-                                <Checkbox
-                                    id="remember"
-                                    name="remember"
-                                    tabIndex={3}
-                                />
+                                <Checkbox id="remember" name="remember" tabIndex={3} />
                                 <Label htmlFor="remember">{t('auth.pages.login.remember_me')}</Label>
                             </div>
 
-                            <Button
-                                type="submit"
-                                className="mt-4 w-full"
-                                tabIndex={4}
-                                disabled={processing}
-                                data-test="login-button"
-                            >
+                            <Button type="submit" className="mt-4 w-full" tabIndex={4} disabled={processing} data-test="login-button">
                                 {processing && <Spinner />}
                                 {t('auth.pages.login.submit')}
                             </Button>
@@ -127,11 +99,7 @@ export default function Login({
                 )}
             </Form>
 
-            {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
+            {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
         </AuthLayout>
     );
 }

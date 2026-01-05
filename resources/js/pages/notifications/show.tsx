@@ -6,16 +6,7 @@ import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import type { Notification as NotificationType } from '@/types/models';
 import { Head, Link, router } from '@inertiajs/react';
-import {
-    ArrowLeft,
-    Bell,
-    Calendar,
-    CheckCircle,
-    Clock,
-    ExternalLink,
-    Mail,
-    Trash2,
-} from 'lucide-react';
+import { ArrowLeft, Bell, Calendar, CheckCircle, Clock, ExternalLink, Mail, Trash2 } from 'lucide-react';
 
 type NotificationProps = {
     notification: NotificationType;
@@ -118,9 +109,7 @@ export default function Notification({ notification }: NotificationProps) {
                             <div className="flex items-start gap-4">
                                 <div
                                     className={`flex size-12 shrink-0 items-center justify-center rounded-full ${
-                                        isRead
-                                            ? 'bg-muted text-muted-foreground'
-                                            : 'bg-primary/10 text-primary'
+                                        isRead ? 'bg-muted text-muted-foreground' : 'bg-primary/10 text-primary'
                                     }`}
                                 >
                                     <Bell className="size-6" />
@@ -140,13 +129,9 @@ export default function Notification({ notification }: NotificationProps) {
                                                 </>
                                             )}
                                         </Badge>
-                                        {notification.deleted_at && (
-                                            <Badge variant="destructive">Deleted</Badge>
-                                        )}
+                                        {notification.deleted_at && <Badge variant="destructive">Deleted</Badge>}
                                     </div>
-                                    <CardTitle className="text-xl sm:text-2xl">
-                                        {notification.title}
-                                    </CardTitle>
+                                    <CardTitle className="text-xl sm:text-2xl">{notification.title}</CardTitle>
                                     <CardDescription className="flex items-center gap-1.5">
                                         <Clock className="size-3.5" />
                                         {formatRelativeTime(notification.created_at)}
@@ -157,32 +142,17 @@ export default function Notification({ notification }: NotificationProps) {
                             {/* Action Buttons - Desktop */}
                             <div className="hidden shrink-0 gap-2 sm:flex">
                                 {isRead ? (
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={markAsUnread}
-                                        className="gap-1.5"
-                                    >
+                                    <Button variant="outline" size="sm" onClick={markAsUnread} className="gap-1.5">
                                         <Mail className="size-4" />
                                         Mark unread
                                     </Button>
                                 ) : (
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={markAsRead}
-                                        className="gap-1.5"
-                                    >
+                                    <Button variant="outline" size="sm" onClick={markAsRead} className="gap-1.5">
                                         <CheckCircle className="size-4" />
                                         Mark read
                                     </Button>
                                 )}
-                                <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    onClick={deleteNotification}
-                                    className="gap-1.5"
-                                >
+                                <Button variant="destructive" size="sm" onClick={deleteNotification} className="gap-1.5">
                                     <Trash2 className="size-4" />
                                     Delete
                                 </Button>
@@ -194,19 +164,13 @@ export default function Notification({ notification }: NotificationProps) {
 
                     <CardContent className="py-6">
                         <div className="prose prose-sm dark:prose-invert max-w-none">
-                            <p className="whitespace-pre-wrap text-foreground leading-relaxed">
-                                {notification.body}
-                            </p>
+                            <p className="leading-relaxed whitespace-pre-wrap text-foreground">{notification.body}</p>
                         </div>
 
                         {notification.action_url && (
                             <div className="mt-6">
                                 <Button asChild variant="secondary" className="gap-2">
-                                    <a
-                                        href={notification.action_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
+                                    <a href={notification.action_url} target="_blank" rel="noopener noreferrer">
                                         <ExternalLink className="size-4" />
                                         Open related link
                                     </a>
@@ -223,17 +187,13 @@ export default function Notification({ notification }: NotificationProps) {
                             <div className="flex items-center gap-1.5">
                                 <Calendar className="size-4" />
                                 <span>Sent: {formatDate(notification.created_at)}</span>
-                                <span className="text-muted-foreground/50">
-                                    at {formatTime(notification.created_at)}
-                                </span>
+                                <span className="text-muted-foreground/50">at {formatTime(notification.created_at)}</span>
                             </div>
                             {notification.read_at && (
                                 <div className="flex items-center gap-1.5">
                                     <CheckCircle className="size-4" />
                                     <span>Read: {formatDate(notification.read_at)}</span>
-                                    <span className="text-muted-foreground/50">
-                                        at {formatTime(notification.read_at)}
-                                    </span>
+                                    <span className="text-muted-foreground/50">at {formatTime(notification.read_at)}</span>
                                 </div>
                             )}
                         </div>
@@ -241,32 +201,17 @@ export default function Notification({ notification }: NotificationProps) {
                         {/* Action Buttons - Mobile */}
                         <div className="flex w-full gap-2 sm:hidden">
                             {isRead ? (
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={markAsUnread}
-                                    className="flex-1 gap-1.5"
-                                >
+                                <Button variant="outline" size="sm" onClick={markAsUnread} className="flex-1 gap-1.5">
                                     <Mail className="size-4" />
                                     Mark unread
                                 </Button>
                             ) : (
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={markAsRead}
-                                    className="flex-1 gap-1.5"
-                                >
+                                <Button variant="outline" size="sm" onClick={markAsRead} className="flex-1 gap-1.5">
                                     <CheckCircle className="size-4" />
                                     Mark read
                                 </Button>
                             )}
-                            <Button
-                                variant="destructive"
-                                size="sm"
-                                onClick={deleteNotification}
-                                className="flex-1 gap-1.5"
-                            >
+                            <Button variant="destructive" size="sm" onClick={deleteNotification} className="flex-1 gap-1.5">
                                 <Trash2 className="size-4" />
                                 Delete
                             </Button>

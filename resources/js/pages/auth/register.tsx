@@ -15,17 +15,9 @@ export default function Register() {
     const { t } = useTranslation();
 
     return (
-        <AuthLayout
-            title={t('auth.pages.register.title')}
-            description={t('auth.pages.register.description')}
-        >
+        <AuthLayout title={t('auth.pages.register.title')} description={t('auth.pages.register.description')}>
             <Head title={t('auth.pages.register.page_title')} />
-            <Form
-                action={store()}
-                resetOnSuccess={['password', 'password_confirmation']}
-                disableWhileProcessing
-                className="flex flex-col gap-6"
-            >
+            <Form action={store()} resetOnSuccess={['password', 'password_confirmation']} disableWhileProcessing className="flex flex-col gap-6">
                 {({ processing, errors }) => (
                     <>
                         <div className="grid gap-6">
@@ -41,10 +33,7 @@ export default function Register() {
                                     name="name"
                                     placeholder={t('auth.pages.register.name_placeholder')}
                                 />
-                                <InputError
-                                    message={errors.name}
-                                    className="mt-2"
-                                />
+                                <InputError message={errors.name} className="mt-2" />
                             </div>
 
                             <div className="grid gap-2">
@@ -76,9 +65,7 @@ export default function Register() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="password_confirmation">
-                                    {t('auth.pages.register.password_confirmation')}
-                                </Label>
+                                <Label htmlFor="password_confirmation">{t('auth.pages.register.password_confirmation')}</Label>
                                 <Input
                                     id="password_confirmation"
                                     type="password"
@@ -88,17 +75,10 @@ export default function Register() {
                                     name="password_confirmation"
                                     placeholder={t('auth.pages.register.password_confirmation_placeholder')}
                                 />
-                                <InputError
-                                    message={errors.password_confirmation}
-                                />
+                                <InputError message={errors.password_confirmation} />
                             </div>
 
-                            <Button
-                                type="submit"
-                                className="mt-2 w-full"
-                                tabIndex={5}
-                                data-test="register-user-button"
-                            >
+                            <Button type="submit" className="mt-2 w-full" tabIndex={5} data-test="register-user-button">
                                 {processing && <Spinner />}
                                 {t('auth.pages.register.submit')}
                             </Button>

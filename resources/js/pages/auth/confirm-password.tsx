@@ -12,10 +12,7 @@ export default function ConfirmPassword() {
     const { t } = useTranslation();
 
     return (
-        <AuthLayout
-            title={t('auth.pages.confirm_password.title')}
-            description={t('auth.pages.confirm_password.description')}
-        >
+        <AuthLayout title={t('auth.pages.confirm_password.title')} description={t('auth.pages.confirm_password.description')}>
             <Head title={t('auth.pages.confirm_password.page_title')} />
 
             <Form action={store()} resetOnSuccess={['password']}>
@@ -36,11 +33,7 @@ export default function ConfirmPassword() {
                         </div>
 
                         <div className="flex items-center">
-                            <Button
-                                className="w-full"
-                                disabled={processing}
-                                data-test="confirm-password-button"
-                            >
+                            <Button className="w-full" disabled={processing} data-test="confirm-password-button">
                                 {processing && <Spinner />}
                                 {t('auth.pages.confirm_password.submit')}
                             </Button>

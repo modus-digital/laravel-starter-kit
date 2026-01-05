@@ -39,5 +39,8 @@ if (config('modules.socialite.enabled')) {
 if (config('modules.clients.enabled')) {
     require __DIR__.'/modules/clients.php';
 }
+if (config('modules.tasks.enabled')) {
+    require __DIR__.'/modules/tasks.php';
+}
 
 require __DIR__.'/settings.php';

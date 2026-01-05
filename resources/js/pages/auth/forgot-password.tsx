@@ -16,17 +16,10 @@ export default function ForgotPassword({ status }: { status?: string }) {
     const { t } = useTranslation();
 
     return (
-        <AuthLayout
-            title={t('auth.pages.forgot_password.title')}
-            description={t('auth.pages.forgot_password.description')}
-        >
+        <AuthLayout title={t('auth.pages.forgot_password.title')} description={t('auth.pages.forgot_password.description')}>
             <Head title={t('auth.pages.forgot_password.page_title')} />
 
-            {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
+            {status && <div className="mb-4 text-center text-sm font-medium text-green-600">{status}</div>}
 
             <div className="space-y-6">
                 <Form action={email()}>
@@ -47,14 +40,8 @@ export default function ForgotPassword({ status }: { status?: string }) {
                             </div>
 
                             <div className="my-6 flex items-center justify-start">
-                                <Button
-                                    className="w-full"
-                                    disabled={processing}
-                                    data-test="email-password-reset-link-button"
-                                >
-                                    {processing && (
-                                        <LoaderCircle className="h-4 w-4 animate-spin" />
-                                    )}
+                                <Button className="w-full" disabled={processing} data-test="email-password-reset-link-button">
+                                    {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
                                     {t('auth.pages.forgot_password.submit')}
                                 </Button>
                             </div>
