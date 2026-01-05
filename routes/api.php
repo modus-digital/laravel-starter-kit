@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\Admin\ActivityLogController;
 use App\Http\Controllers\Api\V1\Admin\ClientController;
 use App\Http\Controllers\Api\V1\Admin\RbacController;
 use App\Http\Controllers\Api\V1\Admin\UserController;
+use App\Http\Controllers\Api\V1\ImageUploadController;
 use App\Http\Controllers\Api\V1\MeController;
 use App\Models\Activity;
 use App\Models\Modules\Clients\Client;
@@ -24,6 +25,11 @@ Route::middleware('auth:sanctum')
     ->group(function (): void {
         // Current user endpoint
         Route::get('/me', MeController::class)->name('me');
+
+        // Image upload endpoint
+        Route::post('/upload/image', ImageUploadController::class)
+            ->name('upload.image')
+            ->withoutMiddleware('auth:sanctum');
 
         // Admin routes
         Route::prefix('admin')->name('admin.')->group(function (): void {

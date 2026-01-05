@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Enums\Modules\Tasks\TaskViewType;
+use App\Http\Requests\Tasks\AddCommentRequest;
 use App\Http\Requests\Tasks\CreateTaskRequest;
 use App\Http\Requests\Tasks\CreateTaskViewRequest;
 use App\Http\Requests\Tasks\DeleteTaskRequest;
@@ -19,6 +20,7 @@ use App\Services\TaskService;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
+use Spatie\Activitylog\Facades\Activity as ActivityFacade;
 
 final class TaskController extends Controller
 {
@@ -68,7 +70,27 @@ final class TaskController extends Controller
             ->where('subject_id', $task->getKey())
             ->with(['causer'])
             ->latest('created_at')
-            ->get();
+            ->get()
+            ->map(function (Activity $activity) {
+                return [
+                    'id' => $activity->id,
+                    'log_name' => $activity->log_name,
+                    'description' => $activity->getTranslatedDescription(),
+                    'subject_type' => $activity->subject_type,
+                    'subject_id' => $activity->subject_id,
+                    'event' => $activity->event,
+                    'causer_type' => $activity->causer_type,
+                    'causer_id' => $activity->causer_id,
+                    'properties' => $activity->properties,
+                    'created_at' => $activity->created_at,
+                    'updated_at' => $activity->updated_at,
+                    'causer' => $activity->causer ? [
+                        'id' => $activity->causer->id,
+                        'name' => $activity->causer->name,
+                        'email' => $activity->causer->email,
+                    ] : null,
+                ];
+            });
 
         return Inertia::render(
             component: 'tasks/show',
@@ -84,13 +106,13 @@ final class TaskController extends Controller
     {
         abort_if(boolean: $request->user() === null, code: 401);
 
-        $this->taskService->createNewTask(
+        $task = $this->taskService->createNewTask(
             user: $request->user(),
             data: $request->validated(),
             currentClientId: session()->get('current_client_id'),
         );
 
-        return redirect()->route('tasks.index');
+        return redirect()->route('tasks.show', $task);
     }
 
     public function update(UpdateTaskRequest $request, Task $task): RedirectResponse
@@ -104,7 +126,7 @@ final class TaskController extends Controller
             currentClientId: session()->get('current_client_id'),
         );
 
-        return redirect()->route('tasks.index');
+        return redirect()->back();
     }
 
     public function destroy(DeleteTaskRequest $request, Task $task): RedirectResponse
@@ -166,5 +188,66 @@ final class TaskController extends Controller
         $this->taskService->deleteTaskView(taskView: $taskView);
 
         return redirect()->route('tasks.index');
+    }
+
+    public function addComment(AddCommentRequest $request, Task $task): RedirectResponse
+    {
+        abort_if(boolean: $request->user() === null, code: 401);
+
+        ActivityFacade::inLog('tasks')
+            ->event('tasks.comments.created')
+            ->causedBy($request->user())
+            ->performedOn($task)
+            ->withProperties([
+                'comment' => $request->validated('comment'),
+            ])
+            ->log('tasks.comments.created');
+
+        return redirect()->back();
+    }
+
+    /**
+     * Get activities for a task (API endpoint for dialogs).
+     */
+    public function activities(Task $task): \Illuminate\Http\JsonResponse
+    {
+        abort_if(boolean: request()->user() === null, code: 401);
+
+        $user = request()->user();
+        $this->taskService->ensureUserCanAccessTask(
+            user: $user,
+            task: $task,
+            currentClientId: session()->get('current_client_id'),
+        );
+
+        $activities = Activity::query()
+            ->where('log_name', 'tasks')
+            ->where('subject_type', Task::class)
+            ->where('subject_id', $task->getKey())
+            ->with(['causer'])
+            ->latest('created_at')
+            ->get()
+            ->map(function (Activity $activity) {
+                return [
+                    'id' => $activity->id,
+                    'log_name' => $activity->log_name,
+                    'description' => $activity->getTranslatedDescription(),
+                    'subject_type' => $activity->subject_type,
+                    'subject_id' => $activity->subject_id,
+                    'event' => $activity->event,
+                    'causer_type' => $activity->causer_type,
+                    'causer_id' => $activity->causer_id,
+                    'properties' => $activity->properties,
+                    'created_at' => $activity->created_at,
+                    'updated_at' => $activity->updated_at,
+                    'causer' => $activity->causer ? [
+                        'id' => $activity->causer->id,
+                        'name' => $activity->causer->name,
+                        'email' => $activity->causer->email,
+                    ] : null,
+                ];
+            });
+
+        return response()->json(['activities' => $activities]);
     }
 }

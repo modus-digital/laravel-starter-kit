@@ -2,7 +2,19 @@
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
-import { DndContext, type DragEndEvent, DragOverlay, type DragStartEvent, MouseSensor, rectIntersection, TouchSensor, useDraggable, useDroppable, useSensor, useSensors } from '@dnd-kit/core';
+import {
+    DndContext,
+    type DragEndEvent,
+    DragOverlay,
+    type DragStartEvent,
+    MouseSensor,
+    rectIntersection,
+    TouchSensor,
+    useDraggable,
+    useDroppable,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { ChevronDown } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -117,7 +129,7 @@ export const ListItem = ({ id, name, index, parent, onSelectItem, children, clas
     return (
         <div
             className={cn(
-                'flex cursor-pointer items-center gap-2 rounded-md border border-border bg-background p-2 shadow-sm transition-colors select-none hover:bg-muted/40 hover:border-ring',
+                'flex cursor-pointer items-center gap-2 rounded-md border border-border bg-background p-2 shadow-sm transition-colors select-none hover:border-ring hover:bg-muted/40',
                 isDragging && 'cursor-grabbing opacity-90',
                 className,
             )}

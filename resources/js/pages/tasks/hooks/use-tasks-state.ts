@@ -158,11 +158,15 @@ export function useTasksState({ tasks, statuses }: UseTasksStateProps) {
 
         // Persist to backend
         const route = tasksRoutes.update(taskId);
-        router.patch(route.url, { due_date: newDueDateISO }, {
-            preserveScroll: true,
-            preserveState: true,
-            onSuccess: () => toast.success('Due date updated'),
-        });
+        router.patch(
+            route.url,
+            { due_date: newDueDateISO },
+            {
+                preserveScroll: true,
+                preserveState: true,
+                onSuccess: () => toast.success('Due date updated'),
+            },
+        );
     };
 
     // Handle gantt feature move (persists due_date)
@@ -172,11 +176,15 @@ export function useTasksState({ tasks, statuses }: UseTasksStateProps) {
         // Persist the due_date (end date) to backend
         const dueDateISO = toISODate(endAt);
         const route = tasksRoutes.update(id);
-        router.patch(route.url, { due_date: dueDateISO }, {
-            preserveScroll: true,
-            preserveState: true,
-            onSuccess: () => toast.success('Due date updated'),
-        });
+        router.patch(
+            route.url,
+            { due_date: dueDateISO },
+            {
+                preserveScroll: true,
+                preserveState: true,
+                onSuccess: () => toast.success('Due date updated'),
+            },
+        );
     };
 
     return {

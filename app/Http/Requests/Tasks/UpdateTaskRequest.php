@@ -41,7 +41,7 @@ final class UpdateTaskRequest extends FormRequest
     {
         return [
             'title' => ['sometimes', 'required', 'string', 'max:255'],
-            'description' => ['sometimes', 'nullable', 'string'],
+            'description' => ['sometimes', 'nullable', 'string', 'json'],
             'type' => ['sometimes', 'nullable', 'string', Rule::enum(TaskType::class)],
             'priority' => ['sometimes', 'nullable', 'string', Rule::enum(TaskPriority::class)],
             'status_id' => ['sometimes', 'nullable', 'string', 'uuid', 'exists:task_statuses,id'],

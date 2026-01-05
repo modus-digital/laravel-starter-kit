@@ -9,12 +9,14 @@ use Filament\Actions\Action;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 final class ActivitiesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->query(fn (): Builder => self::getQuery())
             ->columns([
                 TextColumn::make('description')
                     ->label(__('admin.activities.table.description'))
@@ -88,5 +90,11 @@ final class ActivitiesTable
                     ])),
             ])
             ->recordAction('view');
+    }
+
+    private static function getQuery(): Builder
+    {
+        return Activity::whereNotIn('log_name', config('modules.activity_logs.banlist', []))
+            ->latest();
     }
 }

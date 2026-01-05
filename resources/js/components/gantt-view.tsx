@@ -409,7 +409,7 @@ export const GanttSidebarItem: FC<GanttSidebarItemProps> = ({ feature, onSelectI
 
     return (
         <div
-            className={cn('relative flex cursor-pointer items-center gap-2.5 p-2.5 text-xs hover:bg-secondary transition-colors', className)}
+            className={cn('relative flex cursor-pointer items-center gap-2.5 p-2.5 text-xs transition-colors hover:bg-secondary', className)}
             key={feature.id}
             onClick={handleClick}
             onKeyDown={handleKeyDown}

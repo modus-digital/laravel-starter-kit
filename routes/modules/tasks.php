@@ -8,21 +8,32 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth')
     ->prefix('tasks')
     ->name('tasks.')
+    ->controller(TaskController::class)
     ->group(function (): void {
-        // * Task routes
-        Route::get('/', [TaskController::class, 'index'])->name('index');
-        Route::post('/', [TaskController::class, 'store'])->name('store');
-        Route::get('/{task}', [TaskController::class, 'show'])->name('show');
-        Route::patch('/{task}', [TaskController::class, 'update'])->name('update');
-        Route::delete('/{task}', [TaskController::class, 'destroy'])->name('destroy');
+        // Tasks
+        Route::get('/', 'index')->name('index');
+        Route::post('/', 'store')->name('store');
 
-        // * Task View routes
-        Route::prefix('views')
-            ->name('views.')
-            ->group(function (): void {
-                Route::post('/', [TaskController::class, 'createView'])->name('create');
-                Route::patch('/{taskView}', [TaskController::class, 'updateView'])->name('update');
-                Route::patch('/{taskView}/default', [TaskController::class, 'makeDefaultView'])->name('makeDefault');
-                Route::delete('/{taskView}', [TaskController::class, 'deleteView'])->name('delete');
+        Route::prefix('{task}')->group(function (): void {
+            Route::get('/', 'show')->name('show');
+            Route::patch('/', 'update')->name('update');
+            Route::delete('/', 'destroy')->name('destroy');
+
+            // Comments
+            Route::prefix('comments')->name('comments.')->group(function (): void {
+                Route::post('/', 'addComment')->name('add');
             });
+
+            // Activities (API for dialogs)
+            Route::get('/activities', 'activities')->name('activities');
+
+        });
+
+        // Views
+        Route::prefix('views')->name('views.')->group(function (): void {
+            Route::post('/', 'createView')->name('create');
+            Route::patch('/{taskView}', 'updateView')->name('update');
+            Route::patch('/{taskView}/default', 'makeDefaultView')->name('makeDefault');
+            Route::delete('/{taskView}', 'deleteView')->name('delete');
+        });
     });

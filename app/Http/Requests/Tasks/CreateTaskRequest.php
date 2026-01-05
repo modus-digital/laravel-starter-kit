@@ -33,7 +33,7 @@ final class CreateTaskRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
+            'description' => ['nullable', 'string', 'json'],
             'type' => ['nullable', 'string', Rule::enum(TaskType::class)],
             'priority' => ['nullable', 'string', Rule::enum(TaskPriority::class)],
             'status_id' => ['nullable', 'string', 'uuid', 'exists:task_statuses,id'],

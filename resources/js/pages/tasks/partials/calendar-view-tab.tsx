@@ -70,7 +70,7 @@ function CalendarTaskChip({
             {...listeners}
             {...attributes}
             className={cn(
-                'flex cursor-pointer items-center gap-2 truncate rounded-sm border border-border bg-muted/20 px-2 py-1 text-xs text-foreground transition-colors select-none hover:bg-accent/30 hover:border-ring',
+                'flex cursor-pointer items-center gap-2 truncate rounded-sm border border-border bg-muted/20 px-2 py-1 text-xs text-foreground transition-colors select-none hover:border-ring hover:bg-accent/30',
                 isDragging && 'cursor-grabbing opacity-60',
             )}
             onClick={() => onSelectItem?.(id)}

@@ -1,3 +1,4 @@
+import { activities as fetchActivitiesAction } from '@/actions/App/Http/Controllers/TaskController';
 import InputError from '@/components/input-error';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -8,20 +9,25 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import RichTextEditor from '@/components/ui/text-editor/index';
+import { RichTextRenderer } from '@/components/ui/text-editor/renderer';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import tasksRoutes from '@/routes/tasks';
 import type { SharedData } from '@/types';
-import { Form, usePage } from '@inertiajs/react';
+import { Form, router, usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { ChevronDown, Flag, MessageSquare } from 'lucide-react';
-import { useState } from 'react';
+import type { JSONContent } from 'novel';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import type { Status, Task, TaskPriority } from '../types';
+import type { Activity, Status, Task, TaskActivityProperties, TaskActivityValue, TaskPriority } from '../types';
 
 type Props = {
     task: Task | null;
     statuses: Status[];
+    activities?: Activity[];
     open: boolean;
     onOpenChange: (open: boolean) => void;
 };
@@ -46,26 +52,72 @@ const formatDate = (date: Date | undefined): string => {
     return format(date, 'MMM d, yyyy');
 };
 
-export default function TaskDetailsDialog({ task, statuses = [], open, onOpenChange }: Props) {
+const renderActivityBadge = (value: TaskActivityValue | undefined, field?: string) => {
+    if (!value) return null;
+
+    if (typeof value === 'object' && value !== null) {
+        // Handle status with color badge
+        if (field === 'status_id' && value.name && value.color) {
+            return (
+                <Badge
+                    variant="outline"
+                    className="ml-1 border-0"
+                    style={{
+                        backgroundColor: `${value.color}20`,
+                        color: value.color,
+                    }}
+                >
+                    <div className="mr-1.5 h-2 w-2 rounded-full" style={{ backgroundColor: value.color }} />
+                    {value.name}
+                </Badge>
+            );
+        }
+
+        // Handle priority with icon
+        if (field === 'priority' && value.label) {
+            const priorityColor =
+                {
+                    low: 'text-muted-foreground',
+                    normal: 'text-blue-500',
+                    high: 'text-orange-500',
+                    critical: 'text-red-500',
+                }[value.value as TaskPriority] || 'text-muted-foreground';
+
+            return (
+                <span className="ml-1 inline-flex items-center gap-1">
+                    <Flag className={cn('h-3.5 w-3.5', priorityColor)} />
+                    <span>{value.label}</span>
+                </span>
+            );
+        }
+    }
+
+    return null;
+};
+
+export default function TaskDetailsDialog({ task, statuses = [], activities = [], open, onOpenChange }: Props) {
     if (!task) {
         return null;
     }
 
-    return <TaskDetailsDialogInner key={task.id} task={task} statuses={statuses} open={open} onOpenChange={onOpenChange} />;
+    return <TaskDetailsDialogInner key={task.id} task={task} statuses={statuses} activities={activities} open={open} onOpenChange={onOpenChange} />;
 }
 
 function TaskDetailsDialogInner({
     task,
     statuses = [],
+    activities: propActivities = [],
     open,
     onOpenChange,
 }: {
     task: Task;
     statuses: Status[];
+    activities: Activity[];
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }) {
     const { auth, appUrl } = usePage<SharedData & { appUrl?: string }>().props;
+    const { t } = useTranslation();
 
     const assigneeOptions = [
         { id: UNASSIGNED_VALUE, name: 'Unassigned' },
@@ -76,6 +128,100 @@ function TaskDetailsDialogInner({
     const [selectedPriority, setSelectedPriority] = useState<TaskPriority>(task.priority ?? 'normal');
     const [dueDate, setDueDate] = useState<Date | undefined>(toDate(task.due_date));
     const [selectedStatusId, setSelectedStatusId] = useState<string>(task.status_id ?? statuses[0]?.id ?? '');
+
+    // Activities state - use prop if provided, otherwise fetch
+    const [fetchedActivities, setFetchedActivities] = useState<Activity[]>([]);
+    const [isLoadingActivities, setIsLoadingActivities] = useState(false);
+
+    // Use prop activities if provided, otherwise use fetched activities
+    const activities = propActivities.length > 0 ? propActivities : fetchedActivities;
+
+    // Fetch activities when dialog opens (if not provided via props)
+    useEffect(() => {
+        if (open && propActivities.length === 0) {
+            setIsLoadingActivities(true);
+            fetch(fetchActivitiesAction.url(task.id))
+                .then((res) => res.json())
+                .then((data) => {
+                    setFetchedActivities(data.activities || []);
+                })
+                .catch(() => {
+                    // Silently fail - activities are not critical
+                })
+                .finally(() => {
+                    setIsLoadingActivities(false);
+                });
+        }
+    }, [open, task.id, propActivities.length]);
+
+    // Parse description - handle both string (legacy) and JSON formats
+    const parseDescription = (desc: string | null | undefined): JSONContent | undefined => {
+        if (!desc) return undefined;
+        try {
+            // Try parsing as JSON first
+            const parsed = JSON.parse(desc);
+            return parsed as JSONContent;
+        } catch {
+            // If not JSON, treat as plain text and convert to TipTap format
+            return {
+                type: 'doc',
+                content: [
+                    {
+                        type: 'paragraph',
+                        content: [{ type: 'text', text: desc }],
+                    },
+                ],
+            };
+        }
+    };
+
+    const [descriptionContent, setDescriptionContent] = useState<JSONContent | undefined>(parseDescription(task.description));
+    const [descriptionEditorKey, setDescriptionEditorKey] = useState(0);
+    const [commentContent, setCommentContent] = useState<JSONContent | undefined>(undefined);
+    const [commentEditorKey, setCommentEditorKey] = useState(0);
+
+    // Sync description content when task changes (e.g., after save and Inertia reload)
+    useEffect(() => {
+        const newContent = parseDescription(task.description);
+        setDescriptionContent(newContent);
+        setDescriptionEditorKey((prev) => prev + 1);
+    }, [task.description]);
+
+    const refetchActivities = () => {
+        fetch(fetchActivitiesAction.url(task.id))
+            .then((res) => res.json())
+            .then((data) => {
+                setFetchedActivities(data.activities || []);
+            })
+            .catch(() => {
+                // Silently fail
+            });
+    };
+
+    const handleCommentSubmit = () => {
+        if (!commentContent) {
+            toast.error('Please enter a comment');
+            return;
+        }
+
+        router.post(
+            tasksRoutes.comments.add(task.id).url,
+            { comment: commentContent },
+            {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setCommentContent(undefined);
+                    setCommentEditorKey((prev) => prev + 1);
+                    toast.success('Comment added');
+                    // Refetch activities to show the new comment
+                    refetchActivities();
+                },
+                onError: () => {
+                    toast.error('Failed to add comment');
+                },
+            },
+        );
+    };
 
     const currentStatus = statuses?.find((s) => s.id === selectedStatusId);
     const currentAssignee = assigneeOptions.find((opt) => opt.id === selectedAssigneeId);
@@ -92,26 +238,12 @@ function TaskDetailsDialogInner({
         }
     };
 
-    // Mock activity data - in a real app, this would come from props or API
-    const activities = [
-        { id: '1', action: 'created', user: auth?.user?.name ?? 'You', date: task.created_at ? new Date(task.created_at) : new Date() },
-        ...(task.assigned_to_id
-            ? [
-                  {
-                      id: '2',
-                      action: 'added follower',
-                      user: auth?.user?.name ?? 'You',
-                      date: task.updated_at ? new Date(task.updated_at) : new Date(),
-                  },
-              ]
-            : []),
-    ];
-
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
             <SheetContent
                 side="right"
                 className="right-6! left-6! flex h-[calc(100vh-3rem)] w-auto! max-w-none flex-col overflow-hidden rounded-lg p-0"
+                onOpenAutoFocus={(e) => e.preventDefault()}
             >
                 <Form
                     key={task.id}
@@ -296,17 +428,14 @@ function TaskDetailsDialogInner({
                                             <Label htmlFor="task-description" className="text-sm font-medium">
                                                 Description
                                             </Label>
-                                            <textarea
-                                                id="task-description"
+                                            <RichTextEditor
+                                                key={descriptionEditorKey}
+                                                initialContent={descriptionContent}
                                                 name="description"
-                                                defaultValue={task.description ?? ''}
-                                                placeholder="Add description"
-                                                className={cn(
-                                                    'w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground',
-                                                    'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
-                                                    'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
-                                                    'min-h-24 resize-y',
-                                                )}
+                                                onUpdate={(content) => {
+                                                    setDescriptionContent(content);
+                                                }}
+                                                className="relative min-h-24 w-full rounded-md border border-input bg-background px-3 py-2 shadow-xs transition-[color,box-shadow] focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50"
                                             />
                                             <InputError message={errors.description as string | undefined} />
                                         </div>
@@ -325,26 +454,91 @@ function TaskDetailsDialogInner({
                                     </div>
                                     <ScrollArea className="flex-1">
                                         <div className="space-y-4 px-4 py-3">
-                                            {activities.map((activity) => (
-                                                <div key={activity.id} className="space-y-1">
-                                                    <div className="text-sm">
-                                                        <span className="font-medium">{activity.user}</span>{' '}
-                                                        <span className="text-muted-foreground">{activity.action} this task</span>
-                                                    </div>
-                                                    <div className="text-xs text-muted-foreground">
-                                                        {format(activity.date, 'MMM d')} at {format(activity.date, 'HH:mm')}
-                                                    </div>
+                                            {isLoadingActivities ? (
+                                                <div className="space-y-3">
+                                                    {[1, 2, 3].map((i) => (
+                                                        <div key={i} className="flex animate-pulse gap-2">
+                                                            <div className="h-6 w-6 shrink-0 rounded-full bg-muted" />
+                                                            <div className="flex-1 space-y-2">
+                                                                <div className="h-4 w-3/4 rounded bg-muted" />
+                                                                <div className="h-3 w-1/2 rounded bg-muted" />
+                                                            </div>
+                                                        </div>
+                                                    ))}
                                                 </div>
-                                            ))}
-                                            <Button type="button" variant="ghost" size="sm" className="text-xs">
-                                                Show more
-                                            </Button>
+                                            ) : activities.length === 0 ? (
+                                                <div className="text-sm text-muted-foreground">No activity yet</div>
+                                            ) : (
+                                                activities.map((activity) => {
+                                                    const props = activity.properties as TaskActivityProperties;
+                                                    const isStatusChange = props.field === 'status_id';
+                                                    const isPriorityChange = props.field === 'priority';
+                                                    const isComment = activity.event === 'tasks.comments.created';
+                                                    const commentContent = isComment && props.comment ? (props.comment as JSONContent) : null;
+
+                                                    const userName = activity.causer?.name ?? 'System';
+                                                    const userInitials = userName
+                                                        .split(' ')
+                                                        .map((n) => n[0])
+                                                        .join('')
+                                                        .toUpperCase();
+
+                                                    return (
+                                                        <div key={activity.id} className="space-y-1.5">
+                                                            <div className="flex gap-2">
+                                                                <Avatar className="h-6 w-6 shrink-0">
+                                                                    <AvatarFallback className="text-xs">{userInitials}</AvatarFallback>
+                                                                </Avatar>
+                                                                <div className="flex-1 space-y-1.5">
+                                                                    <div className="text-sm leading-relaxed">
+                                                                        <span className="font-medium">{userName}</span>{' '}
+                                                                        <span className="text-muted-foreground">{activity.description}</span>
+                                                                        {(isStatusChange || isPriorityChange) && (
+                                                                            <div className="mt-1.5 flex items-center gap-1.5">
+                                                                                {props.old && renderActivityBadge(props.old, props.field)}
+                                                                                {props.old && props.new && (
+                                                                                    <span className="text-muted-foreground">→</span>
+                                                                                )}
+                                                                                {props.new && renderActivityBadge(props.new, props.field)}
+                                                                            </div>
+                                                                        )}
+                                                                        {commentContent && (
+                                                                            <div className="mt-2 rounded-md border bg-muted/50 p-3">
+                                                                                <RichTextRenderer content={commentContent} />
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="text-xs text-muted-foreground">
+                                                                        {format(new Date(activity.created_at), 'MMM d')} at{' '}
+                                                                        {format(new Date(activity.created_at), 'HH:mm')}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })
+                                            )}
                                         </div>
                                     </ScrollArea>
-                                    <div className="border-t px-4 py-3">
-                                        <div className="flex items-center gap-2">
-                                            <Input placeholder="Write a comment..." className="h-8 text-xs" />
-                                            <Button type="button" size="icon" className="h-8 w-8">
+                                    <div className="border-t px-4 py-2">
+                                        <div className="flex items-start gap-2">
+                                            <div className="flex-1">
+                                                <RichTextEditor
+                                                    key={commentEditorKey}
+                                                    initialContent={undefined}
+                                                    onUpdate={(content) => {
+                                                        setCommentContent(content);
+                                                    }}
+                                                    className="relative max-h-32 min-h-10 w-full overflow-y-auto rounded-md border border-input bg-background px-3 py-2 shadow-xs transition-[color,box-shadow] focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50"
+                                                />
+                                            </div>
+                                            <Button
+                                                type="button"
+                                                size="icon"
+                                                className="h-8 w-8 shrink-0"
+                                                onClick={handleCommentSubmit}
+                                                disabled={!commentContent}
+                                            >
                                                 <MessageSquare className="h-4 w-4" />
                                             </Button>
                                         </div>

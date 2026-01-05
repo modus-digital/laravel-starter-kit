@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use BackedEnum;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Collection;
 use Spatie\Activitylog\Models\Activity as BaseActivity;
@@ -101,10 +102,23 @@ final class Activity extends BaseActivity
         $properties = $this->properties->toArray();
         $replacements = [];
 
+        // Special handling for task activity old/new values
+        if (isset($properties['old']) || isset($properties['new'])) {
+            if (isset($properties['old'])) {
+                $replacements['old'] = $this->formatTaskValueForDisplay($properties['old'], $properties['field'] ?? null);
+            }
+            if (isset($properties['new'])) {
+                $replacements['new'] = $this->formatTaskValueForDisplay($properties['new'], $properties['field'] ?? null);
+            }
+            if (isset($properties['field'])) {
+                $replacements['field'] = $this->formatFieldName($properties['field']);
+            }
+        }
+
         // Process each property dynamically
         foreach ($properties as $key => $value) {
             // Skip special properties that need custom handling
-            if (in_array($key, ['issuer', 'credentials', 'changes'], true)) {
+            if (in_array($key, ['issuer', 'credentials', 'changes', 'old', 'new', 'field'], true)) {
                 continue;
             }
 
@@ -207,5 +221,70 @@ final class Activity extends BaseActivity
 
         // For scalars, just cast to string
         return (string) $value;
+    }
+
+    /**
+     * Format a task value for display, handling special cases like status, priority, etc.
+     */
+    protected function formatTaskValueForDisplay(mixed $value, ?string $field = null): string
+    {
+        if ($value === null) {
+            return '—';
+        }
+
+        if (is_array($value)) {
+            // Handle status with name and color
+            if (isset($value['name']) && isset($value['color'])) {
+                return (string) $value['name'];
+            }
+
+            // Handle assigned user with name
+            if (isset($value['name']) && $field === 'assigned_to_id') {
+                return (string) $value['name'];
+            }
+
+            // Handle enum-like arrays with label
+            if (isset($value['label'])) {
+                return (string) $value['label'];
+            }
+
+            // Handle arrays with just a name
+            if (isset($value['name'])) {
+                return (string) $value['name'];
+            }
+
+            // Fallback to JSON
+            return json_encode($value) ?: '';
+        }
+
+        // For scalars, format based on field type
+        if ($field === 'due_date' && is_string($value)) {
+            try {
+                $date = \Carbon\Carbon::parse($value);
+
+                return $date->format('M j, Y');
+            } catch (Exception) {
+                return (string) $value;
+            }
+        }
+
+        return (string) $value;
+    }
+
+    /**
+     * Format a field name for display.
+     */
+    protected function formatFieldName(string $field): string
+    {
+        return match ($field) {
+            'title' => 'title',
+            'description' => 'description',
+            'status_id' => 'status',
+            'priority' => 'priority',
+            'type' => 'type',
+            'due_date' => 'due date',
+            'assigned_to_id' => 'assignment',
+            default => str_replace('_', ' ', $field),
+        };
     }
 }

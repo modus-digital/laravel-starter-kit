@@ -85,7 +85,7 @@ export const KanbanCard = <T extends KanbanItemProps = KanbanItemProps>({ id, na
             <div style={style} {...listeners} {...attributes} ref={setNodeRef}>
                 <Card
                     className={cn(
-                        'cursor-pointer gap-4 rounded-md border border-border bg-background p-2 shadow-sm transition-colors hover:bg-muted/40 hover:border-ring',
+                        'cursor-pointer gap-4 rounded-md border border-border bg-background p-2 shadow-sm transition-colors hover:border-ring hover:bg-muted/40',
                         isDragging && 'pointer-events-none cursor-grabbing opacity-30',
                         className,
                     )}

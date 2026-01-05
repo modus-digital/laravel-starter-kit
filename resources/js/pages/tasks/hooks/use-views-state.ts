@@ -50,26 +50,38 @@ export function useViewsState({ taskViews }: UseViewsStateProps) {
     // Create a new view via backend
     const createView = ({ type, name, status_ids }: CreateViewPayload) => {
         pendingView.current = { type, name, status_ids };
-        router.post(tasksRoutes.views.create().url, { type, name, status_ids }, {
-            preserveScroll: true,
-            onSuccess: () => toast.success('View created'),
-        });
+        router.post(
+            tasksRoutes.views.create().url,
+            { type, name, status_ids },
+            {
+                preserveScroll: true,
+                onSuccess: () => toast.success('View created'),
+            },
+        );
     };
 
     // Rename a view via backend
     const renameView = (viewId: string, name: string) => {
-        router.patch(tasksRoutes.views.update(viewId).url, { name }, {
-            preserveScroll: true,
-            onSuccess: () => toast.success('View renamed'),
-        });
+        router.patch(
+            tasksRoutes.views.update(viewId).url,
+            { name },
+            {
+                preserveScroll: true,
+                onSuccess: () => toast.success('View renamed'),
+            },
+        );
     };
 
     // Update view statuses (columns) via backend
     const updateViewStatuses = (viewId: string, statusIds: string[]) => {
-        router.patch(tasksRoutes.views.update(viewId).url, { status_ids: statusIds }, {
-            preserveScroll: true,
-            onSuccess: () => toast.success('View updated'),
-        });
+        router.patch(
+            tasksRoutes.views.update(viewId).url,
+            { status_ids: statusIds },
+            {
+                preserveScroll: true,
+                onSuccess: () => toast.success('View updated'),
+            },
+        );
     };
 
     // Set a view as default via backend

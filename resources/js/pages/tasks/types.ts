@@ -71,16 +71,45 @@ export type CalendarTask = {
     statusId: string;
 };
 
+export type TaskActivityValue =
+    | {
+          id?: string;
+          name?: string;
+          color?: string;
+          value?: string;
+          label?: string;
+      }
+    | string
+    | null;
+
+export type TaskActivityProperties = {
+    task?: {
+        id: string;
+        title: string;
+    };
+    field?: string;
+    old?: TaskActivityValue;
+    new?: TaskActivityValue;
+    comment?: unknown; // JSONContent from TipTap
+    issuer?: {
+        name: string;
+        email?: string;
+        ip_address?: string;
+        user_agent?: string;
+    };
+    [key: string]: unknown;
+};
+
 export type Activity = {
     id: number;
     log_name: string;
-    description: string;
+    description: string | null;
     subject_type: string;
     subject_id: string;
     event: string | null;
     causer_type: string | null;
     causer_id: string | null;
-    properties: Record<string, unknown>;
+    properties: TaskActivityProperties | Record<string, unknown>;
     created_at: string;
     updated_at: string;
     causer?: {

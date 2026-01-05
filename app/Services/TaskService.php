@@ -12,6 +12,7 @@ use App\Models\Modules\Tasks\Task;
 use App\Models\Modules\Tasks\TaskStatus;
 use App\Models\Modules\Tasks\TaskView;
 use App\Models\User;
+use BackedEnum;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -386,7 +387,11 @@ final class TaskService
     {
         $this->ensureUserCanAccessTask($user, $task, $currentClientId);
 
+        // Capture original values before updating
+        $originalValues = $this->getTaskOriginalValues($task);
+
         $updateData = [];
+        $status = null;
 
         if (array_key_exists('title', $data)) {
             $updateData['title'] = $data['title'];
@@ -397,14 +402,23 @@ final class TaskService
         }
 
         if (array_key_exists('type', $data)) {
-            $updateData['type'] = TaskType::tryFrom($data['type'] ?? '') ?? $task->type;
+            $typeValue = $data['type'];
+            if ($typeValue instanceof TaskType) {
+                $updateData['type'] = $typeValue;
+            } else {
+                $updateData['type'] = TaskType::tryFrom((string) ($typeValue ?? '')) ?? $task->type;
+            }
         }
 
         if (array_key_exists('priority', $data)) {
-            $updateData['priority'] = TaskPriority::tryFrom($data['priority'] ?? '') ?? $task->priority;
+            $priorityValue = $data['priority'];
+            if ($priorityValue instanceof TaskPriority) {
+                $updateData['priority'] = $priorityValue;
+            } else {
+                $updateData['priority'] = TaskPriority::tryFrom((string) ($priorityValue ?? '')) ?? $task->priority;
+            }
         }
 
-        $status = null;
         if (array_key_exists('status_id', $data) && $data['status_id'] !== null) {
             $status = TaskStatus::query()->find($data['status_id']);
             if ($status === null) {
@@ -425,27 +439,47 @@ final class TaskService
         }
 
         if (array_key_exists('assigned_to_id', $data)) {
-            $updateData['assigned_to_id'] = $data['assigned_to_id'];
+            $updateData['assigned_to_id'] = $data['assigned_to_id'] === '' ? null : $data['assigned_to_id'];
         }
 
         if ($status !== null) {
             $updateData['completed_at'] = $this->shouldMarkCompleted($status) ? ($task->completed_at ?? now()) : null;
         }
 
+        // Detect actual changes before updating (only field names and old values)
+        $changedFields = $this->detectChangedFields($task, $updateData, $originalValues);
+
+        // Update the task
         $task->update($updateData);
 
-        Activity::inLog('tasks')
-            ->event('tasks.updated')
-            ->causedBy($user)
-            ->performedOn($task)
-            ->withProperties([
-                'task' => [
-                    'id' => $task->id,
-                    'title' => $task->title,
-                ],
-                'updated' => array_keys($updateData),
-            ])
-            ->log('Task updated');
+        // Reload relationships for accurate logging
+        $task->refresh();
+        $task->load(['status', 'assignedTo']);
+
+        // Get new values after update
+        $newValues = $this->getTaskOriginalValues($task);
+
+        // Log each change individually with properly formatted values
+        foreach ($changedFields as $field) {
+            $oldFormatted = $this->formatValueForLogging(
+                $originalValues[$field] ?? null,
+                $field,
+                $originalValues
+            );
+            $newFormatted = $this->formatValueForLogging(
+                $newValues[$field] ?? null,
+                $field,
+                $newValues,
+                $task
+            );
+
+            $this->logTaskChange($user, $task, [
+                'field' => $field,
+                'old' => $oldFormatted,
+                'new' => $newFormatted,
+                'event' => $this->getEventTypeForField($field),
+            ]);
+        }
 
         return $task;
     }
@@ -529,6 +563,183 @@ final class TaskService
     private function shouldMarkCompleted(TaskStatus $status): bool
     {
         return mb_strtolower($status->name) === 'done';
+    }
+
+    /**
+     * Get original values from the task for comparison.
+     *
+     * @return array<string, mixed>
+     */
+    private function getTaskOriginalValues(Task $task): array
+    {
+        $task->load(['status', 'assignedTo']);
+
+        return [
+            'title' => $task->title,
+            'description' => $task->description,
+            'type' => $task->type,
+            'priority' => $task->priority,
+            'status_id' => $task->status_id,
+            'status_name' => $task->status?->name,
+            'status_color' => $task->status?->color,
+            'due_date' => $task->due_date?->format('Y-m-d'),
+            'assigned_to_id' => $task->assigned_to_id,
+            'assigned_to_name' => $task->assignedTo?->name,
+        ];
+    }
+
+    /**
+     * Detect which fields actually changed.
+     *
+     * @param  array<string, mixed>  $updateData
+     * @param  array<string, mixed>  $originalValues
+     * @return array<int, string>
+     */
+    private function detectChangedFields(Task $task, array $updateData, array $originalValues): array
+    {
+        $changedFields = [];
+
+        foreach ($updateData as $field => $newValue) {
+            $oldValue = $originalValues[$field] ?? null;
+
+            // Normalize values for comparison
+            $oldNormalized = $this->normalizeValueForComparison($oldValue, $field);
+            $newNormalized = $this->normalizeValueForComparison($newValue, $field);
+
+            // Skip if values are the same
+            if ($oldNormalized === $newNormalized) {
+                continue;
+            }
+
+            $changedFields[] = $field;
+        }
+
+        return $changedFields;
+    }
+
+    /**
+     * Normalize a value for comparison purposes.
+     */
+    private function normalizeValueForComparison(mixed $value, string $field): mixed
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        // Handle date fields
+        if ($field === 'due_date' && $value instanceof \Carbon\Carbon) {
+            return $value->format('Y-m-d');
+        }
+
+        // Handle enum fields
+        if (in_array($field, ['type', 'priority'], true) && $value instanceof BackedEnum) {
+            return $value->value;
+        }
+
+        return $value;
+    }
+
+    /**
+     * Get the event type for a specific field change.
+     */
+    private function getEventTypeForField(string $field): string
+    {
+        return match ($field) {
+            'title' => 'tasks.title_changed',
+            'description' => 'tasks.description_changed',
+            'status_id' => 'tasks.status_changed',
+            'priority' => 'tasks.priority_changed',
+            'type' => 'tasks.type_changed',
+            'due_date' => 'tasks.due_date_changed',
+            'assigned_to_id' => 'tasks.assigned_changed',
+            default => 'tasks.field_changed',
+        };
+    }
+
+    /**
+     * Format a value for logging display.
+     *
+     * @param  array<string, mixed>  $context
+     */
+    private function formatValueForLogging(mixed $value, string $field, array $context, ?Task $task = null): mixed
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return match ($field) {
+            'status_id' => [
+                'id' => $value,
+                'name' => $context['status_name'] ?? ($task?->status?->name),
+                'color' => $context['status_color'] ?? ($task?->status?->color),
+            ],
+            'assigned_to_id' => [
+                'id' => $value,
+                'name' => $context['assigned_to_name'] ?? ($task?->assignedTo?->name),
+            ],
+            'priority' => $value instanceof TaskPriority ? [
+                'value' => $value->value,
+                'label' => $value->getLabel(),
+            ] : (is_string($value) ? [
+                'value' => $value,
+                'label' => TaskPriority::tryFrom($value)?->getLabel() ?? $value,
+            ] : $value),
+            'type' => $value instanceof TaskType ? [
+                'value' => $value->value,
+                'label' => $value->getLabel(),
+            ] : (is_string($value) ? [
+                'value' => $value,
+                'label' => TaskType::tryFrom($value)?->getLabel() ?? $value,
+            ] : $value),
+            'due_date' => $value instanceof \Carbon\Carbon ? $value->format('Y-m-d') : (is_string($value) ? $value : $value),
+            default => $value,
+        };
+    }
+
+    /**
+     * Log a single task field change.
+     *
+     * @param  array{field: string, old: mixed, new: mixed, event: string}  $change
+     */
+    private function logTaskChange(User $user, Task $task, array $change): void
+    {
+        $properties = [
+            'task' => [
+                'id' => $task->id,
+                'title' => $task->title,
+            ],
+            'field' => $change['field'],
+            'old' => $change['old'],
+            'new' => $change['new'],
+        ];
+
+        // Handle special cases for better translation
+        if ($change['field'] === 'assigned_to_id') {
+            if ($change['old'] === null && $change['new'] !== null) {
+                $change['event'] = 'tasks.assigned';
+                unset($properties['old']);
+            } elseif ($change['old'] !== null && $change['new'] === null) {
+                $change['event'] = 'tasks.unassigned';
+                unset($properties['new']);
+            } else {
+                $change['event'] = 'tasks.reassigned';
+            }
+        } elseif ($change['field'] === 'due_date') {
+            if ($change['old'] === null && $change['new'] !== null) {
+                $change['event'] = 'tasks.due_date_set';
+                unset($properties['old']);
+            } elseif ($change['old'] !== null && $change['new'] === null) {
+                $change['event'] = 'tasks.due_date_removed';
+                unset($properties['new']);
+            }
+        }
+
+        Activity::inLog('tasks')
+            ->event($change['event'])
+            ->causedBy($user)
+            ->performedOn($task)
+            ->withProperties($properties)
+            ->log('Task field changed');
     }
 
     /**
