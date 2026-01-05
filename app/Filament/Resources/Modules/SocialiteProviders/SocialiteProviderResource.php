@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Modules\SocialiteProviders;
 
+use App\Enums\RBAC\Permission;
 use App\Filament\Resources\Modules\SocialiteProviders\Pages\EditSocialiteProvider;
 use App\Filament\Resources\Modules\SocialiteProviders\Pages\ListSocialiteProviders;
 use App\Filament\Resources\Modules\SocialiteProviders\Pages\ViewSocialiteProvider;
@@ -15,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 final class SocialiteProviderResource extends Resource
 {
@@ -22,11 +24,38 @@ final class SocialiteProviderResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 11;
 
-    protected static bool $shouldRegisterNavigation = true;
+    protected static ?string $slug = 'system/auth-providers';
 
-    protected static ?string $slug = 'modules/auth/providers';
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::UPDATE_SOCIALITE_PROVIDERS) ?? false;
+    }
+
+    public static function canCreate(): bool
+    {
+        // Providers are predefined, not created manually
+        return false;
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::UPDATE_SOCIALITE_PROVIDERS) ?? false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        // Providers should not be deleted
+        return false;
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        // Only show if module is enabled and user has permission
+        return config('modules.socialite.enabled', false)
+            && (auth()->user()?->hasPermissionTo(Permission::UPDATE_SOCIALITE_PROVIDERS) ?? false);
+    }
 
     public static function getModelLabel(): string
     {
@@ -45,7 +74,7 @@ final class SocialiteProviderResource extends Resource
 
     public static function getNavigationGroup(): string
     {
-        return __('navigation.groups.modules');
+        return __('navigation.groups.system');
     }
 
     public static function form(Schema $schema): Schema

@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Core\RBAC\Permissions\Tables;
 
 use App\Enums\RBAC\Permission as RBACPermission;
+use App\Models\Permission;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Artisan;
 
 final class PermissionsTable
 {
@@ -27,9 +27,9 @@ final class PermissionsTable
                 TextColumn::make('enum_key')
                     ->label(__('admin.rbac.permissions.table.enum_key'))
                     ->badge()
-                    ->state(fn (Permission $permission): ?string => self::isLinkedToEnum($permission) ? $permission->name : null)
+                    ->state(fn (Permission $record): ?string => self::isLinkedToEnum($record) ? $record->name : null)
                     ->formatStateUsing(fn (?string $state): string => $state ? RBACPermission::from($state)->getLabel() : '-')
-                    ->color(fn (Permission $permission): string => self::isLinkedToEnum($permission) ? RBACPermission::from($permission->name)->getFilamentColor() : 'gray'),
+                    ->color(fn (Permission $record): string => self::isLinkedToEnum($record) ? RBACPermission::from($record->name)->getFilamentColor() : 'gray'),
 
                 TextColumn::make('name')
                     ->label(__('admin.rbac.permissions.table.name'))
@@ -38,7 +38,7 @@ final class PermissionsTable
 
                 IconColumn::make('linked_to_enum')
                     ->label(__('admin.rbac.permissions.table.linked_to_enum.title'))
-                    ->state(fn (Permission $permission): bool => self::isLinkedToEnum($permission))
+                    ->state(fn (Permission $record): bool => self::isLinkedToEnum($record))
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle')
@@ -89,28 +89,27 @@ final class PermissionsTable
                 DeleteAction::make()
                     ->visible(fn (Permission $record): bool => ! self::isLinkedToEnum($record)),
             ])
-            ->toolbarActions([
+            ->headerActions([
                 Action::make('sync_permissions')
                     ->label(__('admin.rbac.permissions.table.sync_permissions.title'))
-                    ->icon(Heroicon::OutlinedArrowPath)
-                    ->color('primary')
+                    ->icon('heroicon-o-arrow-path')
+                    ->color('gray')
                     ->action(function (): void {
-                        $count = 0;
-
-                        foreach (RBACPermission::cases() as $permission) {
-                            Permission::updateOrCreate([
-                                'name' => $permission->value,
-                            ]);
-
-                            $count++;
-                        }
+                        $beforeCount = Permission::count();
+                        Artisan::call('permissions:sync');
+                        $afterCount = Permission::count();
+                        $syncedCount = $afterCount - $beforeCount;
 
                         Notification::make()
                             ->title(__('admin.rbac.permissions.table.sync_permissions.success.title'))
-                            ->body(__('admin.rbac.permissions.table.sync_permissions.success.body', ['count' => $count]))
+                            ->body(__('admin.rbac.permissions.table.sync_permissions.success.body', ['count' => $syncedCount]))
                             ->success()
                             ->send();
-                    }),
+                    })
+                    ->requiresConfirmation()
+                    ->modalHeading(__('admin.rbac.permissions.table.sync_permissions.title'))
+                    ->modalDescription(__('admin.rbac.permissions.table.sync_permissions.modal_description'))
+                    ->modalSubmitActionLabel(__('common.actions.confirm')),
             ]);
     }
 

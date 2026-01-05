@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Core\Users\Pages;
 
+use App\Enums\RBAC\Role;
 use App\Filament\Resources\Core\Users\UserResource;
 use App\Notifications\Auth\AccountCreated;
 use Filament\Resources\Pages\CreateRecord;
@@ -27,9 +28,10 @@ final class CreateUser extends CreateRecord
 
     protected function afterCreate(): void
     {
-        if ($this->generatedPassword && $this->record) {
-            /** @var \App\Models\User $record */
-            $record = $this->record;
+        /** @var \App\Models\User $record */
+        $record = $this->record;
+
+        if ($this->generatedPassword !== '' && $this->generatedPassword !== '0') {
             $record->notify(new AccountCreated(password: $this->generatedPassword));
         }
 
@@ -38,12 +40,16 @@ final class CreateUser extends CreateRecord
             ->causedBy(Auth::user())
             ->performedOn($record)
             ->withProperties([
-                'user_id' => $record->id,
-                'user_name' => $record->name,
-                'user_email' => $record->email,
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
+                'user' => [
+                    'id' => $record->id,
+                    'name' => $record->name,
+                    'email' => $record->email,
+                    'status' => $record->status->getLabel(),
+                    'roles' => $record->roles->first()?->name
+                        ? (Role::tryFrom($record->roles->first()->name)?->getLabel() ?? str($record->roles->first()->name)->headline()->toString())
+                        : null,
+                ],
             ])
-            ->log('User created successfully');
+            ->log('');
     }
 }

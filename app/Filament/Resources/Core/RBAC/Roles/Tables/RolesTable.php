@@ -5,46 +5,47 @@ declare(strict_types=1);
 namespace App\Filament\Resources\Core\RBAC\Roles\Tables;
 
 use App\Enums\RBAC\Role as RBACRole;
-use Filament\Actions\Action;
+use App\Models\Role;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Notifications\Notification;
-use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Spatie\Permission\Models\Role;
 
 final class RolesTable
 {
     public static function configure(Table $table): Table
     {
         return $table
-            ->recordAction(null)
             ->columns([
-                TextColumn::make('enum_key')
-                    ->label(__('admin.rbac.roles.table.enum_key'))
+                TextColumn::make('label')
+                    ->label(__('admin.rbac.roles.table.label'))
+                    ->getStateUsing(function (Role $record): string {
+                        $enum = RBACRole::tryFrom($record->name);
+
+                        return $enum?->getLabel() ?? ucwords(str_replace('_', ' ', $record->name));
+                    })
+                    ->icon(function (Role $record): ?string {
+                        $enum = RBACRole::tryFrom($record->name);
+
+                        return $enum?->getIcon() ?? ($record->icon ?? null);
+                    })
+                    ->color(function (Role $record): string {
+                        $enum = RBACRole::tryFrom($record->name);
+
+                        return $enum?->getFilamentColor() ?? ($record->color ?? 'info');
+                    })
                     ->badge()
-                    ->state(fn (Role $role): ?string => self::isLinkedToEnum($role) ? $role->name : null)
-                    ->formatStateUsing(fn (?string $state): string => $state ? RBACRole::from($state)->getLabel() : '-')
-                    ->color(fn (Role $role): string => self::isLinkedToEnum($role) ? RBACRole::from($role->name)->getFilamentColor() : 'gray'),
+                    ->searchable(query: fn (Builder $query, string $search): Builder => $query->where('name', 'like', "%{$search}%"))
+                    ->sortable(query: fn (Builder $query, string $direction): Builder => $query->orderBy('name', $direction)),
 
                 TextColumn::make('name')
                     ->label(__('admin.rbac.roles.table.name'))
                     ->searchable()
                     ->sortable(),
-
-                IconColumn::make('linked_to_enum')
-                    ->label(__('admin.rbac.roles.table.linked_to_enum.title'))
-                    ->state(fn (Role $role): bool => self::isLinkedToEnum($role))
-                    ->boolean()
-                    ->trueIcon('heroicon-o-check-circle')
-                    ->falseIcon('heroicon-o-x-circle')
-                    ->trueColor('success')
-                    ->falseColor('danger')
-                    ->tooltip(__('admin.rbac.roles.table.linked_to_enum.tooltip')),
 
                 TextColumn::make('permissions_count')
                     ->label(__('admin.rbac.roles.table.permissions_count'))
@@ -85,32 +86,13 @@ final class RolesTable
                     }),
             ])
             ->recordActions([
-                ViewAction::make(),
-                DeleteAction::make()
-                    ->visible(fn (Role $record): bool => ! self::isLinkedToEnum($record)),
-            ])
-            ->toolbarActions([
-                Action::make('sync_roles')
-                    ->label(__('admin.rbac.roles.table.sync_roles.title'))
-                    ->icon(Heroicon::OutlinedArrowPath)
-                    ->color('primary')
-                    ->action(function (): void {
-                        $count = 0;
-
-                        foreach (RBACRole::cases() as $role) {
-                            Role::updateOrCreate([
-                                'name' => $role->value,
-                            ]);
-
-                            $count++;
-                        }
-
-                        Notification::make()
-                            ->title(__('admin.rbac.roles.table.sync_roles.success.title'))
-                            ->body(__('admin.rbac.roles.table.sync_roles.success.body', ['count' => $count]))
-                            ->success()
-                            ->send();
-                    }),
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make()
+                        ->visible(fn (Role $record): bool => ! self::isLinkedToEnum($record)),
+                    DeleteAction::make()
+                        ->visible(fn (Role $record): bool => ! self::isLinkedToEnum($record)),
+                ]),
             ]);
     }
 

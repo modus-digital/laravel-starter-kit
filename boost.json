@@ -1,12 +1,6 @@
 {
-    "agents": [
-        "cursor"
-    ],
-    "editors": [
-        "cursor"
-    ],
-    "guidelines": [
-        "laravel/fortify"
-    ],
+    "agents": ["cursor"],
+    "editors": ["cursor"],
+    "guidelines": ["filament/filament", "laravel/fortify"],
     "herd_mcp": true
 }

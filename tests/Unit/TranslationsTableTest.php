@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Filament\Resources\Core\Translations\Tables\TranslationsTable;
 use App\Filament\Resources\Core\Translations\TranslationService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 
 it('builds records with status and missing metadata', function () {
@@ -44,6 +45,122 @@ it('builds records with status and missing metadata', function () {
             'missing' => 0,
             'total' => 2,
         ]);
+});
+
+it('does not include disabled module translations in progress calculations', function () {
+    File::shouldReceive('get')
+        ->with(lang_path('en.json'))
+        ->andReturn(json_encode([
+            'navigation' => [
+                'labels' => [
+                    'clients' => 'Clients',
+                    'dashboard' => 'Dashboard',
+                ],
+            ],
+            'admin' => [
+                'clients' => [
+                    'navigation_label' => 'Clients',
+                ],
+                'branding' => [
+                    'sections' => [
+                        'logo' => 'Logo',
+                    ],
+                ],
+            ],
+        ]));
+
+    File::shouldReceive('get')
+        ->with(lang_path('fr.json'))
+        ->andReturn(json_encode([
+            'navigation' => [
+                'labels' => [
+                    'dashboard' => 'Tableau de bord',
+                ],
+            ],
+            'admin' => [
+                'branding' => [
+                    'sections' => [
+                        'logo' => 'Logo',
+                    ],
+                ],
+            ],
+        ]));
+
+    File::shouldReceive('exists')
+        ->andReturn(true);
+
+    Config::set('modules.clients.enabled', false);
+
+    $service = new TranslationService;
+
+    $records = TranslationsTable::buildKeyRecords(
+        translationService: $service,
+        targetLanguage: 'fr',
+    );
+
+    /** @var array{__key: string, key: string, status: bool, missing: int, total: int} $adminRecord */
+    $adminRecord = $records->firstWhere('__key', 'admin');
+
+    expect($adminRecord['total'])->toBe(1)
+        ->and($adminRecord['missing'])->toBe(0);
+});
+
+it('applies module-based filtering dynamically from config modules', function () {
+    File::shouldReceive('get')
+        ->with(lang_path('en.json'))
+        ->andReturn(json_encode([
+            'navigation' => [
+                'labels' => [
+                    'registration' => 'Registration',
+                    'dashboard' => 'Dashboard',
+                ],
+            ],
+            'admin' => [
+                'registration' => [
+                    'navigation_label' => 'Registration',
+                ],
+                'branding' => [
+                    'sections' => [
+                        'logo' => 'Logo',
+                    ],
+                ],
+            ],
+        ]));
+
+    File::shouldReceive('get')
+        ->with(lang_path('fr.json'))
+        ->andReturn(json_encode([
+            'navigation' => [
+                'labels' => [
+                    'dashboard' => 'Tableau de bord',
+                ],
+            ],
+            'admin' => [
+                'branding' => [
+                    'sections' => [
+                        'logo' => 'Logo',
+                    ],
+                ],
+            ],
+        ]));
+
+    File::shouldReceive('exists')
+        ->andReturn(true);
+
+    config()->set('modules.registration.enabled', false);
+
+    $service = new TranslationService;
+
+    $records = TranslationsTable::buildKeyRecords(
+        translationService: $service,
+        targetLanguage: 'fr',
+    );
+
+    /** @var array{__key: string, key: string, status: bool, missing: int, total: int} $adminRecord */
+    $adminRecord = $records->firstWhere('__key', 'admin');
+
+    expect($adminRecord['total'])->toBe(1)
+        ->and($adminRecord['missing'])->toBe(0);
 });
 
 it('filters records when a search term is provided', function () {

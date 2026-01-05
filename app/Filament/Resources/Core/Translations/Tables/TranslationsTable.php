@@ -50,12 +50,12 @@ final class TranslationsTable
             )
             ->columns([
                 TextColumn::make('key')
-                    ->label('Translation Key')
+                    ->label(__('admin.translations.table.translation_key'))
                     ->sortable()
                     ->searchable(),
 
                 IconColumn::make('status')
-                    ->label('Fully Translated')
+                    ->label(__('admin.translations.table.fully_translated'))
                     ->boolean()
                     ->sortable()
                     ->trueIcon(Heroicon::OutlinedCheckCircle)
@@ -64,7 +64,7 @@ final class TranslationsTable
                     ->falseColor('danger'),
 
                 TextColumn::make('missing')
-                    ->label('Missing')
+                    ->label(__('admin.translations.table.missing'))
                     ->sortable()
                     ->formatStateUsing(
                         fn (int $state, array $record): string => "{$state} / {$record['total']}",
@@ -72,15 +72,15 @@ final class TranslationsTable
             ])
             ->headerActions([
                 Action::make('create_language')
-                    ->label('Create Language')
+                    ->label(__('admin.translations.table.create_language'))
                     ->icon('heroicon-o-plus')
                     ->schema([
                         TextInput::make('language_code')
-                            ->label('Language Code')
+                            ->label(__('admin.translations.table.language_code'))
                             ->required()
                             ->maxLength(2)
-                            ->placeholder('e.g. en, fr, es, etc.')
-                            ->helperText('The code for the language you want to create.'),
+                            ->placeholder(__('admin.translations.table.language_code_placeholder'))
+                            ->helperText(__('admin.translations.table.language_code_helper')),
                     ])
                     ->action(fn (array $data) => self::createLanguage(data: $data, service: $translationService)),
             ])
@@ -151,8 +151,8 @@ final class TranslationsTable
     {
         if ($service->languageExists($data['language_code'])) {
             Notification::make('language_exists')
-                ->title('Language already exists')
-                ->body('The language you are trying to create already exists.')
+                ->title(__('admin.translations.notifications.language_exists.title'))
+                ->body(__('admin.translations.notifications.language_exists.body'))
                 ->danger()
                 ->send();
 
@@ -163,16 +163,16 @@ final class TranslationsTable
             $service->createLanguage($data['language_code']);
 
             Notification::make('language_created')
-                ->title('Language created')
-                ->body('The language you are trying to create has been created successfully.')
+                ->title(__('admin.translations.notifications.language_created.title'))
+                ->body(__('admin.translations.notifications.language_created.body'))
                 ->success()
                 ->send();
 
             return;
         } catch (Exception) {
             Notification::make('language_creation_failed')
-                ->title('Language creation failed')
-                ->body('The language you are trying to create failed to be created.')
+                ->title(__('admin.translations.notifications.language_creation_failed.title'))
+                ->body(__('admin.translations.notifications.language_creation_failed.body'))
                 ->danger()
                 ->send();
         }

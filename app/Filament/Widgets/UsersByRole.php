@@ -10,11 +10,14 @@ use Spatie\Permission\Models\Role;
 
 final class UsersByRole extends ChartWidget
 {
-    protected ?string $heading = 'Users by Role';
-
     protected int|string|array $columnSpan = 1;
 
     protected static ?int $sort = 2;
+
+    public function getHeading(): string
+    {
+        return __('admin.widgets.users_by_role.heading');
+    }
 
     protected function getData(): array
     {
@@ -35,7 +38,11 @@ final class UsersByRole extends ChartWidget
                     ],
                 ],
             ],
-            'labels' => $roles->pluck('name')->map(fn (string $name): string => RBACRole::from($name)->getLabel())->toArray(),
+            'labels' => $roles->pluck('name')->map(function (string $name): string {
+                $enum = RBACRole::tryFrom($name);
+
+                return $enum?->getLabel() ?? str($name)->headline()->toString();
+            })->toArray(),
         ];
     }
 

@@ -4,17 +4,23 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Core\RBAC\Roles;
 
+use App\Enums\RBAC\Permission;
+use App\Enums\RBAC\Role as RBACRole;
+use App\Filament\Resources\Core\RBAC\Roles\Pages\CreateRole;
+use App\Filament\Resources\Core\RBAC\Roles\Pages\EditRole;
 use App\Filament\Resources\Core\RBAC\Roles\Pages\ListRoles;
 use App\Filament\Resources\Core\RBAC\Roles\Pages\ViewRole;
+use App\Filament\Resources\Core\RBAC\Roles\RelationManagers\ActivitiesRelationManager;
 use App\Filament\Resources\Core\RBAC\Roles\RelationManagers\PermissionRelationManager;
 use App\Filament\Resources\Core\RBAC\Roles\Schemas\RoleForm;
 use App\Filament\Resources\Core\RBAC\Roles\Tables\RolesTable;
+use App\Models\Role;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
-use Spatie\Permission\Models\Role;
+use Illuminate\Database\Eloquent\Model;
 
 final class RoleResource extends Resource
 {
@@ -22,15 +28,58 @@ final class RoleResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static bool $shouldRegisterNavigation = true;
+    protected static ?int $navigationSort = 7;
 
-    protected static ?int $navigationSort = 2;
+    protected static ?string $slug = 'management/access-control/roles';
 
-    protected static ?string $slug = 'system/access-control/roles';
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::READ_ROLES) ?? false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        // System roles cannot be deleted
+        if ($record instanceof Role) {
+            $isSystemRole = collect(RBACRole::cases())
+                ->contains(fn (RBACRole $enum): bool => $enum->value === $record->name);
+
+            if ($isSystemRole) {
+                return false;
+            }
+        }
+
+        return auth()->user()?->hasPermissionTo(Permission::DELETE_ROLES) ?? false;
+    }
+
+    public static function canRestore(Model $record): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::RESTORE_ROLES) ?? false;
+    }
+
+    public static function canForceDelete(Model $record): bool
+    {
+        // Force delete requires delete permission and cannot be system role
+        if ($record instanceof Role) {
+            $isSystemRole = collect(RBACRole::cases())
+                ->contains(fn (RBACRole $enum): bool => $enum->value === $record->name);
+
+            if ($isSystemRole) {
+                return false;
+            }
+        }
+
+        return auth()->user()?->hasPermissionTo(Permission::DELETE_ROLES) ?? false;
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::READ_ROLES) ?? false;
+    }
 
     public static function getNavigationGroup(): string
     {
-        return __('navigation.groups.system');
+        return __('navigation.groups.management');
     }
 
     public static function getNavigationParentItem(): string
@@ -64,6 +113,7 @@ final class RoleResource extends Resource
     {
         return [
             PermissionRelationManager::class,
+            ActivitiesRelationManager::class,
         ];
     }
 
@@ -71,7 +121,9 @@ final class RoleResource extends Resource
     {
         return [
             'index' => ListRoles::route('/'),
+            'create' => CreateRole::route('/create'),
             'view' => ViewRole::route('/{record}'),
+            'edit' => EditRole::route('/{record}/edit'),
         ];
     }
 }

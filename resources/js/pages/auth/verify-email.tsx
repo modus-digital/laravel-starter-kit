@@ -12,16 +12,11 @@ export default function VerifyEmail({ status }: { status?: string }) {
     const { t } = useTranslation();
 
     return (
-        <AuthLayout
-            title={t('auth.pages.verify_email.title')}
-            description={t('auth.pages.verify_email.description')}
-        >
+        <AuthLayout title={t('auth.pages.verify_email.title')} description={t('auth.pages.verify_email.description')}>
             <Head title={t('auth.pages.verify_email.page_title')} />
 
             {status === 'verification-link-sent' && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
-                    {t('auth.pages.verify_email.sent')}
-                </div>
+                <div className="mb-4 text-center text-sm font-medium text-green-600">{t('auth.pages.verify_email.sent')}</div>
             )}
 
             <Form action={send()} className="space-y-6 text-center">
@@ -32,10 +27,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
                             {t('auth.pages.verify_email.resend')}
                         </Button>
 
-                        <TextLink
-                            href={logout()}
-                            className="mx-auto block text-sm"
-                        >
+                        <TextLink href={logout()} className="mx-auto block text-sm">
                             {t('auth.pages.verify_email.logout')}
                         </TextLink>
                     </>

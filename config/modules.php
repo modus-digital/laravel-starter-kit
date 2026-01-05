@@ -5,6 +5,17 @@ declare(strict_types=1);
 return [
     /*
     |--------------------------------------------------------------------------
+    | Activity Logs
+    |--------------------------------------------------------------------------
+    | This is used for an allowlist for the admin panel to see activity logs.
+    |
+    */
+    'activity_logs' => [
+        'banlist' => ['tasks', 'comments'],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Socialite
     |--------------------------------------------------------------------------
     | If this module is enabled we allow an admin to configure
@@ -38,7 +49,7 @@ return [
     |
     */
     'clients' => [
-        'enabled' => false,
+        'enabled' => true,
         'role_management' => false,
     ],
 
@@ -65,6 +76,57 @@ return [
     |
     */
     'registration' => [
+        'enabled' => true,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | API
+    |--------------------------------------------------------------------------
+    | If this module is enabled we are allowing the API to be used.
+    |
+    */
+    'api' => [
+        'enabled' => true,
+        'documentation_path' => 'scribe/openapi.yaml',
+        'documentation_url' => env('APP_URL').'/api/docs',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Comments
+    |--------------------------------------------------------------------------
+    | If this module is enabled we are allowing comments to be used.
+    |
+    */
+    'comments' => [
+        'enabled' => true,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tasks
+    |--------------------------------------------------------------------------
+    | If this module is enabled we are allowing tasks to be used.
+    |
+    */
+    'tasks' => [
+        'enabled' => true,
+        'options' => [
+            'list' => true,
+            'kanban' => true,
+            'calendar' => true,
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Import / Export
+    |--------------------------------------------------------------------------
+    | If this module is enabled we are allowing import / export of data.
+    |
+    */
+    'import_export' => [
         'enabled' => true,
     ],
 ];

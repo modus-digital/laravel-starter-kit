@@ -18,6 +18,8 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\Facades\Activity as ActivityFacade;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -53,9 +55,9 @@ final class PermissionRelationManager extends RelationManager
                 TextColumn::make('enum_key')
                     ->label(__('admin.rbac.roles.relation_managers.permission.enum_key'))
                     ->badge()
-                    ->state(fn (Permission $permission): ?string => $this->isLinkedToEnum($permission) ? $permission->name : null)
+                    ->state(fn (Permission $record): ?string => $this->isLinkedToEnum($record) ? $record->name : null)
                     ->formatStateUsing(fn (?string $state): string => $state ? RBACPermission::from($state)->getLabel() : '-')
-                    ->color(fn (Permission $permission): string => $this->isLinkedToEnum($permission) ? RBACPermission::from($permission->name)->getFilamentColor() : 'gray'),
+                    ->color(fn (Permission $record): string => $this->isLinkedToEnum($record) ? RBACPermission::from($record->name)->getFilamentColor() : 'gray'),
 
                 TextColumn::make('name')
                     ->label(__('admin.rbac.roles.relation_managers.permission.name'))
@@ -63,7 +65,7 @@ final class PermissionRelationManager extends RelationManager
 
                 IconColumn::make('linked_to_enum')
                     ->label(__('admin.rbac.roles.relation_managers.permission.linked_to_enum.title'))
-                    ->state(fn (Permission $permission): bool => $this->isLinkedToEnum($permission))
+                    ->state(fn (Permission $record): bool => $this->isLinkedToEnum($record))
                     ->boolean()
                     ->trueIcon(Heroicon::OutlinedCheckCircle)
                     ->falseIcon(Heroicon::OutlinedXCircle)
@@ -136,6 +138,25 @@ final class PermissionRelationManager extends RelationManager
                             $role->givePermissionTo($permission);
                         }
 
+                        // Log activity for each permission added
+                        foreach ($newPermissions as $permission) {
+                            ActivityFacade::inLog('administration')
+                                ->event('rbac.role.permission.attached')
+                                ->causedBy(Auth::user())
+                                ->performedOn($role)
+                                ->withProperties([
+                                    'role' => [
+                                        'id' => $role->id,
+                                        'name' => $role->name,
+                                    ],
+                                    'permission' => [
+                                        'id' => $permission->id,
+                                        'name' => $permission->name,
+                                    ],
+                                ])
+                                ->log('');
+                        }
+
                         Notification::make()
                             ->title(__('admin.rbac.roles.relation_managers.permission.permissions_added', ['count' => count($data['permissions'])]))
                             ->success()
@@ -156,6 +177,23 @@ final class PermissionRelationManager extends RelationManager
 
                         // Detach the permission from the role using revokePermissionTo
                         $role->revokePermissionTo($record);
+
+                        // Log activity for permission detached
+                        ActivityFacade::inLog('administration')
+                            ->event('rbac.role.permission.detached')
+                            ->causedBy(Auth::user())
+                            ->performedOn($role)
+                            ->withProperties([
+                                'role' => [
+                                    'id' => $role->id,
+                                    'name' => $role->name,
+                                ],
+                                'permission' => [
+                                    'id' => $record->id,
+                                    'name' => $record->name,
+                                ],
+                            ])
+                            ->log('');
 
                         Notification::make()
                             ->title(__('admin.rbac.roles.relation_managers.permission.permission_detached', ['name' => $record->name]))

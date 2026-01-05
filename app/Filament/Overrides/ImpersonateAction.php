@@ -21,95 +21,119 @@ final class ImpersonateAction extends Action
     {
         parent::setUp();
 
-        $impersonatableRoles = array_map(
-            callback: fn (Role $role) => $role->value,
-            array: array_filter(
-                array: Role::cases(),
-                callback: fn (Role $role): bool => $role !== Role::ADMIN && $role !== Role::SUPER_ADMIN
-            )
-        );
+        $nonImpersonatableRoles = [Role::ADMIN->value, Role::SUPER_ADMIN->value];
 
         $this->icon(Heroicon::ArrowLeftEndOnRectangle);
         $this->label(__('admin.users.table.impersonate.label'));
         $this->name('impersonate-action');
-        $this->color(function (?User $record) use ($impersonatableRoles): array {
-            /** @var User|null $currentUser */
-            $currentUser = Auth::user();
+        $this->color(fn (?User $record): array => $this->colorAction($record, $nonImpersonatableRoles));
+        $this->disabled(fn (?User $record): bool => $this->disableAction($record, $nonImpersonatableRoles));
+        $this->action(fn (?User $record) => $this->impersonate($record));
+    }
 
-            if (! $currentUser || ! $record || $record->id === $currentUser->id || ! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS) || $record->status === ActivityStatus::INACTIVE) {
-                return Color::Gray;
-            }
+    /**
+     * @param  array<string>  $roles
+     * @return array<int, mixed>
+     */
+    private function colorAction(?User $record, array $roles): array
+    {
+        /** @var User|null $currentUser */
+        $currentUser = Auth::user();
 
-            /** @var \Spatie\Permission\Models\Role|null $firstRole */
-            $firstRole = $record->roles->first();
-            if (! $firstRole || ! in_array($firstRole->name, $impersonatableRoles)) {
-                return Color::Gray;
-            }
+        if (! $currentUser || ! $record || $record->id === $currentUser->id || ! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS) || $record->status === ActivityStatus::INACTIVE) {
+            return Color::Gray;
+        }
 
-            return Color::Green;
-        });
+        /** @var \Spatie\Permission\Models\Role|null $firstRole */
+        $firstRole = $record->roles->first();
+        if (! $firstRole || in_array($firstRole->name, $roles)) {
+            return Color::Gray;
+        }
 
-        $this->disabled(function (?User $record) use ($impersonatableRoles): bool {
-            /** @var User|null $currentUser */
-            $currentUser = Auth::user();
+        return Color::Green;
+    }
 
-            if (! $currentUser || ! $record) {
-                return true;
-            }
+    /**
+     * @param  array<string|int, string>  $roles
+     */
+    private function disableAction(?User $record, array $roles): bool
+    {
+        /** @var User|null $currentUser */
+        $currentUser = Auth::user();
+        assert($currentUser instanceof User);
+        assert($record instanceof User);
 
-            if ($record->id === $currentUser->id) {
-                return true;
-            }
-            if ($record->status === ActivityStatus::INACTIVE) {
-                return true;
-            }
-            /** @var \Spatie\Permission\Models\Role|null $firstRole */
-            $firstRole = $record->roles->first();
-            if (! $firstRole || ! in_array($firstRole->name, $impersonatableRoles)) {
-                return true;
-            }
+        if ($record->id === $currentUser->id) {
+            return true;
+        }
+        if ($record->status === ActivityStatus::INACTIVE) {
+            return true;
+        }
+        /** @var \Spatie\Permission\Models\Role|null $firstRole */
+        $firstRole = $record->roles->first();
+        if (! $firstRole || \in_array($firstRole->name, $roles)) {
+            return true;
+        }
 
-            return ! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS);
-        });
+        return ! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS);
+    }
 
-        $this->action(function (?User $record) {
-            /** @var User|null $currentUser */
-            $currentUser = Auth::user();
+    private function impersonate(?User $record): void
+    {
+        /** @var User|null $currentUser */
+        $currentUser = Auth::user();
 
-            if (! $currentUser || ! $record || ! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS)) {
-                Notification::make()
-                    ->title(__('admin.users.table.impersonate.error.title'))
-                    ->body(__('admin.users.table.impersonate.error.body'))
-                    ->color(Color::Red)
-                    ->icon(Heroicon::ExclamationTriangle)
-                    ->send();
+        assert($currentUser instanceof User);
+        assert($record instanceof User);
 
-                return;
-            }
+        if (! $currentUser->hasPermissionTo(Permission::IMPERSONATE_USERS)) {
+            Notification::make()
+                ->title(__('admin.users.table.impersonate.error.title'))
+                ->body(__('admin.users.table.impersonate.error.body'))
+                ->color(Color::Red)
+                ->icon(Heroicon::ExclamationTriangle)
+                ->send();
+        }
 
-            session()->put('impersonation', [
-                'is_impersonating' => true,
-                'original_user_id' => $currentUser->id,
-                'return_url' => url()->previous(),
-                'can_bypass_2fa' => true,
-            ]);
+        // Store impersonation data after migration
+        session()->put('impersonation', [
+            'is_impersonating' => true,
+            'original_user_id' => $currentUser->id,
+            'return_url' => url()->previous(),
+            'can_bypass_2fa' => true,
+        ]);
 
-            Auth::login($record);
+        Auth::loginUsingId($record->id);
 
-            Activity::inLog('impersonation')
-                ->event('impersonate.start')
-                ->performedOn($record)
-                ->causedBy($currentUser)
-                ->withProperties([
-                    'issuer' => $currentUser->name,
-                    'target' => $record->name,
-                    'ip' => request()->ip(),
-                    'user_agent' => request()->userAgent(),
-                ])
-                ->log(description: 'User impersonation started');
+        /**
+         * ! ADMIN PANEL ONLY
+         * ------------------------------------------------------------
+         * Update the password hash in session for AuthenticateSession middleware
+         * This prevents the middleware from logging out the impersonated user
+         */
+        if ($record->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL)) {
+            session()->put('password_hash_'.Auth::getDefaultDriver(), $record->getAuthPassword());
+        }
 
-            return redirect()->to(path: route('dashboard'));
-        });
+        Activity::inLog('impersonation')
+            ->event('impersonate.start')
+            ->performedOn($record)
+            ->causedBy($currentUser)
+            ->withProperties([
+                'target' => $record->name,
+                'user' => [
+                    'id' => $record->id,
+                    'name' => $record->name,
+                    'email' => $record->email,
+                    'status' => $record->status->getLabel(),
+                    'roles' => $record->roles->first()?->name
+                        ? (Role::tryFrom($record->roles->first()->name)?->getLabel() ?? str($record->roles->first()->name)->headline()->toString())
+                        : null,
+                ],
+            ])
+            ->log('');
 
+        // Redirect to dashboard after successful impersonation
+        $this->redirect(route('dashboard'));
     }
 }

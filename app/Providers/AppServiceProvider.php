@@ -8,6 +8,7 @@ use App\Http\Responses\FilamentLogoutResponse;
 use App\Http\Responses\FortifyLoginResponse;
 use App\Http\Responses\FortifyLogoutResponse;
 use App\Http\Responses\FortifyRegisterResponse;
+use App\Traits\ConfiguresScribeDocumentation;
 use App\Translation\NestedJsonLoader;
 use Filament\Auth\Http\Responses\Contracts\LogoutResponse as FilamentLogoutResponseContract;
 use Illuminate\Support\ServiceProvider;
@@ -17,6 +18,8 @@ use Laravel\Fortify\Http\Responses\RegisterResponse as FortifyRegisterResponseCo
 
 final class AppServiceProvider extends ServiceProvider
 {
+    use ConfiguresScribeDocumentation;
+
     /**
      * Register any application services.
      */
@@ -24,6 +27,14 @@ final class AppServiceProvider extends ServiceProvider
     {
         $this->configureCustomLoaders();
         $this->configureResponses();
+    }
+
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        $this->configureScribe();
     }
 
     /**

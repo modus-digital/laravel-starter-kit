@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Pages;
 
+use App\Enums\RBAC\Permission;
 use App\Services\BrandingService;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
@@ -20,29 +20,37 @@ use Illuminate\Support\Facades\Auth;
 use JaOcero\RadioDeck\Forms\Components\RadioDeck;
 use Outerweb\FilamentSettings\Pages\Settings;
 use Spatie\Activitylog\Facades\Activity;
-use UnitEnum;
 
 final class Branding extends Settings
 {
     protected string $view = 'filament.pages.branding';
 
-    protected static ?string $title = 'Branding';
-
-    protected static ?string $navigationLabel = 'Branding';
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSparkles;
-
-    protected static string|UnitEnum|null $navigationGroup = 'Modules';
 
     protected static ?int $navigationSort = 10;
 
-    protected static ?string $slug = 'modules/branding';
+    protected static ?string $slug = 'system/branding';
 
     protected ?Alignment $headerActionsAlignment = Alignment::End;
 
-    public function getHeading(): string
+    public static function canAccess(): bool
     {
-        return 'Branding';
+        return auth()->user()?->hasPermissionTo(Permission::MANAGE_SETTINGS) ?? false;
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::MANAGE_SETTINGS) ?? false;
+    }
+
+    public static function getNavigationGroup(): string
+    {
+        return __('navigation.groups.system');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('navigation.labels.branding');
     }
 
     public function form(Schema $schema): Schema
@@ -50,33 +58,33 @@ final class Branding extends Settings
         return $this->defaultForm($schema)
             ->columns(1)
             ->components([
-                Section::make('Logo')
-                    ->description('Upload your brand logo to personalize your application.')
+                Section::make(__('admin.branding.sections.logo'))
+                    ->description(__('admin.branding.descriptions.logo'))
                     ->aside()
                     ->schema([
                         FileUpload::make('branding.logo')
-                            ->label('Logo')
+                            ->label(__('admin.branding.labels.logo'))
                             ->disk('public')
                             ->directory('uploads')
                             ->acceptedFileTypes(['image/*', 'image/svg+xml'])
                             ->image()
                             ->maxSize(2048)
-                            ->helperText('Upload your logo (max 2MB, supports SVG and common image formats)'),
+                            ->helperText(__('admin.branding.helpers.logo')),
                     ]),
 
-                Section::make('Colors')
-                    ->description('Choose your primary and secondary brand colors.')
+                Section::make(__('admin.branding.sections.colors'))
+                    ->description(__('admin.branding.descriptions.colors'))
                     ->aside()
                     ->schema([
                         ColorPicker::make('branding.primary_color')
-                            ->label('Primary Color')
-                            ->helperText('In this admin panel, the color will not perfectly match the chosen color. Due to the provider of this panel, the core application will use the correct colors.'),
+                            ->label(__('admin.branding.labels.primary_color'))
+                            ->helperText(__('admin.branding.helpers.primary_color')),
                         ColorPicker::make('branding.secondary_color')
-                            ->label('Secondary Color'),
+                            ->label(__('admin.branding.labels.secondary_color')),
                     ]),
 
-                Section::make('Typography')
-                    ->description('Select the font that best represents your brand.')
+                Section::make(__('admin.branding.sections.typography'))
+                    ->description(__('admin.branding.descriptions.typography'))
                     ->aside()
                     ->schema([
                         RadioDeck::make('branding.font')
@@ -133,18 +141,14 @@ final class Branding extends Settings
     {
         return [
             Action::make('save')
-                ->label('Save')
-                ->action(function () {
+                ->label(__('admin.branding.labels.save'))
+                ->action(function (): void {
                     $this->save();
 
                     Activity::inLog('administration')
                         ->event('branding.updated')
                         ->causedBy(Auth::user())
-                        ->withProperties([
-                            'ip_address' => request()->ip(),
-                            'user_agent' => request()->userAgent(),
-                        ])
-                        ->log('Branding updated successfully');
+                        ->log('');
 
                     app(BrandingService::class)->clearCache();
                     $this->js('window.location.reload()');

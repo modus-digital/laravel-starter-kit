@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enums\RBAC\Permission;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +38,16 @@ final class LeaveImpersonationController extends Controller
 
         Auth::loginUsingId($originalUser->id);
 
+        /**
+         * ! ADMIN PANEL ONLY
+         * ------------------------------------------------------------
+         * Update the password hash in session for AuthenticateSession middleware
+         * This prevents the middleware from logging out the impersonated user
+         */
+        if ($originalUser->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL)) {
+            session()->put('password_hash_'.Auth::getDefaultDriver(), $originalUser->getAuthPassword());
+        }
+
         session()->forget('impersonation');
 
         Activity::inLog('impersonation')
@@ -44,12 +55,9 @@ final class LeaveImpersonationController extends Controller
             ->performedOn($currentUser)
             ->causedBy($originalUser)
             ->withProperties([
-                'issuer' => $originalUser->name,
                 'target' => $currentUser->name,
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
             ])
-            ->log(description: 'User impersonation ended');
+            ->log('');
 
         return Inertia::location(url: route('dashboard'));
     }

@@ -17,6 +17,8 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Activitylog\Facades\Activity as ActivityFacade;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -50,9 +52,23 @@ final class RoleRelationManager extends RelationManager
                 TextColumn::make('enum_key')
                     ->label(__('admin.rbac.permissions.relation_managers.role.enum_key'))
                     ->badge()
-                    ->state(fn (Role $role): ?string => $this->isLinkedToEnum($role) ? $role->name : null)
-                    ->formatStateUsing(fn (?string $state): string => $state ? RBACRole::from($state)->getLabel() : '-')
-                    ->color(fn (Role $role): string => $this->isLinkedToEnum($role) ? RBACRole::from($role->name)->getFilamentColor() : 'gray'),
+                    ->state(fn (Role $record): ?string => $this->isLinkedToEnum($record) ? $record->name : null)
+                    ->formatStateUsing(function (?string $state): string {
+                        if (! $state) {
+                            return '-';
+                        }
+                        $enum = RBACRole::tryFrom($state);
+
+                        return $enum?->getLabel() ?? str($state)->headline()->toString();
+                    })
+                    ->color(function (Role $record): string {
+                        if (! $this->isLinkedToEnum($record)) {
+                            return 'gray';
+                        }
+                        $enum = RBACRole::tryFrom($record->name);
+
+                        return $enum?->getFilamentColor() ?? 'info';
+                    }),
 
                 TextColumn::make('name')
                     ->label(__('admin.rbac.permissions.relation_managers.role.name'))
@@ -60,7 +76,7 @@ final class RoleRelationManager extends RelationManager
 
                 IconColumn::make('linked_to_enum')
                     ->label(__('admin.rbac.permissions.relation_managers.role.linked_to_enum.title'))
-                    ->state(fn (Role $role): bool => $this->isLinkedToEnum($role))
+                    ->state(fn (Role $record): bool => $this->isLinkedToEnum($record))
                     ->boolean()
                     ->trueIcon(Heroicon::OutlinedCheckCircle)
                     ->falseIcon(Heroicon::OutlinedXCircle)
@@ -132,6 +148,25 @@ final class RoleRelationManager extends RelationManager
                             $role->givePermissionTo($permission);
                         }
 
+                        // Log activity for each role added
+                        foreach ($newRoles as $role) {
+                            ActivityFacade::inLog('administration')
+                                ->event('rbac.role.permission.attached')
+                                ->causedBy(Auth::user())
+                                ->performedOn($role)
+                                ->withProperties([
+                                    'role' => [
+                                        'id' => $role->id,
+                                        'name' => $role->name,
+                                    ],
+                                    'permission' => [
+                                        'id' => $permission->id,
+                                        'name' => $permission->name,
+                                    ],
+                                ])
+                                ->log('');
+                        }
+
                         Notification::make()
                             ->title(__('admin.rbac.permissions.relation_managers.role.roles_added', ['count' => count($data['roles'])]))
                             ->success()
@@ -152,6 +187,23 @@ final class RoleRelationManager extends RelationManager
 
                         // Detach the role from the permission
                         $record->revokePermissionTo($permission);
+
+                        // Log activity for role detached
+                        ActivityFacade::inLog('administration')
+                            ->event('rbac.role.permission.detached')
+                            ->causedBy(Auth::user())
+                            ->performedOn($record)
+                            ->withProperties([
+                                'role' => [
+                                    'id' => $record->id,
+                                    'name' => $record->name,
+                                ],
+                                'permission' => [
+                                    'id' => $permission->id,
+                                    'name' => $permission->name,
+                                ],
+                            ])
+                            ->log('');
 
                         Notification::make()
                             ->title(__('admin.rbac.permissions.relation_managers.role.role_detached', ['name' => $record->name]))

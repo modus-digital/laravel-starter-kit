@@ -37,7 +37,7 @@ final class TranslationsGroupTable extends TableWidget
             ->records(fn (): Collection => self::buildRecords($service, $targetLanguage, $group))
             ->columns([
                 TextColumn::make('english')
-                    ->label('Base')
+                    ->label(__('admin.translations.quick_translate.base'))
                     ->description(fn (array $record) => $record['full_key'])
                     ->sortable()
                     ->searchable()
@@ -47,21 +47,21 @@ final class TranslationsGroupTable extends TableWidget
                 TextColumn::make('translation')
                     ->label(Str::upper($targetLanguage))
                     ->wrap()
-                    ->placeholder('—'),
+                    ->placeholder(__('admin.translations.quick_translate.base_placeholder')),
             ])
             ->headerActions([
                 Action::make('quick-translate')
-                    ->label('Quick Translate')
+                    ->label(__('admin.translations.quick_translate.quick_translate'))
                     ->icon(Heroicon::OutlinedBolt)
                     ->color(Color::Green)
                     ->url(fn (): string => TranslationResource::getUrl('quick-translate', ['group' => $group])),
             ])
             ->recordActions([
                 Action::make('edit')
-                    ->label('Edit')
+                    ->label(__('admin.translations.quick_translate.edit'))
                     ->icon(Heroicon::OutlinedPencil)
                     ->schema([
-                        Section::make('Base')
+                        Section::make(__('admin.translations.quick_translate.base'))
                             ->schema([
                                 Textarea::make('english')
                                     ->default(fn (array $record) => $record['english'])
@@ -94,6 +94,14 @@ final class TranslationsGroupTable extends TableWidget
     {
         $englishGroup = data_get($service->getLanguageFile('en'), $group, []);
         $targetGroup = data_get($service->getLanguageFile($targetLanguage), $group, []);
+
+        if (is_array($englishGroup)) {
+            $englishGroup = $service->filterGroupTranslationsByModules($englishGroup, $group);
+        }
+
+        if (is_array($targetGroup)) {
+            $targetGroup = $service->filterGroupTranslationsByModules($targetGroup, $group);
+        }
 
         $englishFlat = $service->flattenTranslations(is_array($englishGroup) ? $englishGroup : []);
         $targetFlat = $service->flattenTranslations(is_array($targetGroup) ? $targetGroup : []);

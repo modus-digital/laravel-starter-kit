@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Core\Users;
 
+use App\Enums\RBAC\Permission;
 use App\Filament\Resources\Core\Users\Pages\CreateUser;
 use App\Filament\Resources\Core\Users\Pages\EditUser;
 use App\Filament\Resources\Core\Users\Pages\ListUsers;
 use App\Filament\Resources\Core\Users\Pages\ViewUser;
+use App\Filament\Resources\Core\Users\RelationManagers\ActivitiesRelationManager;
 use App\Filament\Resources\Core\Users\Schemas\UserForm;
 use App\Filament\Resources\Core\Users\Tables\UsersTable;
 use App\Models\User;
@@ -17,23 +19,58 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 final class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
-    protected static bool $shouldRegisterNavigation = true;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
     protected static ?int $navigationSort = 1;
 
     protected static ?string $slug = 'system/users';
 
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::READ_USERS) ?? false;
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::CREATE_USERS) ?? false;
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::UPDATE_USERS) ?? false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::DELETE_USERS) ?? false;
+    }
+
+    public static function canRestore(Model $record): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::RESTORE_USERS) ?? false;
+    }
+
+    public static function canForceDelete(Model $record): bool
+    {
+        // Force delete requires delete permission
+        return auth()->user()?->hasPermissionTo(Permission::DELETE_USERS) ?? false;
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasPermissionTo(Permission::READ_USERS) ?? false;
+    }
+
     public static function getNavigationGroup(): string
     {
-        return __('navigation.groups.system');
+        return __('navigation.groups.management');
     }
 
     public static function getNavigationLabel(): string
@@ -61,7 +98,7 @@ final class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ActivitiesRelationManager::class,
         ];
     }
 

@@ -5,18 +5,20 @@ declare(strict_types=1);
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-// use App\Traits\HasClients; <-- Uncomment if clients module is enabled in config/modules.php
-
 use App\Enums\ActivityStatus;
 use App\Enums\RBAC\Permission;
+use App\Traits\HasClients;
+use App\Traits\HasPreferences;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -25,9 +27,21 @@ use Spatie\Permission\Traits\HasRoles;
  */
 final class User extends Authenticatable implements FilamentUser
 {
+    /*
+    |--------------------------------------------------------------------------
+    | Traits
+    |--------------------------------------------------------------------------
+    | 1. Enable HasApiTokens trait if api module is enabled in config/modules.php
+    | 2. Enable HasClients trait if clients module is enabled in config/modules.php
+    |
+    */
+    use HasApiTokens;
+    use HasClients;
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
 
+    use HasPreferences;
     use HasRoles;
     use HasUuids;
     use Notifiable;
@@ -35,8 +49,6 @@ final class User extends Authenticatable implements FilamentUser
     use TwoFactorAuthenticatable;
 
     public $incrementing = false;
-
-    // use HasClients; <-- Uncomment if clients module is enabled in config/modules.php
 
     protected $keyType = 'string';
 
@@ -52,6 +64,8 @@ final class User extends Authenticatable implements FilamentUser
         'password',
         'status',
         'provider',
+        'email_verified_at',
+        'preferences',
     ];
 
     /**
@@ -72,6 +86,14 @@ final class User extends Authenticatable implements FilamentUser
     }
 
     /**
+     * @return MorphMany<Activity, $this>
+     */
+    public function activities(): MorphMany
+    {
+        return $this->morphMany(related: Activity::class, name: 'subject');
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -83,6 +105,7 @@ final class User extends Authenticatable implements FilamentUser
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'status' => ActivityStatus::class,
+            'preferences' => 'array',
         ];
     }
 }

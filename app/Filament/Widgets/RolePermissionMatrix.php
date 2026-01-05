@@ -19,29 +19,33 @@ final class RolePermissionMatrix extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Roles & Permissions Matrix')
-            ->description('Overview of which roles have which permissions')
+            ->heading(__('admin.widgets.role_permission_matrix.heading'))
+            ->description(__('admin.widgets.role_permission_matrix.description'))
             ->query(
                 Role::query()->with('permissions')
             )
             ->columns([
                 TextColumn::make('name')
-                    ->label('Role')
-                    ->formatStateUsing(fn (string $state): string => RBACRole::from($state)->getLabel())
+                    ->label(__('admin.widgets.role_permission_matrix.role'))
+                    ->formatStateUsing(function (string $state): string {
+                        $enum = RBACRole::tryFrom($state);
+
+                        return $enum?->getLabel() ?? str($state)->headline()->toString();
+                    })
                     ->searchable()
                     ->sortable()
                     ->weight('bold')
                     ->badge()
                     ->color('info'),
                 TextColumn::make('permissions_count')
-                    ->label('Total Permissions')
+                    ->label(__('admin.widgets.role_permission_matrix.total_permissions'))
                     ->counts('permissions')
                     ->sortable()
                     ->alignCenter()
                     ->badge()
                     ->color('success'),
                 TextColumn::make('users_count')
-                    ->label('Users')
+                    ->label(__('admin.widgets.role_permission_matrix.users'))
                     ->counts('users')
                     ->sortable()
                     ->alignCenter()

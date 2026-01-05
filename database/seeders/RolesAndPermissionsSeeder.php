@@ -17,32 +17,62 @@ final class RolesAndPermissionsSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach (RoleEnum::cases() as $role) {
-            Role::create([
-                'name' => $role->value,
-                'guard_name' => 'web',
-            ]);
-        }
-
+        // Sync permissions from enum
         foreach (PermissionEnum::cases() as $permission) {
-            Permission::create([
-                'name' => $permission->value,
-                'guard_name' => 'web',
-            ]);
+            if (! $permission->shouldSync()) {
+                continue;
+            }
+
+            Permission::firstOrCreate(
+                ['name' => $permission->value, 'guard_name' => 'web']
+            );
         }
 
-        $superAdminRole = Role::where('name', RoleEnum::SUPER_ADMIN->value)->first();
-        $superAdminRole->givePermissionTo(Permission::all());
+        // Sync system roles from enum
+        foreach (RoleEnum::cases() as $role) {
+            Role::firstOrCreate(
+                ['name' => $role->value, 'guard_name' => 'web']
+            );
+        }
 
+        // Assign permissions to Super Admin (all permissions)
+        $superAdminRole = Role::where('name', RoleEnum::SUPER_ADMIN->value)->first();
+        $superAdminRole->syncPermissions(Permission::all());
+
+        // Assign permissions to Admin
         $adminRole = Role::where('name', RoleEnum::ADMIN->value)->first();
-        $adminRole->givePermissionTo([
+        $adminRole->syncPermissions([
             PermissionEnum::ACCESS_CONTROL_PANEL->value,
-            PermissionEnum::IMPERSONATE_USERS->value,
             PermissionEnum::ACCESS_ACTIVITY_LOGS->value,
+            PermissionEnum::IMPERSONATE_USERS->value,
             PermissionEnum::MANAGE_SETTINGS->value,
+            PermissionEnum::CREATE_USERS->value,
+            PermissionEnum::READ_USERS->value,
+            PermissionEnum::UPDATE_USERS->value,
+            PermissionEnum::DELETE_USERS->value,
+            PermissionEnum::RESTORE_USERS->value,
+            PermissionEnum::READ_ROLES->value,
         ]);
 
+        // Check if API module is enabled and add API permissions to Admin
+        if (config('modules.api.enabled', false)) {
+            $adminRole->givePermissionTo([
+                PermissionEnum::HAS_API_ACCESS->value,
+                PermissionEnum::CREATE_API_TOKENS->value,
+                PermissionEnum::READ_API_TOKENS->value,
+                PermissionEnum::UPDATE_API_TOKENS->value,
+                PermissionEnum::DELETE_API_TOKENS->value,
+            ]);
+        }
+
+        // Assign minimal permissions to User role
         $userRole = Role::where('name', RoleEnum::USER->value)->first();
-        $userRole->givePermissionTo([]);
+        $userPermissions = [];
+
+        if (config('modules.api.enabled', false)) {
+            $userPermissions[] = PermissionEnum::HAS_API_ACCESS->value;
+        }
+
+        $userRole->syncPermissions($userPermissions);
     }
 }

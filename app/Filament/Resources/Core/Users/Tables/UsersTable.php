@@ -28,6 +28,8 @@ use Spatie\Activitylog\Facades\Activity;
 
 final class UsersTable
 {
+    public ?User $record = null;
+
     public static function configure(Table $table): Table
     {
         return $table
@@ -66,7 +68,9 @@ final class UsersTable
                             return __('admin.users.table.no_role');
                         }
 
-                        return Role::from($firstRole->name)->getLabel();
+                        $enum = Role::tryFrom($firstRole->name);
+
+                        return $enum?->getLabel() ?? str($firstRole->name)->headline()->toString();
                     })
                     ->icon(function (?User $record) {
                         if (! $record instanceof User) {
@@ -78,7 +82,9 @@ final class UsersTable
                             return null;
                         }
 
-                        return Role::from($firstRole->name)->getIcon();
+                        $enum = Role::tryFrom($firstRole->name);
+
+                        return $enum?->getIcon();
                     })
                     ->color(function (?User $record) {
                         if (! $record instanceof User) {
@@ -90,7 +96,9 @@ final class UsersTable
                             return null;
                         }
 
-                        return Role::from($firstRole->name)->getFilamentColor();
+                        $enum = Role::tryFrom($firstRole->name);
+
+                        return $enum?->getFilamentColor() ?? 'info';
                     })
                     ->badge()
                     ->sortable()
@@ -141,32 +149,52 @@ final class UsersTable
                     EditAction::make(),
                     RestoreAction::make()
                         ->visible(fn (?User $record) => $record?->trashed())
-                        ->after(function (?User $record) {
+                        ->after(function (?User $record): void {
+                            if (! $record instanceof User) {
+                                return;
+                            }
+
                             Activity::inLog('administration')
                                 ->event('user.restored')
                                 ->causedBy(Auth::user())
                                 ->performedOn($record)
                                 ->withProperties([
-                                    'user_id' => $record->id,
-                                    'user_name' => $record->name,
-                                    'user_email' => $record->email,
+                                    'user' => [
+                                        'id' => $record->id,
+                                        'name' => $record->name,
+                                        'email' => $record->email,
+                                        'status' => $record->status->getLabel(),
+                                        'roles' => $record->roles->first()?->name
+                                            ? (Role::tryFrom($record->roles->first()->name)?->getLabel() ?? str($record->roles->first()->name)->headline()->toString())
+                                            : null,
+                                    ],
                                 ])
-                                ->log('User restored successfully');
+                                ->log('');
                         }),
                     DeleteAction::make()
-                        ->after(function () {
+                        ->after(function (?User $record): void {
+                            if (! $record instanceof User) {
+                                return;
+                            }
+
                             Activity::inLog('administration')
                                 ->event('user.deleted')
                                 ->causedBy(Auth::user())
-                                ->performedOn($this->record)
+                                ->performedOn($record)
                                 ->withProperties([
-                                    'user_id' => $this->record->id,
-                                    'user_name' => $this->record->name,
-                                    'user_email' => $this->record->email,
+                                    'user' => [
+                                        'id' => $record->id,
+                                        'name' => $record->name,
+                                        'email' => $record->email,
+                                        'status' => $record->status->getLabel(),
+                                        'roles' => $record->roles->first()?->name
+                                            ? (Role::tryFrom($record->roles->first()->name)?->getLabel() ?? str($record->roles->first()->name)->headline()->toString())
+                                            : null,
+                                    ],
                                 ])
-                                ->log('User deleted successfully');
-                        })
-                ])
+                                ->log('');
+                        }),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

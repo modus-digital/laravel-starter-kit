@@ -1,0 +1,391 @@
+@layer base {
+    :root {
+        /* Code block styling variables */
+        --code-block-padding: 0.5rem 1rem;
+        --code-block-line-height: 1.5rem;
+        --code-block-font-size: 0.875rem;
+
+        /* Syntax highlighting colors - Atom One Light */
+        --hljs-foreground: #383a42; /* mono-1 */
+        --hljs-comment: #a0a1a7; /* mono-3 */
+        --hljs-keyword: #a626a4; /* hue-3 purple */
+        --hljs-string: #50a14f; /* hue-4 green */
+        --hljs-number: #986801; /* hue-6 orange */
+        --hljs-function: #4078f2; /* hue-2 blue */
+        --hljs-type: #c18401; /* hue-6-2 yellow */
+        --hljs-tag: #e45649; /* hue-5 red */
+        --hljs-attribute: #50a14f; /* hue-4 green (from string group) */
+        --hljs-literal: #0184bb; /* hue-1 cyan */
+        --hljs-deletion-bg: #ffeef0;
+        --hljs-addition-bg: #e6ffed;
+    }
+
+    .dark {
+        /* Syntax highlighting colors - Atom One Dark (Authentic) */
+        --hljs-foreground: #abb2bf; /* mono-1 */
+        --hljs-comment: #5c6370; /* mono-3 */
+        --hljs-keyword: #c678dd; /* hue-3 purple */
+        --hljs-string: #98c379; /* hue-4 green */
+        --hljs-number: #d19a66; /* hue-6 orange */
+        --hljs-function: #61aeee; /* hue-2 blue */
+        --hljs-type: #e6c07b; /* hue-6-2 yellow */
+        --hljs-tag: #e06c75; /* hue-5 red */
+        --hljs-attribute: #98c379; /* hue-4 green (from string group) */
+        --hljs-literal: #56b6c2; /* hue-1 cyan */
+        --hljs-deletion-bg: #3e2c2c;
+        --hljs-addition-bg: #2c3e2c;
+    }
+}
+
+/* ===========================
+   Code Block Styling
+   =========================== */
+
+.code-block-wrapper {
+    position: relative;
+    margin: 0;
+}
+
+.code-block-wrapper pre {
+    margin: 0 !important;
+    padding: var(--code-block-padding) !important;
+    line-height: var(--code-block-line-height);
+}
+
+.code-block-wrapper pre code {
+    line-height: var(--code-block-line-height);
+    font-size: var(--code-block-font-size);
+}
+
+.hljs {
+    color: var(--hljs-foreground);
+}
+
+/* Comments & documentation */
+.hljs-comment,
+.hljs-quote {
+    color: var(--hljs-comment);
+    font-style: italic;
+}
+
+.hljs-doctag,
+.hljs-keyword,
+.hljs-formula {
+    color: var(--hljs-keyword);
+}
+
+.hljs-section,
+.hljs-name,
+.hljs-selector-tag,
+.hljs-deletion,
+.hljs-subst {
+    color: var(--hljs-tag);
+}
+
+.hljs-literal {
+    color: var(--hljs-literal);
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta .hljs-string {
+    color: var(--hljs-string);
+}
+
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-type,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-number {
+    color: var(--hljs-number);
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-meta,
+.hljs-selector-id,
+.hljs-title {
+    color: var(--hljs-function);
+}
+
+.hljs-built_in,
+.hljs-title.class_,
+.hljs-class .hljs-title {
+    color: var(--hljs-type);
+}
+
+.hljs-emphasis {
+    font-style: italic;
+}
+
+.hljs-strong {
+    font-weight: bold;
+}
+
+.hljs-link {
+    text-decoration: underline;
+}
+
+.ProseMirror pre.hljs .is-empty::before {
+    display: none;
+}
+
+.ProseMirror {
+    font-size: 14px;
+
+    h1 {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--foreground);
+    }
+
+    h2 {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--foreground);
+    }
+
+    h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--foreground);
+    }
+
+    p {
+        font-size: 14px;
+        color: var(--foreground);
+    }
+}
+
+.ProseMirror .is-editor-empty:first-child::before,
+.ProseMirror .is-empty::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: var(--muted-foreground);
+    pointer-events: none;
+    height: 0;
+}
+
+.ProseMirror img {
+    transition: filter 0.1s ease-in-out;
+
+    &:hover {
+        cursor: pointer;
+        filter: brightness(90%);
+    }
+
+    &.ProseMirror-selectednode {
+        outline: 3px solid #5abbf7;
+        filter: brightness(90%);
+    }
+}
+
+.img-placeholder {
+    position: relative;
+
+    &:before {
+        content: '';
+        box-sizing: border-box;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 3px solid var(--novel-stone-200);
+        border-top-color: var(--novel-stone-800);
+        animation: spinning 0.6s linear infinite;
+    }
+}
+
+@keyframes spinning {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.ProseMirror ul:not([data-type='taskList']) {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+}
+
+.ProseMirror ol {
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+}
+
+.ProseMirror ul:not([data-type='taskList']) li,
+.ProseMirror ol li {
+    margin-bottom: 0.25rem;
+}
+
+ul[data-type='taskList'] {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+ul[data-type='taskList'] li {
+    display: flex;
+    align-items: flex-start;
+}
+
+ul[data-type='taskList'] li > label {
+    margin-right: 0;
+    user-select: none;
+    display: flex;
+    align-items: center;
+}
+
+ul[data-type='taskList'] li > label input[type='checkbox'] {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    margin: 0;
+    cursor: pointer;
+    width: 1.25rem;
+    height: 1.25rem;
+    position: relative;
+    top: 0.125rem;
+    border: 2px solid var(--border);
+    margin-right: 0.5rem;
+    display: grid;
+    place-content: center;
+    border-radius: 0.25rem;
+    flex-shrink: 0;
+
+    &:hover {
+        background-color: var(--accent);
+    }
+
+    &:active {
+        background-color: var(--accent);
+    }
+
+    &::before {
+        content: '';
+        width: 0.65em;
+        height: 0.65em;
+        transform: scale(0);
+        transition: 120ms transform ease-in-out;
+        box-shadow: inset 1em 1em var(--primary);
+        transform-origin: center;
+        clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+    }
+
+    &:checked::before {
+        transform: scale(1);
+    }
+}
+
+ul[data-type='taskList'] li > div {
+    flex: 1;
+    min-width: 0;
+}
+
+ul[data-type='taskList'] li > div > p {
+    margin: 0;
+    line-height: 1.5;
+}
+
+ul[data-type='taskList'] li[data-checked='true'] > div > p {
+    color: var(--muted-foreground);
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+}
+
+.tippy-box {
+    max-width: 400px !important;
+}
+
+/* Selected node highlighting */
+.ProseMirror:not(.dragging) .ProseMirror-selectednode {
+    outline: none !important;
+    background-color: var(--novel-highlight-blue);
+    transition: background-color 0.2s;
+    box-shadow: none;
+}
+
+/* Drag handle */
+.drag-handle {
+    position: fixed;
+    opacity: 1;
+    transition: opacity ease-in 0.2s;
+    border-radius: 0.25rem;
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' style='fill: rgba(0, 0, 0, 0.5)'%3E%3Cpath d='M3,2 C2.44771525,2 2,1.55228475 2,1 C2,0.44771525 2.44771525,0 3,0 C3.55228475,0 4,0.44771525 4,1 C4,1.55228475 3.55228475,2 3,2 Z M3,6 C2.44771525,6 2,5.55228475 2,5 C2,4.44771525 2.44771525,4 3,4 C3.55228475,4 4,4.44771525 4,5 C4,5.55228475 3.55228475,6 3,6 Z M3,10 C2.44771525,10 2,9.55228475 2,9 C2,8.44771525 2.44771525,8 3,8 C3.55228475,8 4,8.44771525 4,9 C4,9.55228475 3.55228475,10 3,10 Z M7,2 C6.44771525,2 6,1.55228475 6,1 C6,0.44771525 6.44771525,0 7,0 C7.55228475,0 8,0.44771525 8,1 C8,1.55228475 7.55228475,2 7,2 Z M7,6 C6.44771525,6 6,5.55228475 6,5 C6,4.44771525 6.44771525,4 7,4 C7.55228475,4 8,4.44771525 8,5 C8,5.55228475 7.55228475,6 7,6 Z M7,10 C6.44771525,10 6,9.55228475 6,9 C6,8.44771525 6.44771525,8 7,8 C7.55228475,8 8,8.44771525 8,9 C8,9.55228475 7.55228475,10 7,10 Z'%3E%3C/path%3E%3C/svg%3E");
+    background-size: calc(0.5em + 0.375rem) calc(0.5em + 0.375rem);
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 1.2rem;
+    height: 1.5rem;
+    z-index: 50;
+    cursor: grab;
+
+    &:hover {
+        background-color: var(--novel-stone-100);
+        transition: background-color 0.2s;
+    }
+
+    &:active {
+        background-color: var(--novel-stone-200);
+        transition: background-color 0.2s;
+        cursor: grabbing;
+    }
+
+    &.hide {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    @media screen and (max-width: 600px) {
+        display: none;
+        pointer-events: none;
+    }
+}
+
+.dark .drag-handle {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' style='fill: rgba(255, 255, 255, 0.5)'%3E%3Cpath d='M3,2 C2.44771525,2 2,1.55228475 2,1 C2,0.44771525 2.44771525,0 3,0 C3.55228475,0 4,0.44771525 4,1 C4,1.55228475 3.55228475,2 3,2 Z M3,6 C2.44771525,6 2,5.55228475 2,5 C2,4.44771525 2.44771525,4 3,4 C3.55228475,4 4,4.44771525 4,5 C4,5.55228475 3.55228475,6 3,6 Z M3,10 C2.44771525,10 2,9.55228475 2,9 C2,8.44771525 2.44771525,8 3,8 C3.55228475,8 4,8.44771525 4,9 C4,9.55228475 3.55228475,10 3,10 Z M7,2 C6.44771525,2 6,1.55228475 6,1 C6,0.44771525 6.44771525,0 7,0 C7.55228475,0 8,0.44771525 8,1 C8,1.55228475 7.55228475,2 7,2 Z M7,6 C6.44771525,6 6,5.55228475 6,5 C6,4.44771525 6.44771525,4 7,4 C7.55228475,4 8,4.44771525 8,5 C8,5.55228475 7.55228475,6 7,6 Z M7,10 C6.44771525,10 6,9.55228475 6,9 C6,8.44771525 6.44771525,8 7,8 C7.55228475,8 8,8.44771525 8,9 C8,9.55228475 7.55228475,10 7,10 Z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+iframe {
+    border: 8px solid #ffd00027;
+    border-radius: 4px;
+    min-width: 200px;
+    min-height: 200px;
+    display: block;
+    outline: 0px solid transparent;
+}
+
+div[data-youtube-video] > iframe {
+    cursor: move;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+}
+
+.ProseMirror-selectednode iframe {
+    transition: outline 0.15s;
+    outline: 6px solid #fbbf24;
+}
+
+@media only screen and (max-width: 480px) {
+    div[data-youtube-video] > iframe {
+        max-height: 50px;
+    }
+}
+
+@media only screen and (max-width: 720px) {
+    div[data-youtube-video] > iframe {
+        max-height: 100px;
+    }
+}
+
+span[style] > strong,
+mark[style] > strong {
+    color: inherit;
+}

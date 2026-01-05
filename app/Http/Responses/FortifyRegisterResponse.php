@@ -20,11 +20,7 @@ final class FortifyRegisterResponse implements Responsable
         Activity::inLog('authentication')
             ->event('auth.register')
             ->causedBy($user)
-            ->withProperties([
-                'ip_address' => request()->ip(),
-                'user_agent' => request()->userAgent(),
-            ])
-            ->log('User registered successfully');
+            ->log('');
 
         if ($user && $user->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL)) {
             return Inertia::location(url: route('filament.control.pages.dashboard'));

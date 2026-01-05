@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Filament\Widgets;
 
+use App\Models\Activity;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
-use Spatie\Activitylog\Models\Activity;
 
 final class ActivityLog extends Widget implements HasSchemas
 {
@@ -26,20 +26,21 @@ final class ActivityLog extends Widget implements HasSchemas
 
     public function mount(): void
     {
-        $this->form->fill();
+        // Form is handled by InteractsWithSchemas trait
     }
 
     public function form(Schema $schema): Schema
     {
-        $maxLength = $this->logNames->map(fn (string $name): int => mb_strlen($name))->max() ?? 0;
+        $logNames = $this->getLogNamesProperty();
+        $maxLength = $logNames->map(fn (string $name): int => mb_strlen($name))->max() ?? 0;
         $minWidth = max($maxLength, 3) + 4;
 
         return $schema
             ->components([
                 Select::make('logName')
-                    ->label('Filter by Log')
-                    ->options(fn (): array => $this->logNames->mapWithKeys(fn (string $name): array => [$name => $name])->all())
-                    ->placeholder('All')
+                    ->label(__('admin.widgets.activity_log.filter_placeholder'))
+                    ->options(fn (): array => $logNames->mapWithKeys(fn (string $name): array => [$name => $name])->all())
+                    ->placeholder(__('admin.widgets.activity_log.filter_placeholder'))
                     ->native(false)
                     ->live()
                     ->afterStateUpdated(fn () => $this->updatedLogName())
@@ -56,18 +57,20 @@ final class ActivityLog extends Widget implements HasSchemas
     {
         return Activity::query()
             ->distinct()
+            ->whereNotIn('log_name', config('modules.activity_logs.banlist', []))
             ->whereNotNull('log_name')
             ->orderBy('log_name')
             ->pluck('log_name');
     }
 
     /**
-     * @return Collection<Activity>
+     * @return Collection<int, Activity>
      */
     public function getActivitiesProperty(): Collection
     {
         $query = Activity::query()
             ->with(['causer', 'subject'])
+            ->whereNotIn('log_name', config('modules.activity_logs.banlist', []))
             ->latest('created_at');
 
         if ($this->logName !== null && $this->logName !== '') {
@@ -104,8 +107,6 @@ final class ActivityLog extends Widget implements HasSchemas
 
     public function getFullPageUrl(): string
     {
-        // TODO: Update this URL when you create the activity log resource page
-        // For example: return route('filament.control.resources.system.activity-logs.index');
-        return '#';
+        return route('filament.control.resources.monitoring.activities.index');
     }
 }

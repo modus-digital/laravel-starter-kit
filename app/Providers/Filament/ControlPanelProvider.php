@@ -8,7 +8,9 @@ use App\Filament\Pages\Branding;
 use App\Filament\Resources\Modules\Clients\ClientResource;
 use App\Filament\Resources\Modules\SocialiteProviders\SocialiteProviderResource;
 use App\Filament\Widgets\ActivityLog;
+use App\Filament\Widgets\ImpersonationWidget;
 use App\Services\BrandingService;
+use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -17,7 +19,7 @@ use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Enums\Width;
-use Filament\Widgets\AccountWidget;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -45,7 +47,7 @@ final class ControlPanelProvider extends PanelProvider
             $brandingService = app(BrandingService::class);
             $settings = $brandingService->getSettings();
             $fontFamily = $fontMap[$settings['font'] ?? 'inter'] ?? 'Inter';
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             $fontFamily = 'Inter';
         }
 
@@ -54,16 +56,18 @@ final class ControlPanelProvider extends PanelProvider
             ->id(id: 'control')
             ->path(path: 'control')
             ->topbar(false)
-            ->brandLogo(fn () => view('filament.application-logo'))
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s')
+            ->brandLogo(fn (): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view('filament.application-logo'))
             ->font($fontFamily)
             ->viteTheme('resources/css/filament/control/theme.css')
             ->maxContentWidth(Width::Full)
-            ->colors(colors: fn () => [
+            ->colors(colors: fn (): array => [
                 'primary' => $this->getPrimaryColorPalette(),
             ])
             ->renderHook(
                 \Filament\View\PanelsRenderHook::HEAD_START,
-                fn () => view('filament.branding-styles')
+                fn (): \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View => view('filament.branding-styles')
             )
             ->discoverResources(in: app_path(path: 'Filament/Resources/Core'), for: 'App\Filament\Resources\Core')
             ->resources(resources: $this->registerResources())
@@ -72,7 +76,7 @@ final class ControlPanelProvider extends PanelProvider
                 Dashboard::class,
             ])
             ->widgets(widgets: [
-                AccountWidget::class,
+                ImpersonationWidget::class,
                 ActivityLog::class,
             ])
             ->middleware(middleware: [
@@ -91,6 +95,18 @@ final class ControlPanelProvider extends PanelProvider
                     ->pages([
                         Branding::class,
                     ]),
+            ])
+            ->userMenuItems([
+                Action::make('settings')
+                    ->label((string) __('navigation.labels.update_profile'))
+                    ->url('/settings/profile')
+                    ->icon(Heroicon::PencilSquare),
+
+                'logout' => fn (Action $action): Action => $action
+                    ->label(session()->has('impersonation') ? (string) __('navigation.labels.leave_impersonation') : $action->getLabel())
+                    ->url(session()->has('impersonation') ? route('impersonate.leave') : $action->getUrl())
+                    ->postToUrl(session()->has('impersonation'))
+                    ->icon(session()->has('impersonation') ? Heroicon::ArrowLeftEndOnRectangle : $action->getIcon()),
             ])
             ->authMiddleware([
                 Authenticate::class,
@@ -124,7 +140,7 @@ final class ControlPanelProvider extends PanelProvider
     {
         try {
             return app(BrandingService::class)->getFilamentPrimaryColorPalette();
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             // Return default Filament primary color palette if settings not available
             return [
                 50 => 'oklch(0.985 0 0)',

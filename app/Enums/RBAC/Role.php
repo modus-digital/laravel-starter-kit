@@ -18,7 +18,7 @@ enum Role: string
     {
         return match ($this) {
             self::SUPER_ADMIN => 'red',
-            self::ADMIN => 'blue',
+            self::ADMIN => 'yellow',
             self::USER => 'green',
         };
     }
@@ -27,7 +27,7 @@ enum Role: string
     {
         return match ($this) {
             self::SUPER_ADMIN => 'danger',
-            self::ADMIN => 'info',
+            self::ADMIN => 'warning',
             self::USER => 'success',
         };
     }

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Filament\Resources\Core\Translations\TranslationService;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 
@@ -49,4 +50,35 @@ it('persists the selected target language', function () {
 it('rejects unavailable target languages', function () {
     expect(fn () => $this->service->setTargetLanguage('es'))
         ->toThrow(InvalidArgumentException::class);
+});
+
+it('filters out disabled module translations when calculating missing translations for a group', function () {
+    Config::set('modules.clients.enabled', false);
+
+    File::put("{$this->temporaryLangPath}/en.json", json_encode([
+        'admin' => [
+            'clients' => [
+                'navigation_label' => 'Clients',
+            ],
+            'branding' => [
+                'sections' => [
+                    'logo' => 'Logo',
+                ],
+            ],
+        ],
+    ])."\n");
+
+    File::put("{$this->temporaryLangPath}/fr.json", json_encode([
+        'admin' => [
+            'branding' => [
+                'sections' => [
+                    'logo' => 'Logo',
+                ],
+            ],
+        ],
+    ])."\n");
+
+    $missing = $this->service->getMissingTranslations('fr', 'admin');
+
+    expect($missing)->toBe([]);
 });

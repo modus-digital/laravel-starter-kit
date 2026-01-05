@@ -20,6 +20,11 @@ final class PermissionForm
                     ->columnSpanFull()
                     ->columns(2)
                     ->schema([
+                        \Filament\Forms\Components\Placeholder::make('info')
+                            ->label('Permissions are managed via code')
+                            ->content('Permissions are defined in the Permission enum and synced via the "permissions:sync" command. They cannot be created or edited manually.')
+                            ->columnSpanFull(),
+
                         TextInput::make('enum_key')
                             ->label(__('admin.rbac.permissions.form.enum_key'))
                             ->formatStateUsing(function (Permission $record): string {
