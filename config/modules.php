@@ -129,4 +129,19 @@ return [
     'import_export' => [
         'enabled' => true,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Mailgun Analytics
+    |--------------------------------------------------------------------------
+    | If this module is enabled we track email lifecycle events from Mailgun.
+    | This provides comprehensive email analytics and logging capabilities.
+    |
+    */
+    'mailgun_analytics' => [
+        'enabled' => env('MAILGUN_ANALYTICS_ENABLED', false),
+        'track_opens' => env('MAILGUN_ANALYTICS_TRACK_OPENS', true),
+        'track_clicks' => env('MAILGUN_ANALYTICS_TRACK_CLICKS', true),
+        'retention_days' => env('MAILGUN_ANALYTICS_RETENTION_DAYS', 90),
+    ],
 ];
