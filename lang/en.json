@@ -425,6 +425,7 @@
             "roles": "Roles",
             "permissions": "Permissions",
             "branding": "Branding",
+            "mailgun": "Mailgun",
             "translation_manager": "Translation Manager",
             "access_control": "Access Control",
             "clients": "Clients",
@@ -494,6 +495,48 @@
             "helpers": {
                 "logo": "Upload your logo (max 2MB, supports SVG and common image formats)",
                 "primary_color": "In this admin panel, the color will not perfectly match the chosen color. Due to the provider of this panel, the core application will use the correct colors."
+            }
+        },
+        "integrations": {
+            "tabs": {
+                "mailgun": "Email (Mailgun)",
+                "storage": "Cloud Storage"
+            },
+            "mailgun": {
+                "section_title": "Mailgun Configuration",
+                "section_description": "Configure Mailgun for transactional email delivery.",
+                "enabled": "Enable Mailgun",
+                "enabled_helper": "When enabled, emails will be sent via Mailgun instead of the default mail driver.",
+                "domain": "Mailgun Domain",
+                "domain_helper": "Your Mailgun sending domain (e.g., mg.example.com).",
+                "secret": "API Secret Key",
+                "secret_helper": "Your Mailgun private API key. Keep this secret!",
+                "region": "Mailgun Region",
+                "region_helper": "Select the region where your Mailgun account is hosted.",
+                "from_address": "From Email Address",
+                "from_address_helper": "Default sender email address for outgoing emails.",
+                "from_name": "From Name",
+                "from_name_helper": "Default sender name that appears in emails."
+            },
+            "storage": {
+                "section_title": "Cloud Storage Configuration",
+                "section_description": "Configure cloud storage for file uploads and media.",
+                "enabled": "Enable Cloud Storage",
+                "enabled_helper": "When enabled, files will be stored in the cloud instead of locally.",
+                "driver": "Storage Provider",
+                "driver_helper": "Select your preferred cloud storage provider.",
+                "key": "Access Key ID",
+                "key_helper": "Your storage provider access key or client ID.",
+                "secret": "Secret Access Key",
+                "secret_helper": "Your storage provider secret key. Keep this secret!",
+                "bucket": "Bucket Name",
+                "bucket_helper": "The name of your storage bucket or container.",
+                "region": "Region",
+                "region_helper": "The region where your bucket is located (e.g., us-east-1).",
+                "endpoint": "Custom Endpoint",
+                "endpoint_helper": "Custom endpoint URL for S3-compatible storage providers.",
+                "url": "Public URL",
+                "url_helper": "Custom public URL for accessing files (e.g., CDN URL)."
             }
         },
         "widgets": {
