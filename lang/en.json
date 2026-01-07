@@ -414,6 +414,7 @@
     },
     "navigation": {
         "groups": {
+            "platform": "Platform",
             "system": "System",
             "logs_and_monitoring": "Logs & Monitoring",
             "management": "Management",
@@ -434,7 +435,10 @@
             "leave_impersonation": "Leave Impersonation",
             "currently_viewing_as": "You are currently impersonating",
             "update_profile": "Update Profile",
-            "notifications": "Notifications"
+            "notifications": "Notifications",
+            "repository": "Repository",
+            "documentation": "Documentation",
+            "navigation_menu": "Navigation Menu"
         }
     },
     "admin": {
@@ -948,6 +952,10 @@
                 "label": "Comments",
                 "description": "Receive updates when someone comments on your content."
             },
+            "tasks": {
+                "label": "Tasks",
+                "description": "Receive updates when someone assigns a task to you."
+            },
             "save": "Save preferences",
             "saved_title": "Saved",
             "saved_description": "Your notification preferences have been updated."
@@ -974,7 +982,14 @@
                 "update": "Update",
                 "delete": "Delete",
                 "restore": "Restore",
-                "not_available": "(Not available)"
+                "not_available": "(Not available)",
+                "display_labels": {
+                    "create": "Create",
+                    "read": "Read",
+                    "update": "Update",
+                    "delete": "Delete",
+                    "restore": "Restore"
+                }
             },
             "token_created_title": "Token Created Successfully",
             "token_created_description": "Please copy your new API token. For security reasons, it won't be shown again.",
@@ -1068,9 +1083,264 @@
             "title": "Title",
             "date": "Date",
             "open_link": "Open link"
+        },
+        "relative_time": {
+            "just_now": "Just now",
+            "minutes_ago": ":count minute ago",
+            "minutes_ago_plural": ":count minutes ago",
+            "hours_ago": ":count hour ago",
+            "hours_ago_plural": ":count hours ago",
+            "days_ago": ":count day ago",
+            "days_ago_plural": ":count days ago"
+        },
+        "tasks": {
+            "assigned": {
+                "subject": "Task Assigned: :title",
+                "greeting": "Hello :name,",
+                "line1": ":assigner has assigned you the task \":title\".",
+                "line2": "You can view and manage this task by clicking the button below.",
+                "action": "View Task",
+                "title": ":assigner assigned you \":title\"",
+                "body": ":assigner has assigned you the task \":title\"."
+            },
+            "completed": {
+                "subject": "Task Completed: :title",
+                "greeting": "Hello :name,",
+                "line1": ":completedBy has marked the task \":title\" as completed.",
+                "line2": "You can view the completed task by clicking the button below.",
+                "action": "View Task",
+                "title": ":completedBy completed \":title\"",
+                "body": ":completedBy has marked the task \":title\" as completed."
+            },
+            "due_reminder": {
+                "subject": "Task Due Soon: :title",
+                "greeting": "Hello :name,",
+                "line1": "The task \":title\" is due in :days day(s) (due date: :dueDate).",
+                "line2": "Please review and complete this task before the due date.",
+                "action": "View Task",
+                "title": "Task \":title\" due in :days day(s)",
+                "body": "The task \":title\" is due in :days day(s) (due date: :dueDate)."
+            },
+            "reassigned": {
+                "subject": "Task Reassigned: :title",
+                "greeting_assigned": "Hello :name,",
+                "greeting_unassigned": "Hello :name,",
+                "line1_assigned": ":reassigner has reassigned the task \":title\" to you.",
+                "line1_unassigned": ":reassigner has reassigned the task \":title\" from you to :newAssignee.",
+                "line2": "You can view and manage this task by clicking the button below.",
+                "action": "View Task",
+                "title_assigned": ":reassigner reassigned \":title\" to you",
+                "title_unassigned": ":reassigner reassigned \":title\" from you",
+                "body_assigned": ":reassigner has reassigned the task \":title\" to you.",
+                "body_unassigned": ":reassigner has reassigned the task \":title\" from you to :newAssignee.",
+                "unassigned": "Unassigned"
+            },
+            "updated": {
+                "subject": "Task Updated: :title",
+                "greeting": "Hello :name,",
+                "line1": ":updatedBy has updated the task \":title\".",
+                "line2": "The following fields were changed: :fields",
+                "line3": "You can view the updated task by clicking the button below.",
+                "action": "View Task",
+                "title": ":updatedBy updated \":title\"",
+                "body": ":updatedBy has updated the task \":title\". The following fields were changed: :fields"
+            }
+        },
+        "comments": {
+            "added": {
+                "subject": "New Comment on Task: :title",
+                "greeting": "Hello :name,",
+                "line1": ":commenter has added a comment to the task \":title\".",
+                "line2": "You can view the comment and respond by clicking the button below.",
+                "action": "View Task",
+                "title": ":commenter commented on \":title\"",
+                "body": ":commenter has added a comment to the task \":title\"."
+            }
+        },
+        "security": {
+            "new_device_login": {
+                "subject": "New Device Login Detected",
+                "greeting": "Hello :name,",
+                "line1": "We detected a login to your account from a new device or location.",
+                "line2": "Device Information:\nIP Address: :ipAddress\nUser Agent: :userAgent",
+                "line3": "Location: :location",
+                "line4": "If this was you, you can safely ignore this email.",
+                "line5": "If you did not log in from this device, please secure your account immediately.",
+                "action": "Review Account Security",
+                "title": "New Device Login Detected",
+                "body": "We detected a login to your account from a new device. IP Address: :ipAddress, User Agent: :userAgent",
+                "body_location": "Location: :location"
+            },
+            "password_changed": {
+                "subject": "Password Changed",
+                "greeting": "Hello :name,",
+                "line1": "Your password has been successfully changed.",
+                "line2": "This change was made from:\nIP Address: :ipAddress\nDevice: :userAgent",
+                "line3": "If you did not make this change, please secure your account immediately.",
+                "line4": "If you made this change, you can safely ignore this email.",
+                "title": "Password Changed",
+                "body": "Your password has been successfully changed.",
+                "body_details": "This change was made from IP Address: :ipAddress, Device: :userAgent",
+                "unknown_device": "Unknown Device"
+            },
+            "two_factor_enabled": {
+                "subject": "Two-Factor Authentication Enabled",
+                "greeting": "Hello :name,",
+                "line1": "Two-factor authentication has been enabled on your account.",
+                "line2": "This change was made from:\nIP Address: :ipAddress\nDevice: :userAgent",
+                "line3": "Your account is now more secure. You will be required to enter a verification code when logging in.",
+                "action": "Manage Two-Factor Authentication",
+                "title": "Two-Factor Authentication Enabled",
+                "body": "Two-factor authentication has been enabled on your account.",
+                "body_details": "This change was made from IP Address: :ipAddress, Device: :userAgent",
+                "unknown_device": "Unknown Device"
+            },
+            "two_factor_disabled": {
+                "subject": "Two-Factor Authentication Disabled",
+                "greeting": "Hello :name,",
+                "line1": "Two-factor authentication has been disabled on your account.",
+                "line2": "This change was made from:\nIP Address: :ipAddress\nDevice: :userAgent",
+                "line3": "If you did not make this change, please secure your account immediately.",
+                "action": "Manage Two-Factor Authentication",
+                "title": "Two-Factor Authentication Disabled",
+                "body": "Two-factor authentication has been disabled on your account.",
+                "body_details": "This change was made from IP Address: :ipAddress, Device: :userAgent",
+                "unknown_device": "Unknown Device"
+            }
+        }
+    },
+    "tasks": {
+        "title": "Tasks",
+        "new_task": "New task",
+        "create_task": "Create task",
+        "create_task_description": "Create a new task for the current scope.",
+        "task_title": "Task title",
+        "task_title_placeholder": "e.g. Follow up with client",
+        "description": "Description",
+        "assignee": "Assignee",
+        "priority": "Priority",
+        "due_date": "Due date",
+        "select_assignee": "Select assignee",
+        "select_priority": "Select priority",
+        "select_due_date": "Select due date",
+        "unassigned": "Unassigned",
+        "creating": "Creating…",
+        "create": "Create",
+        "created": "Task created",
+        "updated": "Task updated",
+        "saving": "Saving…",
+        "save": "Save",
+        "activity": "Activity",
+        "comment_added": "Comment added",
+        "comment_error": "Please enter a comment",
+        "comment_failed": "Failed to add comment",
+        "url_copied": "Task URL copied to clipboard",
+        "url_copy_failed": "Failed to copy URL",
+        "views": {
+            "list": "List View",
+            "kanban": "Kanban Board",
+            "calendar": "Calendar",
+            "gantt": "Gantt Chart",
+            "create_view": "Create view",
+            "rename_view": "Rename view",
+            "configure_columns": "Configure columns",
+            "set_as_default": "Set as default",
+            "delete": "Delete",
+            "name": "Name",
+            "name_placeholder": "e.g. Sprint Backlog",
+            "statuses_columns": "Statuses (columns)",
+            "select_all": "Select all",
+            "deselect_all": "Deselect all",
+            "no_statuses": "No statuses available.",
+            "select_at_least_one": "Select at least one status.",
+            "create_description": "Create a new :type view.",
+            "rename_description": "Enter a new name for this view.",
+            "configure_description": "Select which statuses (columns) to show in :name.",
+            "delete_description": "Are you sure you want to delete :name? This action cannot be undone.",
+            "view_created": "View created",
+            "view_renamed": "View renamed",
+            "view_updated": "View updated",
+            "view_deleted": "View deleted",
+            "due_date_updated": "Due date updated",
+            "no_statuses_found": "No task statuses found.",
+            "no_views": "No views yet.",
+            "view_type": ":type view"
+        },
+        "calendar": {
+            "previous_month": "Previous month",
+            "next_month": "Next month",
+            "monday": "Mon",
+            "tuesday": "Tue",
+            "wednesday": "Wed",
+            "thursday": "Thu",
+            "friday": "Fri",
+            "saturday": "Sat",
+            "sunday": "Sun"
+        },
+        "gantt": {
+            "today": "Today"
+        }
+    },
+    "text_editor": {
+        "commands": {
+            "text": "Text",
+            "text_description": "Just start typing with plain text.",
+            "todo_list": "To-do List",
+            "todo_list_description": "Track tasks with a to-do list.",
+            "heading_1": "Heading 1",
+            "heading_1_description": "Big section heading.",
+            "heading_2": "Heading 2",
+            "heading_2_description": "Medium section heading.",
+            "heading_3": "Heading 3",
+            "heading_3_description": "Small section heading.",
+            "bullet_list": "Bullet List",
+            "bullet_list_description": "Create a simple bullet list.",
+            "numbered_list": "Numbered List",
+            "numbered_list_description": "Create a list with numbering.",
+            "quote": "Quote",
+            "quote_description": "Capture a quote.",
+            "code": "Code",
+            "code_description": "Capture a code snippet.",
+            "image": "Image",
+            "image_description": "Upload an image from your computer."
+        },
+        "nodes": {
+            "text": "Text",
+            "todo_list": "To-do List",
+            "bullet_list": "Bullet List",
+            "numbered_list": "Numbered List",
+            "quote": "Quote",
+            "code": "Code",
+            "multiple": "Multiple"
+        },
+        "colors": {
+            "default": "Default",
+            "purple": "Purple",
+            "red": "Red",
+            "yellow": "Yellow",
+            "blue": "Blue",
+            "green": "Green",
+            "orange": "Orange",
+            "pink": "Pink",
+            "gray": "Gray"
+        },
+        "status": {
+            "saved": "Saved",
+            "unsaved": "Unsaved"
+        },
+        "upload": {
+            "success": "Image uploaded successfully.",
+            "error": "Upload failed",
+            "login_required": "You must be logged in to upload images.",
+            "validation_error": "Validation error. Please check the image file.",
+            "upload_error": "Error uploading image. Please try again.",
+            "file_type_error": "File type not supported.",
+            "file_size_error": "File size too big (max 20MB)."
         }
     },
     "common": {
+        "saving": "Saving...",
+        "saved": "Saved",
         "actions": {
             "edit": "Edit",
             "delete": "Delete",
