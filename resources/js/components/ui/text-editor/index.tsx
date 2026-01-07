@@ -33,11 +33,12 @@ import '../../../../css/text-editor.css';
 interface RichTextEditorProps {
     initialContent?: JSONContent;
     onUpdate?: (content: JSONContent) => void;
+    onSubmit?: () => void;
     name?: string;
     className?: string;
 }
 
-const RichTextEditor = ({ initialContent, onUpdate, name, className }: RichTextEditorProps) => {
+const RichTextEditor = ({ initialContent, onUpdate, onSubmit, name, className }: RichTextEditorProps) => {
     // Track the content for the hidden input (form submission)
     const [content, setContent] = useState<undefined | JSONContent>(initialContent);
     const [status, setStatus] = useState<'Saved' | 'Unsaved'>('Saved');
@@ -90,6 +91,14 @@ const RichTextEditor = ({ initialContent, onUpdate, name, className }: RichTextE
                 editorProps={{
                     handleDOMEvents: {
                         keydown: (_view, event) => {
+                            // Handle Ctrl+Enter / Cmd+Enter to submit
+                            if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                onSubmit?.();
+                                return true;
+                            }
+
                             // Stop propagation of editor keyboard shortcuts to prevent global handlers
                             const isEditorShortcut =
                                 (event.ctrlKey || event.metaKey) &&

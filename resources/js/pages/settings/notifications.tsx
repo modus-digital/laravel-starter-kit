@@ -19,6 +19,7 @@ type DeliveryMethod = 'none' | 'email' | 'push' | 'email_push';
 type NotificationPreferences = {
     security_alerts: DeliveryMethod;
     comments: DeliveryMethod;
+    tasks: DeliveryMethod;
 };
 
 type NotificationsSettingsProps = {
@@ -28,16 +29,19 @@ type NotificationsSettingsProps = {
 const defaultPreferences: NotificationPreferences = {
     security_alerts: 'email',
     comments: 'email_push',
+    tasks: 'email_push',
 };
 
 const notificationLabels: Record<keyof NotificationPreferences, string> = {
     security_alerts: 'settings.notifications.security_alerts.label',
     comments: 'settings.notifications.comments.label',
+    tasks: 'settings.notifications.tasks.label',
 };
 
 const notificationDescriptions: Record<keyof NotificationPreferences, string> = {
     security_alerts: 'settings.notifications.security_alerts.description',
     comments: 'settings.notifications.comments.description',
+    tasks: 'settings.notifications.tasks.description',
 };
 
 const deliveryOptions: { value: DeliveryMethod; label: string }[] = [
