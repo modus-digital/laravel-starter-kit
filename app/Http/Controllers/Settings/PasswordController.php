@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Settings;
 
+use App\Events\Security\PasswordChanged;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -36,6 +38,13 @@ final class PasswordController extends Controller
         $user->update([
             'password' => $validated['password'],
         ]);
+
+        // Dispatch PasswordChanged event
+        Event::dispatch(new PasswordChanged(
+            user: $user,
+            ipAddress: $request->ip(),
+            userAgent: $request->userAgent(),
+        ));
 
         return back();
     }
