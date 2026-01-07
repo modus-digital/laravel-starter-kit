@@ -6,7 +6,8 @@ import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import type { Notification as NotificationType } from '@/types/models';
 import { Head, Link, router } from '@inertiajs/react';
-import { ArrowLeft, Bell, Calendar, CheckCircle, Clock, ExternalLink, Mail, Trash2 } from 'lucide-react';
+import { ArrowLeft, Bell, Calendar, CheckCircle, Clock, ExternalLink, Mail, MessageSquare, Trash2, User, Flag } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 type NotificationProps = {
     notification: NotificationType;
@@ -28,41 +29,59 @@ function formatTime(dateString: string): string {
     });
 }
 
-function formatRelativeTime(dateString: string): string {
+function formatRelativeTime(dateString: string, t: (key: string, options?: { count?: number }) => string): string {
     const date = new Date(dateString);
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
     if (diffInSeconds < 60) {
-        return 'Just now';
+        return t('notifications.relative_time.just_now');
     }
 
     const diffInMinutes = Math.floor(diffInSeconds / 60);
     if (diffInMinutes < 60) {
-        return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+        return t(diffInMinutes === 1 ? 'notifications.relative_time.minutes_ago' : 'notifications.relative_time.minutes_ago_plural', { count: diffInMinutes });
     }
 
     const diffInHours = Math.floor(diffInMinutes / 60);
     if (diffInHours < 24) {
-        return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+        return t(diffInHours === 1 ? 'notifications.relative_time.hours_ago' : 'notifications.relative_time.hours_ago_plural', { count: diffInHours });
     }
 
     const diffInDays = Math.floor(diffInHours / 24);
     if (diffInDays < 7) {
-        return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+        return t(diffInDays === 1 ? 'notifications.relative_time.days_ago' : 'notifications.relative_time.days_ago_plural', { count: diffInDays });
     }
 
     return formatDate(dateString);
 }
 
 export default function Notification({ notification }: NotificationProps) {
+    const { t } = useTranslation();
+    
+    // Helper function to translate notification text (handles both translation keys and plain text)
+    const translateNotificationText = (text: string | null | undefined, replacements?: Record<string, unknown> | null): string => {
+        if (!text) return '';
+        // If it looks like a translation key (starts with "notifications."), try to translate it
+        if (text.startsWith('notifications.')) {
+            // Merge replacements with defaultValue option
+            const translated = t(text as never, { ...(replacements || {}), defaultValue: text });
+            // If translation returns the same value, it might be missing - return as-is
+            return translated !== text ? translated : text;
+        }
+        return text;
+    };
+
+    const translatedTitle = translateNotificationText(notification.title, notification.translation_replacements);
+    const translatedBody = translateNotificationText(notification.body, notification.translation_replacements);
+
     const breadcrumbs: BreadcrumbItem[] = [
         {
-            title: 'Notifications',
+            title: t('notifications.title'),
             href: '/notifications',
         },
         {
-            title: notification.title,
+            title: translatedTitle,
             href: `/notifications/${notification.id}`,
         },
     ];
@@ -89,7 +108,7 @@ export default function Notification({ notification }: NotificationProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={notification.title} />
+            <Head title={translatedTitle} />
 
             <div className="mx-auto my-8 flex w-full max-w-4xl flex-col gap-6 px-4 sm:px-6 lg:px-8">
                 {/* Back Button */}
@@ -131,10 +150,10 @@ export default function Notification({ notification }: NotificationProps) {
                                         </Badge>
                                         {notification.deleted_at && <Badge variant="destructive">Deleted</Badge>}
                                     </div>
-                                    <CardTitle className="text-xl sm:text-2xl">{notification.title}</CardTitle>
+                                    <CardTitle className="text-xl sm:text-2xl">{translatedTitle}</CardTitle>
                                     <CardDescription className="flex items-center gap-1.5">
                                         <Clock className="size-3.5" />
-                                        {formatRelativeTime(notification.created_at)}
+                                        {formatRelativeTime(notification.created_at, t)}
                                     </CardDescription>
                                 </div>
                             </div>
@@ -164,8 +183,80 @@ export default function Notification({ notification }: NotificationProps) {
 
                     <CardContent className="py-6">
                         <div className="prose prose-sm dark:prose-invert max-w-none">
-                            <p className="leading-relaxed whitespace-pre-wrap text-foreground">{notification.body}</p>
+                            <p className="leading-relaxed whitespace-pre-wrap text-foreground">{translatedBody}</p>
                         </div>
+
+                        {/* Context Section */}
+                        {notification.context && (
+                            <div className="mt-6 space-y-4">
+                                {notification.context.type === 'comment' && notification.context.comment_preview && (
+                                    <div className="rounded-lg border bg-muted/50 p-4">
+                                        <div className="mb-2 flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                                            <MessageSquare className="size-4" />
+                                            Comment Preview
+                                        </div>
+                                        <blockquote className="border-l-4 border-primary pl-4 italic text-foreground">
+                                            {notification.context.comment_preview}
+                                        </blockquote>
+                                        {notification.context.task_title && (
+                                            <div className="mt-3 text-xs text-muted-foreground">
+                                                Task: {notification.context.task_title}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {notification.context.type === 'task' && (
+                                    <div className="rounded-lg border bg-muted/50 p-4">
+                                        <div className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                                            <Calendar className="size-4" />
+                                            Task Details
+                                        </div>
+                                        <div className="space-y-3">
+                                            {notification.context.task_title && (
+                                                <div>
+                                                    <div className="text-xs font-medium text-muted-foreground">Title</div>
+                                                    <div className="text-sm font-medium text-foreground">{notification.context.task_title}</div>
+                                                </div>
+                                            )}
+                                            {notification.context.task_description && (
+                                                <div>
+                                                    <div className="text-xs font-medium text-muted-foreground">Description</div>
+                                                    <div className="text-sm text-foreground">{notification.context.task_description}</div>
+                                                </div>
+                                            )}
+                                            <div className="flex flex-wrap gap-4">
+                                                {notification.context.task_priority && (
+                                                    <div className="flex items-center gap-2">
+                                                        <Flag className="size-3.5 text-muted-foreground" />
+                                                        <span className="text-xs text-muted-foreground">Priority:</span>
+                                                        <Badge variant="outline" className="text-xs capitalize">
+                                                            {notification.context.task_priority}
+                                                        </Badge>
+                                                    </div>
+                                                )}
+                                                {notification.context.task_due_date && (
+                                                    <div className="flex items-center gap-2">
+                                                        <Calendar className="size-3.5 text-muted-foreground" />
+                                                        <span className="text-xs text-muted-foreground">Due:</span>
+                                                        <span className="text-xs text-foreground">
+                                                            {new Date(notification.context.task_due_date).toLocaleDateString()}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                                {notification.context.task_assignee && (
+                                                    <div className="flex items-center gap-2">
+                                                        <User className="size-3.5 text-muted-foreground" />
+                                                        <span className="text-xs text-muted-foreground">Assignee:</span>
+                                                        <span className="text-xs text-foreground">{notification.context.task_assignee}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
                         {notification.action_url && (
                             <div className="mt-6">

@@ -170,4 +170,15 @@ export interface Notification {
     created_at: string;
     updated_at: string;
     deleted_at?: string;
+    translation_key?: string | null;
+    translation_replacements?: Record<string, unknown> | null;
+    context?: {
+        type: 'comment' | 'task';
+        comment_preview?: string;
+        task_title?: string;
+        task_description?: string;
+        task_priority?: string;
+        task_due_date?: string;
+        task_assignee?: string;
+    } | null;
 }

@@ -19,6 +19,15 @@ type NotificationItem = {
     action_url?: string | null;
     read_at?: string | null;
     created_at: string;
+    context?: {
+        type: 'comment' | 'task';
+        comment_preview?: string;
+        task_title?: string;
+        task_description?: string;
+        task_priority?: string;
+        task_due_date?: string;
+        task_assignee?: string;
+    } | null;
 };
 
 type PaginationLinks = {
@@ -47,6 +56,20 @@ type NotificationsProps = {
 export default function Notifications({ notifications, unreadCount, activeTab }: NotificationsProps) {
     const [selectedNotifications, setSelectedNotifications] = useState<NotificationItem[]>([]);
     const { t } = useTranslation();
+
+    // Helper function to translate notification text (handles both translation keys and plain text)
+    const translateNotificationText = (notification: NotificationItem): string => {
+        const text = notification.title;
+        if (!text) return '';
+        // If it looks like a translation key (starts with "notifications."), try to translate it
+        if (text.startsWith('notifications.')) {
+            // Merge replacements with defaultValue option
+            const translated = t(text as never, { ...(notification.translation_replacements || {}), defaultValue: text });
+            // If translation returns the same value, it might be missing - return as-is
+            return translated !== text ? translated : text;
+        }
+        return text;
+    };
 
     const openDetails = (id: string) => {
         router.visit(`/notifications/${id}`);
@@ -123,7 +146,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                 ),
                 cell: ({ row }) => (
                     <div className="flex items-center gap-2">
-                        <span className="truncate text-sm font-medium">{row.original.title || t('notifications.fallback_title')}</span>
+                        <span className="truncate text-sm font-medium">{translateNotificationText(row.original) || t('notifications.fallback_title')}</span>
                         {row.original.action_url && (
                             <a
                                 href={row.original.action_url}
