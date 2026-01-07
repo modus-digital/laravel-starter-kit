@@ -5,32 +5,39 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import RichTextEditor from '@/components/ui/text-editor';
 import { cn } from '@/lib/utils';
 import tasksRoutes from '@/routes/tasks';
 import type { SharedData } from '@/types';
 import { Form, usePage } from '@inertiajs/react';
 import { Flag } from 'lucide-react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 const UNASSIGNED_VALUE = '__unassigned__';
-const priorityOptions = [
-    { value: 'low', label: 'Low', color: 'text-muted-foreground' },
-    { value: 'normal', label: 'Normal', color: 'text-blue-500' },
-    { value: 'high', label: 'High', color: 'text-orange-500' },
-    { value: 'critical', label: 'Critical', color: 'text-red-500' },
-] as const;
 
 export default function CreateNewTask() {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const [selectedAssigneeId, setSelectedAssigneeId] = useState<string>(UNASSIGNED_VALUE);
-    const [selectedPriority, setSelectedPriority] = useState<(typeof priorityOptions)[number]['value']>('normal');
+    const [selectedPriority, setSelectedPriority] = useState<'low' | 'normal' | 'high' | 'critical'>('normal');
     const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
 
     const { auth } = usePage<SharedData>().props;
 
+    const priorityOptions = useMemo(
+        () => [
+            { value: 'low' as const, label: t('enums.task_priority.low'), color: 'text-muted-foreground' },
+            { value: 'normal' as const, label: t('enums.task_priority.normal'), color: 'text-blue-500' },
+            { value: 'high' as const, label: t('enums.task_priority.high'), color: 'text-orange-500' },
+            { value: 'critical' as const, label: t('enums.task_priority.critical'), color: 'text-red-500' },
+        ],
+        [t],
+    );
+
     const assigneeOptions = [
-        { id: UNASSIGNED_VALUE, name: 'Unassigned' },
+        { id: UNASSIGNED_VALUE, name: t('tasks.unassigned') },
         ...(auth?.user?.id !== undefined ? [{ id: String(auth.user.id), name: auth.user.name }] : []),
     ];
 
@@ -41,13 +48,13 @@ export default function CreateNewTask() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <Button type="button" size="sm" onClick={() => setOpen(true)}>
-                New task
+                {t('tasks.new_task')}
             </Button>
 
             <DialogContent className="md:max-w-3xl">
                 <DialogHeader>
-                    <DialogTitle>Create task</DialogTitle>
-                    <DialogDescription>Create a new task for the current scope.</DialogDescription>
+                    <DialogTitle>{t('tasks.create_task')}</DialogTitle>
+                    <DialogDescription>{t('tasks.create_task_description')}</DialogDescription>
                 </DialogHeader>
 
                 <Form
@@ -60,7 +67,7 @@ export default function CreateNewTask() {
                         setSelectedPriority('normal');
                         setDueDate(undefined);
                         close();
-                        toast.success('Task created');
+                        toast.success(t('tasks.created'));
                     }}
                     className="space-y-4"
                 >
@@ -68,29 +75,19 @@ export default function CreateNewTask() {
                         <>
                             <div className="grid gap-4 md:grid-cols-3">
                                 <div className="space-y-2 md:col-span-3">
-                                    <Label htmlFor="task-title">Task title</Label>
-                                    <Input id="task-title" name="title" required autoFocus placeholder="e.g. Follow up with client" />
+                                    <Label htmlFor="task-title">{t('tasks.task_title')}</Label>
+                                    <Input id="task-title" name="title" required autoFocus placeholder={t('tasks.task_title_placeholder')} />
                                     <InputError message={errors.title as string | undefined} />
                                 </div>
 
                                 <div className="space-y-2 md:col-span-3">
-                                    <Label htmlFor="task-description">Description</Label>
-                                    <textarea
-                                        id="task-description"
-                                        name="description"
-                                        placeholder="Optional"
-                                        className={cn(
-                                            'w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground placeholder:text-muted-foreground md:text-sm',
-                                            'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
-                                            'aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40',
-                                            'min-h-24 resize-y',
-                                        )}
-                                    />
+                                    <Label htmlFor="task-description">{t('tasks.description')}</Label>
+                                    <RichTextEditor name="description" />
                                     <InputError message={errors.description as string | undefined} />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>Assignee</Label>
+                                    <Label>{t('tasks.assignee')}</Label>
 
                                     <input
                                         type="hidden"
@@ -100,7 +97,7 @@ export default function CreateNewTask() {
 
                                     <Select value={selectedAssigneeId} onValueChange={setSelectedAssigneeId}>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select assignee" />
+                                            <SelectValue placeholder={t('tasks.select_assignee')} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {assigneeOptions.map((option) => (
@@ -115,13 +112,13 @@ export default function CreateNewTask() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>Priority</Label>
+                                    <Label>{t('tasks.priority')}</Label>
 
                                     <input type="hidden" name="priority" value={selectedPriority} />
 
                                     <Select value={selectedPriority} onValueChange={(value) => setSelectedPriority(value as typeof selectedPriority)}>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select priority">
+                                            <SelectValue placeholder={t('tasks.select_priority')}>
                                                 {selectedPriority && (
                                                     <div className="flex items-center gap-2">
                                                         <Flag
@@ -151,19 +148,19 @@ export default function CreateNewTask() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="task-due-date">Due date</Label>
+                                    <Label htmlFor="task-due-date">{t('tasks.due_date')}</Label>
                                     <input type="hidden" name="due_date" value={dueDate ? dueDate.toISOString().split('T')[0] : ''} />
-                                    <DatePicker id="task-due-date" value={dueDate} onChange={setDueDate} placeholder="Select due date" />
+                                    <DatePicker id="task-due-date" value={dueDate} onChange={setDueDate} placeholder={t('tasks.select_due_date')} />
                                     <InputError message={errors.due_date as string | undefined} />
                                 </div>
                             </div>
 
                             <DialogFooter>
                                 <Button type="button" variant="outline" onClick={close}>
-                                    Cancel
+                                    {t('common.actions.cancel')}
                                 </Button>
                                 <Button type="submit" disabled={processing}>
-                                    {processing ? 'Creating…' : 'Create'}
+                                    {processing ? t('tasks.creating') : t('tasks.create')}
                                 </Button>
                             </DialogFooter>
                         </>

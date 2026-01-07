@@ -126,19 +126,19 @@ export default function ApiTokens({
     const getPermissionDisplayLabel = (permission: Permission) => {
         // For CRUD permissions, remove the resource name
         if (permission.value.startsWith('create:')) {
-            return 'Create';
+            return t('settings.api_tokens.permissions.display_labels.create');
         }
         if (permission.value.startsWith('read:')) {
-            return 'Read';
+            return t('settings.api_tokens.permissions.display_labels.read');
         }
         if (permission.value.startsWith('update:')) {
-            return 'Update';
+            return t('settings.api_tokens.permissions.display_labels.update');
         }
         if (permission.value.startsWith('delete:')) {
-            return 'Delete';
+            return t('settings.api_tokens.permissions.display_labels.delete');
         }
         if (permission.value.startsWith('restore:')) {
-            return 'Restore';
+            return t('settings.api_tokens.permissions.display_labels.restore');
         }
 
         // For other permissions, keep the original label

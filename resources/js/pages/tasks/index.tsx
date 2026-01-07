@@ -3,6 +3,7 @@ import AppLayout from '@/layouts/app-layout';
 import { type SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import CalendarViewTab from './partials/calendar-view-tab';
 import CreateNewTask from './partials/create-new-task';
@@ -66,9 +67,11 @@ export default function Index() {
         setIsTaskDialogOpen(true);
     };
 
+    const { t } = useTranslation();
+
     const renderViewContent = () => {
         if (viewStatuses.length === 0) {
-            return <p className="text-sm text-muted-foreground">No task statuses found.</p>;
+            return <p className="text-sm text-muted-foreground">{t('tasks.views.no_statuses_found')}</p>;
         }
 
         switch (activeView?.type) {
@@ -132,7 +135,7 @@ export default function Index() {
                         <header className="flex items-start justify-between gap-4 border-b border-border p-4">
                             <div className="min-w-0">
                                 <h2 className="text-lg font-medium">{activeView.name}</h2>
-                                <p className="mt-1 text-sm text-muted-foreground capitalize">{activeView.type} view</p>
+                                <p className="mt-1 text-sm text-muted-foreground capitalize">{t('tasks.views.view_type', { type: activeView.type })}</p>
                             </div>
 
                             <div className="shrink-0">
@@ -143,7 +146,7 @@ export default function Index() {
                         <div className="p-4">{renderViewContent()}</div>
                     </div>
                 ) : (
-                    <p className="text-sm text-muted-foreground">No views yet.</p>
+                    <p className="text-sm text-muted-foreground">{t('tasks.views.no_views')}</p>
                 )}
             </div>
 

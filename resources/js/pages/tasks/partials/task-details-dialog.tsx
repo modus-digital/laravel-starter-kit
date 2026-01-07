@@ -19,7 +19,7 @@ import { Form, router, usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { ChevronDown, Flag, MessageSquare } from 'lucide-react';
 import type { JSONContent } from 'novel';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import type { Activity, Status, Task, TaskActivityProperties, TaskActivityValue, TaskPriority } from '../types';
@@ -33,13 +33,6 @@ type Props = {
 };
 
 const UNASSIGNED_VALUE = '__unassigned__';
-
-const priorityOptions: Array<{ value: TaskPriority; label: string; color: string }> = [
-    { value: 'low', label: 'Low', color: 'text-muted-foreground' },
-    { value: 'normal', label: 'Normal', color: 'text-blue-500' },
-    { value: 'high', label: 'High', color: 'text-orange-500' },
-    { value: 'critical', label: 'Critical', color: 'text-red-500' },
-];
 
 const toDate = (iso: string | null | undefined): Date | undefined => {
     if (!iso) return undefined;
@@ -119,8 +112,18 @@ function TaskDetailsDialogInner({
     const { auth, appUrl } = usePage<SharedData & { appUrl?: string }>().props;
     const { t } = useTranslation();
 
+    const priorityOptions = useMemo(
+        () => [
+            { value: 'low' as const, label: t('enums.task_priority.low'), color: 'text-muted-foreground' },
+            { value: 'normal' as const, label: t('enums.task_priority.normal'), color: 'text-blue-500' },
+            { value: 'high' as const, label: t('enums.task_priority.high'), color: 'text-orange-500' },
+            { value: 'critical' as const, label: t('enums.task_priority.critical'), color: 'text-red-500' },
+        ],
+        [t],
+    );
+
     const assigneeOptions = [
-        { id: UNASSIGNED_VALUE, name: 'Unassigned' },
+        { id: UNASSIGNED_VALUE, name: t('tasks.unassigned') },
         ...(auth?.user?.id !== undefined ? [{ id: String(auth.user.id), name: auth.user.name }] : []),
     ];
 
@@ -200,7 +203,7 @@ function TaskDetailsDialogInner({
 
     const handleCommentSubmit = () => {
         if (!commentContent) {
-            toast.error('Please enter a comment');
+            toast.error(t('tasks.comment_error'));
             return;
         }
 
@@ -212,12 +215,12 @@ function TaskDetailsDialogInner({
                 onSuccess: () => {
                     setCommentContent(undefined);
                     setCommentEditorKey((prev) => prev + 1);
-                    toast.success('Comment added');
+                    toast.success(t('tasks.comment_added'));
                     // Refetch activities to show the new comment
                     refetchActivities();
                 },
                 onError: () => {
-                    toast.error('Failed to add comment');
+                    toast.error(t('tasks.comment_failed'));
                 },
             },
         );
@@ -232,9 +235,9 @@ function TaskDetailsDialogInner({
 
         try {
             await navigator.clipboard.writeText(taskUrl);
-            toast.success('Task URL copied to clipboard');
+            toast.success(t('tasks.url_copied'));
         } catch (err) {
-            toast.error('Failed to copy URL');
+            toast.error(t('tasks.url_copy_failed'));
         }
     };
 
@@ -251,7 +254,7 @@ function TaskDetailsDialogInner({
                     options={{ preserveScroll: true }}
                     disableWhileProcessing
                     onSuccess={() => {
-                        toast.success('Task updated');
+                        toast.success(t('tasks.updated'));
                     }}
                     className="flex h-full flex-col"
                 >
@@ -340,7 +343,7 @@ function TaskDetailsDialogInner({
                                                 />
                                                 <Select value={selectedAssigneeId} onValueChange={setSelectedAssigneeId}>
                                                     <SelectTrigger className="h-8">
-                                                        <SelectValue placeholder="Select assignee">
+                                                        <SelectValue placeholder={t('tasks.select_assignee')}>
                                                             {currentAssignee && currentAssignee.id !== UNASSIGNED_VALUE ? (
                                                                 <div className="flex items-center gap-2">
                                                                     <Avatar className="h-5 w-5">
@@ -377,7 +380,7 @@ function TaskDetailsDialogInner({
                                                 <DatePicker
                                                     value={dueDate}
                                                     onChange={setDueDate}
-                                                    placeholder="Select due date"
+                                                    placeholder={t('tasks.select_due_date')}
                                                     className="h-8 text-xs"
                                                 />
                                                 <InputError message={errors.due_date as string | undefined} />
@@ -392,7 +395,7 @@ function TaskDetailsDialogInner({
                                                     onValueChange={(value) => setSelectedPriority(value as TaskPriority)}
                                                 >
                                                     <SelectTrigger className="h-8">
-                                                        <SelectValue placeholder="Select priority">
+                                                        <SelectValue placeholder={t('tasks.select_priority')}>
                                                             {selectedPriority && (
                                                                 <div className="flex items-center gap-2">
                                                                     <Flag
@@ -445,7 +448,7 @@ function TaskDetailsDialogInner({
                                 {/* Activity Sidebar */}
                                 <div className="flex w-xl flex-col border-l bg-muted/30">
                                     <div className="flex items-center justify-between border-b px-4 py-3">
-                                        <h3 className="text-sm font-medium">Activity</h3>
+                                        <h3 className="text-sm font-medium">{t('tasks.activity')}</h3>
                                         <div className="flex items-center gap-2">
                                             <Button type="button" variant="ghost" size="icon" className="h-6 w-6">
                                                 <MessageSquare className="h-4 w-4" />
@@ -552,7 +555,7 @@ function TaskDetailsDialogInner({
                                     Close
                                 </Button>
                                 <Button type="submit" disabled={processing}>
-                                    {processing ? 'Saving…' : 'Save'}
+                                    {processing ? t('tasks.saving') : t('tasks.save')}
                                 </Button>
                             </div>
                         </div>

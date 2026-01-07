@@ -9,6 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { ChevronDown, Pencil, Settings2, Star, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { CreateViewPayload, Status, TaskView, ViewType } from '../types';
 import { viewTypes } from '../types';
 
@@ -35,6 +36,7 @@ export default function ViewsTabBar({
     onMakeDefaultView,
     onDeleteView,
 }: Props) {
+    const { t } = useTranslation();
     // Create view dialog state
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const [pendingType, setPendingType] = useState<ViewType | null>(null);
@@ -57,12 +59,12 @@ export default function ViewsTabBar({
 
     const defaultNameByType: Record<ViewType, string> = useMemo(
         () => ({
-            list: 'List View',
-            kanban: 'Kanban Board',
-            calendar: 'Calendar',
-            gantt: 'Gantt Chart',
+            list: t('tasks.views.list'),
+            kanban: t('tasks.views.kanban'),
+            calendar: t('tasks.views.calendar'),
+            gantt: t('tasks.views.gantt'),
         }),
-        [],
+        [t],
     );
 
     // Create view dialog handlers
@@ -212,20 +214,20 @@ export default function ViewsTabBar({
                             <ContextMenuContent>
                                 <ContextMenuItem onClick={() => openRenameDialog(view)}>
                                     <Pencil className="mr-2 size-4" />
-                                    Rename
+                                    {t('tasks.views.rename_view')}
                                 </ContextMenuItem>
                                 <ContextMenuItem onClick={() => openConfigureDialog(view)}>
                                     <Settings2 className="mr-2 size-4" />
-                                    Configure columns
+                                    {t('tasks.views.configure_columns')}
                                 </ContextMenuItem>
                                 <ContextMenuItem onClick={() => onMakeDefaultView(view.id)} disabled={view.is_default}>
                                     <Star className="mr-2 size-4" />
-                                    Set as default
+                                    {t('tasks.views.set_as_default')}
                                 </ContextMenuItem>
                                 <ContextMenuSeparator />
                                 <ContextMenuItem variant="destructive" onClick={() => openDeleteDialog(view)} disabled={view.is_default}>
                                     <Trash2 className="mr-2 size-4" />
-                                    Delete
+                                    {t('tasks.views.delete')}
                                 </ContextMenuItem>
                             </ContextMenuContent>
                         </ContextMenu>
@@ -236,14 +238,14 @@ export default function ViewsTabBar({
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button type="button" size="sm" variant="outline" className="gap-2">
-                                Create view
+                                {t('tasks.views.create_view')}
                                 <ChevronDown className="size-4 opacity-70" />
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             {viewTypes.map((type) => (
                                 <DropdownMenuItem key={type} onClick={() => openCreateDialog(type)}>
-                                    {type.charAt(0).toUpperCase() + type.slice(1)} view
+                                    {t(`tasks.views.${type}`)}
                                 </DropdownMenuItem>
                             ))}
                         </DropdownMenuContent>
@@ -255,8 +257,10 @@ export default function ViewsTabBar({
             <Dialog open={isCreateDialogOpen} onOpenChange={(open) => !open && closeCreateDialog()}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Create view</DialogTitle>
-                        <DialogDescription>{pendingType ? `Create a new ${pendingType} view.` : 'Create a new view.'}</DialogDescription>
+                        <DialogTitle>{t('tasks.views.create_view')}</DialogTitle>
+                        <DialogDescription>
+                            {pendingType ? t('tasks.views.create_description', { type: t(`tasks.views.${pendingType}`) }) : t('tasks.views.create_description', { type: 'view' })}
+                        </DialogDescription>
                     </DialogHeader>
 
                     <form
@@ -267,22 +271,22 @@ export default function ViewsTabBar({
                         }}
                     >
                         <div className="space-y-2">
-                            <Label htmlFor="create-view-name">Name</Label>
+                            <Label htmlFor="create-view-name">{t('tasks.views.name')}</Label>
                             <Input
                                 id="create-view-name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
-                                placeholder="e.g. Sprint Backlog"
+                                placeholder={t('tasks.views.name_placeholder')}
                                 autoFocus
                             />
                         </div>
 
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                                <Label>Statuses (columns)</Label>
+                                <Label>{t('tasks.views.statuses_columns')}</Label>
                                 <div className="flex gap-2">
                                     <button type="button" className="text-xs text-muted-foreground hover:text-foreground" onClick={selectAllStatuses}>
-                                        Select all
+                                        {t('tasks.views.select_all')}
                                     </button>
                                     <span className="text-xs text-muted-foreground">·</span>
                                     <button
@@ -290,7 +294,7 @@ export default function ViewsTabBar({
                                         className="text-xs text-muted-foreground hover:text-foreground"
                                         onClick={deselectAllStatuses}
                                     >
-                                        Deselect all
+                                        {t('tasks.views.deselect_all')}
                                     </button>
                                 </div>
                             </div>
@@ -298,7 +302,7 @@ export default function ViewsTabBar({
                             <ScrollArea className="h-48 rounded-md border">
                                 <div className="space-y-1 p-3">
                                     {statuses.length === 0 ? (
-                                        <p className="py-2 text-center text-sm text-muted-foreground">No statuses available.</p>
+                                        <p className="py-2 text-center text-sm text-muted-foreground">{t('tasks.views.no_statuses')}</p>
                                     ) : (
                                         statuses.map((status) => (
                                             <label
@@ -317,15 +321,15 @@ export default function ViewsTabBar({
                                 </div>
                             </ScrollArea>
 
-                            {selectedStatusIds.length === 0 && <p className="text-xs text-destructive">Select at least one status.</p>}
+                            {selectedStatusIds.length === 0 && <p className="text-xs text-destructive">{t('tasks.views.select_at_least_one')}</p>}
                         </div>
 
                         <DialogFooter>
                             <Button type="button" variant="outline" onClick={closeCreateDialog}>
-                                Cancel
+                                {t('common.actions.cancel')}
                             </Button>
                             <Button type="submit" disabled={!isCreateFormValid}>
-                                Create
+                                {t('common.actions.create')}
                             </Button>
                         </DialogFooter>
                     </form>
@@ -336,8 +340,8 @@ export default function ViewsTabBar({
             <Dialog open={isRenameDialogOpen} onOpenChange={(open) => !open && closeRenameDialog()}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Rename view</DialogTitle>
-                        <DialogDescription>Enter a new name for this view.</DialogDescription>
+                        <DialogTitle>{t('tasks.views.rename_view')}</DialogTitle>
+                        <DialogDescription>{t('tasks.views.rename_description')}</DialogDescription>
                     </DialogHeader>
 
                     <form
@@ -348,22 +352,22 @@ export default function ViewsTabBar({
                         }}
                     >
                         <div className="space-y-2">
-                            <Label htmlFor="rename-view-name">Name</Label>
+                            <Label htmlFor="rename-view-name">{t('tasks.views.name')}</Label>
                             <Input
                                 id="rename-view-name"
                                 value={renameName}
                                 onChange={(e) => setRenameName(e.target.value)}
-                                placeholder="e.g. Sprint Backlog"
+                                placeholder={t('tasks.views.name_placeholder')}
                                 autoFocus
                             />
                         </div>
 
                         <DialogFooter>
                             <Button type="button" variant="outline" onClick={closeRenameDialog}>
-                                Cancel
+                                {t('common.actions.cancel')}
                             </Button>
                             <Button type="submit" disabled={!renameName.trim()}>
-                                Save
+                                {t('common.actions.save')}
                             </Button>
                         </DialogFooter>
                     </form>
@@ -374,9 +378,9 @@ export default function ViewsTabBar({
             <Dialog open={isConfigureDialogOpen} onOpenChange={(open) => !open && closeConfigureDialog()}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Configure columns</DialogTitle>
+                        <DialogTitle>{t('tasks.views.configure_columns')}</DialogTitle>
                         <DialogDescription>
-                            Select which statuses (columns) to show in <strong>{viewToConfigure?.name}</strong>.
+                            {t('tasks.views.configure_description', { name: viewToConfigure?.name ?? '' })}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -389,14 +393,14 @@ export default function ViewsTabBar({
                     >
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                                <Label>Statuses (columns)</Label>
+                                <Label>{t('tasks.views.statuses_columns')}</Label>
                                 <div className="flex gap-2">
                                     <button
                                         type="button"
                                         className="text-xs text-muted-foreground hover:text-foreground"
                                         onClick={selectAllConfigureStatuses}
                                     >
-                                        Select all
+                                        {t('tasks.views.select_all')}
                                     </button>
                                     <span className="text-xs text-muted-foreground">·</span>
                                     <button
@@ -404,7 +408,7 @@ export default function ViewsTabBar({
                                         className="text-xs text-muted-foreground hover:text-foreground"
                                         onClick={deselectAllConfigureStatuses}
                                     >
-                                        Deselect all
+                                        {t('tasks.views.deselect_all')}
                                     </button>
                                 </div>
                             </div>
@@ -412,7 +416,7 @@ export default function ViewsTabBar({
                             <ScrollArea className="h-48 rounded-md border">
                                 <div className="space-y-1 p-3">
                                     {statuses.length === 0 ? (
-                                        <p className="py-2 text-center text-sm text-muted-foreground">No statuses available.</p>
+                                        <p className="py-2 text-center text-sm text-muted-foreground">{t('tasks.views.no_statuses')}</p>
                                     ) : (
                                         statuses.map((status) => (
                                             <label
@@ -431,15 +435,15 @@ export default function ViewsTabBar({
                                 </div>
                             </ScrollArea>
 
-                            {configureStatusIds.length === 0 && <p className="text-xs text-destructive">Select at least one status.</p>}
+                            {configureStatusIds.length === 0 && <p className="text-xs text-destructive">{t('tasks.views.select_at_least_one')}</p>}
                         </div>
 
                         <DialogFooter>
                             <Button type="button" variant="outline" onClick={closeConfigureDialog}>
-                                Cancel
+                                {t('common.actions.cancel')}
                             </Button>
                             <Button type="submit" disabled={configureStatusIds.length === 0}>
-                                Save
+                                {t('common.actions.save')}
                             </Button>
                         </DialogFooter>
                     </form>
@@ -450,18 +454,18 @@ export default function ViewsTabBar({
             <Dialog open={isDeleteDialogOpen} onOpenChange={(open) => !open && closeDeleteDialog()}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Delete view</DialogTitle>
+                        <DialogTitle>{t('tasks.views.delete')}</DialogTitle>
                         <DialogDescription>
-                            Are you sure you want to delete <strong>{viewToDelete?.name}</strong>? This action cannot be undone.
+                            {t('tasks.views.delete_description', { name: viewToDelete?.name ?? '' })}
                         </DialogDescription>
                     </DialogHeader>
 
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={closeDeleteDialog}>
-                            Cancel
+                            {t('common.actions.cancel')}
                         </Button>
                         <Button type="button" variant="destructive" onClick={confirmDeleteView}>
-                            Delete
+                            {t('common.actions.delete')}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

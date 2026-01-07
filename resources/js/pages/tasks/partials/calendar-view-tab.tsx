@@ -16,6 +16,7 @@ import {
 } from '@dnd-kit/core';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useMemo, useState, type Dispatch, type ReactNode, type SetStateAction } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { CalendarTask, Status } from '../types';
 
 type Props = {
@@ -99,6 +100,7 @@ function CalendarDayCell({ dayISO, isCurrentMonth, children }: { dayISO: string;
 }
 
 export default function CalendarViewTab({ statuses, calendarMonth, setCalendarMonth, calendarTasks, onMoveTask, onOpenTask }: Props) {
+    const { t } = useTranslation();
     const calendarGridStart = startOfWeekMonday(startOfMonth(calendarMonth));
     const calendarDays = useMemo(() => Array.from({ length: 42 }, (_, i) => addDays(calendarGridStart, i)), [calendarGridStart]);
 
@@ -148,7 +150,7 @@ export default function CalendarViewTab({ statuses, calendarMonth, setCalendarMo
                         size="icon"
                         variant="outline"
                         onClick={() => setCalendarMonth(startOfMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() - 1, 1)))}
-                        aria-label="Previous month"
+                        aria-label={t('tasks.calendar.previous_month')}
                     >
                         <ChevronLeft className="size-4" />
                     </Button>
@@ -157,7 +159,7 @@ export default function CalendarViewTab({ statuses, calendarMonth, setCalendarMo
                         size="icon"
                         variant="outline"
                         onClick={() => setCalendarMonth(startOfMonth(new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 1)))}
-                        aria-label="Next month"
+                        aria-label={t('tasks.calendar.next_month')}
                     >
                         <ChevronRight className="size-4" />
                     </Button>
@@ -165,7 +167,15 @@ export default function CalendarViewTab({ statuses, calendarMonth, setCalendarMo
             </div>
 
             <div className="grid grid-cols-7 gap-2 text-xs text-muted-foreground">
-                {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => (
+                {[
+                    t('tasks.calendar.monday'),
+                    t('tasks.calendar.tuesday'),
+                    t('tasks.calendar.wednesday'),
+                    t('tasks.calendar.thursday'),
+                    t('tasks.calendar.friday'),
+                    t('tasks.calendar.saturday'),
+                    t('tasks.calendar.sunday'),
+                ].map((d) => (
                     <div key={d} className="px-1">
                         {d}
                     </div>

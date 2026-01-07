@@ -17,7 +17,8 @@ import { Form, Head, Link, router, usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { Flag, MessageSquare } from 'lucide-react';
 import type { JSONContent } from 'novel';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import type { Activity, Status, Task, TaskActivityProperties, TaskActivityValue, TaskPriority } from './types';
 
@@ -28,13 +29,6 @@ type Props = {
 };
 
 const UNASSIGNED_VALUE = '__unassigned__';
-
-const priorityOptions: Array<{ value: TaskPriority; label: string; color: string }> = [
-    { value: 'low', label: 'Low', color: 'text-muted-foreground' },
-    { value: 'normal', label: 'Normal', color: 'text-blue-500' },
-    { value: 'high', label: 'High', color: 'text-orange-500' },
-    { value: 'critical', label: 'Critical', color: 'text-red-500' },
-];
 
 const toDate = (iso: string | null | undefined): Date | undefined => {
     if (!iso) return undefined;
@@ -88,9 +82,21 @@ const renderActivityBadge = (value: TaskActivityValue | undefined, field?: strin
 export default function Show({ task, statuses = [], activities = [] }: Props) {
     const { auth } = usePage<SharedData>().props;
 
+    const { t } = useTranslation();
+
+    const priorityOptions = useMemo(
+        () => [
+            { value: 'low' as const, label: t('enums.task_priority.low'), color: 'text-muted-foreground' },
+            { value: 'normal' as const, label: t('enums.task_priority.normal'), color: 'text-blue-500' },
+            { value: 'high' as const, label: t('enums.task_priority.high'), color: 'text-orange-500' },
+            { value: 'critical' as const, label: t('enums.task_priority.critical'), color: 'text-red-500' },
+        ],
+        [t],
+    );
+
     const breadcrumbs: BreadcrumbItem[] = [
         {
-            title: 'Tasks',
+            title: t('tasks.title'),
             href: '/tasks',
         },
         {
@@ -100,7 +106,7 @@ export default function Show({ task, statuses = [], activities = [] }: Props) {
     ];
 
     const assigneeOptions = [
-        { id: UNASSIGNED_VALUE, name: 'Unassigned' },
+        { id: UNASSIGNED_VALUE, name: t('tasks.unassigned') },
         ...(auth?.user?.id !== undefined ? [{ id: String(auth.user.id), name: auth.user.name }] : []),
     ];
 
@@ -143,7 +149,7 @@ export default function Show({ task, statuses = [], activities = [] }: Props) {
 
     const handleCommentSubmit = () => {
         if (!commentContent) {
-            toast.error('Please enter a comment');
+            toast.error(t('tasks.comment_error'));
             return;
         }
 
@@ -155,10 +161,10 @@ export default function Show({ task, statuses = [], activities = [] }: Props) {
                 onSuccess: () => {
                     setCommentContent(undefined);
                     setCommentEditorKey((prev) => prev + 1);
-                    toast.success('Comment added');
+                    toast.success(t('tasks.comment_added'));
                 },
                 onError: () => {
-                    toast.error('Failed to add comment');
+                    toast.error(t('tasks.comment_failed'));
                 },
             },
         );
@@ -178,7 +184,7 @@ export default function Show({ task, statuses = [], activities = [] }: Props) {
                     options={{ preserveScroll: true }}
                     disableWhileProcessing
                     onSuccess={() => {
-                        toast.success('Task updated');
+                        toast.success(t('tasks.updated'));
                     }}
                     className="flex h-full flex-col"
                 >
@@ -243,7 +249,7 @@ export default function Show({ task, statuses = [], activities = [] }: Props) {
                                                 />
                                                 <Select value={selectedAssigneeId} onValueChange={setSelectedAssigneeId}>
                                                     <SelectTrigger className="h-8">
-                                                        <SelectValue placeholder="Select assignee">
+                                                        <SelectValue placeholder={t('tasks.select_assignee')}>
                                                             {currentAssignee && currentAssignee.id !== UNASSIGNED_VALUE ? (
                                                                 <div className="flex items-center gap-2">
                                                                     <Avatar className="h-5 w-5">
@@ -280,7 +286,7 @@ export default function Show({ task, statuses = [], activities = [] }: Props) {
                                                 <DatePicker
                                                     value={dueDate}
                                                     onChange={setDueDate}
-                                                    placeholder="Select due date"
+                                                    placeholder={t('tasks.select_due_date')}
                                                     className="h-8 text-xs"
                                                 />
                                                 <InputError message={errors.due_date as string | undefined} />
@@ -295,7 +301,7 @@ export default function Show({ task, statuses = [], activities = [] }: Props) {
                                                     onValueChange={(value) => setSelectedPriority(value as TaskPriority)}
                                                 >
                                                     <SelectTrigger className="h-8">
-                                                        <SelectValue placeholder="Select priority">
+                                                        <SelectValue placeholder={t('tasks.select_priority')}>
                                                             {selectedPriority && (
                                                                 <div className="flex items-center gap-2">
                                                                     <Flag
@@ -348,7 +354,7 @@ export default function Show({ task, statuses = [], activities = [] }: Props) {
                                 {/* Activity Sidebar */}
                                 <div className="my-4 mr-4 flex w-lg shrink-0 flex-col overflow-hidden rounded-lg border bg-muted/30">
                                     <div className="flex shrink-0 items-center justify-between border-b px-4 py-3">
-                                        <h3 className="text-sm font-medium">Activity</h3>
+                                        <h3 className="text-sm font-medium">{t('tasks.activity')}</h3>
                                         <div className="flex items-center gap-2">
                                             <Button type="button" variant="ghost" size="icon" className="h-6 w-6">
                                                 <MessageSquare className="h-4 w-4" />
@@ -420,6 +426,7 @@ export default function Show({ task, statuses = [], activities = [] }: Props) {
                                                     onUpdate={(content) => {
                                                         setCommentContent(content);
                                                     }}
+                                                    onSubmit={handleCommentSubmit}
                                                     className="relative max-h-48 min-h-10 w-full overflow-y-auto rounded-md border border-input bg-background px-3 py-2 shadow-xs transition-[color,box-shadow] focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50"
                                                 />
                                             </div>
@@ -443,7 +450,7 @@ export default function Show({ task, statuses = [], activities = [] }: Props) {
                                     <Link href="/tasks">Cancel</Link>
                                 </Button>
                                 <Button type="submit" disabled={processing}>
-                                    {processing ? 'Saving…' : 'Save'}
+                                    {processing ? t('tasks.saving') : t('tasks.save')}
                                 </Button>
                             </div>
                         </div>

@@ -28,6 +28,7 @@ import throttle from 'lodash.throttle';
 import { PlusIcon, TrashIcon } from 'lucide-react';
 import type { CSSProperties, FC, KeyboardEventHandler, MouseEventHandler, ReactNode, RefObject } from 'react';
 import { createContext, memo, useCallback, useContext, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const draggingAtom = atom(false);
 const scrollXAtom = atom(0);

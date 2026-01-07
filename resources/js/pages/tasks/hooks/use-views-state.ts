@@ -1,6 +1,7 @@
 import tasksRoutes from '@/routes/tasks';
 import { router } from '@inertiajs/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import type { CreateViewPayload, TaskView } from '../types';
 
@@ -9,6 +10,7 @@ type UseViewsStateProps = {
 };
 
 export function useViewsState({ taskViews }: UseViewsStateProps) {
+    const { t } = useTranslation();
     // Sort views: default first, then alphabetically
     const views = useMemo(() => {
         return [...taskViews].sort((a, b) => {
@@ -55,7 +57,7 @@ export function useViewsState({ taskViews }: UseViewsStateProps) {
             { type, name, status_ids },
             {
                 preserveScroll: true,
-                onSuccess: () => toast.success('View created'),
+                onSuccess: () => toast.success(t('tasks.views.view_created')),
             },
         );
     };
@@ -67,7 +69,7 @@ export function useViewsState({ taskViews }: UseViewsStateProps) {
             { name },
             {
                 preserveScroll: true,
-                onSuccess: () => toast.success('View renamed'),
+                onSuccess: () => toast.success(t('tasks.views.view_renamed')),
             },
         );
     };
@@ -79,7 +81,7 @@ export function useViewsState({ taskViews }: UseViewsStateProps) {
             { status_ids: statusIds },
             {
                 preserveScroll: true,
-                onSuccess: () => toast.success('View updated'),
+                onSuccess: () => toast.success(t('tasks.views.view_updated')),
             },
         );
     };
@@ -94,7 +96,7 @@ export function useViewsState({ taskViews }: UseViewsStateProps) {
         // If the deleted view is the active view, we'll let the useEffect handle resetting
         router.delete(tasksRoutes.views.delete(viewId).url, {
             preserveScroll: true,
-            onSuccess: () => toast.success('View deleted'),
+            onSuccess: () => toast.success(t('tasks.views.view_deleted')),
         });
     };
 

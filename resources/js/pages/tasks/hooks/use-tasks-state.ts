@@ -3,6 +3,7 @@ import type { DragEndEvent } from '@/components/list-view';
 import tasksRoutes from '@/routes/tasks';
 import { router } from '@inertiajs/react';
 import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import type { CalendarTask, KanbanTask, ListTask, Status, Task } from '../types';
 
@@ -24,6 +25,7 @@ type UseTasksStateProps = {
 };
 
 export function useTasksState({ tasks, statuses }: UseTasksStateProps) {
+    const { t } = useTranslation();
     // List view state
     const [listTasks, setListTasks] = useState<ListTask[]>([]);
 
@@ -164,7 +166,7 @@ export function useTasksState({ tasks, statuses }: UseTasksStateProps) {
             {
                 preserveScroll: true,
                 preserveState: true,
-                onSuccess: () => toast.success('Due date updated'),
+                onSuccess: () => toast.success(t('tasks.views.due_date_updated')),
             },
         );
     };
@@ -182,7 +184,7 @@ export function useTasksState({ tasks, statuses }: UseTasksStateProps) {
             {
                 preserveScroll: true,
                 preserveState: true,
-                onSuccess: () => toast.success('Due date updated'),
+                onSuccess: () => toast.success(t('tasks.views.due_date_updated')),
             },
         );
     };
