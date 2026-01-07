@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Enums\Modules\Tasks\TaskViewType;
+use App\Events\Comments\CommentAdded;
 use App\Http\Requests\Tasks\AddCommentRequest;
 use App\Http\Requests\Tasks\CreateTaskRequest;
 use App\Http\Requests\Tasks\CreateTaskViewRequest;
@@ -18,6 +19,7 @@ use App\Models\Modules\Tasks\Task;
 use App\Models\Modules\Tasks\TaskView;
 use App\Services\TaskService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Event;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Activitylog\Facades\Activity as ActivityFacade;
@@ -194,14 +196,27 @@ final class TaskController extends Controller
     {
         abort_if(boolean: $request->user() === null, code: 401);
 
+        $user = $request->user();
+        $comment = $request->validated('comment');
+
         ActivityFacade::inLog('tasks')
             ->event('tasks.comments.created')
-            ->causedBy($request->user())
+            ->causedBy($user)
             ->performedOn($task)
             ->withProperties([
-                'comment' => $request->validated('comment'),
+                'comment' => $comment,
             ])
             ->log('tasks.comments.created');
+
+        // Load relationships for event
+        $task->load(['assignedTo', 'createdBy']);
+
+        // Dispatch CommentAdded event
+        Event::dispatch(new CommentAdded(
+            task: $task,
+            commenter: $user,
+            comment: $comment,
+        ));
 
         return redirect()->back();
     }
