@@ -82,7 +82,7 @@ export default function CreateNewTask() {
 
                                 <div className="space-y-2 md:col-span-3">
                                     <Label htmlFor="task-description">{t('tasks.description')}</Label>
-                                    <RichTextEditor name="description" />
+                                    <RichTextEditor name="description" className="max-h-48 overflow-y-auto" />
                                     <InputError message={errors.description as string | undefined} />
                                 </div>
 

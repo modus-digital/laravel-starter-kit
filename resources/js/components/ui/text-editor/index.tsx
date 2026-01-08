@@ -87,7 +87,7 @@ const RichTextEditor = ({ initialContent, onUpdate, onSubmit, name, className }:
                 key={editorKey}
                 initialContent={initialContent}
                 extensions={extensions}
-                className={className || 'relative min-h-18 w-full max-w-5xl rounded-xl border border-input bg-background px-6 py-4 shadow-sm transition-[color,box-shadow] focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50'}
+                className={`relative min-h-18 w-full max-w-5xl rounded-xl border border-input bg-background px-6 py-4 shadow-sm transition-[color,box-shadow] focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50 ${className || ''}`}
                 editorProps={{
                     handleDOMEvents: {
                         keydown: (_view, event) => {
