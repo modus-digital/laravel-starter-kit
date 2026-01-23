@@ -1,0 +1,170 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Seeders;
+
+use App\Enums\RBAC\Permission as PermissionEnum;
+use App\Enums\RBAC\Role as RoleEnum;
+use App\Models\Modules\Tasks\TaskStatus;
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+
+final class BootstrapApplicationSeeder extends Seeder
+{
+    public function run(): void
+    {
+        /**
+         * -----------------------------------------------------------------------
+         * Bootstrap Application Settings
+         * This seeder is used to bootstrap the application settings.
+         * -----------------------------------------------------------------------
+         * This settings are used to bootstrap the application settings.
+         * If you need to change the settings, you can change them in the database.
+         * The settings are stored in the database table 'settings'.
+         *
+         * @see https://github.com/outerweb/laravel-settings
+         */
+        DB::table('settings')->insert([
+            // Branding
+            ['key' => 'branding.primary_color', 'value' => null],
+            ['key' => 'branding.secondary_color', 'value' => null],
+            ['key' => 'branding.font', 'value' => null],
+            ['key' => 'branding.logo', 'value' => null],
+            ['key' => 'branding.favicon', 'value' => null],
+            ['key' => 'branding.app_name', 'value' => config('app.name')],
+            ['key' => 'branding.tagline', 'value' => null],
+
+            // Mailgun Signing Key
+            ['key' => 'integrations.mailgun.webhook_signing_key', 'value' => null],
+
+            // OAuth
+            ['key' => 'integrations.oauth.google.enabled', 'value' => config('modules.socialite.providers.google')],
+            ['key' => 'integrations.oauth.google.client_id', 'value' => null],
+            ['key' => 'integrations.oauth.google.client_secret', 'value' => null],
+
+            ['key' => 'integrations.oauth.github.enabled', 'value' => config('modules.socialite.providers.github')],
+            ['key' => 'integrations.oauth.github.client_id', 'value' => null],
+            ['key' => 'integrations.oauth.github.client_secret', 'value' => null],
+
+            ['key' => 'integrations.oauth.microsoft.enabled', 'value' => config('modules.socialite.providers.microsoft')],
+            ['key' => 'integrations.oauth.microsoft.client_id', 'value' => null],
+            ['key' => 'integrations.oauth.microsoft.client_secret', 'value' => null],
+
+            // S3
+            ['key' => 'integrations.s3.enabled', 'value' => false],
+            ['key' => 'integrations.s3.key', 'value' => null],
+            ['key' => 'integrations.s3.secret', 'value' => null],
+            ['key' => 'integrations.s3.region', 'value' => null],
+            ['key' => 'integrations.s3.bucket', 'value' => null],
+            ['key' => 'integrations.s3.endpoint', 'value' => null],
+            ['key' => 'integrations.s3.use_path_style_endpoint', 'value' => false],
+        ]);
+
+        /**
+         * ----------------------------------------------------------------------------------
+         * Bootstrap Task Statuses
+         * ----------------------------------------------------------------------------------
+         * This seeder is used to bootstrap the task statuses if the tasks module is enabled.
+         * ----------------------------------------------------------------------------------
+         * The task statuses are used to bootstrap the task statuses.
+         * If you need to change the task statuses, you can change them in the database.
+         * The task statuses are stored in the database table 'task_statuses'.
+         */
+        if (config('modules.tasks.enabled')) {
+            TaskStatus::findOrCreateByName('Todo', '#fde047');
+            TaskStatus::findOrCreateByName('In Progress', '#2563eb');
+            TaskStatus::findOrCreateByName('Done', '#65a30d');
+        }
+
+        /**
+         * ----------------------------------------------------------------------------------
+         * Bootstrap Default roles and permissions
+         * ----------------------------------------------------------------------------------
+         * This seeder is used to bootstrap the default roles and permissions.
+         * ----------------------------------------------------------------------------------
+         * The default roles and permissions are used to bootstrap the default roles and permissions.
+         * If you need to change the default roles and permissions, you can change them in the database.
+         * The default roles and permissions are stored in the database table 'roles' and 'permissions'.
+         */
+        // Sync permissions from enum
+        foreach (PermissionEnum::cases() as $permission) {
+            if (! $permission->shouldSync()) {
+                continue;
+            }
+
+            Permission::firstOrCreate(
+                ['name' => $permission->value, 'guard_name' => 'web']
+            );
+        }
+
+        // Sync system roles from enum
+        foreach (RoleEnum::cases() as $role) {
+            Role::firstOrCreate(
+                ['name' => $role->value, 'guard_name' => 'web']
+            );
+        }
+
+        // Assign permissions to Super Admin (all permissions)
+        $superAdminRole = Role::where('name', RoleEnum::SUPER_ADMIN->value)->first();
+        $superAdminRole->syncPermissions(Permission::all());
+
+        // Assign permissions to Admin
+        $adminRole = Role::where('name', RoleEnum::ADMIN->value)->first();
+        $adminRole->syncPermissions([
+            PermissionEnum::ACCESS_CONTROL_PANEL->value,
+            PermissionEnum::ACCESS_ACTIVITY_LOGS->value,
+            PermissionEnum::IMPERSONATE_USERS->value,
+            PermissionEnum::MANAGE_SETTINGS->value,
+            PermissionEnum::CREATE_USERS->value,
+            PermissionEnum::READ_USERS->value,
+            PermissionEnum::UPDATE_USERS->value,
+            PermissionEnum::DELETE_USERS->value,
+            PermissionEnum::RESTORE_USERS->value,
+            PermissionEnum::READ_ROLES->value,
+        ]);
+
+        // Check if API module is enabled and add API permissions to Admin
+        if (config('modules.api.enabled', false)) {
+            $adminRole->givePermissionTo([
+                PermissionEnum::HAS_API_ACCESS->value,
+                PermissionEnum::CREATE_API_TOKENS->value,
+                PermissionEnum::READ_API_TOKENS->value,
+                PermissionEnum::UPDATE_API_TOKENS->value,
+                PermissionEnum::DELETE_API_TOKENS->value,
+            ]);
+        }
+
+        // Assign minimal permissions to User role
+        $userRole = Role::where('name', RoleEnum::USER->value)->first();
+        $userPermissions = [];
+
+        if (config('modules.api.enabled', false)) {
+            $userPermissions[] = PermissionEnum::HAS_API_ACCESS->value;
+        }
+
+        $userRole->syncPermissions($userPermissions);
+
+        /**
+         * ----------------------------------------------------------------------------------
+         * Bootstrap Default users
+         * ----------------------------------------------------------------------------------
+         * This seeder is used to bootstrap the default users.
+         * ----------------------------------------------------------------------------------
+         * The default users are used to bootstrap the default users.
+         * If you need to change the default users, you can change them in the database.
+         * The default users are stored in the database table 'users'.
+         */
+        $user = User::create([
+            'name' => 'Modus Admin',
+            'email' => 'admin@modus-digital.com',
+            'password' => Hash::make('W8chtW00rd01!'),
+        ]);
+
+        $user->assignRole(RoleEnum::SUPER_ADMIN);
+    }
+}
