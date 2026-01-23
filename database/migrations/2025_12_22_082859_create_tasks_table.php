@@ -7,17 +7,10 @@ use App\Enums\Modules\Tasks\TaskType;
 use App\Enums\Modules\Tasks\TaskViewType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    private const array DEFAULT_STATUSES = [
-        ['id' => '019b454e-e215-72ef-b6c5-b40d67c6e8a2', 'name' => 'Todo', 'color' => '#3498db'],
-        ['id' => '019b454f-91af-7054-a201-fbd3bc129897', 'name' => 'In Progress', 'color' => '#f1c40f'],
-        ['id' => '019b454f-d915-73e4-a4e0-e74b9cf612b6', 'name' => 'Done', 'color' => '#2ecc71'],
-    ];
-
     public function shouldRun(): bool
     {
         return config('modules.tasks.enabled') === true;
@@ -47,8 +40,6 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-
-        DB::table('task_statuses')->insert(self::DEFAULT_STATUSES);
 
         Schema::create('tasks', function (Blueprint $table) {
             $table->uuid('id')->primary();

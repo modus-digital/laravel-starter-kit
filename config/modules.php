@@ -44,13 +44,11 @@ return [
     | - CRUD operations for clients
     | - Client settings management
     | - Client users management
-    | - Client roles management
     | - Client permissions management
     |
     */
     'clients' => [
         'enabled' => true,
-        'role_management' => false,
     ],
 
     /*
@@ -94,17 +92,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Comments
-    |--------------------------------------------------------------------------
-    | If this module is enabled we are allowing comments to be used.
-    |
-    */
-    'comments' => [
-        'enabled' => true,
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Tasks
     |--------------------------------------------------------------------------
     | If this module is enabled we are allowing tasks to be used.
@@ -143,5 +130,11 @@ return [
         'track_opens' => env('MAILGUN_ANALYTICS_TRACK_OPENS', true),
         'track_clicks' => env('MAILGUN_ANALYTICS_TRACK_CLICKS', true),
         'retention_days' => env('MAILGUN_ANALYTICS_RETENTION_DAYS', 90),
+    ],
+
+    'integrations' => [
+        's3' => [
+            'enabled' => true,
+        ],
     ],
 ];

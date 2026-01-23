@@ -18,10 +18,13 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('avatar')->nullable();
             $table->string('phone')->nullable();
             $table->string('status')->default(ActivityStatus::ACTIVE);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('provider')->nullable();
+            $table->json('preferences')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
