@@ -2,29 +2,30 @@ import { Icon } from '@/components/icon';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
+import { SidebarHeader } from '@/components/sidebar-header';
 import {
     Sidebar,
     SidebarContent,
     SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
-    SidebarHeader,
+    SidebarHeader as SidebarHeaderContainer,
     SidebarMenu,
-    SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { SharedData, type NavItem } from '@/types';
-import { Link, router, usePage } from '@inertiajs/react';
-import { LayoutGrid, List, LogOut, Shield } from 'lucide-react';
+import { router, usePage } from '@inertiajs/react';
+import { BellIcon, LayoutGrid, List, LogOut, Shield } from 'lucide-react'
 import { useTranslation } from 'react-i18next';
-import AppLogo from './app-logo';
 
 // Routes
-import { dashboard as ApplicationDashboard } from '@/routes';
-import { dashboard as ControlPanelDashboard } from '@/routes/filament/control/pages';
+import { dashboard as ApplicationDashboard, } from '@/routes';
 import { leave as leaveImpersonation } from '@/routes/impersonate';
 import tasks from '@/routes/tasks';
 import { Button } from './ui/button';
+import notifications from '@/routes/notifications';
+import { AppSearchBar } from './app-search-bar';
+import { UnreadNotificationIcon } from './custom-icons';
 
 export function AppSidebar() {
     const page = usePage<SharedData>();
@@ -50,33 +51,32 @@ export function AppSidebar() {
     ];
 
     const footerNavItems: NavItem[] = [
-        // If the user is not impersonating, show the admin panel button
         ...(permissions.canAccessControlPanel
             ? [
                   {
                       title: t('navigation.labels.admin_panel'),
-                      href: ControlPanelDashboard(),
+                      href: '/admin',
                       icon: Shield,
                   },
               ]
             : []),
+
+        {
+            title: t('navigation.labels.notifications'),
+            href: notifications.index(),
+            icon: (page.props?.unreadNotificationsCount ?? 0) > 0 ? UnreadNotificationIcon : BellIcon,
+        },
     ];
 
     return (
         <Sidebar collapsible="icon" variant="inset">
-            <SidebarHeader>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
-                            <Link href={ApplicationDashboard()} prefetch>
-                                <AppLogo />
-                            </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-            </SidebarHeader>
+            <SidebarHeaderContainer>
+                <SidebarHeader />
+            </SidebarHeaderContainer>
 
             <SidebarContent>
+                <AppSearchBar mainNavItems={mainNavItems} footerNavItems={footerNavItems} />
+
                 <NavMain items={mainNavItems} />
             </SidebarContent>
 

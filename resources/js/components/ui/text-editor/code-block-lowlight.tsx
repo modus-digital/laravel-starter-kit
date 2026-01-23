@@ -16,6 +16,8 @@ function CodeBlock() {
                     'font-mono text-sm font-medium text-foreground',
                     'hljs overflow-x-auto',
                 )}
+                spellCheck="false"
+                data-spellcheck="false"
             >
                 <NodeViewContent as="code" />
             </pre>

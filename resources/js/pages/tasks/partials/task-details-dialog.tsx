@@ -112,6 +112,22 @@ function TaskDetailsDialogInner({
     const { auth, appUrl } = usePage<SharedData & { appUrl?: string }>().props;
     const { t } = useTranslation();
 
+    const renderActivityDescription = (activity: Activity) => {
+        if (activity.translation) {
+            return t(activity.translation.key, activity.translation.replacements as never);
+        }
+
+        if (activity.translated_description) {
+            return activity.translated_description;
+        }
+
+        if (activity.description) {
+            return t(activity.description as never);
+        }
+
+        return '';
+    };
+
     const priorityOptions = useMemo(
         () => [
             { value: 'low' as const, label: t('enums.task_priority.low'), color: 'text-muted-foreground' },
@@ -495,7 +511,7 @@ function TaskDetailsDialogInner({
                                                                 <div className="flex-1 space-y-1.5">
                                                                     <div className="text-sm leading-relaxed">
                                                                         <span className="font-medium">{userName}</span>{' '}
-                                                                        <span className="text-muted-foreground">{activity.description}</span>
+                                                                        <span className="text-muted-foreground">{String(renderActivityDescription(activity))}</span>
                                                                         {(isStatusChange || isPriorityChange) && (
                                                                             <div className="mt-1.5 flex items-center gap-1.5">
                                                                                 {props.old && renderActivityBadge(props.old, props.field)}

@@ -4,12 +4,12 @@ import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 
-export function NavMain({ items = [] }: { items: NavItem[] }) {
+export function NavMain({ items = [], withoutGroupLabel = false }: { items: NavItem[]; withoutGroupLabel?: boolean }) {
     const page = usePage();
     const { t } = useTranslation();
     return (
         <SidebarGroup className="px-2 py-0">
-            <SidebarGroupLabel>{t('navigation.groups.platform', 'Platform')}</SidebarGroupLabel>
+            {!withoutGroupLabel && <SidebarGroupLabel>{t('navigation.groups.platform', 'Platform')}</SidebarGroupLabel>}
             <SidebarMenu>
                 {items.map((item) => (
                     <SidebarMenuItem key={item.title}>

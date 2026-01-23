@@ -8,7 +8,7 @@ import { usePage } from '@inertiajs/react';
 import { ChevronsUpDown } from 'lucide-react';
 
 export function NavUser() {
-    const { auth, unreadNotificationsCount } = usePage<SharedData>().props;
+    const { auth } = usePage<SharedData>().props;
     const { state } = useSidebar();
     const isMobile = useIsMobile();
 
@@ -22,7 +22,7 @@ export function NavUser() {
                             className="group text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent"
                             data-test="sidebar-menu-button"
                         >
-                            <UserInfo user={auth.user} hasUnreadNotifications={(unreadNotificationsCount ?? 0) > 0} />
+                            <UserInfo user={auth.user} />
                             <ChevronsUpDown className="ml-auto size-4" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
@@ -31,7 +31,7 @@ export function NavUser() {
                         align="end"
                         side={isMobile ? 'bottom' : state === 'collapsed' ? 'left' : 'bottom'}
                     >
-                        <UserMenuContent user={auth.user} unreadNotificationsCount={unreadNotificationsCount} />
+                        <UserMenuContent user={auth.user} />
                     </DropdownMenuContent>
                 </DropdownMenu>
             </SidebarMenuItem>

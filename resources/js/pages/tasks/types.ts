@@ -104,6 +104,11 @@ export type Activity = {
     id: number;
     log_name: string;
     description: string | null;
+    translated_description?: string;
+    translation?: {
+        key: string;
+        replacements: Record<string, string>;
+    };
     subject_type: string;
     subject_id: string;
     event: string | null;

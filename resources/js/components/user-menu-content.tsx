@@ -12,15 +12,11 @@ import { UnreadNotificationIcon } from './custom-icons';
 
 interface UserMenuContentProps {
     user: User;
-    unreadNotificationsCount?: number;
 }
 
-export function UserMenuContent({ user, unreadNotificationsCount = 0 }: UserMenuContentProps) {
+export function UserMenuContent({ user }: UserMenuContentProps) {
     const cleanup = useMobileNavigation();
     const { t } = useTranslation();
-
-    const hasUnreadNotifications = unreadNotificationsCount > 0;
-    const unreadNotificationsLabel = unreadNotificationsCount > 9 ? '9+' : unreadNotificationsCount.toString();
 
     const handleLogout = () => {
         cleanup();
@@ -31,19 +27,11 @@ export function UserMenuContent({ user, unreadNotificationsCount = 0 }: UserMenu
         <>
             <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    <UserInfo user={user} showEmail={true} hasUnreadNotifications={hasUnreadNotifications} />
+                    <UserInfo user={user} showEmail={true} />
                 </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-                <DropdownMenuItem asChild>
-                    <Link className="flex w-full items-center" href={NotificationsIndex().url} as="button" prefetch onClick={cleanup}>
-                        <UnreadNotificationIcon className="mr-2" />
-                        {t('navigation.labels.notifications')}
-                        {hasUnreadNotifications && <DropdownMenuShortcut>{unreadNotificationsLabel}</DropdownMenuShortcut>}
-                    </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                     <Link className="block w-full" href={edit()} as="button" prefetch onClick={cleanup}>
                         <Settings className="mr-2" />
