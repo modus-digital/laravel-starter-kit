@@ -22,7 +22,9 @@ final class ActivityResource extends JsonResource
         return [
             'id' => $this->resource->id,
             'log_name' => $this->resource->log_name,
-            'description' => $this->resource->getTranslatedDescription(),
+            'description' => $this->resource->description,
+            'translated_description' => $this->resource->getTranslatedDescription(),
+            'translation' => $this->resource->getTranslationPayload(),
             'event' => $this->resource->event,
             'subject_type' => $this->resource->subject_type,
             'subject_id' => $this->resource->subject_id,

@@ -41,7 +41,8 @@
 
         @php
             try {
-                $branding = app(\App\Services\BrandingService::class)->getSettings();
+                $brandingService = app(\App\Services\BrandingService::class);
+                $branding = $brandingService->getSettings();
                 $fontMap = [
                     'inter' => 'Inter',
                     'roboto' => 'Roboto',
@@ -50,7 +51,7 @@
                     'inria_serif' => 'Inria Serif',
                     'arvo' => 'Arvo',
                 ];
-                $serifFonts = ['inria_serif', 'arvo'];
+                $serifFonts = ['inria_serif', 'arvo', 'lato'];
                 $selectedFontKey = $branding['font'] ?? 'inter';
                 $selectedFont = $fontMap[$selectedFontKey] ?? 'Inter';
                 $isSerif = in_array($selectedFontKey, $serifFonts);
@@ -61,12 +62,18 @@
                 $primaryColor = preg_match('/^#[0-9A-Fa-f]{6}$/', $primaryColor) ? $primaryColor : '#f59e0b';
                 $secondaryColor = preg_match('/^#[0-9A-Fa-f]{6}$/', $secondaryColor) ? $secondaryColor : '#6b7280';
                 $selectedFont = preg_match('/^[a-zA-Z0-9\s-]+$/', $selectedFont) ? $selectedFont : 'Inter';
+                
+                // Generate color scale CSS variables
+                $primaryCSSVars = $brandingService->generateCSSVariables('primary', $primaryColor);
+                $secondaryCSSVars = $brandingService->generateCSSVariables('secondary', $secondaryColor);
             } catch (\Throwable $e) {
                 // Fallback to defaults if branding service fails
                 $selectedFont = 'Inter';
                 $isSerif = false;
                 $primaryColor = '#f59e0b';
                 $secondaryColor = '#6b7280';
+                $primaryCSSVars = '';
+                $secondaryCSSVars = '';
             }
         @endphp
 
@@ -77,6 +84,12 @@
                 --brand-font-sans: '{{ addslashes($selectedFont) }}', {{ $isSerif ? 'ui-serif, Georgia, serif' : 'ui-sans-serif, system-ui, sans-serif' }}, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
                 --primary: {{ $primaryColor }};
                 --secondary: {{ $secondaryColor }};
+@if (!empty($primaryCSSVars))
+{!! $primaryCSSVars !!}
+@endif
+@if (!empty($secondaryCSSVars))
+{!! $secondaryCSSVars !!}
+@endif
             }
 
             .dark {

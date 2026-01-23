@@ -67,7 +67,8 @@ final class MailgunWebhookController extends Controller
             return false;
         }
 
-        $webhookKey = config('services.mailgun.webhook_key');
+        // Try to get webhook key from database settings (encrypted), fallback to config/env
+        $webhookKey = $this->getWebhookKey();
         if (! $webhookKey) {
             return false;
         }
@@ -77,6 +78,27 @@ final class MailgunWebhookController extends Controller
         $expectedSignature = hash_hmac('sha256', $data, $webhookKey);
 
         return hash_equals($expectedSignature, $providedSignature);
+    }
+
+    /**
+     * Get the Mailgun webhook signing key from settings or config.
+     */
+    private function getWebhookKey(): ?string
+    {
+        // First try to get from database settings (stored encrypted)
+        $encryptedKey = \Outerweb\Settings\Facades\Setting::get('integrations.mailgun.webhook_signing_key');
+
+        if ($encryptedKey) {
+            try {
+                return decrypt($encryptedKey);
+            } catch (Exception) {
+                // If decryption fails, might be plain text (legacy)
+                return $encryptedKey;
+            }
+        }
+
+        // Fallback to environment variable
+        return config('services.mailgun.webhook_key');
     }
 
     /**
