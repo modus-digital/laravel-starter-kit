@@ -22,10 +22,19 @@ use function is_scalar;
  * - Injects issuer details (name, email, ip_address, user_agent) into properties
  * - Dynamically extracts identifiers from nested property arrays for translations
  *
- * @property string|null $event
+ * @property int $id
+ * @property string $log_name
  * @property string $description
+ * @property string|null $event
+ * @property string|null $subject_type
+ * @property string|null $subject_id
+ * @property string|null $causer_type
+ * @property string|null $causer_id
  * @property Collection<string, mixed> $properties
- * @property User|null $causer
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read User|null $causer
+ * @property-read \Illuminate\Database\Eloquent\Model|null $subject
  */
 final class Activity extends BaseActivity
 {
@@ -38,6 +47,23 @@ final class Activity extends BaseActivity
     public function getTranslatedDescription(): string
     {
         try {
+            $payload = $this->getTranslationPayload();
+
+            return __($payload['key'], $payload['replacements']);
+        } catch (Throwable) {
+            // Fallback to the raw description if translation fails
+            return $this->description ?? 'Unknown activity';
+        }
+    }
+
+    /**
+     * Return the translation key and replacements for frontend rendering.
+     *
+     * @return array{key: string, replacements: array<string, string>}
+     */
+    public function getTranslationPayload(): array
+    {
+        try {
             $replacements = $this->buildTranslationReplacements();
 
             // Ensure all replacements are strings
@@ -48,10 +74,15 @@ final class Activity extends BaseActivity
                     : (string) $value;
             }
 
-            return __($this->description, $stringReplacements);
+            return [
+                'key' => $this->description,
+                'replacements' => $stringReplacements,
+            ];
         } catch (Throwable) {
-            // Fallback to the raw description if translation fails
-            return $this->description ?? 'Unknown activity';
+            return [
+                'key' => $this->description ?? 'activity.unknown',
+                'replacements' => [],
+            ];
         }
     }
 

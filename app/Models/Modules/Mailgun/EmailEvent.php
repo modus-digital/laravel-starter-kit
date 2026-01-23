@@ -11,8 +11,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
+ * @property string $id
+ * @property string $email_message_id
  * @property EmailEventType $event_type
- * @property EmailMessage $emailMessage
+ * @property string|null $mailgun_event_id
+ * @property string|null $severity
+ * @property string|null $reason
+ * @property string|null $recipient
+ * @property string|null $ip_address
+ * @property string|null $user_agent
+ * @property string|null $url
+ * @property array|null $raw_payload
+ * @property \Carbon\Carbon|null $occurred_at
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read EmailMessage $emailMessage
  */
 final class EmailEvent extends Model
 {

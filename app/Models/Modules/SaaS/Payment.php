@@ -11,6 +11,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property string $id
+ * @property string $invoice_id
+ * @property string $provider
+ * @property string|null $provider_payment_id
+ * @property float $amount
+ * @property string|null $currency
+ * @property BillingStatus $status
+ * @property \Carbon\Carbon|null $paid_at
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property \Carbon\Carbon|null $deleted_at
+ * @property-read Invoice $invoice
+ */
 final class Payment extends Model
 {
     /** @use HasFactory<\Database\Factories\Modules\SaaS\PaymentFactory> */

@@ -7,6 +7,7 @@ namespace App\Models\Modules\Tasks;
 use App\Enums\Modules\Tasks\TaskPriority;
 use App\Enums\Modules\Tasks\TaskType;
 use App\Models\User;
+use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -44,9 +45,12 @@ final class Task extends Model
     use HasFactory;
 
     use HasUuids;
+    use Searchable;
     use SoftDeletes;
 
     public $incrementing = false;
+
+    protected static array $searchable = ['title', 'description'];
 
     protected $keyType = 'string';
 

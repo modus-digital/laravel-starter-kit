@@ -12,8 +12,24 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 /**
+ * @property string $id
+ * @property string|null $tenant_id
+ * @property string|null $mailable_class
+ * @property string $subject
+ * @property string $from_address
+ * @property string|null $from_name
+ * @property string $to_address
+ * @property string|null $to_name
+ * @property array|null $cc
+ * @property array|null $bcc
+ * @property array|null $tags
+ * @property string|null $mailgun_message_id
+ * @property string|null $correlation_id
  * @property EmailStatus $status
- * @property \Illuminate\Database\Eloquent\Collection<int, EmailEvent> $events
+ * @property \Carbon\Carbon|null $sent_at
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, EmailEvent> $events
  */
 final class EmailMessage extends Model
 {

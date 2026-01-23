@@ -5,13 +5,11 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Events\Security\TwoFactorStatusChanged;
-use App\Http\Responses\FilamentLogoutResponse;
 use App\Http\Responses\FortifyLoginResponse;
 use App\Http\Responses\FortifyLogoutResponse;
 use App\Http\Responses\FortifyRegisterResponse;
 use App\Traits\ConfiguresScribeDocumentation;
 use App\Translation\NestedJsonLoader;
-use Filament\Auth\Http\Responses\Contracts\LogoutResponse as FilamentLogoutResponseContract;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Events\TwoFactorAuthenticationDisabled;
@@ -75,10 +73,6 @@ final class AppServiceProvider extends ServiceProvider
      */
     private function configureResponses(): void
     {
-        // Filament
-        $this->app->singleton(abstract: FilamentLogoutResponseContract::class, concrete: FilamentLogoutResponse::class);
-
-        // Fortify
         $this->app->singleton(abstract: FortifyLoginResponseContract::class, concrete: FortifyLoginResponse::class);
         $this->app->singleton(abstract: FortifyRegisterResponseContract::class, concrete: FortifyRegisterResponse::class);
         $this->app->singleton(abstract: FortifyLogoutResponseContract::class, concrete: FortifyLogoutResponse::class);

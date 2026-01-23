@@ -14,33 +14,6 @@ enum Role: string
     case ADMIN = 'admin';
     case USER = 'user';
 
-    public function getColor(): string
-    {
-        return match ($this) {
-            self::SUPER_ADMIN => 'red',
-            self::ADMIN => 'yellow',
-            self::USER => 'green',
-        };
-    }
-
-    public function getFilamentColor(): string
-    {
-        return match ($this) {
-            self::SUPER_ADMIN => 'danger',
-            self::ADMIN => 'warning',
-            self::USER => 'success',
-        };
-    }
-
-    public function getIcon(): string
-    {
-        return match ($this) {
-            self::SUPER_ADMIN => 'heroicon-o-shield-check',
-            self::ADMIN => 'heroicon-o-user',
-            self::USER => 'heroicon-o-user',
-        };
-    }
-
     public function getLabel(): string
     {
         return match ($this) {

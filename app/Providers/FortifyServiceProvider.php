@@ -6,7 +6,7 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
-use App\Models\Modules\SocialiteProvider;
+use App\Enums\AuthenticationProvider;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -15,6 +15,7 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
+use Outerweb\Settings\Facades\Setting;
 
 final class FortifyServiceProvider extends ServiceProvider
 {
@@ -58,10 +59,7 @@ final class FortifyServiceProvider extends ServiceProvider
             'canResetPassword' => Features::enabled(Features::resetPasswords()),
             'canRegister' => Features::enabled(Features::registration()),
             'status' => $request->session()->get('status'),
-            'authProviders' => SocialiteProvider::enabled()->get()->map(fn (SocialiteProvider $provider): array => [
-                'id' => $provider->id,
-                'name' => $provider->name,
-            ]),
+            'authProviders' => $this->configureAllowedAuthProviders(),
         ]));
 
         Fortify::resetPasswordView(fn (Request $request) => Inertia::render('auth/reset-password', [
@@ -96,5 +94,37 @@ final class FortifyServiceProvider extends ServiceProvider
 
             return Limit::perMinute(5)->by($throttleKey);
         });
+    }
+
+    /**
+     * Configure the allowed auth providers for the login view.
+     */
+    private function configureAllowedAuthProviders(): array
+    {
+        $settings = Setting::get('integrations.oauth', []);
+        $providers = [];
+
+        if ($settings['google']['enabled']) {
+            $providers[] = [
+                'id' => AuthenticationProvider::GOOGLE,
+                'name' => AuthenticationProvider::GOOGLE->value,
+            ];
+        }
+
+        if ($settings['github']['enabled']) {
+            $providers[] = [
+                'id' => AuthenticationProvider::GITHUB,
+                'name' => AuthenticationProvider::GITHUB->value,
+            ];
+        }
+
+        if ($settings['microsoft']['enabled']) {
+            $providers[] = [
+                'id' => AuthenticationProvider::MICROSOFT,
+                'name' => AuthenticationProvider::MICROSOFT->value,
+            ];
+        }
+
+        return $providers;
     }
 }

@@ -11,6 +11,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property string $id
+ * @property string $name
+ * @property float $price
+ * @property string $interval
+ * @property int|null $trial_days
+ * @property array|null $features
+ * @property ActivityStatus $status
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property \Carbon\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Subscription> $subscriptions
+ */
 final class Plan extends Model
 {
     /** @use HasFactory<\Database\Factories\Modules\SaaS\PlanFactory> */

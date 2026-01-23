@@ -42,14 +42,6 @@ enum Permission: string
     case DELETE_CLIENTS = 'delete:clients';
     case RESTORE_CLIENTS = 'restore:clients';
 
-    // Socialite Providers (conditional - if module enabled)
-    case UPDATE_SOCIALITE_PROVIDERS = 'update:socialite-providers';
-
-    public function getFilamentColor(): string
-    {
-        return 'primary';
-    }
-
     public function getLabel(): string
     {
         return match ($this) {
@@ -88,9 +80,6 @@ enum Permission: string
             self::UPDATE_CLIENTS => __('enums.rbac.permission.label.update_clients'),
             self::DELETE_CLIENTS => __('enums.rbac.permission.label.delete_clients'),
             self::RESTORE_CLIENTS => __('enums.rbac.permission.label.restore_clients'),
-
-            // Socialite
-            self::UPDATE_SOCIALITE_PROVIDERS => __('enums.rbac.permission.label.update_socialite_providers'),
         };
     }
 
@@ -132,9 +121,6 @@ enum Permission: string
             self::UPDATE_CLIENTS => __('enums.rbac.permission.description.update_clients'),
             self::DELETE_CLIENTS => __('enums.rbac.permission.description.delete_clients'),
             self::RESTORE_CLIENTS => __('enums.rbac.permission.description.restore_clients'),
-
-            // Socialite
-            self::UPDATE_SOCIALITE_PROVIDERS => __('enums.rbac.permission.description.update_socialite_providers'),
         };
     }
 
@@ -150,9 +136,6 @@ enum Permission: string
             self::UPDATE_CLIENTS,
             self::DELETE_CLIENTS,
             self::RESTORE_CLIENTS => config('modules.clients.enabled', false),
-
-            // Socialite permissions - only if socialite module is enabled
-            self::UPDATE_SOCIALITE_PROVIDERS => config('modules.socialite.enabled', false),
 
             // API access - only if API module is enabled
             self::HAS_API_ACCESS,

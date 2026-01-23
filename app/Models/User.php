@@ -9,6 +9,7 @@ use App\Enums\ActivityStatus;
 use App\Enums\RBAC\Permission;
 use App\Traits\HasClients;
 use App\Traits\HasPreferences;
+use App\Traits\Searchable;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -22,8 +23,25 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
+ * @property string $id
+ * @property string $name
+ * @property string $email
+ * @property string|null $phone
+ * @property string|null $avatar
+ * @property string $password
  * @property ActivityStatus $status
- * @property \Illuminate\Database\Eloquent\Collection<int, \Spatie\Permission\Models\Role> $roles
+ * @property string $provider
+ * @property string|null $remember_token
+ * @property \Carbon\Carbon|null $email_verified_at
+ * @property \Carbon\Carbon|null $two_factor_confirmed_at
+ * @property array|null $preferences
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property \Carbon\Carbon|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Role> $roles
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Permission> $permissions
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Activity> $activities
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Modules\Clients\Client> $clients
  */
 final class User extends Authenticatable implements FilamentUser
 {
@@ -45,6 +63,7 @@ final class User extends Authenticatable implements FilamentUser
     use HasRoles;
     use HasUuids;
     use Notifiable;
+    use Searchable;
     use SoftDeletes;
     use TwoFactorAuthenticatable;
 
@@ -61,6 +80,7 @@ final class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'phone',
+        'avatar',
         'password',
         'status',
         'provider',
@@ -79,6 +99,25 @@ final class User extends Authenticatable implements FilamentUser
         'two_factor_recovery_codes',
         'remember_token',
     ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var list<string>
+     */
+    protected $appends = [];
+
+    /**
+     * Searchable columns for global search.
+     *
+     * @var array<int, string>
+     */
+    protected static array $searchable = ['name', 'email'];
+
+    /**
+     * Permission required to search this model.
+     */
+    protected static string $searchPermission = 'read:users';
 
     public function canAccessPanel(Panel $panel): bool
     {
