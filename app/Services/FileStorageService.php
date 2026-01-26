@@ -12,7 +12,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 
 final class FileStorageService
 {
-    public function upload(UploadedFile $file, string $storagePath, bool $public = false, ?string $fileName = null): string
+    public function upload(UploadedFile $file, string $storagePath, bool $public = true, ?string $fileName = null): string
     {
         $disk = $this->getDisk();
 
@@ -63,7 +63,7 @@ final class FileStorageService
         $s3Enabled = setting('integrations.s3.enabled', false);
 
         if (! $s3Enabled) {
-            return Storage::disk('local');
+            return Storage::disk('public');
         }
 
         // Build S3 disk on-demand using settings from database
