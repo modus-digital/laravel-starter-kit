@@ -7,6 +7,8 @@ namespace App\Services;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Contracts\Filesystem\Filesystem;
 
 final class FileStorageService
 {
@@ -53,7 +55,10 @@ final class FileStorageService
         return $disk->delete($path);
     }
 
-    public function getDisk(): \Illuminate\Contracts\Filesystem\Filesystem
+    /**
+     * @return FilesystemAdapter
+     */
+    public function getDisk(): Filesystem
     {
         $s3Enabled = setting('integrations.s3.enabled', false);
 
