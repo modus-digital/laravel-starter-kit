@@ -10,14 +10,14 @@ use Illuminate\Support\Str;
 
 final class FileStorageService
 {
-    public function upload(UploadedFile $file, string $storagePath, bool $public = false): string
+    public function upload(UploadedFile $file, string $storagePath, bool $public = false, ?string $fileName = null): string
     {
         $disk = $this->getDisk();
 
         $path = $disk->putFileAs(
             path: $storagePath,
             file: $file,
-            name: $this->generateFileName($file)
+            name: $fileName ?? $this->generateFileName($file)
         );
 
         if ($public) {
