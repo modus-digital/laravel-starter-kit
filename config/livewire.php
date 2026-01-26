@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'class_namespace' => 'App\\Filament',
+    'class_namespace' => 'App\\Livewire',
 
     /*
     |---------------------------------------------------------------------------

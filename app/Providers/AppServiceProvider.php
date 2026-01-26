@@ -69,7 +69,7 @@ final class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * Configure the responses of Filament and Fortify.
+     * Configure the responses of Fortify.
      */
     private function configureResponses(): void
     {

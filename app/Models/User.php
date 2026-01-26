@@ -10,8 +10,6 @@ use App\Enums\RBAC\Permission;
 use App\Traits\HasClients;
 use App\Traits\HasPreferences;
 use App\Traits\Searchable;
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Panel;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -43,7 +41,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Activity> $activities
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Modules\Clients\Client> $clients
  */
-final class User extends Authenticatable implements FilamentUser
+final class User extends Authenticatable
 {
     /*
     |--------------------------------------------------------------------------
@@ -118,11 +116,6 @@ final class User extends Authenticatable implements FilamentUser
      * Permission required to search this model.
      */
     protected static string $searchPermission = 'read:users';
-
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return $this->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL);
-    }
 
     /**
      * @return MorphMany<Activity, $this>
