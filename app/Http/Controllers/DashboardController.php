@@ -18,7 +18,7 @@ final class DashboardController extends Controller
         $user = Auth::user();
 
         return Inertia::render(
-            component: 'dashboard',
+            component: 'core/dashboard',
         );
     }
 }

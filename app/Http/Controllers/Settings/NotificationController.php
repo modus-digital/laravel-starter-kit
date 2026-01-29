@@ -31,7 +31,7 @@ final class NotificationController extends Controller
             $notificationsPreferences,
         );
 
-        return Inertia::render('settings/notifications', [
+        return Inertia::render('core/settings/notifications', [
             'preferences' => $preferences,
         ]);
     }

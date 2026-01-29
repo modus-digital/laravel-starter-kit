@@ -80,7 +80,7 @@ final class UserController extends Controller
                 'label' => RoleEnum::tryFrom($role->name)?->getLabel() ?? str($role->name)->headline()->toString(),
             ]);
 
-        return Inertia::render('admin/users/index', [
+        return Inertia::render('core/admin/users/index', [
             'users' => $users,
             'filters' => $request->only(['search', 'status', 'with_trashed', 'only_trashed', 'sort_by', 'sort_direction']),
             'roles' => $roles,
@@ -98,7 +98,7 @@ final class UserController extends Controller
                 'label' => RoleEnum::tryFrom($role->name)?->getLabel() ?? str($role->name)->headline()->toString(),
             ]);
 
-        return Inertia::render('admin/users/create', [
+        return Inertia::render('core/admin/users/create', [
             'roles' => $roles,
             'statuses' => ActivityStatus::options(),
         ]);
@@ -135,7 +135,7 @@ final class UserController extends Controller
             ->latest()
             ->get();
 
-        return Inertia::render('admin/users/show', [
+        return Inertia::render('core/admin/users/show', [
             'user' => $user,
             'activities' => ActivityResource::collection($activities)->toArray(request()),
         ]);
@@ -153,7 +153,7 @@ final class UserController extends Controller
                 'label' => RoleEnum::tryFrom($role->name)?->getLabel() ?? str($role->name)->headline()->toString(),
             ]);
 
-        return Inertia::render('admin/users/edit', [
+        return Inertia::render('core/admin/users/edit', [
             'user' => $user,
             'roles' => $roles,
             'statuses' => ActivityStatus::options(),

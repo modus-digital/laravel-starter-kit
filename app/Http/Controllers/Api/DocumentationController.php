@@ -19,7 +19,7 @@ final class DocumentationController extends Controller
      */
     public function __invoke(Request $request): Response
     {
-        return Inertia::render(component: 'api-docs');
+        return Inertia::render(component: 'core/api-docs');
     }
 
     public function specFile(): JsonResponse

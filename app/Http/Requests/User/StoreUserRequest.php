@@ -28,7 +28,7 @@ final class StoreUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'phone' => ['nullable', 'string', 'max:20', 'regex:/^\+?[1-9]\d{1,14}$/'],
@@ -39,6 +39,14 @@ final class StoreUserRequest extends FormRequest
             'roles' => ['nullable', 'array'],
             'roles.*' => ['string', 'exists:roles,name'],
         ];
+
+        // Add client_ids validation if clients module is enabled
+        if (config('modules.clients.enabled', false)) {
+            $rules['client_ids'] = ['nullable', 'array'];
+            $rules['client_ids.*'] = ['required', 'string', 'exists:clients,id'];
+        }
+
+        return $rules;
     }
 
     /**

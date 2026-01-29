@@ -30,7 +30,7 @@ final class BrandingController extends Controller
             'logo_aspect_ratio' => Setting::get('branding.logo_aspect_ratio', '1:1'),
         ];
 
-        return Inertia::render('admin/branding/edit', [
+        return Inertia::render('core/admin/branding/edit', [
             'branding' => $branding,
         ]);
     }

@@ -21,7 +21,7 @@ final class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
-        return Inertia::render('settings/profile', [
+        return Inertia::render('core/settings/profile', [
             'mustVerifyEmail' => false, // User model doesn't implement MustVerifyEmail by default
             'status' => $request->session()->get('status'),
         ]);

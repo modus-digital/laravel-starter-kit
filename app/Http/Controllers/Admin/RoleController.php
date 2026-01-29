@@ -44,7 +44,7 @@ final class RoleController extends Controller
 
         $roles = $query->get();
 
-        return Inertia::render('admin/roles/index', [
+        return Inertia::render('core/admin/roles/index', [
             'roles' => $roles,
             'filters' => $request->only(['search', 'sort_by', 'sort_direction']),
         ]);
@@ -64,7 +64,7 @@ final class RoleController extends Controller
             ])
             ->groupBy('category');
 
-        return Inertia::render('admin/roles/create', [
+        return Inertia::render('core/admin/roles/create', [
             'permissions' => $permissions,
         ]);
     }
@@ -108,7 +108,7 @@ final class RoleController extends Controller
             ->latest()
             ->paginate(10);
 
-        return Inertia::render('admin/roles/show', [
+        return Inertia::render('core/admin/roles/show', [
             'role' => $role,
             'activities' => new ActivityCollection($activities),
         ]);
@@ -133,7 +133,7 @@ final class RoleController extends Controller
         // Check if this is a system role
         $isSystemRole = in_array($role->name, [RoleEnum::SUPER_ADMIN->value, RoleEnum::ADMIN->value], true);
 
-        return Inertia::render('admin/roles/edit', [
+        return Inertia::render('core/admin/roles/edit', [
             'role' => [
                 'id' => $role->id,
                 'name' => $role->name,

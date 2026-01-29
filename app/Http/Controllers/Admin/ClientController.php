@@ -61,7 +61,7 @@ final class ClientController extends Controller
 
         $clients = $query->get();
 
-        return Inertia::render('admin/clients/index', [
+        return Inertia::render('modules/clients/index', [
             'clients' => $clients,
             'filters' => $request->only(['search', 'status', 'with_trashed', 'only_trashed', 'sort_by', 'sort_direction']),
             'statuses' => ActivityStatus::options(),
@@ -70,7 +70,7 @@ final class ClientController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('admin/clients/create', [
+        return Inertia::render('modules/clients/create', [
             'statuses' => ActivityStatus::options(),
         ]);
     }
@@ -106,7 +106,7 @@ final class ClientController extends Controller
             ->latest()
             ->paginate(10);
 
-        return Inertia::render('admin/clients/show', [
+        return Inertia::render('modules/clients/show', [
             'client' => $client,
             'users' => new UserCollection($users),
             'activities' => new ActivityCollection($activities),
@@ -115,7 +115,7 @@ final class ClientController extends Controller
 
     public function edit(Client $client): Response
     {
-        return Inertia::render('admin/clients/edit', [
+        return Inertia::render('modules/clients/edit', [
             'client' => $client,
             'statuses' => ActivityStatus::options(),
         ]);

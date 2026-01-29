@@ -45,7 +45,7 @@ final class TaskController extends Controller
         $statuses = $this->taskService->getStatuses();
 
         return Inertia::render(
-            component: 'tasks/index',
+            component: 'modules/tasks/index',
             props: [
                 'tasks' => $tasks,
                 'taskViews' => $taskViews,
@@ -98,7 +98,7 @@ final class TaskController extends Controller
             });
 
         return Inertia::render(
-            component: 'tasks/show',
+            component: 'modules/tasks/show',
             props: [
                 'task' => $task,
                 'statuses' => $statuses,

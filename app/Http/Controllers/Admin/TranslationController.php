@@ -49,7 +49,7 @@ final class TranslationController extends Controller
             ])
             ->all();
 
-        return Inertia::render('admin/translations/index', [
+        return Inertia::render('core/admin/translations/index', [
             'groups' => $groupsData,
             'availableLanguages' => $availableLanguages,
             'targetLanguage' => $targetLanguage,
@@ -92,7 +92,7 @@ final class TranslationController extends Controller
 
         $progress = $this->translationService->getTranslationProgress($targetLanguage, $group);
 
-        return Inertia::render('admin/translations/[group]/index', [
+        return Inertia::render('core/admin/translations/[group]/index', [
             'group' => $group,
             'groupName' => Str::headline($group),
             'translations' => $translations,
@@ -137,7 +137,7 @@ final class TranslationController extends Controller
 
         $progress = $this->translationService->getTranslationProgress($targetLanguage, $group);
 
-        return Inertia::render('admin/translations/[group]/quick-translate', [
+        return Inertia::render('core/admin/translations/[group]/quick-translate', [
             'group' => $group,
             'groupName' => Str::headline($group),
             'currentKey' => $currentKey,

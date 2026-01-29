@@ -62,7 +62,7 @@ final class ActivityController extends Controller
             ->distinct()
             ->pluck('log_name');
 
-        return Inertia::render('admin/activities/index', [
+        return Inertia::render('core/admin/activities/index', [
             'activities' => ActivityResource::collection($activities)->toArray(request()),
             'filters' => $request->only(['log_name', 'event', 'causer_id', 'date_from', 'date_to', 'sort_by', 'sort_direction']),
             'logNames' => $logNames,
@@ -73,7 +73,7 @@ final class ActivityController extends Controller
     {
         $activity->load(['causer:id,name,email', 'subject']);
 
-        return Inertia::render('admin/activities/show', [
+        return Inertia::render('core/admin/activities/show', [
             'activity' => new ActivityResource($activity),
         ]);
     }

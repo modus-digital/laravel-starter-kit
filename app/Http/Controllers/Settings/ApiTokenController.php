@@ -40,7 +40,7 @@ final class ApiTokenController extends Controller
         // Get user's permissions
         $userPermissions = $user->getAllPermissions()->pluck('name')->toArray();
 
-        return Inertia::render('settings/api-tokens', [
+        return Inertia::render('core/settings/api-tokens', [
             'tokens' => $tokens,
             'availablePermissions' => $allPermissions,
             'userPermissions' => $userPermissions,

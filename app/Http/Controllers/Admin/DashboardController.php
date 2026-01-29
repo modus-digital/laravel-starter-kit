@@ -40,7 +40,7 @@ final class DashboardController extends Controller
                 'count' => $role->users_count,
             ]);
 
-        return Inertia::render('admin/index', [
+        return Inertia::render('core/admin/index', [
             'stats' => $stats,
             'recentActivities' => ['data' => ActivityResource::collection($recentActivities)->toArray(request())],
             'roleDistribution' => $roleDistribution,

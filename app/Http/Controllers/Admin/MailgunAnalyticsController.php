@@ -53,7 +53,7 @@ final class MailgunAnalyticsController extends Controller
                 'count' => $event->count,
             ]);
 
-        return Inertia::render('admin/mailgun/index', [
+        return Inertia::render('core/admin/mailgun/index', [
             'stats' => $stats,
             'trends' => $trends,
             'recentMessages' => $recentMessages,

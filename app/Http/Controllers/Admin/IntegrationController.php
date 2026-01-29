@@ -56,7 +56,7 @@ final class IntegrationController extends Controller
             ],
         ];
 
-        return Inertia::render('admin/integrations/edit', [
+        return Inertia::render('core/admin/integrations/edit', [
             'integrations' => $integrations,
         ]);
     }
