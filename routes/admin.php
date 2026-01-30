@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\BrandingController;
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DashboardLayoutController;
 use App\Http\Controllers\Admin\ImpersonationController;
 use App\Http\Controllers\Admin\IntegrationController;
 use App\Http\Controllers\Admin\MailgunAnalyticsController;
@@ -23,6 +24,10 @@ Route::middleware(['auth', 'verified'])
         Route::get('/', DashboardController::class)
             ->middleware('can:'.Permission::ACCESS_CONTROL_PANEL->value)
             ->name('index');
+
+        Route::put('/dashboard/layout', [DashboardLayoutController::class, 'update'])
+            ->middleware('can:'.Permission::ACCESS_CONTROL_PANEL->value)
+            ->name('dashboard.layout.update');
 
         // Roles routes
         Route::prefix('roles')
