@@ -10,6 +10,7 @@ import { format } from 'date-fns';
 import { ArrowLeft, Edit, RotateCcw, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { destroy, edit, forceDelete, index, restore, show } from '@/routes/admin/users';
 
 type User = {
     id: string;
@@ -52,8 +53,8 @@ type PageProps = SharedData & {
 export default function Show() {
     const { user, activities } = usePage<PageProps>().props;
     const { t } = useTranslation();
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    const [forceDeleteDialogOpen, setForceDeleteDialogOpen] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+    const [forceDeleteDialogOpen, setForceDeleteDialogOpen] = useState<boolean>(false);
 
     const renderActivityDescription = (activity: Activity) => {
         if (activity.translation) {
@@ -70,23 +71,23 @@ export default function Show() {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('admin.users.navigation_label', 'Users'),
-            href: '/admin/users',
+            href: index().url,
         },
         {
             title: user.name,
-            href: `/admin/users/${user.id}`,
+            href: show({ user: user.id }).url,
         },
     ];
 
     const handleDelete = () => {
-        router.delete(`/admin/users/${user.id}`, {
+        router.delete(destroy({ user: user.id }).url, {
             preserveScroll: true,
         });
     };
 
     const handleRestore = () => {
         router.post(
-            `/admin/users/${user.id}/restore`,
+            restore({ user: user.id }).url,
             {},
             {
                 preserveScroll: true,
@@ -95,7 +96,7 @@ export default function Show() {
     };
 
     const handleForceDelete = () => {
-        router.delete(`/admin/users/${user.id}/force`, {
+        router.delete(forceDelete({ user: user.id }).url, {
             preserveScroll: true,
         });
     };
@@ -133,7 +134,7 @@ export default function Show() {
                     <div className="flex items-center gap-2">
                         {!user.deleted_at && (
                             <>
-                                <Link href={`/admin/users/${user.id}/edit`}>
+                                <Link href={edit({ user: user.id }).url}>
                                     <Button variant="outline">
                                         <Edit className="mr-2 h-4 w-4" />
                                         {t('admin.users.edit', 'Edit')}

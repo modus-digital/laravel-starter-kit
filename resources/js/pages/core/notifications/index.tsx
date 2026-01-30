@@ -11,6 +11,8 @@ import { type ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown, CheckCircle, Clock, EllipsisVertical, Eye, Mail, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { clear, destroy, index, read, show, unread } from '@/routes/notifications';
+import { read as bulkRead, unread as bulkUnread } from '@/routes/notifications/bulk';
 
 type NotificationItem = {
     id: string;
@@ -72,16 +74,16 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
     };
 
     const openDetails = (id: string) => {
-        router.visit(`/notifications/${id}`);
+        router.visit(show({ notification: id }).url);
     };
 
-    const markRead = (id: string) => router.post(`/notifications/${id}/read`, undefined, { preserveScroll: true, preserveState: true });
+    const markRead = (id: string) => router.post(read({ notification: id }).url, undefined, { preserveScroll: true, preserveState: true });
 
-    const markUnread = (id: string) => router.post(`/notifications/${id}/unread`, undefined, { preserveScroll: true, preserveState: true });
+    const markUnread = (id: string) => router.post(unread({ notification: id }).url, undefined, { preserveScroll: true, preserveState: true });
 
-    const remove = (id: string) => router.delete(`/notifications/${id}`, { preserveScroll: true, preserveState: true });
+    const remove = (id: string) => router.delete(destroy({ notification: id }).url, { preserveScroll: true, preserveState: true });
 
-    const clearAll = () => router.delete('/notifications', { preserveScroll: true, preserveState: true });
+    const clearAll = () => router.delete(clear().url, { preserveScroll: true, preserveState: true });
 
     const columns: ColumnDef<NotificationItem>[] = useMemo(
         () => [
@@ -263,7 +265,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
         }
 
         router.post(
-            '/notifications/bulk/read',
+            bulkRead().url,
             { ids },
             {
                 preserveScroll: true,
@@ -280,7 +282,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
         }
 
         router.post(
-            '/notifications/bulk/unread',
+            bulkUnread().url,
             { ids },
             {
                 preserveScroll: true,
@@ -298,7 +300,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
             breadcrumbs={[
                 {
                     title: t('notifications.title'),
-                    href: '/notifications',
+                    href: index().url,
                 },
             ]}
         >
@@ -329,7 +331,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                                     key={tab}
                                     type="button"
                                     onClick={() =>
-                                        router.visit(tab === 'all' ? '/notifications' : `/notifications?tab=${tab}`, {
+                                        router.visit(tab === 'all' ? index().url : index({ query: { tab } }).url, {
                                             preserveScroll: true,
                                             preserveState: true,
                                         })
@@ -395,7 +397,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                                 total: notifications.total,
                                 onPageChange: (page) =>
                                     router.visit(
-                                        activeTab === 'all' ? `/notifications?page=${page}` : `/notifications?tab=${activeTab}&page=${page}`,
+                                        activeTab === 'all' ? index({ query: { page } }).url : index({ query: { tab: activeTab, page } }).url,
                                         {
                                             preserveScroll: true,
                                             preserveState: true,

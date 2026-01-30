@@ -8,6 +8,7 @@ import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { create, index, store } from '@/routes/admin/users';
 
 type PageProps = SharedData & {
     roles: Array<{ name: string; label: string }>;
@@ -21,11 +22,11 @@ export default function Create() {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('admin.users.navigation_label', 'Users'),
-            href: '/admin/users',
+            href: index().url,
         },
         {
             title: t('admin.users.create', 'Create User'),
-            href: '/admin/users/create',
+            href: create().url,
         },
     ];
 
@@ -35,7 +36,7 @@ export default function Create() {
 
             <div className="space-y-6 px-6 py-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/admin/users">
+                    <Link href={index().url}>
                         <Button variant="ghost" size="icon">
                             <ArrowLeft className="h-4 w-4" />
                         </Button>
@@ -129,7 +130,7 @@ export default function Create() {
                                     <Button type="submit" disabled={processing}>
                                         {processing ? t('admin.users.creating', 'Creating...') : t('admin.users.create', 'Create User')}
                                     </Button>
-                                    <Link href="/admin/users">
+                                    <Link href={index().url}>
                                         <Button type="button" variant="outline">
                                             {t('admin.users.cancel', 'Cancel')}
                                         </Button>

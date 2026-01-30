@@ -8,6 +8,7 @@ import type { Notification as NotificationType } from '@/types/models';
 import { Head, Link, router } from '@inertiajs/react';
 import { ArrowLeft, Bell, Calendar, CheckCircle, Clock, ExternalLink, Mail, MessageSquare, Trash2, User, Flag } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { destroy, index, read, show, unread } from '@/routes/notifications';
 
 type NotificationProps = {
     notification: NotificationType;
@@ -78,11 +79,11 @@ export default function Notification({ notification }: NotificationProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('notifications.title'),
-            href: '/notifications',
+            href: index().url,
         },
         {
             title: translatedTitle,
-            href: `/notifications/${notification.id}`,
+            href: show({ notification: notification.id }).url,
         },
     ];
 
@@ -114,7 +115,7 @@ export default function Notification({ notification }: NotificationProps) {
                 {/* Back Button */}
                 <div className="flex items-center">
                     <Button variant="ghost" size="sm" asChild className="gap-2">
-                        <Link href="/notifications">
+                        <Link href={index().url}>
                             <ArrowLeft className="size-4" />
                             Back to notifications
                         </Link>

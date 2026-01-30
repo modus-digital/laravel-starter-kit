@@ -8,6 +8,7 @@ import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { edit, index, show, update } from '@/routes/admin/users';
 
 type User = {
     id: string;
@@ -31,15 +32,15 @@ export default function Edit() {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('admin.users.navigation_label', 'Users'),
-            href: '/admin/users',
+            href: index().url,
         },
         {
             title: user.name,
-            href: `/admin/users/${user.id}`,
+            href: show({ user: user.id }).url,
         },
         {
             title: t('admin.users.edit', 'Edit'),
-            href: `/admin/users/${user.id}/edit`,
+            href: edit({ user: user.id }).url,
         },
     ];
 
@@ -51,7 +52,7 @@ export default function Edit() {
 
             <div className="space-y-6 px-6 py-4">
                 <div className="flex items-center gap-4">
-                    <Link href={`/admin/users/${user.id}`}>
+                    <Link href={show({ user: user.id }).url}>
                         <Button variant="ghost" size="icon">
                             <ArrowLeft className="h-4 w-4" />
                         </Button>
@@ -64,8 +65,7 @@ export default function Edit() {
 
                 <div className="rounded-lg border border-border bg-card p-6">
                     <Form
-                        action={`/admin/users/${user.id}`}
-                        method="put"
+                        {...update.form({ user: user.id })}
                         className="space-y-6"
                         onSubmit={(e) => {
                             const form = e.currentTarget;
@@ -145,7 +145,7 @@ export default function Edit() {
                                     <Button type="submit" disabled={processing}>
                                         {processing ? t('admin.users.updating', 'Updating...') : t('admin.users.update', 'Update User')}
                                     </Button>
-                                    <Link href={`/admin/users/${user.id}`}>
+                                    <Link href={show({ user: user.id }).url}>
                                         <Button type="button" variant="outline">
                                             {t('admin.users.cancel', 'Cancel')}
                                         </Button>

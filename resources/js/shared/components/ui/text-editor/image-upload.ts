@@ -1,5 +1,6 @@
 import { createImageUpload } from 'novel';
 import { toast } from 'sonner';
+import { image } from '@/routes/api/v1/upload';
 
 export const onUpload = async (file: File): Promise<string> => {
     const formData = new FormData();
@@ -8,7 +9,7 @@ export const onUpload = async (file: File): Promise<string> => {
     const toastId = toast.loading('Uploading image...');
 
     try {
-        const response = await fetch('/api/v1/upload/image', {
+        const response = await fetch(image().url, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

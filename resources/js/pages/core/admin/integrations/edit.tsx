@@ -8,10 +8,11 @@ import { Switch } from '@/shared/components/ui/switch';
 import AdminLayout from '@/shared/layouts/admin/layout';
 import { cn } from '@/shared/lib/utils';
 import { type SharedData } from '@/types';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, router, useForm } from '@inertiajs/react';
 import { BarChart3, CheckCircle2, Cloud, Eye, EyeOff, Loader2, Users, XCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { update } from '@/routes/admin/integrations';
 
 type Integrations = {
     mailgun: {
@@ -60,42 +61,57 @@ type SidebarItem = {
     icon?: React.ElementType;
 };
 
+type ShowSecretsState = {
+    mailgun: boolean;
+    google: boolean;
+    github: boolean;
+    microsoft: boolean;
+    s3: boolean;
+};
+
 export default function Edit({ integrations }: PageProps) {
     const { t } = useTranslation();
 
-    const [activeSection, setActiveSection] = useState('mailgun');
-    const [showSecrets, setShowSecrets] = useState({
+    const [activeSection, setActiveSection] = useState<string>('mailgun');
+    const [showSecrets, setShowSecrets] = useState<ShowSecretsState>({
         mailgun: false,
         google: false,
         github: false,
         microsoft: false,
         s3: false,
     });
-    const [testingS3, setTestingS3] = useState(false);
-    const [s3TestResult, setS3TestResult] = useState<{
-        success: boolean;
-        message: string;
-    } | null>(null);
 
     const { data, setData, put, processing, errors } = useForm({
-        mailgun_webhook_signing_key: integrations.mailgun.webhook_signing_key || '',
-        google_enabled: integrations.oauth.google.enabled || false,
-        google_client_id: integrations.oauth.google.client_id || '',
-        google_client_secret: integrations.oauth.google.client_secret || '',
-        github_enabled: integrations.oauth.github.enabled || false,
-        github_client_id: integrations.oauth.github.client_id || '',
-        github_client_secret: integrations.oauth.github.client_secret || '',
-        microsoft_enabled: integrations.oauth.microsoft.enabled || false,
-        microsoft_client_id: integrations.oauth.microsoft.client_id || '',
-        microsoft_client_secret: integrations.oauth.microsoft.client_secret || '',
-        s3_enabled: integrations.s3.enabled || false,
-        s3_key: integrations.s3.key || '',
-        s3_secret: integrations.s3.secret || '',
-        s3_bucket: integrations.s3.bucket || '',
-        s3_region: integrations.s3.region || '',
-        s3_endpoint: integrations.s3.endpoint || '',
-        s3_url: integrations.s3.url || '',
-        s3_use_path_style_endpoint: integrations.s3.use_path_style_endpoint || false,
+        mailgun: {
+            webhook_signing_key: integrations.mailgun.webhook_signing_key ?? '',
+        },
+        oauth: {
+            google: {
+                enabled: integrations.oauth.google.enabled,
+                client_id: integrations.oauth.google.client_id ?? '',
+                client_secret: integrations.oauth.google.client_secret ?? '',
+            },
+            github: {
+                enabled: integrations.oauth.github.enabled,
+                client_id: integrations.oauth.github.client_id ?? '',
+                client_secret: integrations.oauth.github.client_secret ?? '',
+            },
+            microsoft: {
+                enabled: integrations.oauth.microsoft.enabled,
+                client_id: integrations.oauth.microsoft.client_id ?? '',
+                client_secret: integrations.oauth.microsoft.client_secret ?? '',
+            },
+        },
+        s3: {
+            enabled: integrations.s3.enabled,
+            key: integrations.s3.key ?? '',
+            secret: integrations.s3.secret ?? '',
+            bucket: integrations.s3.bucket ?? '',
+            region: integrations.s3.region ?? '',
+            endpoint: integrations.s3.endpoint ?? '',
+            url: integrations.s3.url ?? '',
+            use_path_style_endpoint: integrations.s3.use_path_style_endpoint,
+        },
     });
 
     const sidebarItems: SidebarItem[] = useMemo(() => {
@@ -157,77 +173,35 @@ export default function Edit({ integrations }: PageProps) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put('/admin/integrations');
-    };
-
-    const toggleSecret = (provider: keyof typeof showSecrets) => {
-        setShowSecrets((prev) => ({ ...prev, [provider]: !prev[provider] }));
-    };
-
-    const testS3Connection = async () => {
-        setTestingS3(true);
-        setS3TestResult(null);
-
-        try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-
-            const response = await fetch('/admin/integrations/test-s3', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken || '',
-                    Accept: 'application/json',
-                },
-                body: JSON.stringify({
-                    s3_key: data.s3_key,
-                    s3_secret: data.s3_secret,
-                    s3_region: data.s3_region,
-                    s3_bucket: data.s3_bucket,
-                    s3_endpoint: data.s3_endpoint,
-                    s3_use_path_style_endpoint: data.s3_use_path_style_endpoint,
-                }),
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                setS3TestResult({
-                    success: true,
-                    message: result.message || t('admin.integrations.s3.test_connection_success', 'Connection successful!'),
-                });
-            } else {
-                // Build detailed error message with debug info
-                let errorMsg =
-                    result.message || t('admin.integrations.s3.test_connection_error', 'Connection failed. Please check your credentials.');
-
-                if (result.debug) {
-                    if (typeof result.debug === 'string') {
-                        errorMsg += `\n\n${result.debug}`;
-                    } else if (result.debug.error) {
-                        errorMsg += `\n\nError: ${result.debug.error}`;
-                        if (result.debug.config) {
-                            errorMsg += `\n\nConfiguration:\n`;
-                            errorMsg += `- Endpoint: ${result.debug.config.endpoint || 'default'}\n`;
-                            errorMsg += `- Region: ${result.debug.config.region}\n`;
-                            errorMsg += `- Bucket: ${result.debug.config.bucket}\n`;
-                            errorMsg += `- Path Style: ${result.debug.config.path_style ? 'enabled' : 'disabled'}`;
-                        }
-                    }
-                }
-
-                setS3TestResult({
-                    success: false,
-                    message: errorMsg,
-                });
-            }
-        } catch (error: any) {
-            setS3TestResult({
-                success: false,
-                message: t('admin.integrations.s3.test_connection_error', 'Connection failed. Please check your credentials.'),
-            });
-        } finally {
-            setTestingS3(false);
+        
+        // Only submit fields for the active section
+        let sectionData: Record<string, any> = {};
+        
+        switch (activeSection) {
+            case 'mailgun':
+                sectionData = { mailgun: data.mailgun };
+                break;
+            case 'google':
+                sectionData = { oauth: { google: data.oauth.google } };
+                break;
+            case 'github':
+                sectionData = { oauth: { github: data.oauth.github } };
+                break;
+            case 'microsoft':
+                sectionData = { oauth: { microsoft: data.oauth.microsoft } };
+                break;
+            case 's3':
+                sectionData = { s3: data.s3 };
+                break;
         }
+        
+        router.put(update().url, sectionData, {
+            preserveScroll: true,
+        });
+    };
+
+    const toggleSecret = (provider: keyof ShowSecretsState) => {
+        setShowSecrets((prev: ShowSecretsState) => ({ ...prev, [provider]: !prev[provider] }));
     };
 
     return (
@@ -294,8 +268,8 @@ export default function Edit({ integrations }: PageProps) {
                                                     <Input
                                                         id="mailgun_webhook_signing_key"
                                                         type={showSecrets.mailgun ? 'text' : 'password'}
-                                                        value={data.mailgun_webhook_signing_key}
-                                                        onChange={(e) => setData('mailgun_webhook_signing_key', e.target.value)}
+                                                        value={data.mailgun.webhook_signing_key}
+                                                        onChange={(e) => setData('mailgun.webhook_signing_key', e.target.value)}
                                                         placeholder={t('admin.integrations.mailgun.webhook_signing_key_placeholder')}
                                                     />
                                                     <button
@@ -313,7 +287,7 @@ export default function Edit({ integrations }: PageProps) {
                                                 <p className="text-xs text-muted-foreground">
                                                     {t('admin.integrations.mailgun.webhook_signing_key_helper')}
                                                 </p>
-                                                <InputError message={errors.mailgun_webhook_signing_key} />
+                                                <InputError message={errors['mailgun.webhook_signing_key']} />
                                             </div>
                                         </CardContent>
                                     </Card>
@@ -341,8 +315,8 @@ export default function Edit({ integrations }: PageProps) {
                                                 </div>
                                                 <Switch
                                                     id="google_enabled"
-                                                    checked={data.google_enabled}
-                                                    onCheckedChange={(checked) => setData('google_enabled', checked)}
+                                                    checked={data.oauth.google.enabled}
+                                                    onCheckedChange={(checked) => setData('oauth.google.enabled', checked)}
                                                 />
                                             </div>
 
@@ -350,11 +324,11 @@ export default function Edit({ integrations }: PageProps) {
                                                 <Label htmlFor="google_client_id">{t('admin.integrations.oauth.client_id')}</Label>
                                                 <Input
                                                     id="google_client_id"
-                                                    value={data.google_client_id}
-                                                    onChange={(e) => setData('google_client_id', e.target.value)}
+                                                    value={data.oauth.google.client_id}
+                                                    onChange={(e) => setData('oauth.google.client_id', e.target.value)}
                                                     placeholder={t('admin.integrations.oauth.client_id_placeholder')}
                                                 />
-                                                <InputError message={errors.google_client_id} />
+                                                <InputError message={errors['oauth.google.client_id']} />
                                             </div>
 
                                             <div className="space-y-2">
@@ -363,8 +337,8 @@ export default function Edit({ integrations }: PageProps) {
                                                     <Input
                                                         id="google_client_secret"
                                                         type={showSecrets.google ? 'text' : 'password'}
-                                                        value={data.google_client_secret}
-                                                        onChange={(e) => setData('google_client_secret', e.target.value)}
+                                                        value={data.oauth.google.client_secret}
+                                                        onChange={(e) => setData('oauth.google.client_secret', e.target.value)}
                                                         placeholder={t('admin.integrations.oauth.client_secret_placeholder')}
                                                     />
                                                     <button
@@ -379,7 +353,7 @@ export default function Edit({ integrations }: PageProps) {
                                                         )}
                                                     </button>
                                                 </div>
-                                                <InputError message={errors.google_client_secret} />
+                                                <InputError message={errors['oauth.google.client_secret']} />
                                             </div>
                                         </CardContent>
                                     </Card>
@@ -407,8 +381,8 @@ export default function Edit({ integrations }: PageProps) {
                                                 </div>
                                                 <Switch
                                                     id="github_enabled"
-                                                    checked={data.github_enabled}
-                                                    onCheckedChange={(checked) => setData('github_enabled', checked)}
+                                                    checked={data.oauth.github.enabled}
+                                                    onCheckedChange={(checked) => setData('oauth.github.enabled', checked)}
                                                 />
                                             </div>
 
@@ -416,11 +390,11 @@ export default function Edit({ integrations }: PageProps) {
                                                 <Label htmlFor="github_client_id">{t('admin.integrations.oauth.client_id')}</Label>
                                                 <Input
                                                     id="github_client_id"
-                                                    value={data.github_client_id}
-                                                    onChange={(e) => setData('github_client_id', e.target.value)}
+                                                    value={data.oauth.github.client_id}
+                                                    onChange={(e) => setData('oauth.github.client_id', e.target.value)}
                                                     placeholder={t('admin.integrations.oauth.client_id_placeholder')}
                                                 />
-                                                <InputError message={errors.github_client_id} />
+                                                <InputError message={errors['oauth.github.client_id']} />
                                             </div>
 
                                             <div className="space-y-2">
@@ -429,8 +403,8 @@ export default function Edit({ integrations }: PageProps) {
                                                     <Input
                                                         id="github_client_secret"
                                                         type={showSecrets.github ? 'text' : 'password'}
-                                                        value={data.github_client_secret}
-                                                        onChange={(e) => setData('github_client_secret', e.target.value)}
+                                                        value={data.oauth.github.client_secret}
+                                                        onChange={(e) => setData('oauth.github.client_secret', e.target.value)}
                                                         placeholder={t('admin.integrations.oauth.client_secret_placeholder')}
                                                     />
                                                     <button
@@ -445,7 +419,7 @@ export default function Edit({ integrations }: PageProps) {
                                                         )}
                                                     </button>
                                                 </div>
-                                                <InputError message={errors.github_client_secret} />
+                                                <InputError message={errors['oauth.github.client_secret']} />
                                             </div>
                                         </CardContent>
                                     </Card>
@@ -473,8 +447,8 @@ export default function Edit({ integrations }: PageProps) {
                                                 </div>
                                                 <Switch
                                                     id="microsoft_enabled"
-                                                    checked={data.microsoft_enabled}
-                                                    onCheckedChange={(checked) => setData('microsoft_enabled', checked)}
+                                                    checked={data.oauth.microsoft.enabled}
+                                                    onCheckedChange={(checked) => setData('oauth.microsoft.enabled', checked)}
                                                 />
                                             </div>
 
@@ -482,11 +456,11 @@ export default function Edit({ integrations }: PageProps) {
                                                 <Label htmlFor="microsoft_client_id">{t('admin.integrations.oauth.client_id')}</Label>
                                                 <Input
                                                     id="microsoft_client_id"
-                                                    value={data.microsoft_client_id}
-                                                    onChange={(e) => setData('microsoft_client_id', e.target.value)}
+                                                    value={data.oauth.microsoft.client_id}
+                                                    onChange={(e) => setData('oauth.microsoft.client_id', e.target.value)}
                                                     placeholder={t('admin.integrations.oauth.client_id_placeholder')}
                                                 />
-                                                <InputError message={errors.microsoft_client_id} />
+                                                <InputError message={errors['oauth.microsoft.client_id']} />
                                             </div>
 
                                             <div className="space-y-2">
@@ -495,8 +469,8 @@ export default function Edit({ integrations }: PageProps) {
                                                     <Input
                                                         id="microsoft_client_secret"
                                                         type={showSecrets.microsoft ? 'text' : 'password'}
-                                                        value={data.microsoft_client_secret}
-                                                        onChange={(e) => setData('microsoft_client_secret', e.target.value)}
+                                                        value={data.oauth.microsoft.client_secret}
+                                                        onChange={(e) => setData('oauth.microsoft.client_secret', e.target.value)}
                                                         placeholder={t('admin.integrations.oauth.client_secret_placeholder')}
                                                     />
                                                     <button
@@ -511,7 +485,7 @@ export default function Edit({ integrations }: PageProps) {
                                                         )}
                                                     </button>
                                                 </div>
-                                                <InputError message={errors.microsoft_client_secret} />
+                                                <InputError message={errors['oauth.microsoft.client_secret']} />
                                             </div>
                                         </CardContent>
                                     </Card>
@@ -541,8 +515,8 @@ export default function Edit({ integrations }: PageProps) {
                                                 </div>
                                                 <Switch
                                                     id="s3_enabled"
-                                                    checked={data.s3_enabled}
-                                                    onCheckedChange={(checked) => setData('s3_enabled', checked)}
+                                                    checked={data.s3.enabled}
+                                                    onCheckedChange={(checked) => setData('s3.enabled', checked)}
                                                 />
                                             </div>
 
@@ -550,12 +524,12 @@ export default function Edit({ integrations }: PageProps) {
                                                 <Label htmlFor="s3_key">{t('admin.integrations.s3.key', 'Access Key ID')}</Label>
                                                 <Input
                                                     id="s3_key"
-                                                    value={data.s3_key}
-                                                    onChange={(e) => setData('s3_key', e.target.value)}
+                                                    value={data.s3.key}
+                                                    onChange={(e) => setData('s3.key', e.target.value)}
                                                     placeholder={t('admin.integrations.s3.key_placeholder', 'AKIAIOSFODNN7EXAMPLE')}
-                                                    disabled={!data.s3_enabled}
+                                                    disabled={!data.s3.enabled}
                                                 />
-                                                <InputError message={errors.s3_key} />
+                                                <InputError message={errors['s3.key']} />
                                             </div>
 
                                             <div className="space-y-2">
@@ -564,19 +538,19 @@ export default function Edit({ integrations }: PageProps) {
                                                     <Input
                                                         id="s3_secret"
                                                         type={showSecrets.s3 ? 'text' : 'password'}
-                                                        value={data.s3_secret}
-                                                        onChange={(e) => setData('s3_secret', e.target.value)}
+                                                        value={data.s3.secret}
+                                                        onChange={(e) => setData('s3.secret', e.target.value)}
                                                         placeholder={t(
                                                             'admin.integrations.s3.secret_placeholder',
                                                             'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
                                                         )}
-                                                        disabled={!data.s3_enabled}
+                                                        disabled={!data.s3.enabled}
                                                     />
                                                     <button
                                                         type="button"
                                                         onClick={() => toggleSecret('s3')}
                                                         className="absolute top-1/2 right-3 -translate-y-1/2"
-                                                        disabled={!data.s3_enabled}
+                                                        disabled={!data.s3.enabled}
                                                     >
                                                         {showSecrets.s3 ? (
                                                             <EyeOff className="h-4 w-4 text-muted-foreground" />
@@ -585,44 +559,44 @@ export default function Edit({ integrations }: PageProps) {
                                                         )}
                                                     </button>
                                                 </div>
-                                                <InputError message={errors.s3_secret} />
+                                                <InputError message={errors['s3.secret']} />
                                             </div>
 
                                             <div className="space-y-2">
                                                 <Label htmlFor="s3_region">{t('admin.integrations.s3.region', 'Region')}</Label>
                                                 <Input
                                                     id="s3_region"
-                                                    value={data.s3_region}
-                                                    onChange={(e) => setData('s3_region', e.target.value)}
+                                                    value={data.s3.region}
+                                                    onChange={(e) => setData('s3.region', e.target.value)}
                                                     placeholder={t('admin.integrations.s3.region_placeholder', 'us-east-1')}
-                                                    disabled={!data.s3_enabled}
+                                                    disabled={!data.s3.enabled}
                                                 />
                                                 <p className="text-xs text-muted-foreground">
                                                     {t('admin.integrations.s3.region_helper', 'The AWS region where your bucket is located')}
                                                 </p>
-                                                <InputError message={errors.s3_region} />
+                                                <InputError message={errors['s3.region']} />
                                             </div>
 
                                             <div className="space-y-2">
                                                 <Label htmlFor="s3_bucket">{t('admin.integrations.s3.bucket', 'Bucket Name')}</Label>
                                                 <Input
                                                     id="s3_bucket"
-                                                    value={data.s3_bucket}
-                                                    onChange={(e) => setData('s3_bucket', e.target.value)}
+                                                    value={data.s3.bucket}
+                                                    onChange={(e) => setData('s3.bucket', e.target.value)}
                                                     placeholder={t('admin.integrations.s3.bucket_placeholder', 'my-bucket')}
-                                                    disabled={!data.s3_enabled}
+                                                    disabled={!data.s3.enabled}
                                                 />
-                                                <InputError message={errors.s3_bucket} />
+                                                <InputError message={errors['s3.bucket']} />
                                             </div>
 
                                             <div className="space-y-2">
                                                 <Label htmlFor="s3_url">{t('admin.integrations.s3.url', 'Url')}</Label>
                                                 <Input
                                                     id="s3_url"
-                                                    value={data.s3_url}
-                                                    onChange={(e) => setData('s3_url', e.target.value)}
+                                                    value={data.s3.url}
+                                                    onChange={(e) => setData('s3.url', e.target.value)}
                                                     placeholder={t('admin.integrations.s3.url_placeholder', 'http://localhost:9000')}
-                                                    disabled={!data.s3_enabled}
+                                                    disabled={!data.s3.enabled}
                                                 />
                                                 <p className="text-xs text-muted-foreground">
                                                     {t(
@@ -630,7 +604,7 @@ export default function Edit({ integrations }: PageProps) {
                                                         'Required for MinIO and other S3-compatible services. Leave empty for AWS S3.',
                                                     )}
                                                 </p>
-                                                <InputError message={errors.s3_url} />
+                                                <InputError message={errors['s3.url']} />
                                             </div>
 
                                             <div className="flex items-center justify-between rounded-lg border p-4">
@@ -647,21 +621,21 @@ export default function Edit({ integrations }: PageProps) {
                                                 </div>
                                                 <Switch
                                                     id="s3_use_path_style_endpoint"
-                                                    checked={data.s3_use_path_style_endpoint}
-                                                    onCheckedChange={(checked) => setData('s3_use_path_style_endpoint', checked)}
-                                                    disabled={!data.s3_enabled}
+                                                    checked={data.s3.use_path_style_endpoint}
+                                                    onCheckedChange={(checked) => setData('s3.use_path_style_endpoint', checked)}
+                                                    disabled={!data.s3.enabled}
                                                 />
                                             </div>
 
-                                            {data.s3_use_path_style_endpoint && (
+                                            {data.s3.use_path_style_endpoint && (
                                                 <div className="space-y-2">
                                                     <Label htmlFor="s3_endpoint">{t('admin.integrations.s3.endpoint', 'Endpoint')}</Label>
                                                     <Input
                                                         id="s3_endpoint"
-                                                        value={data.s3_endpoint}
-                                                        onChange={(e) => setData('s3_endpoint', e.target.value)}
+                                                        value={data.s3.endpoint}
+                                                        onChange={(e) => setData('s3.endpoint', e.target.value)}
                                                         placeholder={t('admin.integrations.s3.endpoint_placeholder', 'http://localhost:9000/bucket-name')}
-                                                        disabled={!data.s3_enabled}
+                                                        disabled={!data.s3.enabled}
                                                     />
                                                     <p className="text-xs text-muted-foreground">
                                                         {t(
@@ -669,7 +643,7 @@ export default function Edit({ integrations }: PageProps) {
                                                             'Public URL for accessing uploaded files. For MinIO: http://localhost:9000/bucket-name',
                                                         )}
                                                     </p>
-                                                    <InputError message={errors.s3_endpoint} />
+                                                    <InputError message={errors['s3.endpoint']} />
                                                 </div>
                                             )}
                                         </CardContent>

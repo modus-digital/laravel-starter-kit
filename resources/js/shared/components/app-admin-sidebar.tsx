@@ -25,6 +25,15 @@ import { AppSearchBar } from './app-search-bar';
 // Routes
 import { dashboard as ApplicationDashboard } from '@/routes';
 import { leave as leaveImpersonation } from '@/routes/impersonate';
+import { index as adminIndex } from '@/routes/admin';
+import { index as usersIndex } from '@/routes/admin/users';
+import { index as rolesIndex } from '@/routes/admin/roles';
+import { index as clientsIndex } from '@/routes/admin/clients';
+import { index as brandingIndex } from '@/routes/admin/branding';
+import { index as activitiesIndex } from '@/routes/admin/activities';
+import { index as translationsIndex } from '@/routes/admin/translations';
+import { index as integrationsIndex } from '@/routes/admin/integrations';
+import { index as mailgunIndex } from '@/routes/admin/mailgun';
 
 export function AppAdminSidebar() {
     const page = usePage<SharedData>();
@@ -119,7 +128,7 @@ export function AppAdminSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href="/admin" prefetch>
+                            <Link href={adminIndex().url} prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>

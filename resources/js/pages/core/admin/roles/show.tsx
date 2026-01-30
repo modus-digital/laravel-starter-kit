@@ -7,6 +7,7 @@ import { Head, router } from '@inertiajs/react';
 import { ArrowLeft, Edit, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
+import { destroy, edit, index, show } from '@/routes/admin/roles';
 
 type Permission = {
     id: string;
@@ -64,7 +65,7 @@ export default function Show({ role, activities }: PageProps) {
 
     const handleDelete = () => {
         if (confirm(t('admin.roles.confirm_delete'))) {
-            router.delete(`/admin/roles/${role.id}`);
+            router.delete(destroy({ role: role.id }).url);
         }
     };
 
@@ -93,7 +94,7 @@ export default function Show({ role, activities }: PageProps) {
                     <div className="flex gap-2">
                         <Button
                             variant="outline"
-                            onClick={() => router.visit(`/admin/roles/${role.id}/edit`)}
+                            onClick={() => router.visit(edit({ role: role.id }).url)}
                         >
                             <Edit className="mr-2 h-4 w-4" />
                             {t('common.actions.edit')}

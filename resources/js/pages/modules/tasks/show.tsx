@@ -153,9 +153,9 @@ export default function Show({ task, statuses = [], activities = [] }: Props) {
     };
 
     const [descriptionContent, setDescriptionContent] = useState<JSONContent | undefined>(parseDescription(task.description));
-    const [descriptionEditorKey, setDescriptionEditorKey] = useState(0);
+    const [descriptionEditorKey, setDescriptionEditorKey] = useState<number>(0);
     const [commentContent, setCommentContent] = useState<JSONContent | undefined>(undefined);
-    const [commentEditorKey, setCommentEditorKey] = useState(0);
+    const [commentEditorKey, setCommentEditorKey] = useState<number>(0);
     // Sync description content when task changes (e.g., after save and Inertia reload)
     useEffect(() => {
         const newContent = parseDescription(task.description);
@@ -463,7 +463,7 @@ export default function Show({ task, statuses = [], activities = [] }: Props) {
                             {/* Footer */}
                             <div className="flex items-center justify-end gap-2 border-t px-6 py-4">
                                 <Button type="button" variant="outline" asChild>
-                                    <Link href="/tasks">Cancel</Link>
+                                    <Link href={tasksRoutes.index().url}>Cancel</Link>
                                 </Button>
                                 <Button type="submit" disabled={processing}>
                                     {processing ? t('tasks.saving') : t('tasks.save')}

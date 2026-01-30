@@ -28,6 +28,7 @@ export default defineConfig({
             '@shared': path.resolve(__dirname, 'resources/js/shared'),
             '@assets': path.resolve(__dirname, 'resources/assets'),
             '@lang': path.resolve(__dirname, 'lang'),
+            '@styles': path.resolve(__dirname, 'resources/css'),
         },
     },
     esbuild: {

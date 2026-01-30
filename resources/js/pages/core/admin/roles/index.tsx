@@ -10,6 +10,7 @@ import { format } from 'date-fns';
 import { Edit, Eye, MoreVertical, Plus, Trash2 } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { create, destroy, edit, index, show } from '@/routes/admin/roles';
 
 type Role = {
     id: string;
@@ -36,7 +37,7 @@ export default function Index({ roles, filters }: PageProps) {
     const handleDelete = (roleId: string, e: React.MouseEvent) => {
         e.stopPropagation();
         if (confirm(t('admin.roles.confirm_delete'))) {
-            router.delete(`/admin/roles/${roleId}`, {
+            router.delete(destroy({ role: roleId }).url, {
                 preserveScroll: true,
             });
         }
@@ -89,7 +90,7 @@ export default function Index({ roles, filters }: PageProps) {
                                     <DropdownMenuItem
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            router.visit(`/admin/roles/${role.id}`);
+                                            router.visit(show({ role: role.id }).url);
                                         }}
                                     >
                                         <Eye className="mr-2 h-4 w-4" />
@@ -98,7 +99,7 @@ export default function Index({ roles, filters }: PageProps) {
                                     <DropdownMenuItem
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            router.visit(`/admin/roles/${role.id}/edit`);
+                                            router.visit(edit({ role: role.id }).url);
                                         }}
                                     >
                                         <Edit className="mr-2 h-4 w-4" />
@@ -143,7 +144,7 @@ export default function Index({ roles, filters }: PageProps) {
                         data={roles}
                         searchColumnIds={['name']}
                         searchPlaceholder={t('admin.roles.search_placeholder')}
-                        onRowClick={(role) => router.visit(`/admin/roles/${role.id}`)}
+                        onRowClick={(role) => router.visit(show({ role: role.id }).url)}
                         enableRowSelection={false}
                     />
                 </div>

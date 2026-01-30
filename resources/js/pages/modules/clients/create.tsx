@@ -8,6 +8,7 @@ import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { create, index, store } from '@/routes/admin/clients';
 
 type PageProps = SharedData & {
     statuses: Record<string, string>;
@@ -34,7 +35,7 @@ export default function Create() {
 
             <div className="space-y-6 px-6 py-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/admin/clients">
+                    <Link href={index().url}>
                         <Button variant="ghost" size="icon">
                             <ArrowLeft className="h-4 w-4" />
                         </Button>
@@ -47,8 +48,7 @@ export default function Create() {
 
                 <div className="rounded-lg border border-border bg-card p-6">
                     <Form
-                        action="/admin/clients"
-                        method="post"
+                        {...store.form()}
                         className="space-y-6"
                     >
                         {({ processing, errors }) => (
@@ -139,7 +139,7 @@ export default function Create() {
                                     <Button type="submit" disabled={processing}>
                                         {processing ? t('admin.clients.creating', 'Creating...') : t('admin.clients.create', 'Create Client')}
                                     </Button>
-                                    <Link href="/admin/clients">
+                                    <Link href={index().url}>
                                         <Button type="button" variant="outline">
                                             {t('admin.clients.cancel', 'Cancel')}
                                         </Button>

@@ -11,6 +11,7 @@ import { format } from 'date-fns';
 import { Edit, Eye, MoreVertical, Plus, RotateCcw, Trash, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { bulkDelete, bulkRestore, create, destroy, edit, forceDelete, index, restore, show } from '@/routes/admin/clients';
 
 type Client = {
     id: string;
@@ -46,7 +47,7 @@ export default function Index() {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('admin.clients.navigation_label', 'Clients'),
-            href: '/admin/clients',
+            href: index().url,
         },
     ];
 
@@ -83,7 +84,7 @@ export default function Index() {
     const handleDelete = (clientId: string, e: React.MouseEvent) => {
         e.stopPropagation();
         if (confirm(t('admin.clients.confirm_delete', 'Are you sure you want to delete this client?'))) {
-            router.delete(`/admin/clients/${clientId}`, {
+            router.delete(destroy({ client: clientId }).url, {
                 preserveScroll: true,
             });
         }
@@ -110,7 +111,7 @@ export default function Index() {
                 ),
             )
         ) {
-            router.delete(`/admin/clients/${clientId}/force`, {
+            router.delete(forceDelete({ client: clientId }).url, {
                 preserveScroll: true,
             });
         }
@@ -120,7 +121,7 @@ export default function Index() {
         const ids = selectedClients.map((c) => c.id);
         if (confirm(t('admin.clients.confirm_bulk_delete', `Are you sure you want to delete ${ids.length} clients?`))) {
             router.post(
-                '/admin/clients/bulk-delete',
+                bulkDelete().url,
                 { ids },
                 {
                     preserveScroll: true,
@@ -132,7 +133,7 @@ export default function Index() {
     const handleBulkRestore = (selectedClients: Client[]) => {
         const ids = selectedClients.map((c) => c.id);
         router.post(
-            '/admin/clients/bulk-restore',
+            bulkRestore().url,
             { ids },
             {
                 preserveScroll: true,
@@ -213,7 +214,7 @@ export default function Index() {
                                     <DropdownMenuItem
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            router.visit(`/admin/clients/${client.id}`);
+                                            router.visit(show({ client: client.id }).url);
                                         }}
                                     >
                                         <Eye className="mr-2 h-4 w-4" />
@@ -224,7 +225,7 @@ export default function Index() {
                                             <DropdownMenuItem
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    router.visit(`/admin/clients/${client.id}/edit`);
+                                                    router.visit(edit({ client: client.id }).url);
                                                 }}
                                             >
                                                 <Edit className="mr-2 h-4 w-4" />
@@ -270,7 +271,7 @@ export default function Index() {
                         <h1 className="text-2xl font-semibold">{t('admin.clients.navigation_label', 'Clients')}</h1>
                         <p className="text-sm text-muted-foreground">{t('admin.clients.description', 'Manage clients')}</p>
                     </div>
-                    <Link href="/admin/clients/create">
+                    <Link href={create().url}>
                         <Button>
                             <Plus className="mr-2 h-4 w-4" />
                             {t('admin.clients.create', 'Create Client')}
@@ -326,7 +327,7 @@ export default function Index() {
                     data={filteredClients}
                     searchColumnIds={['name', 'contact_name', 'contact_email']}
                     searchPlaceholder={t('admin.clients.search_placeholder', 'Search by name, contact...')}
-                    onRowClick={(client) => router.visit(`/admin/clients/${client.id}`)}
+                    onRowClick={(client) => router.visit(show({ client: client.id }).url)}
                     enableRowSelection
                     bulkActionsRender={(selectedClients) => (
                         <>

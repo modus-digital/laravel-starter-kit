@@ -28,7 +28,7 @@ import { TextButtons } from './selectors/text-buttons-selector';
 import { slashCommand, suggestionItems } from './slash-command';
 
 // import styles
-import '../../../../css/text-editor.css';
+import '@styles/text-editor.css';
 
 interface RichTextEditorProps {
     initialContent?: JSONContent;
@@ -48,9 +48,7 @@ const RichTextEditor = ({ initialContent, onUpdate, onSubmit, name, className }:
 
     // Generate a stable key for the editor based on initial content
     // This forces EditorContent to remount when initialContent changes
-    const [editorKey, setEditorKey] = useState(() => 
-        initialContent ? JSON.stringify(initialContent).slice(0, 100) : 'empty'
-    );
+    const [editorKey, setEditorKey] = useState(() => (initialContent ? JSON.stringify(initialContent).slice(0, 100) : 'empty'));
 
     const handleDebouncedUpdate = useDebouncedCallback(async (editor: EditorInstance) => {
         const json = editor.getJSON();
@@ -76,13 +74,7 @@ const RichTextEditor = ({ initialContent, onUpdate, onSubmit, name, className }:
 
     return (
         <EditorRoot>
-            {name && (
-                <input
-                    type="hidden"
-                    name={name}
-                    value={content ? JSON.stringify(content) : ''}
-                />
-            )}
+            {name && <input type="hidden" name={name} value={content ? JSON.stringify(content) : ''} />}
             <EditorContent
                 key={editorKey}
                 initialContent={initialContent}

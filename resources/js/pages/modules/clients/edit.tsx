@@ -8,6 +8,7 @@ import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { edit, index, show, update } from '@/routes/admin/clients';
 
 type Client = {
     id: string;
@@ -34,15 +35,15 @@ export default function Edit() {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('admin.clients.navigation_label', 'Clients'),
-            href: '/admin/clients',
+            href: index().url,
         },
         {
             title: client.name,
-            href: `/admin/clients/${client.id}`,
+            href: show({ client: client.id }).url,
         },
         {
             title: t('admin.clients.edit', 'Edit'),
-            href: `/admin/clients/${client.id}/edit`,
+            href: edit({ client: client.id }).url,
         },
     ];
 
@@ -65,8 +66,7 @@ export default function Edit() {
 
                 <div className="rounded-lg border border-border bg-card p-6">
                     <Form
-                        action={`/admin/clients/${client.id}`}
-                        method="put"
+                        {...update.form({ client: client.id })}
                         className="space-y-6"
                     >
                         {({ processing, errors }) => (
@@ -157,7 +157,7 @@ export default function Edit() {
                                     <Button type="submit" disabled={processing}>
                                         {processing ? t('admin.clients.updating', 'Updating...') : t('admin.clients.update', 'Update Client')}
                                     </Button>
-                                    <Link href={`/admin/clients/${client.id}`}>
+                                    <Link href={show({ client: client.id }).url}>
                                         <Button type="button" variant="outline">
                                             {t('admin.clients.cancel', 'Cancel')}
                                         </Button>

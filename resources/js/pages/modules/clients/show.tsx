@@ -10,6 +10,7 @@ import { ArrowLeft, Edit, Trash2, RotateCcw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { useState } from 'react';
+import { destroy, edit, forceDelete, index, restore, show } from '@/routes/admin/clients';
 
 type Client = {
     id: string;
@@ -89,16 +90,16 @@ export default function Show() {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('admin.clients.navigation_label', 'Clients'),
-            href: '/admin/clients',
+            href: index().url,
         },
         {
             title: client.name,
-            href: `/admin/clients/${client.id}`,
+            href: show({ client: client.id }).url,
         },
     ];
 
     const handleDelete = () => {
-        router.delete(`/admin/clients/${client.id}`, {
+        router.delete(destroy({ client: client.id }).url, {
             preserveScroll: true,
         });
     };
@@ -110,7 +111,7 @@ export default function Show() {
     };
 
     const handleForceDelete = () => {
-        router.delete(`/admin/clients/${client.id}/force`, {
+        router.delete(forceDelete({ client: client.id }).url, {
             preserveScroll: true,
         });
     };
@@ -135,7 +136,7 @@ export default function Show() {
             <div className="space-y-6 px-6 py-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
-                        <Link href="/admin/clients">
+                        <Link href={index().url}>
                             <Button variant="ghost" size="icon">
                                 <ArrowLeft className="h-4 w-4" />
                             </Button>
@@ -148,7 +149,7 @@ export default function Show() {
                     <div className="flex items-center gap-2">
                         {!client.deleted_at && (
                             <>
-                                <Link href={`/admin/clients/${client.id}/edit`}>
+                                <Link href={edit({ client: client.id }).url}>
                                     <Button variant="outline">
                                         <Edit className="mr-2 h-4 w-4" />
                                         {t('admin.clients.edit', 'Edit')}

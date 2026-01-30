@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ApiTokenController from '@/actions/App/Http/Controllers/Settings/ApiTokenController';
+import { destroy, index } from '@/routes/api-tokens';
 import HeadingSmall from '@/shared/components/heading-small';
 import InputError from '@/shared/components/input-error';
 import { Alert, AlertDescription, AlertTitle } from '@/shared/components/ui/alert';
@@ -49,7 +50,7 @@ export default function ApiTokens({
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('settings.api_tokens.page_title'),
-            href: '/settings/api-tokens',
+            href: index().url,
         },
     ];
 

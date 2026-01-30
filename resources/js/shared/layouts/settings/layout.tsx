@@ -3,6 +3,7 @@ import { Button } from '@/shared/components/ui/button';
 import { Separator } from '@/shared/components/ui/separator';
 import { cn, isSameUrl, resolveUrl } from '@/shared/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
+import { index } from '@/routes/api-tokens';
 import { preferences as notificationsPreferences } from '@/routes/notifications';
 import { edit } from '@/routes/profile';
 import { show } from '@/routes/two-factor';
@@ -53,7 +54,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
             ? [
                   {
                       title: t('settings.sidebar.items.api_tokens'),
-                      href: '/settings/api-tokens',
+                      href: index().url,
                       icon: null,
                       group: t('settings.sidebar.groups.security'),
                   },

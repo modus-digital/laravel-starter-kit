@@ -1,6 +1,6 @@
+import { dashboard } from '@/routes';
 import { PlaceholderPattern } from '@/shared/components/ui/placeholder-pattern';
 import AppLayout from '@/shared/layouts/app-layout';
-import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';

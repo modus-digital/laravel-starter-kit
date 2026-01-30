@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import { Edit, Eye, MoreVertical, Plus, RotateCcw, Trash, Trash2, User } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { bulkDelete, bulkRestore, create, destroy, edit, forceDelete, impersonate, index, restore, show } from '@/routes/admin/users';
 
 type User = {
     id: string;
@@ -49,7 +50,7 @@ export default function Index({ users, filters, roles, statuses }: PageProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         {
             title: t('admin.users.navigation_label', 'Users'),
-            href: '/admin/users',
+            href: index().url,
         },
     ];
 
@@ -86,7 +87,7 @@ export default function Index({ users, filters, roles, statuses }: PageProps) {
     const handleDelete = (userId: string, e: React.MouseEvent) => {
         e.stopPropagation();
         if (confirm(t('admin.users.confirm_delete', 'Are you sure you want to delete this user?'))) {
-            router.delete(`/admin/users/${userId}`, {
+            router.delete(destroy({ user: userId }).url, {
                 preserveScroll: true,
             });
         }
@@ -95,7 +96,7 @@ export default function Index({ users, filters, roles, statuses }: PageProps) {
     const handleRestore = (userId: string, e: React.MouseEvent) => {
         e.stopPropagation();
         router.post(
-            `/admin/users/${userId}/restore`,
+            restore({ user: userId }).url,
             {},
             {
                 preserveScroll: true,
@@ -106,7 +107,7 @@ export default function Index({ users, filters, roles, statuses }: PageProps) {
     const handleForceDelete = (userId: string, e: React.MouseEvent) => {
         e.stopPropagation();
         if (confirm(t('admin.users.confirm_force_delete', 'Are you sure you want to permanently delete this user? This action cannot be undone.'))) {
-            router.delete(`/admin/users/${userId}/force`, {
+            router.delete(forceDelete({ user: userId }).url, {
                 preserveScroll: true,
             });
         }
@@ -116,7 +117,7 @@ export default function Index({ users, filters, roles, statuses }: PageProps) {
         const ids = selectedUsers.map((u) => u.id);
         if (confirm(t('admin.users.confirm_bulk_delete', `Are you sure you want to delete ${ids.length} users?`))) {
             router.post(
-                '/admin/users/bulk-delete',
+                bulkDelete().url,
                 { ids },
                 {
                     preserveScroll: true,
@@ -128,7 +129,7 @@ export default function Index({ users, filters, roles, statuses }: PageProps) {
     const handleBulkRestore = (selectedUsers: User[]) => {
         const ids = selectedUsers.map((u) => u.id);
         router.post(
-            '/admin/users/bulk-restore',
+            bulkRestore().url,
             { ids },
             {
                 preserveScroll: true,
@@ -212,7 +213,7 @@ export default function Index({ users, filters, roles, statuses }: PageProps) {
                                     <DropdownMenuItem
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            router.visit(`/admin/users/${user.id}`);
+                                            router.visit(show({ user: user.id }).url);
                                         }}
                                     >
                                         <Eye className="mr-2 h-4 w-4" />
@@ -223,7 +224,7 @@ export default function Index({ users, filters, roles, statuses }: PageProps) {
                                             <DropdownMenuItem
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    router.post(`/admin/users/${user.id}/impersonate`);
+                                                    router.post(impersonate({ targetUser: user.id }).url);
                                                 }}
                                             >
                                                 <User className="mr-2 h-4 w-4" />
@@ -232,7 +233,7 @@ export default function Index({ users, filters, roles, statuses }: PageProps) {
                                             <DropdownMenuItem
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    router.visit(`/admin/users/${user.id}/edit`);
+                                                    router.visit(edit({ user: user.id }).url);
                                                 }}
                                             >
                                                 <Edit className="mr-2 h-4 w-4" />
@@ -278,7 +279,7 @@ export default function Index({ users, filters, roles, statuses }: PageProps) {
                         <h1 className="text-2xl font-semibold">{t('admin.users.navigation_label', 'Users')}</h1>
                         <p className="text-sm text-muted-foreground">{t('admin.users.description', 'Manage system users')}</p>
                     </div>
-                    <Link href="/admin/users/create">
+                    <Link href={create().url}>
                         <Button>
                             <Plus className="mr-2 h-4 w-4" />
                             {t('admin.users.create', 'Create User')}
@@ -334,7 +335,7 @@ export default function Index({ users, filters, roles, statuses }: PageProps) {
                     data={filteredUsers}
                     searchColumnIds={['name', 'email']}
                     searchPlaceholder={t('admin.users.search_placeholder', 'Search by name or email...')}
-                    onRowClick={(user) => router.visit(`/admin/users/${user.id}`)}
+                    onRowClick={(user) => router.visit(show({ user: user.id }).url)}
                     enableRowSelection
                     bulkActionsRender={(selectedUsers) => (
                         <>

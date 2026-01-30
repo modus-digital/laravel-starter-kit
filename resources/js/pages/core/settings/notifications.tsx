@@ -13,6 +13,7 @@ import { Bell } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { preferences, update } from '@/routes/notifications';
 
 type DeliveryMethod = 'none' | 'email' | 'push' | 'email_push';
 
@@ -117,7 +118,7 @@ export default function NotificationsSettings({ preferences }: NotificationsSett
         setProcessing(true);
 
         router.put(
-            '/settings/notifications',
+            update().url,
             { notifications: settings },
             {
                 preserveScroll: true,
