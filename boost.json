@@ -1,6 +1,18 @@
 {
-    "agents": ["cursor"],
-    "editors": ["cursor"],
-    "guidelines": ["filament/filament", "laravel/fortify"],
-    "herd_mcp": true
+    "agents": [
+        "cursor"
+    ],
+    "herd_mcp": true,
+    "mcp": true,
+    "packages": [
+        "laravel/fortify"
+    ],
+    "sail": false,
+    "skills": [
+        "wayfinder-development",
+        "pest-testing",
+        "inertia-react-development",
+        "tailwindcss-development",
+        "developing-with-fortify"
+    ]
 }
