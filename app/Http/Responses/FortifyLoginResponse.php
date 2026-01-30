@@ -59,7 +59,7 @@ final class FortifyLoginResponse implements Responsable
         }
 
         if ($user && $user->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL)) {
-            return Inertia::location(url: route('filament.control.pages.dashboard'));
+            return Inertia::location(url: route('admin.index'));
         }
 
         return Inertia::location(url: route('dashboard'));
