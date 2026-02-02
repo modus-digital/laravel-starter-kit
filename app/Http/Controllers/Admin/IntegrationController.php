@@ -102,7 +102,7 @@ final class IntegrationController extends Controller
         Activity::inLog('administration')
             ->event('integrations.updated')
             ->causedBy(Auth::user())
-            ->log('');
+            ->log('activity.integrations.updated');
 
         return redirect()->route('admin.integrations.edit')
             ->with('success', __('admin.integrations.updated_successfully'));

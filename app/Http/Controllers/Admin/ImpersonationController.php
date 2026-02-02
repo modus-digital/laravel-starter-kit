@@ -47,7 +47,7 @@ final class ImpersonationController extends Controller
                         : null,
                 ],
             ])
-            ->log('');
+            ->log('activity.impersonate.start');
 
         return redirect()->route('dashboard');
     }
@@ -82,7 +82,7 @@ final class ImpersonationController extends Controller
             ->withProperties([
                 'target' => $currentUser->name,
             ])
-            ->log('');
+            ->log('activity.impersonate.leave');
 
         return redirect()->route('admin.users.index');
     }

@@ -128,7 +128,7 @@ final class TaskService
                     'name' => $taskView->name,
                 ],
             ])
-            ->log('Task view created');
+            ->log('activity.tasks.views.created');
 
         return $taskView;
     }
@@ -156,7 +156,7 @@ final class TaskService
                     'new_name' => $taskView->name,
                 ],
             ])
-            ->log('Task view renamed');
+            ->log('activity.tasks.views.renamed');
 
         return $taskView;
     }
@@ -188,7 +188,7 @@ final class TaskService
                     'status_count' => count($statusIds),
                 ],
             ])
-            ->log('Task view statuses updated');
+            ->log('activity.tasks.views.statuses_updated');
 
         return $taskView;
     }
@@ -219,7 +219,7 @@ final class TaskService
                     'name' => $taskView->name,
                 ],
             ])
-            ->log('Task view set as default');
+            ->log('activity.tasks.views.set_default');
     }
 
     /**
@@ -242,7 +242,7 @@ final class TaskService
             ->withProperties([
                 'task_view' => $taskViewData,
             ])
-            ->log('Task view deleted');
+            ->log('activity.tasks.views.deleted');
     }
 
     public function updateTaskView(TaskView $taskView, string $name, TaskViewType $type): TaskView
@@ -263,7 +263,7 @@ final class TaskService
                     'type' => $taskView->type,
                 ],
             ])
-            ->log('Task view updated');
+            ->log('activity.tasks.views.updated');
 
         return $taskView;
     }
@@ -370,7 +370,7 @@ final class TaskService
                     'taskable_id' => $task->taskable_id,
                 ],
             ])
-            ->log('Task created');
+            ->log('activity.tasks.created');
 
         // Dispatch TaskAssigned event if task is assigned
         if ($task->assignedTo !== null) {
@@ -581,7 +581,7 @@ final class TaskService
             ->withProperties([
                 'task' => $taskData,
             ])
-            ->log('Task deleted');
+            ->log('activity.tasks.deleted');
     }
 
     /**
@@ -814,7 +814,7 @@ final class TaskService
             ->causedBy($user)
             ->performedOn($task)
             ->withProperties($properties)
-            ->log('Task field changed');
+            ->log('activity.'.$change['event']);
     }
 
     /**

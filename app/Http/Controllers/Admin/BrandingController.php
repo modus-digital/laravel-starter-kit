@@ -83,7 +83,7 @@ final class BrandingController extends Controller
         Activity::inLog('administration')
             ->event('branding.updated')
             ->causedBy(Auth::user())
-            ->log('');
+            ->log('activity.branding.updated');
 
         // Clear branding cache to regenerate color scales with new values
         app(BrandingService::class)->clearCache();

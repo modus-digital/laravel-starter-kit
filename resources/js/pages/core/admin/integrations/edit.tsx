@@ -1,3 +1,4 @@
+import { update } from '@/routes/admin/integrations';
 import InputError from '@/shared/components/input-error';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card';
@@ -9,10 +10,9 @@ import AdminLayout from '@/shared/layouts/admin/layout';
 import { cn } from '@/shared/lib/utils';
 import { type SharedData } from '@/types';
 import { Head, router, useForm } from '@inertiajs/react';
-import { BarChart3, CheckCircle2, Cloud, Eye, EyeOff, Loader2, Users, XCircle } from 'lucide-react';
+import { BarChart3, Cloud, Eye, EyeOff, Users } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { update } from '@/routes/admin/integrations';
 
 type Integrations = {
     mailgun: {
@@ -173,10 +173,10 @@ export default function Edit({ integrations }: PageProps) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         // Only submit fields for the active section
         let sectionData: Record<string, any> = {};
-        
+
         switch (activeSection) {
             case 'mailgun':
                 sectionData = { mailgun: data.mailgun };
@@ -194,7 +194,7 @@ export default function Edit({ integrations }: PageProps) {
                 sectionData = { s3: data.s3 };
                 break;
         }
-        
+
         router.put(update().url, sectionData, {
             preserveScroll: true,
         });
@@ -634,7 +634,10 @@ export default function Edit({ integrations }: PageProps) {
                                                         id="s3_endpoint"
                                                         value={data.s3.endpoint}
                                                         onChange={(e) => setData('s3.endpoint', e.target.value)}
-                                                        placeholder={t('admin.integrations.s3.endpoint_placeholder', 'http://localhost:9000/bucket-name')}
+                                                        placeholder={t(
+                                                            'admin.integrations.s3.endpoint_placeholder',
+                                                            'http://localhost:9000/bucket-name',
+                                                        )}
                                                         disabled={!data.s3.enabled}
                                                     />
                                                     <p className="text-xs text-muted-foreground">
@@ -653,7 +656,7 @@ export default function Edit({ integrations }: PageProps) {
 
                             <div className="flex justify-end">
                                 <Button type="submit" disabled={processing}>
-                                    {processing ? t('common.saving') : t('common.actions.save')}
+                                    {processing ? t('common.status.saving') : t('common.actions.save')}
                                 </Button>
                             </div>
                         </form>

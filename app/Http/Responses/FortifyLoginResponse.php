@@ -37,7 +37,7 @@ final class FortifyLoginResponse implements Responsable
                     'guard' => $request->guard,
                     'remember' => $request->remember,
                 ])
-                ->log('');
+                ->log('activity.auth.login');
 
             // Check if this is a new device/login
             $sessionKey = 'last_login_device_'.$user->id;

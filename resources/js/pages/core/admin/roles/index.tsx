@@ -47,12 +47,12 @@ export default function Index({ roles, filters }: PageProps) {
         () => [
             {
                 accessorKey: 'name',
-                header: t('admin.roles.table.name'),
+                header: t('common.labels.name'),
                 cell: ({ row }) => <Badge variant="outline">{t(`enums.rbac.role.${row.original.name}` as never)}</Badge>,
             },
             {
                 accessorKey: 'guard_name',
-                header: t('admin.roles.table.guard_name'),
+                header: t('admin.roles.form.guard_name'),
                 cell: ({ row }) => row.original.guard_name,
             },
             {
@@ -67,7 +67,7 @@ export default function Index({ roles, filters }: PageProps) {
             },
             {
                 accessorKey: 'created_at',
-                header: t('admin.roles.table.created_at'),
+                header: t('common.labels.created_at'),
                 cell: ({ row }) => format(new Date(row.original.created_at), 'MMM d, yyyy'),
             },
             {

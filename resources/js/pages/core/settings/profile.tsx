@@ -104,7 +104,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                         {({ processing, recentlySuccessful, errors }) => (
                             <>
                                 <div className="grid gap-2">
-                                    <Label htmlFor="name">{t('settings.profile.name')}</Label>
+                                    <Label htmlFor="name">{t('common.labels.name')}</Label>
 
                                     <Input
                                         id="name"
@@ -120,7 +120,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                 </div>
 
                                 <div className="grid gap-2">
-                                    <Label htmlFor="email">{t('settings.profile.email')}</Label>
+                                    <Label htmlFor="email">{t('common.labels.email')}</Label>
 
                                     <Input
                                         id="email"
@@ -157,7 +157,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
                                 <div className="flex items-center gap-4">
                                     <Button disabled={processing} data-test="update-profile-button">
-                                        {t('settings.profile.save')}
+                                        {t('common.actions.save')}
                                     </Button>
 
                                     <Transition
@@ -167,7 +167,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                         leave="transition ease-in-out"
                                         leaveTo="opacity-0"
                                     >
-                                        <p className="text-sm text-neutral-600">{t('settings.profile.saved')}</p>
+                                        <p className="text-sm text-neutral-600">{t('common.status.saved')}</p>
                                     </Transition>
                                 </div>
                             </>
@@ -205,14 +205,14 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
                             <DialogFooter>
                                 <Button variant="outline" onClick={() => setIsAvatarModalOpen(false)} type="button">
-                                    {t('settings.profile.cancel')}
+                                    {t('common.actions.cancel')}
                                 </Button>
                                 <Button
                                     onClick={handleAvatarUpload}
                                     disabled={avatarFile.length === 0 || isUploadingAvatar}
                                     type="button"
                                 >
-                                    {isUploadingAvatar ? t('settings.profile.uploading') : t('settings.profile.upload')}
+                                    {isUploadingAvatar ? t('common.status.uploading') : t('common.actions.upload')}
                                 </Button>
                             </DialogFooter>
                         </DialogContent>

@@ -226,7 +226,7 @@ final class UserController extends Controller
                         : null,
                 ],
             ])
-            ->log('');
+            ->log('activity.user.deleted');
 
         return redirect()->route('admin.users.index')
             ->with('success', __('admin.users.deleted_successfully'));
@@ -252,7 +252,7 @@ final class UserController extends Controller
                         : null,
                 ],
             ])
-            ->log('');
+            ->log('activity.user.restored');
 
         return redirect()->route('admin.users.show', $user)
             ->with('success', __('admin.users.restored_successfully'));
@@ -283,7 +283,7 @@ final class UserController extends Controller
                 'count' => $count,
                 'user_ids' => $request->ids,
             ])
-            ->log('');
+            ->log('activity.user.bulk_deleted');
 
         return redirect()->route('admin.users.index')
             ->with('success', __('admin.users.bulk_deleted', ['count' => $count]));
@@ -305,7 +305,7 @@ final class UserController extends Controller
                 'count' => $count,
                 'user_ids' => $request->ids,
             ])
-            ->log('');
+            ->log('activity.user.bulk_restored');
 
         return redirect()->route('admin.users.index')
             ->with('success', __('admin.users.bulk_restored', ['count' => $count]));

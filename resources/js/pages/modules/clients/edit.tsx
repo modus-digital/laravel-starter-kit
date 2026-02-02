@@ -76,16 +76,16 @@ export default function Edit() {
                                         <h3 className="mb-4 text-lg font-medium">{t('admin.clients.form.base.title', 'Basic Information')}</h3>
                                         <div className="grid gap-6 md:grid-cols-2">
                                             <div className="space-y-2">
-                                                <Label htmlFor="name">{t('admin.clients.form.base.name', 'Name')}</Label>
+                                                <Label htmlFor="name">{t('common.labels.name')}</Label>
                                                 <Input id="name" name="name" defaultValue={client.name} />
                                                 <InputError message={errors.name} />
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label htmlFor="status">{t('admin.clients.form.base.status', 'Status')}</Label>
+                                                <Label htmlFor="status">{t('common.labels.status')}</Label>
                                                 <Select name="status" defaultValue={client.status}>
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder={t('admin.clients.select_status', 'Select a status')} />
+                                                        <SelectValue placeholder={t('admin.clients.select_status')} />
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {Object.entries(statuses).map(([value, label]) => (
@@ -124,28 +124,28 @@ export default function Edit() {
                                     </div>
 
                                     <div>
-                                        <h3 className="mb-4 text-lg font-medium">{t('admin.clients.form.location.title', 'Location')}</h3>
+                                        <h3 className="mb-4 text-lg font-medium">{t('admin.clients.form.location.title')}</h3>
                                         <div className="grid gap-6 md:grid-cols-4">
                                             <div className="space-y-2 md:col-span-3">
-                                                <Label htmlFor="address">{t('admin.clients.form.location.address', 'Address')}</Label>
+                                                <Label htmlFor="address">{t('common.labels.address')}</Label>
                                                 <Input id="address" name="address" defaultValue={client.address || ''} />
                                                 <InputError message={errors.address} />
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label htmlFor="postal_code">{t('admin.clients.form.location.postal_code', 'Postal Code')}</Label>
+                                                <Label htmlFor="postal_code">{t('common.labels.postal_code')}</Label>
                                                 <Input id="postal_code" name="postal_code" defaultValue={client.postal_code || ''} />
                                                 <InputError message={errors.postal_code} />
                                             </div>
 
                                             <div className="space-y-2 md:col-span-2">
-                                                <Label htmlFor="city">{t('admin.clients.form.location.city', 'City')}</Label>
+                                                <Label htmlFor="city">{t('common.labels.city')}</Label>
                                                 <Input id="city" name="city" defaultValue={client.city || ''} />
                                                 <InputError message={errors.city} />
                                             </div>
 
                                             <div className="space-y-2 md:col-span-2">
-                                                <Label htmlFor="country">{t('admin.clients.form.location.country', 'Country')}</Label>
+                                                <Label htmlFor="country">{t('common.labels.country')}</Label>
                                                 <Input id="country" name="country" defaultValue={client.country || ''} />
                                                 <InputError message={errors.country} />
                                             </div>
@@ -155,11 +155,11 @@ export default function Edit() {
 
                                 <div className="flex items-center gap-4">
                                     <Button type="submit" disabled={processing}>
-                                        {processing ? t('admin.clients.updating', 'Updating...') : t('admin.clients.update', 'Update Client')}
+                                        {processing ? t('common.status.saving') : t('common.actions.save')}
                                     </Button>
                                     <Link href={show({ client: client.id }).url}>
                                         <Button type="button" variant="outline">
-                                            {t('admin.clients.cancel', 'Cancel')}
+                                            {t('common.actions.cancel')}
                                         </Button>
                                     </Link>
                                 </div>

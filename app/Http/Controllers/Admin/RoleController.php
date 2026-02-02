@@ -93,7 +93,7 @@ final class RoleController extends Controller
                     'name' => $role->name,
                 ],
             ])
-            ->log('');
+            ->log('activity.rbac.role.created');
 
         return redirect()->route('admin.roles.show', $role)
             ->with('success', __('admin.roles.created_successfully'));
@@ -180,7 +180,7 @@ final class RoleController extends Controller
                     'name' => $role->name,
                 ],
             ])
-            ->log('');
+            ->log('activity.rbac.role.updated');
 
         return redirect()->route('admin.roles.show', $role)
             ->with('success', __('admin.roles.updated_successfully'));
@@ -204,7 +204,7 @@ final class RoleController extends Controller
                     'name' => $role->name,
                 ],
             ])
-            ->log('');
+            ->log('activity.rbac.role.deleted');
 
         $role->delete();
 

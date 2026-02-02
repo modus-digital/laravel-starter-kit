@@ -1,7 +1,9 @@
 {
     "agents": [
-        "cursor"
+        "cursor",
+        "claude_code"
     ],
+    "guidelines": true,
     "herd_mcp": true,
     "mcp": true,
     "packages": [

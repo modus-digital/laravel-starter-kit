@@ -106,7 +106,7 @@ export default function Index({ activities, filters, logNames }: PageProps) {
             },
             {
                 accessorKey: 'created_at',
-                header: t('admin.activities.table.created_at'),
+                header: t('common.labels.created_at'),
                 cell: ({ row }) => format(new Date(row.original.created_at), 'MMM d, yyyy HH:mm'),
             },
         ],

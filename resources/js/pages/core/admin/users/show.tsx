@@ -1,3 +1,4 @@
+import { destroy, edit, forceDelete, index, restore, show } from '@/routes/admin/users';
 import { ConfirmDialog } from '@/shared/components/confirm-dialog';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
@@ -10,7 +11,6 @@ import { format } from 'date-fns';
 import { ArrowLeft, Edit, RotateCcw, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { destroy, edit, forceDelete, index, restore, show } from '@/routes/admin/users';
 
 type User = {
     id: string;
@@ -172,16 +172,16 @@ export default function Show() {
                                 <div className="rounded-lg border bg-card p-6">
                                     <h2 className="mb-4 text-lg font-semibold">{t('admin.users.details', 'Details')}</h2>
                                     <dl className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3">
-                                        <dt className="text-sm font-medium text-muted-foreground">{t('admin.users.name', 'Name')}</dt>
+                                        <dt className="text-sm font-medium text-muted-foreground">{t('common.labels.name')}</dt>
                                         <dd className="text-sm">{user.name}</dd>
 
                                         <dt className="text-sm font-medium text-muted-foreground">{t('admin.users.email', 'Email')}</dt>
                                         <dd className="text-sm">{user.email}</dd>
 
-                                        <dt className="text-sm font-medium text-muted-foreground">{t('admin.users.phone', 'Phone')}</dt>
+                                        <dt className="text-sm font-medium text-muted-foreground">{t('common.labels.phone')}</dt>
                                         <dd className="text-sm">{user.phone ?? t('admin.users.phone_not_set', 'Not set')}</dd>
 
-                                        <dt className="text-sm font-medium text-muted-foreground">{t('admin.users.status', 'Status')}</dt>
+                                        <dt className="text-sm font-medium text-muted-foreground">{t('common.labels.status')}</dt>
                                         <dd className="text-sm">
                                             <Badge variant={getStatusColor(user.status)}>{user.status}</Badge>
                                         </dd>
@@ -191,14 +191,10 @@ export default function Show() {
                                 <div className="rounded-lg border bg-card p-6">
                                     <h2 className="mb-4 text-lg font-semibold">{t('admin.users.metadata', 'Metadata')}</h2>
                                     <dl className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-3">
-                                        <dt className="text-sm font-medium text-muted-foreground">
-                                            {t('admin.users.metadata.created_at', 'Created At')}
-                                        </dt>
+                                        <dt className="text-sm font-medium text-muted-foreground">{t('common.labels.created_at')}</dt>
                                         <dd className="text-sm">{format(new Date(user.created_at), 'EEEE d MMMM yyyy, HH:mm')}</dd>
 
-                                        <dt className="text-sm font-medium text-muted-foreground">
-                                            {t('admin.users.metadata.updated_at', 'Updated At')}
-                                        </dt>
+                                        <dt className="text-sm font-medium text-muted-foreground">{t('common.labels.updated_at')}</dt>
                                         <dd className="text-sm">{format(new Date(user.updated_at), 'EEEE d MMMM yyyy, HH:mm')}</dd>
                                     </dl>
                                 </div>
@@ -210,7 +206,7 @@ export default function Show() {
                                     <dt className="text-sm font-medium text-muted-foreground">{t('admin.users.security.provider', 'Provider')}</dt>
                                     <dd className="text-sm">{user.provider}</dd>
 
-                                    <dt className="text-sm font-medium text-muted-foreground">{t('admin.users.security.role', 'Role')}</dt>
+                                    <dt className="text-sm font-medium text-muted-foreground">{t('common.labels.role')}</dt>
                                     <dd className="text-sm">
                                         {user.roles?.length && user.roles.length > 0 ? user.roles?.map((role) => role.name).join(', ') : '-'}
                                     </dd>
@@ -235,7 +231,7 @@ export default function Show() {
                                     <TableRow>
                                         <TableHead>{t('admin.users.activity.description', 'Description')}</TableHead>
                                         <TableHead>{t('admin.users.activity.causer', 'Causer')}</TableHead>
-                                        <TableHead>{t('admin.users.activity.created_at', 'Created At')}</TableHead>
+                                        <TableHead>{t('common.labels.created_at')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -277,7 +273,7 @@ export default function Show() {
                     title={t('admin.users.confirm_delete_title', 'Delete User')}
                     description={t('admin.users.confirm_delete', 'Are you sure you want to delete this user?')}
                     confirmText={t('admin.users.delete', 'Delete')}
-                    cancelText={t('admin.users.cancel', 'Cancel')}
+                    cancelText={t('common.actions.cancel')}
                     variant="destructive"
                 />
 
@@ -291,7 +287,7 @@ export default function Show() {
                         'Are you sure you want to permanently delete this user? This action cannot be undone.',
                     )}
                     confirmText={t('admin.users.force_delete', 'Force Delete')}
-                    cancelText={t('admin.users.cancel', 'Cancel')}
+                    cancelText={t('common.actions.cancel')}
                     variant="destructive"
                 />
             </div>

@@ -1,11 +1,131 @@
 {
+    "common": {
+        "saving": "Saving...",
+        "saved": "Saved",
+        "labels": {
+            "name": "Name",
+            "email": "Email",
+            "email_address": "Email address",
+            "phone": "Phone",
+            "password": "Password",
+            "status": "Status",
+            "role": "Role",
+            "roles": "Roles",
+            "permissions": "Permissions",
+            "users": "Users",
+            "clients": "Clients",
+            "description": "Description",
+            "title": "Title",
+            "type": "Type",
+            "priority": "Priority",
+            "address": "Address",
+            "city": "City",
+            "country": "Country",
+            "postal_code": "Postal Code",
+            "created_at": "Created At",
+            "updated_at": "Updated At",
+            "last_used": "Last Used",
+            "date": "Date",
+            "event": "Event",
+            "subject": "Subject",
+            "count": "Count",
+            "actions": "Actions",
+            "yes": "Yes",
+            "no": "No",
+            "or": "or",
+            "and": "and",
+            "all": "All",
+            "none": "None",
+            "enabled": "Enabled",
+            "disabled": "Disabled",
+            "active": "Active",
+            "inactive": "Inactive",
+            "never": "Never"
+        },
+        "actions": {
+            "create": "Create",
+            "edit": "Edit",
+            "delete": "Delete",
+            "view": "View",
+            "save": "Save",
+            "cancel": "Cancel",
+            "back": "Back",
+            "submit": "Submit",
+            "confirm": "Confirm",
+            "close": "Close",
+            "search": "Search",
+            "filter": "Filter",
+            "clear": "Clear",
+            "refresh": "Refresh",
+            "upload": "Upload",
+            "download": "Download",
+            "copy": "Copy",
+            "copied": "Copied",
+            "restore": "Restore",
+            "show": "Show",
+            "hide": "Hide",
+            "continue": "Continue",
+            "settings": "Settings",
+            "logout": "Log out",
+            "login": "Log in",
+            "register": "Register"
+        },
+        "status": {
+            "saving": "Saving...",
+            "saved": "Saved",
+            "loading": "Loading...",
+            "processing": "Processing...",
+            "uploading": "Uploading...",
+            "success": "Success",
+            "error": "Error",
+            "pending": "Pending"
+        },
+        "table": {
+            "showing": "Showing",
+            "of": "of",
+            "results": "results",
+            "no_results": "No results found.",
+            "select_all": "Select all",
+            "select_row": "Select row",
+            "empty": "No data available."
+        },
+        "search": {
+            "placeholder": "Search...",
+            "type_to_search": "Type to search...",
+            "no_results": "No results found."
+        },
+        "theme": {
+            "toggle": "Toggle theme",
+            "light": "Light",
+            "dark": "Dark",
+            "system": "System"
+        },
+        "messages": {
+            "success": "Operation completed successfully.",
+            "error": "An error occurred.",
+            "confirm_delete": "Are you sure you want to delete this item?",
+            "unsaved_changes": "You have unsaved changes.",
+            "required_field": "This field is required."
+        },
+        "pagination": {
+            "previous": "Previous",
+            "next": "Next",
+            "first": "First",
+            "last": "Last"
+        },
+        "time": {
+            "just_now": "Just now",
+            "minutes_ago": ":count minute ago",
+            "minutes_ago_plural": ":count minutes ago",
+            "hours_ago": ":count hour ago",
+            "hours_ago_plural": ":count hours ago",
+            "days_ago": ":count day ago",
+            "days_ago_plural": ":count days ago"
+        }
+    },
     "auth": {
         "social": {
             "login_with": "Login with :provider"
-        },
-        "actions": {
-            "login": "Log in",
-            "register": "Register"
         },
         "failed": "These credentials do not match our records.",
         "password": "The provided password is incorrect.",
@@ -20,25 +140,26 @@
                 "title": "Log in to your account",
                 "description": "Enter your email and password below to log in",
                 "page_title": "Log in",
-                "email": "Email address",
-                "email_placeholder": "email@example.com",
+                "email": "Email",
                 "password": "Password",
+                "email_placeholder": "email@example.com",
                 "password_placeholder": "Password",
                 "remember_me": "Remember me",
                 "forgot_password": "Forgot password?",
-                "submit": "Log in",
                 "no_account": "Don't have an account?",
-                "sign_up": "Sign up"
+                "sign_up": "Sign up",
+                "or_continue_with": "Or continue with",
+                "submit": "Log in"
             },
             "register": {
                 "title": "Create an account",
                 "description": "Enter your details below to create your account",
                 "page_title": "Register",
                 "name": "Name",
-                "name_placeholder": "Full name",
-                "email": "Email address",
-                "email_placeholder": "email@example.com",
+                "email": "Email",
                 "password": "Password",
+                "name_placeholder": "Full name",
+                "email_placeholder": "email@example.com",
                 "password_placeholder": "Password",
                 "password_confirmation": "Confirm password",
                 "password_confirmation_placeholder": "Confirm password",
@@ -50,7 +171,7 @@
                 "title": "Forgot your password?",
                 "description": "No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.",
                 "page_title": "Forgot Password",
-                "email": "Email address",
+                "email": "Email",
                 "email_placeholder": "email@example.com",
                 "submit": "Email Password Reset Link",
                 "back_to_login": "Back to login"
@@ -59,11 +180,9 @@
                 "title": "Reset your password",
                 "description": "Enter your new password below",
                 "page_title": "Reset Password",
-                "email": "Email address",
                 "email_placeholder": "email@example.com",
-                "password": "New Password",
-                "password_placeholder": "New Password",
-                "password_confirmation": "Confirm Password",
+                "new_password": "New Password",
+                "new_password_placeholder": "New Password",
                 "password_confirmation_placeholder": "Confirm Password",
                 "submit": "Reset Password"
             },
@@ -71,17 +190,14 @@
                 "title": "Confirm your password",
                 "description": "This is a secure area of the application. Please confirm your password before continuing.",
                 "page_title": "Confirm Password",
-                "password": "Password",
-                "password_placeholder": "Password",
-                "submit": "Confirm"
+                "password_placeholder": "Password"
             },
             "verify_email": {
                 "title": "Verify your email address",
                 "description": "Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.",
                 "page_title": "Email Verification",
                 "sent": "A new verification link has been sent to your email address.",
-                "resend": "Resend Verification Email",
-                "logout": "Log Out"
+                "resend": "Resend Verification Email"
             },
             "two_factor_challenge": {
                 "title": "Two-factor authentication",
@@ -94,12 +210,12 @@
                 "recovery_code_placeholder": "Recovery code",
                 "use_recovery_code": "Use a recovery code",
                 "use_authentication_code": "Use an authentication code",
-                "submit": "Verify"
+                "submit": "Verify",
+                "or_you_can": "or you can"
             }
         }
     },
     "errors": {
-        "status": "Status",
         "next_steps": "Next steps",
         "footer": "If this keeps happening, please contact support and include the status code above.",
         "actions": {
@@ -158,10 +274,6 @@
             "message": "An unexpected error occurred.",
             "hint": "Please try again."
         }
-    },
-    "pagination": {
-        "previous": "&laquo; Previous",
-        "next": "Next &raquo;"
     },
     "passwords": {
         "reset": "Your password has been reset.",
@@ -422,14 +534,10 @@
         },
         "labels": {
             "tasks": "Tasks",
-            "users": "Users",
-            "roles": "Roles",
-            "permissions": "Permissions",
             "branding": "Branding",
             "mailgun": "Mailgun",
             "translation_manager": "Translation Manager",
             "access_control": "Access Control",
-            "clients": "Clients",
             "dashboard": "Dashboard",
             "admin_panel": "Admin Panel",
             "leave_impersonation": "Leave Impersonation",
@@ -444,374 +552,13 @@
     },
     "sidebar": {
         "select_client": "Select a client",
-        "clients": "Clients",
         "clients_count": "{{count}} clients",
         "client_workspace": "Client workspace",
         "manage_users": "Manage Users",
         "switch_client": "Switch Client"
     },
     "admin": {
-        "clients": {
-            "navigation_label": "Clients",
-            "table": {
-                "name": "Name",
-                "contact_name": "Contact Person",
-                "status": "Status",
-                "created_at": "Created At"
-            },
-            "form": {
-                "base": {
-                    "title": "Client Information",
-                    "description": "Please enter the name and status of the client.",
-                    "name": "Name",
-                    "status": "Status"
-                },
-                "contact_information": {
-                    "title": "Contact Information",
-                    "description": "Please enter the contact information of the client.",
-                    "contact_name": "Contact Name",
-                    "contact_email": "Contact Email",
-                    "contact_phone": "Contact Phone"
-                },
-                "location": {
-                    "title": "Location",
-                    "description": "Please enter the location of the client.",
-                    "address": "Address",
-                    "postal_code": "Postal Code",
-                    "city": "City",
-                    "country": "Country"
-                },
-                "activity": {
-                    "title": "Activity",
-                    "description": "Recent activity related to this client.",
-                    "empty": "No activity has been recorded for this client yet."
-                }
-            }
-        },
-        "branding": {
-            "sections": {
-                "logo": "Logo",
-                "colors": "Colors",
-                "typography": "Typography"
-            },
-            "descriptions": {
-                "logo": "Upload your brand logo to personalize your application.",
-                "colors": "Choose your primary and secondary brand colors.",
-                "typography": "Select the font that best represents your brand."
-            },
-            "labels": {
-                "logo": "Logo",
-                "primary_color": "Primary Color",
-                "secondary_color": "Secondary Color",
-                "save": "Save"
-            },
-            "helpers": {
-                "logo": "Upload your logo (max 2MB, supports SVG and common image formats)",
-                "primary_color": "In this admin panel, the color will not perfectly match the chosen color. Due to the provider of this panel, the core application will use the correct colors."
-            }
-        },
-        "integrations": {
-            "tabs": {
-                "mailgun": "Email (Mailgun)",
-                "storage": "Cloud Storage"
-            },
-            "mailgun": {
-                "section_title": "Mailgun Configuration",
-                "section_description": "Configure Mailgun for transactional email delivery.",
-                "enabled": "Enable Mailgun",
-                "enabled_helper": "When enabled, emails will be sent via Mailgun instead of the default mail driver.",
-                "domain": "Mailgun Domain",
-                "domain_helper": "Your Mailgun sending domain (e.g., mg.example.com).",
-                "secret": "API Secret Key",
-                "secret_helper": "Your Mailgun private API key. Keep this secret!",
-                "region": "Mailgun Region",
-                "region_helper": "Select the region where your Mailgun account is hosted.",
-                "from_address": "From Email Address",
-                "from_address_helper": "Default sender email address for outgoing emails.",
-                "from_name": "From Name",
-                "from_name_helper": "Default sender name that appears in emails."
-            },
-            "storage": {
-                "section_title": "Cloud Storage Configuration",
-                "section_description": "Configure cloud storage for file uploads and media.",
-                "enabled": "Enable Cloud Storage",
-                "enabled_helper": "When enabled, files will be stored in the cloud instead of locally.",
-                "driver": "Storage Provider",
-                "driver_helper": "Select your preferred cloud storage provider.",
-                "key": "Access Key ID",
-                "key_helper": "Your storage provider access key or client ID.",
-                "secret": "Secret Access Key",
-                "secret_helper": "Your storage provider secret key. Keep this secret!",
-                "bucket": "Bucket Name",
-                "bucket_helper": "The name of your storage bucket or container.",
-                "region": "Region",
-                "region_helper": "The region where your bucket is located (e.g., us-east-1).",
-                "endpoint": "Custom Endpoint",
-                "endpoint_helper": "Custom endpoint URL for S3-compatible storage providers.",
-                "url": "Public URL",
-                "url_helper": "Custom public URL for accessing files (e.g., CDN URL)."
-            }
-        },
-        "widgets": {
-            "activity_log": {
-                "heading": "Activity Log",
-                "description": "Click on the title to show the details",
-                "filter_placeholder": "All",
-                "no_activities": "No activities found.",
-                "modal": {
-                    "heading": "Activity Details",
-                    "description": "View detailed information about this activity",
-                    "close": "Close",
-                    "view_full": "View Full Activity Log"
-                }
-            },
-            "recent_role_assignments": {
-                "heading": "Recent User Role Assignments",
-                "description": "Latest users and their assigned roles",
-                "user": "User",
-                "email": "Email",
-                "roles": "Roles",
-                "added": "Added"
-            },
-            "rbac_stats": {
-                "total_users": "Total Users",
-                "total_roles": "Total Roles",
-                "total_permissions": "Total Permissions",
-                "users_description": "Active users in the system",
-                "roles_description": "Defined roles",
-                "permissions_description": "Available permissions"
-            },
-            "role_permission_matrix": {
-                "heading": "Roles & Permissions Matrix",
-                "description": "Overview of which roles have which permissions",
-                "role": "Role",
-                "total_permissions": "Total Permissions",
-                "users": "Users"
-            },
-            "users_by_role": {
-                "heading": "Users by Role"
-            }
-        },
-        "translations": {
-            "table": {
-                "translation_key": "Translation Key",
-                "fully_translated": "Fully Translated",
-                "missing": "Missing",
-                "create_language": "Create Language",
-                "language_code": "Language Code",
-                "language_code_placeholder": "e.g. en, fr, es, etc.",
-                "language_code_helper": "The code for the language you want to create."
-            },
-            "notifications": {
-                "language_exists": {
-                    "title": "Language already exists",
-                    "body": "The language you are trying to create already exists."
-                },
-                "language_created": {
-                    "title": "Language created",
-                    "body": "The language you are trying to create has been created successfully."
-                },
-                "language_creation_failed": {
-                    "title": "Language creation failed",
-                    "body": "The language you are trying to create failed to be created."
-                },
-                "all_translations_complete": {
-                    "title": "All translations complete",
-                    "body": "All translations for this group have been completed."
-                },
-                "all_translations_complete_group": {
-                    "title": "All translations complete",
-                    "body": "You have successfully translated all missing translations for this group."
-                }
-            },
-            "quick_translate": {
-                "title": "Quick Translate",
-                "base": "Base",
-                "quick_translate": "Quick Translate",
-                "edit": "Edit",
-                "base_placeholder": "—",
-                "breadcrumbs": {
-                    "translations": "Translations"
-                }
-            }
-        },
-        "socialite_providers": {
-            "label": "Authentication Provider",
-            "plural_label": "Authentication Providers",
-            "navigation_label": "Auth Providers",
-            "table": {
-                "name": "Provider Name",
-                "is_enabled": "Enabled",
-                "enable_reorder": "Enable Reordering",
-                "disable_reorder": "Disable Reordering",
-                "reorder_tooltip": "Changes the order of providers on the login page"
-            },
-            "form": {
-                "provider_details": {
-                    "title": "Provider Details",
-                    "description": "Basic information about this authentication provider.",
-                    "name": "Provider Name",
-                    "name_helper": "The name of the authentication provider.",
-                    "is_enabled": "Provider is Enabled",
-                    "is_enabled_helper": "When enabled, users will be able to sign in using this provider on the login page."
-                },
-                "socialite_configuration": {
-                    "title": "OAuth Configuration",
-                    "description": "Configure the OAuth credentials for this provider.",
-                    "client_id": "Client ID",
-                    "client_id_helper": "The OAuth client ID from your provider's developer console.",
-                    "client_secret": "Client Secret",
-                    "client_secret_helper": "The OAuth client secret from your provider's developer console.",
-                    "redirect_uri": "Redirect URI",
-                    "redirect_uri_helper": "Use this URL in your provider's OAuth configuration. Copy it to your provider's settings."
-                },
-                "settings": {
-                    "title": "Settings",
-                    "description": "Control the availability of this authentication provider.",
-                    "is_enabled": "Enable Provider",
-                    "is_enabled_helper": "When enabled, users will be able to sign in using this provider on the login page."
-                }
-            }
-        },
-        "rbac": {
-            "roles": {
-                "form": {
-                    "basic_information": "Basic Information",
-                    "permissions": "Permissions",
-                    "label": "Label",
-                    "name": "Name",
-                    "icon": "Icon",
-                    "color": "Color",
-                    "system_role_indicator": "This is a system role that cannot be modified.",
-                    "super_admin_only_permission": "This is an internal permission and cannot be selected.",
-                    "name_unique": "A role with this name already exists.",
-                    "sections": {
-                        "general": "General Permissions",
-                        "users": "User Management",
-                        "roles": "Role Management",
-                        "api_tokens": "API Tokens",
-                        "clients": "Clients",
-                        "socialite": "Socialite Providers"
-                    }
-                },
-                "table": {
-                    "label": "Role",
-                    "enum_key": "Enum Key",
-                    "name": "Name",
-                    "linked_to_enum": {
-                        "title": "Linked to Enum",
-                        "tooltip": "Indicates whether this role is linked to an enum",
-                        "true": "Yes",
-                        "false": "No"
-                    },
-                    "permissions_count": "Permissions",
-                    "created_at": "Created At",
-                    "updated_at": "Updated At",
-                    "sync_roles": {
-                        "title": "Sync Roles",
-                        "success": {
-                            "title": "Roles Synced",
-                            "body": "Successfully synced :count role(s)"
-                        }
-                    }
-                },
-                "relation_managers": {
-                    "permission": {
-                        "title": "Permissions",
-                        "inverse_relationship": "roles",
-                        "name": "Name",
-                        "enum_key": "Enum Key",
-                        "linked_to_enum": {
-                            "title": "Linked to Enum",
-                            "true": "Yes",
-                            "false": "No"
-                        },
-                        "add_permissions": "Add Permissions",
-                        "add_permissions_modal_heading": "Add Permissions to Role",
-                        "permissions": "Permissions",
-                        "permissions_placeholder": "Select permissions to add",
-                        "permissions_added": ":count permission(s) added successfully",
-                        "detach_permission": "Detach Permission",
-                        "detach_permission_modal_heading": "Detach Permission",
-                        "detach_permission_modal_description": "Are you sure you want to detach this permission from the role?",
-                        "permission_detached": "Permission :name detached successfully"
-                    }
-                }
-            },
-            "permissions": {
-                "form": {
-                    "title": "Permission Information",
-                    "enum_key": "Enum Key",
-                    "name": "Name"
-                },
-                "table": {
-                    "enum_key": "Enum Key",
-                    "name": "Name",
-                    "linked_to_enum": {
-                        "title": "Linked to Enum",
-                        "tooltip": "Indicates whether this permission is linked to an enum",
-                        "true": "Yes",
-                        "false": "No"
-                    },
-                    "roles_count": "Roles",
-                    "created_at": "Created At",
-                    "updated_at": "Updated At",
-                    "sync_permissions": {
-                        "title": "Sync Permissions",
-                        "modal_description": "This will sync all permissions from the Permission enum to the database. Any new permissions will be created.",
-                        "success": {
-                            "title": "Permissions Synced",
-                            "body": "Successfully synced :count permission(s)"
-                        }
-                    }
-                },
-                "relation_managers": {
-                    "role": {
-                        "title": "Roles",
-                        "inverse_relationship": "permissions",
-                        "name": "Name",
-                        "enum_key": "Enum Key",
-                        "linked_to_enum": {
-                            "title": "Linked to Enum",
-                            "true": "Yes",
-                            "false": "No"
-                        },
-                        "add_roles": "Add Roles",
-                        "add_roles_modal_heading": "Add Roles to Permission",
-                        "roles": "Roles",
-                        "roles_placeholder": "Select roles to add",
-                        "roles_added": ":count role(s) added successfully",
-                        "detach_role": "Detach Role",
-                        "detach_role_modal_heading": "Detach Role",
-                        "detach_role_modal_description": "Are you sure you want to detach this role from the permission?",
-                        "role_detached": "Role :name detached successfully"
-                    }
-                }
-            }
-        },
-        "activities": {
-            "navigation_label": "Activities",
-            "table": {
-                "log_name": "Log Name",
-                "description": "Description",
-                "event": "Event",
-                "causer": "Causer",
-                "subject": "Subject",
-                "created_at": "Created At"
-            },
-            "modal": {
-                "heading": "Activity Details",
-                "description": "Description",
-                "event": "Event",
-                "log_name": "Log Name",
-                "causer": "Causer",
-                "subject": "Subject",
-                "properties": "Properties",
-                "properties_key": "Key",
-                "properties_value": "Value",
-                "timestamp": "Timestamp"
-            }
-        },
+        "title": "Admin",
         "panel": {
             "title": "Admin Panel",
             "description": "Manage your application settings and content"
@@ -836,6 +583,11 @@
         },
         "dashboard": {
             "title": "Dashboard",
+            "description": "Overview of your application",
+            "total_users": "Total Users",
+            "total_roles": "Total Roles",
+            "total_permissions": "Total Permissions",
+            "total_activities": "Total Activities",
             "stats": {
                 "total_users": "Total Users",
                 "total_roles": "Total Roles",
@@ -850,25 +602,108 @@
             "recent_activity_description": "Latest activity from across the system",
             "role_distribution": "Role Distribution",
             "role_distribution_description": "Number of users per role",
+            "role_distribution_desc": "Number of users per role",
+            "recent_activities": "Recent Activities",
+            "recent_activities_desc": "Latest activity log entries",
             "no_activities": "No activities found.",
             "no_roles": "No roles found.",
             "role_name": "Role",
             "user_count": "Users"
         },
+        "users": {
+            "title": "Users",
+            "description": "Manage system users",
+            "navigation_label": "Users",
+            "create": "Create User",
+            "edit": "Edit User",
+            "delete": "Delete",
+            "restore": "Restore",
+            "details": "Details",
+            "activities": "Activities",
+            "name": "Name",
+            "email": "Email",
+            "phone": "Phone",
+            "status": "Status",
+            "phone_not_set": "Not set",
+            "metadata": {
+                "title": "Metadata",
+                "created_at": "Created At",
+                "updated_at": "Updated At"
+            },
+            "security": {
+                "provider": "Provider",
+                "role": "Role",
+                "two_factor_enabled": "Two Factor Enabled",
+                "two_factor_enabled_yes": "Yes",
+                "two_factor_enabled_no": "No"
+            },
+            "activity": {
+                "description": "Description",
+                "causer": "Causer",
+                "created_at": "Created At"
+            },
+            "no_activities": "No activities found.",
+            "confirm_delete_title": "Delete User",
+            "confirm_force_delete_title": "Permanently Delete User",
+            "cancel": "Cancel",
+            "create_description": "Add a new user to the system",
+            "edit_description": "Update user information",
+            "select_role": "Select a role",
+            "select_status": "Select a status",
+            "password_placeholder": "Leave blank to keep current password",
+            "search_placeholder": "Search by name or email...",
+            "all_statuses": "All Statuses",
+            "with_trashed": "With Trashed",
+            "only_trashed": "Only Trashed",
+            "impersonate": "Impersonate",
+            "force_delete": "Force Delete",
+            "bulk_delete": "Delete Selected",
+            "bulk_restore": "Restore Selected",
+            "confirm_delete": "Are you sure you want to delete this user?",
+            "confirm_force_delete": "Are you sure you want to permanently delete this user? This action cannot be undone.",
+            "confirm_bulk_delete": "Are you sure you want to delete the selected users?",
+            "created_successfully": "User created successfully.",
+            "updated_successfully": "User updated successfully.",
+            "deleted_successfully": "User deleted successfully.",
+            "restored_successfully": "User restored successfully.",
+            "permanently_deleted": "User permanently deleted.",
+            "bulk_deleted": ":count users deleted.",
+            "bulk_restored": ":count users restored.",
+            "form": {
+                "personal_information": {
+                    "title": "Personal Information",
+                    "description": "Here you can edit the user's personal information."
+                },
+                "security": {
+                    "title": "Security",
+                    "description": "Here you can update the user's role and status. Passwords are automatically generated and sent to the user's email address when creating a user."
+                }
+            },
+            "table": {
+                "auth_provider": "Auth Provider",
+                "two_factor": "2FA",
+                "two_factor_enabled": "Two-factor Enabled",
+                "two_factor_disabled": "Two-factor Disabled",
+                "no_role": "No role",
+                "impersonate": {
+                    "label": "Impersonate",
+                    "error": {
+                        "title": "Impersonation Failed",
+                        "body": "You do not have permission to impersonate users."
+                    }
+                }
+            }
+        },
         "roles": {
             "title": "Roles",
             "description": "Manage system roles and permissions",
             "create": "Create Role",
-            "create_description": "Create a new role with permissions",
+            "create_description": "Create a new role with specific permissions",
             "edit": "Edit Role",
             "edit_description": "Update role information and permissions",
             "view_description": "View role details",
-            "search": "Search",
             "search_placeholder": "Search by role name...",
             "no_roles": "No roles found.",
-            "showing": "Showing",
-            "of": "of",
-            "results": "results",
             "confirm_delete": "Are you sure you want to delete this role?",
             "created_successfully": "Role created successfully.",
             "updated_successfully": "Role updated successfully.",
@@ -878,13 +713,13 @@
             "system_role_warning": "This is a system role and cannot be modified.",
             "details": "Role Details",
             "details_description": "Information about this role",
-            "permissions": "Permissions",
             "permissions_count": ":count permissions assigned",
             "no_permissions": "No permissions assigned to this role.",
             "recent_activity": "Recent Activity",
             "recent_activity_description": "Activity related to this role",
             "created_at": "Created At",
             "updated_at": "Updated At",
+            "permissions": "Permissions",
             "form": {
                 "basic_information": "Basic Information",
                 "basic_information_description": "General information about the role",
@@ -894,23 +729,152 @@
                 "color": "Color",
                 "guard_name": "Guard Name",
                 "permissions": "Permissions",
-                "permissions_description": "Select which permissions this role should have"
+                "permissions_description": "Select which permissions this role should have",
+                "system_role_indicator": "This is a system role that cannot be modified.",
+                "super_admin_only_permission": "This is an internal permission and cannot be selected.",
+                "name_unique": "A role with this name already exists.",
+                "sections": {
+                    "general": "General Permissions",
+                    "users": "User Management",
+                    "roles": "Role Management",
+                    "api_tokens": "API Tokens",
+                    "clients": "Clients",
+                    "socialite": "Socialite Providers"
+                }
             },
             "table": {
-                "name": "Name",
-                "guard_name": "Guard",
+                "enum_key": "Enum Key",
+                "linked_to_enum": {
+                    "title": "Linked to Enum",
+                    "tooltip": "Indicates whether this role is linked to an enum"
+                },
                 "permissions_count": "Permissions",
                 "users_count": "Users",
-                "created_at": "Created At"
+                "sync_roles": {
+                    "title": "Sync Roles",
+                    "success": {
+                        "title": "Roles Synced",
+                        "body": "Successfully synced :count role(s)"
+                    }
+                }
+            },
+            "relation_managers": {
+                "permission": {
+                    "title": "Permissions",
+                    "inverse_relationship": "roles",
+                    "add_permissions": "Add Permissions",
+                    "add_permissions_modal_heading": "Add Permissions to Role",
+                    "permissions_placeholder": "Select permissions to add",
+                    "permissions_added": ":count permission(s) added successfully",
+                    "detach_permission": "Detach Permission",
+                    "detach_permission_modal_heading": "Detach Permission",
+                    "detach_permission_modal_description": "Are you sure you want to detach this permission from the role?",
+                    "permission_detached": "Permission :name detached successfully"
+                }
+            }
+        },
+        "permissions": {
+            "title": "Permissions",
+            "form": {
+                "title": "Permission Information",
+                "enum_key": "Enum Key"
+            },
+            "table": {
+                "enum_key": "Enum Key",
+                "linked_to_enum": {
+                    "title": "Linked to Enum",
+                    "tooltip": "Indicates whether this permission is linked to an enum"
+                },
+                "roles_count": "Roles",
+                "sync_permissions": {
+                    "title": "Sync Permissions",
+                    "modal_description": "This will sync all permissions from the Permission enum to the database. Any new permissions will be created.",
+                    "success": {
+                        "title": "Permissions Synced",
+                        "body": "Successfully synced :count permission(s)"
+                    }
+                }
+            },
+            "relation_managers": {
+                "role": {
+                    "title": "Roles",
+                    "inverse_relationship": "permissions",
+                    "add_roles": "Add Roles",
+                    "add_roles_modal_heading": "Add Roles to Permission",
+                    "roles_placeholder": "Select roles to add",
+                    "roles_added": ":count role(s) added successfully",
+                    "detach_role": "Detach Role",
+                    "detach_role_modal_heading": "Detach Role",
+                    "detach_role_modal_description": "Are you sure you want to detach this role from the permission?",
+                    "role_detached": "Role :name detached successfully"
+                }
+            }
+        },
+        "clients": {
+            "title": "Clients",
+            "description": "Manage your clients",
+            "navigation_label": "Clients",
+            "create": "Create Client",
+            "create_description": "Add a new client",
+            "edit": "Edit Client",
+            "edit_description": "Update client information",
+            "details": "Details",
+            "users": "Users",
+            "activities": "Activities",
+            "search_placeholder": "Search by name, contact...",
+            "select_status": "Select a status",
+            "all_statuses": "All Statuses",
+            "with_trashed": "With Trashed",
+            "only_trashed": "Only Trashed",
+            "force_delete": "Force Delete",
+            "bulk_delete": "Delete Selected",
+            "bulk_restore": "Restore Selected",
+            "no_users": "No users found.",
+            "no_activities": "No activities found.",
+            "confirm_delete": "Are you sure you want to delete this client?",
+            "confirm_delete_title": "Delete Client",
+            "confirm_force_delete": "Are you sure you want to permanently delete this client? This action cannot be undone.",
+            "confirm_force_delete_title": "Permanently Delete Client",
+            "confirm_bulk_delete": "Are you sure you want to delete the selected clients?",
+            "deleted_at": "Deleted At",
+            "created_successfully": "Client created successfully.",
+            "updated_successfully": "Client updated successfully.",
+            "deleted_successfully": "Client deleted successfully.",
+            "restored_successfully": "Client restored successfully.",
+            "permanently_deleted": "Client permanently deleted.",
+            "bulk_deleted": ":count clients deleted.",
+            "bulk_restored": ":count clients restored.",
+            "table": {
+                "contact_name": "Contact Person"
+            },
+            "form": {
+                "base": {
+                    "title": "Client Information",
+                    "description": "Please enter the name and status of the client."
+                },
+                "contact_information": {
+                    "title": "Contact Information",
+                    "description": "Please enter the contact information of the client.",
+                    "contact_name": "Contact Name",
+                    "contact_email": "Contact Email",
+                    "contact_phone": "Contact Phone"
+                },
+                "location": {
+                    "title": "Location",
+                    "description": "Please enter the location of the client."
+                },
+                "activity": {
+                    "title": "Activity",
+                    "description": "Recent activity related to this client.",
+                    "empty": "No activity has been recorded for this client yet."
+                }
             }
         },
         "activities": {
             "title": "Activity Logs",
             "description": "View system activity and audit logs",
             "no_activities": "No activities found.",
-            "showing": "Showing",
-            "of": "of",
-            "results": "results",
+            "search_placeholder": "Search activities...",
             "filters": {
                 "log_name": "Log Name",
                 "all_logs": "All Logs",
@@ -929,10 +893,9 @@
             "modal": {
                 "heading": "Activity Details",
                 "description": "View detailed information about this activity",
-                "event": "Event",
-                "log_name": "Log Name",
-                "causer": "Causer",
                 "properties": "Properties",
+                "properties_key": "Key",
+                "properties_value": "Value",
                 "timestamp": "Timestamp"
             }
         },
@@ -961,8 +924,7 @@
                 "tagline": "Tagline",
                 "primary_color": "Primary Color",
                 "secondary_color": "Secondary Color",
-                "font": "Font",
-                "save": "Save Changes"
+                "font": "Font"
             },
             "placeholders": {
                 "app_name": "My Application",
@@ -970,7 +932,8 @@
             },
             "helpers": {
                 "logo": "Max 2MB, supports JPG, PNG, SVG, WebP",
-                "favicon": "Max 1MB, supports ICO, PNG, SVG"
+                "favicon": "Max 1MB, supports ICO, PNG, SVG",
+                "primary_color": "In this admin panel, the color will not perfectly match the chosen color. Due to the provider of this panel, the core application will use the correct colors."
             },
             "upload_logo": "Upload Logo",
             "upload_favicon": "Upload Favicon",
@@ -982,20 +945,75 @@
             "updated_successfully": "Integration settings updated successfully.",
             "groups": {
                 "analytics": "Analytics",
-                "auth_providers": "Auth Providers"
+                "auth_providers": "Auth Providers",
+                "integrations": "Integrations"
             },
             "tabs": {
                 "mailgun": "Mailgun",
+                "storage": "Cloud Storage",
+                "s3": "S3 Storage",
                 "google": "Google",
                 "github": "GitHub",
                 "microsoft": "Microsoft"
             },
+            "s3": {
+                "title": "Amazon S3",
+                "description": "Configure Amazon S3 for cloud file storage",
+                "enable": "Enable S3",
+                "key": "Access Key ID",
+                "key_placeholder": "AKIAIOSFODNN7EXAMPLE",
+                "secret": "Secret Access Key",
+                "region": "Region",
+                "region_placeholder": "us-east-1",
+                "region_helper": "The AWS region where your bucket is located",
+                "bucket": "Bucket Name",
+                "bucket_placeholder": "my-bucket",
+                "url": "Url",
+                "url_placeholder": "http://localhost:9000",
+                "use_path_style": "Use Path Style Endpoint",
+                "endpoint": "Endpoint",
+                "endpoint_placeholder": "http://localhost:9000/bucket-name"
+            },
             "mailgun": {
                 "title": "Mailgun Configuration",
                 "description": "Configure Mailgun for email delivery",
+                "section_title": "Mailgun Configuration",
+                "section_description": "Configure Mailgun for transactional email delivery.",
+                "enabled": "Enable Mailgun",
+                "enabled_helper": "When enabled, emails will be sent via Mailgun instead of the default mail driver.",
+                "domain": "Mailgun Domain",
+                "domain_helper": "Your Mailgun sending domain (e.g., mg.example.com).",
+                "secret": "API Secret Key",
+                "secret_helper": "Your Mailgun private API key. Keep this secret!",
+                "region": "Mailgun Region",
+                "region_helper": "Select the region where your Mailgun account is hosted.",
+                "from_address": "From Email Address",
+                "from_address_helper": "Default sender email address for outgoing emails.",
+                "from_name": "From Name",
+                "from_name_helper": "Default sender name that appears in emails.",
                 "webhook_signing_key": "Webhook Signing Key",
                 "webhook_signing_key_placeholder": "Enter your Mailgun webhook signing key",
                 "webhook_signing_key_helper": "Your Mailgun webhook signing key for secure webhooks"
+            },
+            "storage": {
+                "section_title": "Cloud Storage Configuration",
+                "section_description": "Configure cloud storage for file uploads and media.",
+                "enabled": "Enable Cloud Storage",
+                "enabled_helper": "When enabled, files will be stored in the cloud instead of locally.",
+                "driver": "Storage Provider",
+                "driver_helper": "Select your preferred cloud storage provider.",
+                "key": "Access Key ID",
+                "key_helper": "Your storage provider access key or client ID.",
+                "secret": "Secret Access Key",
+                "secret_helper": "Your storage provider secret key. Keep this secret!",
+                "bucket": "Bucket Name",
+                "bucket_helper": "The name of your storage bucket or container.",
+                "region": "Region",
+                "region_helper": "The region where your bucket is located (e.g., us-east-1).",
+                "endpoint": "Custom Endpoint",
+                "endpoint_helper": "Custom endpoint URL for S3-compatible storage providers.",
+                "url": "Public URL",
+                "url_helper": "Custom public URL for accessing files (e.g., CDN URL)."
             },
             "google": {
                 "title": "Google OAuth Configuration",
@@ -1045,50 +1063,120 @@
                 "recipient": "Recipient",
                 "subject": "Subject",
                 "status": "Status",
-                "sent_at": "Sent At",
                 "event": "Event",
-                "count": "Count"
+                "count": "Count",
+                "sent_at": "Sent At"
             }
         },
-        "users": {
-            "navigation_label": "Users",
-            "header_actions": {
-                "create": "Create User"
+        "translations": {
+            "title": "Translations",
+            "table": {
+                "translation_key": "Translation Key",
+                "fully_translated": "Fully Translated",
+                "missing": "Missing",
+                "create_language": "Create Language",
+                "language_code": "Language Code",
+                "language_code_placeholder": "e.g. en, fr, es, etc.",
+                "language_code_helper": "The code for the language you want to create."
+            },
+            "notifications": {
+                "language_exists": {
+                    "title": "Language already exists",
+                    "body": "The language you are trying to create already exists."
+                },
+                "language_created": {
+                    "title": "Language created",
+                    "body": "The language you are trying to create has been created successfully."
+                },
+                "language_creation_failed": {
+                    "title": "Language creation failed",
+                    "body": "The language you are trying to create failed to be created."
+                },
+                "all_translations_complete": {
+                    "title": "All translations complete",
+                    "body": "All translations for this group have been completed."
+                },
+                "all_translations_complete_group": {
+                    "title": "All translations complete",
+                    "body": "You have successfully translated all missing translations for this group."
+                }
+            },
+            "quick_translate": {
+                "title": "Quick Translate",
+                "base": "Base",
+                "base_placeholder": "—",
+                "breadcrumbs": {
+                    "translations": "Translations"
+                }
+            }
+        },
+        "socialite_providers": {
+            "label": "Authentication Provider",
+            "plural_label": "Authentication Providers",
+            "navigation_label": "Auth Providers",
+            "table": {
+                "provider_name": "Provider Name",
+                "enable_reorder": "Enable Reordering",
+                "disable_reorder": "Disable Reordering",
+                "reorder_tooltip": "Changes the order of providers on the login page"
             },
             "form": {
-                "personal_information": {
-                    "title": "Personal Information",
-                    "description": "Here you can edit the user's personal information."
+                "provider_details": {
+                    "title": "Provider Details",
+                    "description": "Basic information about this authentication provider.",
+                    "name_helper": "The name of the authentication provider.",
+                    "is_enabled": "Provider is Enabled",
+                    "is_enabled_helper": "When enabled, users will be able to sign in using this provider on the login page."
                 },
-                "security": {
-                    "title": "Security",
-                    "description": "Here you can update the user's role and status. Passwords are automatically generated and sent to the user's email address when creating a user."
+                "socialite_configuration": {
+                    "title": "OAuth Configuration",
+                    "description": "Configure the OAuth credentials for this provider.",
+                    "client_id_helper": "The OAuth client ID from your provider's developer console.",
+                    "client_secret_helper": "The OAuth client secret from your provider's developer console.",
+                    "redirect_uri": "Redirect URI",
+                    "redirect_uri_helper": "Use this URL in your provider's OAuth configuration. Copy it to your provider's settings."
                 },
-                "name": "Name",
-                "email": "Email",
-                "phone": "Phone",
-                "role": "Role",
-                "status": "Status"
-            },
-            "table": {
-                "name": "Name",
-                "email": "Email",
-                "auth_provider": "Auth Provider",
-                "role": "Role",
-                "status": "Status",
-                "two_factor": "2FA",
-                "two_factor_enabled": "Two-factor Enabled",
-                "two_factor_disabled": "Two-factor Disabled",
-                "created_at": "Created At",
-                "updated_at": "Updated At",
-                "no_role": "No role",
-                "impersonate": {
-                    "label": "Impersonate",
-                    "error": {
-                        "title": "Impersonation Failed",
-                        "body": "You do not have permission to impersonate users."
-                    }
+                "settings": {
+                    "title": "Settings",
+                    "description": "Control the availability of this authentication provider.",
+                    "is_enabled": "Enable Provider",
+                    "is_enabled_helper": "When enabled, users will be able to sign in using this provider on the login page."
                 }
+            }
+        },
+        "widgets": {
+            "activity_log": {
+                "heading": "Activity Log",
+                "description": "Click on the title to show the details",
+                "filter_placeholder": "All",
+                "no_activities": "No activities found.",
+                "modal": {
+                    "heading": "Activity Details",
+                    "description": "View detailed information about this activity",
+                    "view_full": "View Full Activity Log"
+                }
+            },
+            "recent_role_assignments": {
+                "heading": "Recent User Role Assignments",
+                "description": "Latest users and their assigned roles",
+                "user": "User",
+                "added": "Added"
+            },
+            "rbac_stats": {
+                "total_users": "Total Users",
+                "total_roles": "Total Roles",
+                "total_permissions": "Total Permissions",
+                "users_description": "Active users in the system",
+                "roles_description": "Defined roles",
+                "permissions_description": "Available permissions"
+            },
+            "role_permission_matrix": {
+                "heading": "Roles & Permissions Matrix",
+                "description": "Overview of which roles have which permissions",
+                "total_permissions": "Total Permissions"
+            },
+            "users_by_role": {
+                "heading": "Users by Role"
             }
         }
     },
@@ -1101,18 +1189,11 @@
             "avatar_placeholder": "Upload your avatar",
             "change_avatar": "Change avatar",
             "avatar_description": "Upload a new avatar image (PNG, JPG, GIF, or WebP, max 2MB)",
-            "upload": "Upload",
-            "uploading": "Uploading...",
-            "cancel": "Cancel",
-            "name": "Name",
             "name_placeholder": "Full name",
-            "email": "Email address",
             "email_placeholder": "Email address",
             "unverified": "Your email address is unverified.",
             "click_to_resend": "Click here to resend the verification email.",
-            "verification_sent": "A new verification link has been sent to your email address.",
-            "save": "Save",
-            "saved": "Saved"
+            "verification_sent": "A new verification link has been sent to your email address."
         },
         "password": {
             "page_title": "Password settings",
@@ -1124,10 +1205,23 @@
             "new_password_placeholder": "New password",
             "confirm_password": "Confirm password",
             "confirm_password_placeholder": "Confirm password",
-            "save": "Save password",
-            "saved": "Saved"
+            "save": "Save password"
         },
         "two_factor": {
+            "page_title": "Two-Factor Authentication",
+            "title": "Two-Factor Authentication",
+            "description": "Add an additional layer of security to your account by enabling two-factor authentication.",
+            "status": {
+                "enabled": "Enabled",
+                "disabled": "Disabled"
+            },
+            "enabled_description": "Two-factor authentication is enabled on your account. You will be required to enter a verification code when logging in.",
+            "disabled_description": "Two-factor authentication is not enabled. Enable it to add an extra layer of security to your account.",
+            "actions": {
+                "enable": "Enable Two-Factor Authentication",
+                "disable": "Disable Two-Factor Authentication",
+                "continue_setup": "Continue Setup"
+            },
             "recovery_codes": {
                 "title": "2FA Recovery Codes",
                 "description": "Recovery codes let you regain access if you lose your 2FA device. Store them in a secure password manager.",
@@ -1144,11 +1238,7 @@
                 "enable_description": "To finish enabling two-factor authentication, scan the QR code or enter the setup key in your authenticator app",
                 "verify_title": "Verify Authentication Code",
                 "verify_description": "Enter the 6-digit code from your authenticator app",
-                "manual_entry": "or, enter the code manually",
-                "continue": "Continue",
-                "back": "Back",
-                "confirm": "Confirm",
-                "close": "Close"
+                "manual_entry": "or, enter the code manually"
             }
         },
         "delete_account": {
@@ -1160,8 +1250,7 @@
             "confirm_title": "Are you sure you want to delete your account?",
             "confirm_description": "Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.",
             "password": "Password",
-            "password_placeholder": "Password",
-            "cancel": "Cancel"
+            "password_placeholder": "Password"
         },
         "appearance": {
             "page_title": "Appearance settings",
@@ -1231,11 +1320,6 @@
                 "socialite_providers": "Socialite Providers"
             },
             "permissions": {
-                "create": "Create",
-                "read": "Read",
-                "update": "Update",
-                "delete": "Delete",
-                "restore": "Restore",
                 "not_available": "(Not available)",
                 "display_labels": {
                     "create": "Create",
@@ -1254,27 +1338,31 @@
                 "description": "Create your first API token to get started."
             },
             "form": {
-                "name": "Token Name",
+                "token_name": "Token Name",
                 "name_placeholder": "e.g., Mobile App Token",
-                "permissions": "Permissions",
                 "permissions_helper": "Select the permissions this token should have. You can only assign permissions that you currently possess."
             },
             "selected_permissions_title": "Selected Permissions",
             "selected_permissions_empty": "No permissions selected.",
+            "form": {
+                "name": "Token Name",
+                "permissions": "Permissions"
+            },
             "table": {
                 "name": "Name",
                 "permissions": "Permissions",
                 "last_used": "Last Used",
                 "created": "Created",
                 "actions": "Actions",
-                "never": "Never"
+                "never": "Never",
+                "delete_token": "Delete token"
             },
             "actions": {
                 "copy": "Copy",
                 "copied": "Copied",
                 "show_token": "Show Token",
-                "delete_token": "Delete token",
-                "confirm_delete": "Are you sure you want to delete this token? This action cannot be undone."
+                "confirm_delete": "Are you sure you want to delete this token? This action cannot be undone.",
+                "confirm_delete_title": "Delete Token"
             },
             "validation": {
                 "permissions_required": "You must select at least one permission that you have access to."
@@ -1317,13 +1405,22 @@
             "read": "Read",
             "unread": "Unread"
         },
+        "relative_time": {
+            "just_now": "Just now",
+            "minutes_ago": ":count minute ago",
+            "minutes_ago_plural": ":count minutes ago",
+            "hours_ago": ":count hour ago",
+            "hours_ago_plural": ":count hours ago",
+            "days_ago": ":count day ago",
+            "days_ago_plural": ":count days ago"
+        },
         "actions": {
             "open_actions": "Open notification actions",
             "view_details": "View details",
             "mark_as_read": "Mark as read",
             "mark_as_unread": "Mark as unread",
-            "delete": "Delete",
-            "clear_all": "Clear all"
+            "clear_all": "Clear all",
+            "delete": "Delete"
         },
         "bulk": {
             "mark_all_read": "Mark all as read",
@@ -1338,14 +1435,26 @@
             "date": "Date",
             "open_link": "Open link"
         },
-        "relative_time": {
-            "just_now": "Just now",
-            "minutes_ago": ":count minute ago",
-            "minutes_ago_plural": ":count minutes ago",
-            "hours_ago": ":count hour ago",
-            "hours_ago_plural": ":count hours ago",
-            "days_ago": ":count day ago",
-            "days_ago_plural": ":count days ago"
+        "show": {
+            "back_to_notifications": "Back to notifications",
+            "read": "Read",
+            "unread": "Unread",
+            "deleted": "Deleted",
+            "mark_unread": "Mark unread",
+            "mark_read": "Mark read",
+            "delete": "Delete",
+            "comment_preview": "Comment Preview",
+            "task_details": "Task Details",
+            "task": "Task",
+            "title": "Title",
+            "description": "Description",
+            "priority": "Priority:",
+            "due": "Due:",
+            "assignee": "Assignee:",
+            "open_related_link": "Open related link",
+            "sent": "Sent:",
+            "at": "at",
+            "read_at": "Read:"
         },
         "tasks": {
             "assigned": {
@@ -1470,20 +1579,15 @@
         "create_task_description": "Create a new task for the current scope.",
         "task_title": "Task title",
         "task_title_placeholder": "e.g. Follow up with client",
-        "description": "Description",
         "assignee": "Assignee",
-        "priority": "Priority",
         "due_date": "Due date",
         "select_assignee": "Select assignee",
         "select_priority": "Select priority",
         "select_due_date": "Select due date",
         "unassigned": "Unassigned",
         "creating": "Creating…",
-        "create": "Create",
         "created": "Task created",
         "updated": "Task updated",
-        "saving": "Saving…",
-        "save": "Save",
         "activity": "Activity",
         "comment_added": "Comment added",
         "comment_error": "Please enter a comment",
@@ -1499,8 +1603,6 @@
             "rename_view": "Rename view",
             "configure_columns": "Configure columns",
             "set_as_default": "Set as default",
-            "delete": "Delete",
-            "name": "Name",
             "name_placeholder": "e.g. Sprint Backlog",
             "statuses_columns": "Statuses (columns)",
             "select_all": "Select all",
@@ -1592,54 +1694,10 @@
             "file_size_error": "File size too big (max 20MB)."
         }
     },
-    "common": {
-        "saving": "Saving...",
-        "saved": "Saved",
-        "search": "Search...",
-        "command_palette": "Command Palette",
-        "search_commands": "Search for a command to run...",
-        "type_to_search": "Type to search...",
-        "no_results": "No results found.",
-        "quick_actions": "Quick Actions",
-        "actions": {
-            "edit": "Edit",
-            "delete": "Delete",
-            "view": "View",
-            "create": "Create",
-            "cancel": "Cancel",
-            "save": "Save",
-            "back": "Back",
-            "submit": "Submit",
-            "confirm": "Confirm",
-            "close": "Close",
-            "settings": "Settings",
-            "logout": "Log out"
-        },
-        "labels": {
-            "yes": "Yes",
-            "no": "No",
-            "or": "or",
-            "and": "and"
-        },
-        "theme": {
-            "toggle": "Toggle theme",
-            "light": "Light",
-            "dark": "Dark",
-            "system": "System"
-        },
-        "messages": {
-            "success": "Operation completed successfully",
-            "error": "An error occurred",
-            "confirm_delete": "Are you sure you want to delete this item?",
-            "no_results": "No results found",
-            "saving": "Saving...",
-            "saved": "Saved."
-        }
-    },
     "activity": {
         "auth": {
             "login": ":issuer signed in",
-            "login.failed": "Failed sign-in attempt for :email",
+            "login_failed": "Failed sign-in attempt for :email",
             "logout": ":issuer signed out",
             "register": ":issuer registered an account"
         },
@@ -1656,14 +1714,18 @@
         "user": {
             "created": ":issuer created user :target",
             "updated": ":issuer updated the :attribute on :target from :old to :new",
-            "deleted": ":issuer deleted user :target",
-            "restored": ":issuer restored user :target"
+            "deleted": ":issuer deleted user :user",
+            "restored": ":issuer restored user :user",
+            "bulk_deleted": ":issuer deleted :count users",
+            "bulk_restored": ":issuer restored :count users"
         },
         "client": {
             "created": ":issuer created client :target",
             "updated": ":issuer updated the :attribute from :old to :new",
-            "deleted": ":issuer deleted client :target",
-            "restored": ":issuer restored client :target",
+            "deleted": ":issuer deleted client :client",
+            "restored": ":issuer restored client :client",
+            "bulk_deleted": ":issuer deleted :count clients",
+            "bulk_restored": ":issuer restored :count clients",
             "user": {
                 "created": "Created :user on :client",
                 "updated": "Updated :attribute on :user from :old to :new",
@@ -1712,6 +1774,14 @@
             "field_changed": "changed :field from :old to :new",
             "comments": {
                 "created": "added a comment to this task"
+            },
+            "views": {
+                "created": ":issuer created task view :task_view",
+                "renamed": ":issuer renamed task view from :old_name to :new_name",
+                "updated": ":issuer updated task view :task_view",
+                "deleted": ":issuer deleted task view :task_view",
+                "statuses_updated": ":issuer updated statuses for task view :task_view",
+                "set_default": ":issuer set :task_view as default view"
             }
         }
     }

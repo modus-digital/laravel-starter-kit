@@ -1,3 +1,5 @@
+import { clear, destroy, index, read, show, unread } from '@/routes/notifications';
+import { read as bulkRead, unread as bulkUnread } from '@/routes/notifications/bulk';
 import { DataTable } from '@/shared/components/data-table';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
@@ -8,11 +10,9 @@ import { Separator } from '@/shared/components/ui/separator';
 import AppLayout from '@/shared/layouts/app-layout';
 import { Head, router } from '@inertiajs/react';
 import { type ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, CheckCircle, Clock, EllipsisVertical, Eye, Mail, Trash2 } from 'lucide-react';
+import { ArrowUpDown, CheckCircle, Clock, EllipsisVertical, ExternalLink, Eye, Mail, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { clear, destroy, index, read, show, unread } from '@/routes/notifications';
-import { read as bulkRead, unread as bulkUnread } from '@/routes/notifications/bulk';
 
 type NotificationItem = {
     id: string;
@@ -21,6 +21,7 @@ type NotificationItem = {
     action_url?: string | null;
     read_at?: string | null;
     created_at: string;
+    translation_replacements?: Record<string, string | number> | null;
     context?: {
         type: 'comment' | 'task';
         comment_preview?: string;
@@ -66,7 +67,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
         // If it looks like a translation key (starts with "notifications."), try to translate it
         if (text.startsWith('notifications.')) {
             // Merge replacements with defaultValue option
-            const translated = t(text as never, { ...(notification.translation_replacements || {}), defaultValue: text });
+            const translated = t(text, { ...(notification.translation_replacements || {}), defaultValue: text }) as string;
             // If translation returns the same value, it might be missing - return as-is
             return translated !== text ? translated : text;
         }
@@ -93,7 +94,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                     <Checkbox
                         checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
                         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                        aria-label={t('notifications.table.select_all')}
+                        aria-label={t('common.table.select_all')}
                         data-row-select
                     />
                 ),
@@ -101,7 +102,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                     <Checkbox
                         checked={row.getIsSelected()}
                         onCheckedChange={(value) => row.toggleSelected(!!value)}
-                        aria-label={t('notifications.table.select_row')}
+                        aria-label={t('common.table.select_row')}
                         data-row-select
                     />
                 ),
@@ -148,7 +149,9 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                 ),
                 cell: ({ row }) => (
                     <div className="flex items-center gap-2">
-                        <span className="truncate text-sm font-medium">{translateNotificationText(row.original) || t('notifications.fallback_title')}</span>
+                        <span className="truncate text-sm font-medium">
+                            {translateNotificationText(row.original) || t('notifications.fallback_title')}
+                        </span>
                         {row.original.action_url && (
                             <a
                                 href={row.original.action_url}
@@ -158,7 +161,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                                 data-row-action
                                 onClick={(event) => event.stopPropagation()}
                             >
-                                {t('notifications.table.open_link')}
+                                <ExternalLink className="size-3.5" />
                             </a>
                         )}
                     </div>
@@ -244,7 +247,7 @@ export default function Notifications({ notifications, unreadCount, activeTab }:
                                         }}
                                     >
                                         <Trash2 className="size-4" />
-                                        <span>{t('notifications.actions.delete')}</span>
+                                        <span>{t('common.actions.delete')}</span>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>

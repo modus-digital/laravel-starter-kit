@@ -163,34 +163,34 @@ export default function Index({ users, filters, roles, statuses }: PageProps) {
             },
             {
                 accessorKey: 'name',
-                header: t('admin.users.table.name', 'Name'),
+                header: t('common.labels.name'),
                 cell: ({ row }) => <div className="font-medium">{row.original.name}</div>,
             },
             {
                 accessorKey: 'email',
-                header: t('admin.users.table.email', 'Email'),
+                header: t('common.labels.email'),
                 cell: ({ row }) => row.original.email,
             },
             {
                 accessorKey: 'role',
-                header: t('admin.users.table.role', 'Role'),
+                header: t('common.labels.role'),
                 cell: ({ row }) =>
                     row.original.role ? (
                         <Badge variant="outline">{t(`enums.rbac.role.${row.original.role}` as never)}</Badge>
                     ) : (
-                        <span className="text-muted-foreground">{t('admin.users.table.no_role', 'No role')}</span>
+                        <span className="text-muted-foreground">{t('admin.users.table.no_role')}</span>
                     ),
             },
             {
                 accessorKey: 'status',
-                header: t('admin.users.table.status', 'Status'),
+                header: t('common.labels.status'),
                 cell: ({ row }) => (
                     <Badge variant={getStatusColor(row.original.status)}>{statuses[row.original.status] || row.original.status}</Badge>
                 ),
             },
             {
                 accessorKey: 'created_at',
-                header: t('admin.users.table.created_at', 'Created At'),
+                header: t('common.labels.created_at'),
                 cell: ({ row }) => format(new Date(row.original.created_at), 'MMM d, yyyy'),
             },
             {
@@ -217,7 +217,7 @@ export default function Index({ users, filters, roles, statuses }: PageProps) {
                                         }}
                                     >
                                         <Eye className="mr-2 h-4 w-4" />
-                                        {t('admin.users.view', 'View')}
+                                        {t('common.actions.view')}
                                     </DropdownMenuItem>
                                     {!user.deleted_at && (
                                         <>
@@ -237,12 +237,12 @@ export default function Index({ users, filters, roles, statuses }: PageProps) {
                                                 }}
                                             >
                                                 <Edit className="mr-2 h-4 w-4" />
-                                                {t('admin.users.edit', 'Edit')}
+                                                {t('common.actions.edit')}
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem className="text-destructive" onClick={(e) => handleDelete(user.id, e)}>
                                                 <Trash2 className="mr-2 h-4 w-4" />
-                                                {t('admin.users.delete', 'Delete')}
+                                                {t('common.actions.delete')}
                                             </DropdownMenuItem>
                                         </>
                                     )}
@@ -250,12 +250,12 @@ export default function Index({ users, filters, roles, statuses }: PageProps) {
                                         <>
                                             <DropdownMenuItem onClick={(e) => handleRestore(user.id, e)}>
                                                 <RotateCcw className="mr-2 h-4 w-4" />
-                                                {t('admin.users.restore', 'Restore')}
+                                                {t('common.actions.restore')}
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem className="text-destructive" onClick={(e) => handleForceDelete(user.id, e)}>
                                                 <Trash className="mr-2 h-4 w-4" />
-                                                {t('admin.users.force_delete', 'Force Delete')}
+                                                {t('admin.users.force_delete')}
                                             </DropdownMenuItem>
                                         </>
                                     )}
@@ -290,7 +290,7 @@ export default function Index({ users, filters, roles, statuses }: PageProps) {
                 <div className="rounded-lg border border-border bg-card p-4">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
                         <div className="w-full sm:w-48">
-                            <label className="mb-2 block text-sm font-medium">{t('admin.users.status', 'Status')}</label>
+                            <label className="mb-2 block text-sm font-medium">{t('common.labels.status')}</label>
                             <Select value={status || undefined} onValueChange={(value) => setStatus(value || '')}>
                                 <SelectTrigger>
                                     <SelectValue placeholder={t('admin.users.all_statuses', 'All Statuses')} />

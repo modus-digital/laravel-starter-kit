@@ -228,7 +228,7 @@ export default function Create({ permissions }: PageProps) {
                                         {t('common.actions.cancel')}
                                     </Button>
                                     <Button type="submit" disabled={processing}>
-                                        {processing ? t('common.saving') : t('common.actions.create')}
+                                        {processing ? t('common.status.saving') : t('common.actions.create')}
                                     </Button>
                                 </div>
                             </>

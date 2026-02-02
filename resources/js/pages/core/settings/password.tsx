@@ -103,7 +103,7 @@ export default function Password() {
 
                                 <div className="flex items-center gap-4">
                                     <Button disabled={processing} data-test="update-password-button">
-                                        {t('settings.password.save')}
+                                        {t('common.actions.save')}
                                     </Button>
 
                                     <Transition
@@ -113,7 +113,7 @@ export default function Password() {
                                         leave="transition ease-in-out"
                                         leaveTo="opacity-0"
                                     >
-                                        <p className="text-sm text-neutral-600">{t('settings.password.saved')}</p>
+                                        <p className="text-sm text-neutral-600">{t('common.status.saved')}</p>
                                     </Transition>
                                 </div>
                             </>

@@ -57,7 +57,7 @@ final class LeaveImpersonationController extends Controller
             ->withProperties([
                 'target' => $currentUser->name,
             ])
-            ->log('');
+            ->log('activity.impersonate.leave');
 
         return Inertia::location(url: route('dashboard'));
     }

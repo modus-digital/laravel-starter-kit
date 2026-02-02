@@ -152,12 +152,12 @@ export default function Show() {
                                 <Link href={edit({ client: client.id }).url}>
                                     <Button variant="outline">
                                         <Edit className="mr-2 h-4 w-4" />
-                                        {t('admin.clients.edit', 'Edit')}
+                                        {t('common.actions.edit')}
                                     </Button>
                                 </Link>
                                 <Button variant="destructive" onClick={() => setDeleteDialogOpen(true)}>
                                     <Trash2 className="mr-2 h-4 w-4" />
-                                    {t('admin.clients.delete', 'Delete')}
+                                    {t('common.actions.delete')}
                                 </Button>
                             </>
                         )}
@@ -165,10 +165,10 @@ export default function Show() {
                             <>
                                 <Button variant="outline" onClick={handleRestore}>
                                     <RotateCcw className="mr-2 h-4 w-4" />
-                                    {t('admin.clients.restore', 'Restore')}
+                                    {t('common.actions.restore')}
                                 </Button>
                                 <Button variant="destructive" onClick={() => setForceDeleteDialogOpen(true)}>
-                                    {t('admin.clients.force_delete', 'Force Delete')}
+                                    {t('admin.clients.force_delete')}
                                 </Button>
                             </>
                         )}
@@ -188,11 +188,11 @@ export default function Show() {
                             <div className="rounded-lg border bg-card p-6">
                                 <dl className="space-y-6">
                                     <div>
-                                        <dt className="text-sm font-medium text-muted-foreground">{t('admin.clients.form.base.name', 'Name')}</dt>
+                                        <dt className="text-sm font-medium text-muted-foreground">{t('common.labels.name')}</dt>
                                         <dd className="mt-1.5 text-sm">{client.name}</dd>
                                     </div>
                                     <div>
-                                        <dt className="text-sm font-medium text-muted-foreground">{t('admin.clients.form.base.status', 'Status')}</dt>
+                                        <dt className="text-sm font-medium text-muted-foreground">{t('common.labels.status')}</dt>
                                         <dd className="mt-1.5">
                                             <Badge variant={getStatusColor(client.status)}>{client.status}</Badge>
                                         </dd>
@@ -225,27 +225,27 @@ export default function Show() {
                                         <dl className="space-y-6">
                                             {client.address && (
                                                 <div>
-                                                    <dt className="text-sm font-medium text-muted-foreground">{t('admin.clients.form.location.address', 'Address')}</dt>
+                                                    <dt className="text-sm font-medium text-muted-foreground">{t('common.labels.address')}</dt>
                                                     <dd className="mt-1.5 text-sm">{client.address}</dd>
                                                 </div>
                                             )}
                                             <div className="grid grid-cols-2 gap-x-6">
                                                 {client.city && (
                                                     <div>
-                                                        <dt className="text-sm font-medium text-muted-foreground">{t('admin.clients.form.location.city', 'City')}</dt>
+                                                        <dt className="text-sm font-medium text-muted-foreground">{t('common.labels.city')}</dt>
                                                         <dd className="mt-1.5 text-sm">{client.city}</dd>
                                                     </div>
                                                 )}
                                                 {client.postal_code && (
                                                     <div>
-                                                        <dt className="text-sm font-medium text-muted-foreground">{t('admin.clients.form.location.postal_code', 'Postal Code')}</dt>
+                                                        <dt className="text-sm font-medium text-muted-foreground">{t('common.labels.postal_code')}</dt>
                                                         <dd className="mt-1.5 text-sm">{client.postal_code}</dd>
                                                     </div>
                                                 )}
                                             </div>
                                             {client.country && (
                                                 <div>
-                                                    <dt className="text-sm font-medium text-muted-foreground">{t('admin.clients.form.location.country', 'Country')}</dt>
+                                                    <dt className="text-sm font-medium text-muted-foreground">{t('common.labels.country')}</dt>
                                                     <dd className="mt-1.5 text-sm">{client.country}</dd>
                                                 </div>
                                             )}
@@ -257,11 +257,11 @@ export default function Show() {
                                     <dl className="space-y-6">
                                         <div className="grid grid-cols-2 gap-x-6">
                                             <div>
-                                                <dt className="text-sm font-medium text-muted-foreground">{t('admin.clients.created_at', 'Created At')}</dt>
+                                                <dt className="text-sm font-medium text-muted-foreground">{t('common.labels.created_at')}</dt>
                                                 <dd className="mt-1.5 text-sm">{format(new Date(client.created_at), 'PPp')}</dd>
                                             </div>
                                             <div>
-                                                <dt className="text-sm font-medium text-muted-foreground">{t('admin.clients.updated_at', 'Updated At')}</dt>
+                                                <dt className="text-sm font-medium text-muted-foreground">{t('common.labels.updated_at')}</dt>
                                                 <dd className="mt-1.5 text-sm">{format(new Date(client.updated_at), 'PPp')}</dd>
                                             </div>
                                         </div>
@@ -282,9 +282,9 @@ export default function Show() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>{t('admin.users.table.name', 'Name')}</TableHead>
-                                        <TableHead>{t('admin.users.table.email', 'Email')}</TableHead>
-                                        <TableHead>{t('admin.users.table.status', 'Status')}</TableHead>
+                                        <TableHead>{t('common.labels.name')}</TableHead>
+                                        <TableHead>{t('common.labels.email')}</TableHead>
+                                        <TableHead>{t('common.labels.status')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -333,9 +333,9 @@ export default function Show() {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>{t('admin.clients.activity.description', 'Description')}</TableHead>
-                                        <TableHead>{t('admin.clients.activity.causer', 'Causer')}</TableHead>
-                                        <TableHead>{t('admin.clients.activity.created_at', 'Created At')}</TableHead>
+                                        <TableHead>{t('common.labels.description')}</TableHead>
+                                        <TableHead>{t('admin.activities.table.causer')}</TableHead>
+                                        <TableHead>{t('common.labels.created_at')}</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -392,10 +392,10 @@ export default function Show() {
                     open={deleteDialogOpen}
                     onOpenChange={setDeleteDialogOpen}
                     onConfirm={handleDelete}
-                    title={t('admin.clients.confirm_delete_title', 'Delete Client')}
-                    description={t('admin.clients.confirm_delete', 'Are you sure you want to delete this client?')}
-                    confirmText={t('admin.clients.delete', 'Delete')}
-                    cancelText={t('admin.clients.cancel', 'Cancel')}
+                    title={t('admin.clients.confirm_delete_title')}
+                    description={t('common.messages.confirm_delete')}
+                    confirmText={t('common.actions.delete')}
+                    cancelText={t('common.actions.cancel')}
                     variant="destructive"
                 />
 
@@ -403,10 +403,10 @@ export default function Show() {
                     open={forceDeleteDialogOpen}
                     onOpenChange={setForceDeleteDialogOpen}
                     onConfirm={handleForceDelete}
-                    title={t('admin.clients.confirm_force_delete_title', 'Permanently Delete Client')}
-                    description={t('admin.clients.confirm_force_delete', 'Are you sure you want to permanently delete this client? This action cannot be undone.')}
-                    confirmText={t('admin.clients.force_delete', 'Force Delete')}
-                    cancelText={t('admin.clients.cancel', 'Cancel')}
+                    title={t('admin.clients.confirm_force_delete_title')}
+                    description={t('admin.clients.confirm_force_delete')}
+                    confirmText={t('admin.clients.force_delete')}
+                    cancelText={t('common.actions.cancel')}
                     variant="destructive"
                 />
             </div>

@@ -169,12 +169,12 @@ export default function Index() {
             },
             {
                 accessorKey: 'name',
-                header: t('admin.clients.table.name', 'Name'),
+                header: t('common.labels.name'),
                 cell: ({ row }) => <div className="font-medium">{row.original.name}</div>,
             },
             {
                 accessorKey: 'contact',
-                header: t('admin.clients.table.contact', 'Contact'),
+                header: t('admin.clients.table.contact_name'),
                 cell: ({ row }) => (
                     <div>
                         {row.original.contact_name && <p className="font-medium">{row.original.contact_name}</p>}
@@ -184,14 +184,14 @@ export default function Index() {
             },
             {
                 accessorKey: 'status',
-                header: t('admin.clients.table.status', 'Status'),
+                header: t('common.labels.status'),
                 cell: ({ row }) => (
                     <Badge variant={getStatusColor(row.original.status)}>{statuses[row.original.status] || row.original.status}</Badge>
                 ),
             },
             {
                 accessorKey: 'created_at',
-                header: t('admin.clients.table.created_at', 'Created At'),
+                header: t('common.labels.created_at'),
                 cell: ({ row }) => format(new Date(row.original.created_at), 'MMM d, yyyy'),
             },
             {
@@ -218,7 +218,7 @@ export default function Index() {
                                         }}
                                     >
                                         <Eye className="mr-2 h-4 w-4" />
-                                        {t('admin.clients.view', 'View')}
+                                        {t('common.actions.view')}
                                     </DropdownMenuItem>
                                     {!client.deleted_at && (
                                         <>
@@ -229,12 +229,12 @@ export default function Index() {
                                                 }}
                                             >
                                                 <Edit className="mr-2 h-4 w-4" />
-                                                {t('admin.clients.edit', 'Edit')}
+                                                {t('common.actions.edit')}
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem className="text-destructive" onClick={(e) => handleDelete(client.id, e)}>
                                                 <Trash2 className="mr-2 h-4 w-4" />
-                                                {t('admin.clients.delete', 'Delete')}
+                                                {t('common.actions.delete')}
                                             </DropdownMenuItem>
                                         </>
                                     )}
@@ -242,12 +242,12 @@ export default function Index() {
                                         <>
                                             <DropdownMenuItem onClick={(e) => handleRestore(client.id, e)}>
                                                 <RotateCcw className="mr-2 h-4 w-4" />
-                                                {t('admin.clients.restore', 'Restore')}
+                                                {t('common.actions.restore')}
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem className="text-destructive" onClick={(e) => handleForceDelete(client.id, e)}>
                                                 <Trash className="mr-2 h-4 w-4" />
-                                                {t('admin.clients.force_delete', 'Force Delete')}
+                                                {t('admin.clients.force_delete')}
                                             </DropdownMenuItem>
                                         </>
                                     )}
@@ -282,7 +282,7 @@ export default function Index() {
                 <div className="rounded-lg border border-border bg-card p-4">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
                         <div className="w-full sm:w-48">
-                            <label className="mb-2 block text-sm font-medium">{t('admin.clients.status', 'Status')}</label>
+                            <label className="mb-2 block text-sm font-medium">{t('common.labels.status')}</label>
                             <Select value={status || undefined} onValueChange={(value) => setStatus(value || '')}>
                                 <SelectTrigger>
                                     <SelectValue placeholder={t('admin.clients.all_statuses', 'All Statuses')} />

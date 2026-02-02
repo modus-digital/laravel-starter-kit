@@ -63,13 +63,13 @@ export default function DeleteUser() {
                                     <DialogFooter className="gap-2">
                                         <DialogClose asChild>
                                             <Button variant="secondary" onClick={() => resetAndClearErrors()}>
-                                                {t('settings.delete_account.cancel')}
+                                                {t('common.actions.cancel')}
                                             </Button>
                                         </DialogClose>
 
                                         <Button variant="destructive" disabled={processing} asChild>
                                             <button type="submit" data-test="confirm-delete-user-button">
-                                                {t('settings.delete_account.button')}
+                                                {t('common.actions.delete')}
                                             </button>
                                         </Button>
                                     </DialogFooter>

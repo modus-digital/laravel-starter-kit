@@ -1,3 +1,6 @@
+import { register } from '@/routes';
+import { store } from '@/routes/login';
+import { request } from '@/routes/password';
 import InputError from '@/shared/components/input-error';
 import SocialAuthButtons from '@/shared/components/social-auth-buttons';
 import TextLink from '@/shared/components/text-link';
@@ -7,9 +10,6 @@ import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { Spinner } from '@/shared/components/ui/spinner';
 import AuthLayout from '@/shared/layouts/auth-layout';
-import { register } from '@/routes';
-import { store } from '@/routes/login';
-import { request } from '@/routes/password';
 import { SocialiteProvider } from '@/types/modules';
 import { Form, Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
@@ -41,7 +41,7 @@ export default function Login({ status, canResetPassword, canRegister, authProvi
                     <>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="email">{t('auth.pages.login.email')}</Label>
+                                <Label htmlFor="email">{t('common.labels.email')}</Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -57,7 +57,7 @@ export default function Login({ status, canResetPassword, canRegister, authProvi
 
                             <div className="grid gap-2">
                                 <div className="flex items-center">
-                                    <Label htmlFor="password">{t('auth.pages.login.password')}</Label>
+                                    <Label htmlFor="password">{t('common.labels.password')}</Label>
                                     {canResetPassword && (
                                         <TextLink href={request()} className="ml-auto text-sm" tabIndex={5}>
                                             {t('auth.pages.login.forgot_password')}

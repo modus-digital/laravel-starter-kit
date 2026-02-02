@@ -247,7 +247,7 @@ export default function Edit({ role, permissions, isSystemRole }: PageProps) {
                                     {t('common.actions.cancel')}
                                 </Button>
                                 <Button type="submit" disabled={processing || isSystemRole}>
-                                    {processing ? t('common.saving') : t('common.actions.save')}
+                                    {processing ? t('common.status.saving') : t('common.actions.save')}
                                 </Button>
                             </div>
                             </>

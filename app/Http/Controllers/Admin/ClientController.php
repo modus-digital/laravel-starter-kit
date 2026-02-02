@@ -182,7 +182,7 @@ final class ClientController extends Controller
                     'status' => $client->status->getLabel(),
                 ],
             ])
-            ->log('');
+            ->log('activity.client.deleted');
 
         return redirect()->route('admin.clients.index')
             ->with('success', __('admin.clients.deleted_successfully'));
@@ -204,7 +204,7 @@ final class ClientController extends Controller
                     'status' => $client->status->getLabel(),
                 ],
             ])
-            ->log('');
+            ->log('activity.client.restored');
 
         return redirect()->route('admin.clients.show', $client)
             ->with('success', __('admin.clients.restored_successfully'));
@@ -235,7 +235,7 @@ final class ClientController extends Controller
                 'count' => $count,
                 'client_ids' => $request->ids,
             ])
-            ->log('');
+            ->log('activity.client.bulk_deleted');
 
         return redirect()->route('admin.clients.index')
             ->with('success', __('admin.clients.bulk_deleted', ['count' => $count]));
@@ -257,7 +257,7 @@ final class ClientController extends Controller
                 'count' => $count,
                 'client_ids' => $request->ids,
             ])
-            ->log('');
+            ->log('activity.client.bulk_restored');
 
         return redirect()->route('admin.clients.index')
             ->with('success', __('admin.clients.bulk_restored', ['count' => $count]));

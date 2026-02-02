@@ -68,34 +68,34 @@ export default function Create() {
                             <>
                                 <div className="grid gap-6 md:grid-cols-2">
                                     <div className="space-y-2">
-                                        <Label htmlFor="name">{t('admin.users.form.name', 'Name')} *</Label>
+                                        <Label htmlFor="name">{t('common.labels.name')} *</Label>
                                         <Input id="name" name="name" required />
                                         <InputError message={errors.name} />
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="email">{t('admin.users.form.email', 'Email')} *</Label>
+                                        <Label htmlFor="email">{t('common.labels.email')} *</Label>
                                         <Input id="email" name="email" type="email" required />
                                         <InputError message={errors.email} />
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="phone">{t('admin.users.form.phone', 'Phone')}</Label>
+                                        <Label htmlFor="phone">{t('common.labels.phone')}</Label>
                                         <Input id="phone" name="phone" type="tel" />
                                         <InputError message={errors.phone} />
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="password">{t('admin.users.form.password', 'Password')} *</Label>
+                                        <Label htmlFor="password">{t('common.labels.password')} *</Label>
                                         <Input id="password" name="password" type="password" required />
                                         <InputError message={errors.password} />
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="role">{t('admin.users.form.role', 'Role')} *</Label>
+                                        <Label htmlFor="role">{t('common.labels.role')} *</Label>
                                         <Select name="role" required>
                                             <SelectTrigger>
-                                                <SelectValue placeholder={t('admin.users.select_role', 'Select a role')} />
+                                                <SelectValue placeholder={t('admin.users.select_role')} />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {roles.map((role) => (
@@ -109,10 +109,10 @@ export default function Create() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="status">{t('admin.users.form.status', 'Status')} *</Label>
+                                        <Label htmlFor="status">{t('common.labels.status')} *</Label>
                                         <Select name="status" required>
                                             <SelectTrigger>
-                                                <SelectValue placeholder={t('admin.users.select_status', 'Select a status')} />
+                                                <SelectValue placeholder={t('admin.users.select_status')} />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 {Object.entries(statuses).map(([value, label]) => (
@@ -128,11 +128,11 @@ export default function Create() {
 
                                 <div className="flex items-center gap-4">
                                     <Button type="submit" disabled={processing}>
-                                        {processing ? t('admin.users.creating', 'Creating...') : t('admin.users.create', 'Create User')}
+                                        {processing ? t('common.status.processing') : t('admin.users.create')}
                                     </Button>
                                     <Link href={index().url}>
                                         <Button type="button" variant="outline">
-                                            {t('admin.users.cancel', 'Cancel')}
+                                            {t('common.actions.cancel')}
                                         </Button>
                                     </Link>
                                 </div>

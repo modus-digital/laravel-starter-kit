@@ -14,13 +14,13 @@ beforeEach(function () {
     ]);
 });
 
-test('activity description is transformed to translation key based on event', function () {
+test('activity description stores the translation key passed to log()', function () {
     Queue::fake();
 
     ActivityFacade::inLog('authentication')
         ->event('auth.login')
         ->causedBy($this->user)
-        ->log('');
+        ->log('activity.auth.login');
 
     $activity = Activity::where('log_name', 'authentication')
         ->where('causer_id', $this->user->id)
@@ -37,7 +37,7 @@ test('issuer details are automatically added to properties', function () {
     ActivityFacade::inLog('authentication')
         ->event('auth.login')
         ->causedBy($this->user)
-        ->log('');
+        ->log('activity.auth.login');
 
     $activity = Activity::where('log_name', 'authentication')
         ->where('causer_id', $this->user->id)
@@ -57,7 +57,7 @@ test('issuer name defaults to System when no causer', function () {
 
     ActivityFacade::inLog('authentication')
         ->event('auth.login.failed')
-        ->log('');
+        ->log('activity.auth.login_failed');
 
     $activity = Activity::where('log_name', 'authentication')
         ->whereNull('causer_id')
@@ -78,7 +78,7 @@ test('custom properties are preserved and merged with issuer', function () {
             'target' => 'Jane Doe',
             'custom_data' => 'value',
         ])
-        ->log('');
+        ->log('activity.impersonate.start');
 
     $activity = Activity::where('log_name', 'impersonation')
         ->where('causer_id', $this->user->id)
@@ -98,7 +98,7 @@ test('getTranslatedDescription returns translated text with replacements', funct
     ActivityFacade::inLog('authentication')
         ->event('auth.login')
         ->causedBy($this->user)
-        ->log('');
+        ->log('activity.auth.login');
 
     $activity = Activity::where('log_name', 'authentication')
         ->where('causer_id', $this->user->id)
@@ -119,7 +119,7 @@ test('getTranslatedDescription works for impersonation with target', function ()
         ->withProperties([
             'target' => 'Jane Doe',
         ])
-        ->log('');
+        ->log('activity.impersonate.start');
 
     $activity = Activity::where('log_name', 'impersonation')
         ->where('causer_id', $this->user->id)
@@ -143,7 +143,7 @@ test('getTranslatedDescription works for user management actions', function () {
         ->withProperties([
             'target' => $targetUser->name,
         ])
-        ->log('');
+        ->log('activity.user.created');
 
     $activity = Activity::where('log_name', 'administration')
         ->where('event', 'user.created')
@@ -161,7 +161,7 @@ test('getTranslatedDescription falls back to key when translation not found', fu
     ActivityFacade::inLog('custom')
         ->event('custom.unknown.event')
         ->causedBy($this->user)
-        ->log('');
+        ->log('activity.custom.unknown.event');
 
     $activity = Activity::where('log_name', 'custom')
         ->where('causer_id', $this->user->id)
@@ -186,7 +186,7 @@ test('existing issuer properties are preserved and merged', function () {
                 'custom_field' => 'custom_value',
             ],
         ])
-        ->log('');
+        ->log('activity.auth.login');
 
     $activity = Activity::where('log_name', 'authentication')
         ->where('causer_id', $this->user->id)
@@ -218,7 +218,7 @@ test('getTranslatedDescription works for field updates with attribute changes', 
             'old' => 'Old Name',
             'new' => 'New Name',
         ])
-        ->log('');
+        ->log('activity.user.updated');
 
     $activity = Activity::where('log_name', 'administration')
         ->where('event', 'user.updated')
@@ -249,7 +249,7 @@ test('getTranslatedDescription handles null old values as empty', function () {
             'old' => null,
             'new' => '+1234567890',
         ])
-        ->log('');
+        ->log('activity.user.updated');
 
     $activity = Activity::where('log_name', 'administration')
         ->where('event', 'user.updated')
