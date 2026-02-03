@@ -40,7 +40,8 @@
             "disabled": "Disabled",
             "active": "Active",
             "inactive": "Inactive",
-            "never": "Never"
+            "never": "Never",
+            "quick_actions": "Quick Actions"
         },
         "actions": {
             "create": "Create",
@@ -91,8 +92,11 @@
         },
         "search": {
             "placeholder": "Search...",
+            "searching": "Searching...",
             "type_to_search": "Type to search...",
-            "no_results": "No results found."
+            "no_results": "No results found.",
+            "command_palette": "Command Palette",
+            "search_commands": "Search for users, clients, and more."
         },
         "theme": {
             "toggle": "Toggle theme",
@@ -189,8 +193,10 @@
             "confirm_password": {
                 "title": "Confirm your password",
                 "description": "This is a secure area of the application. Please confirm your password before continuing.",
+                "password": "Password",
                 "page_title": "Confirm Password",
-                "password_placeholder": "Password"
+                "password_placeholder": "Password",
+                "submit": "Confirm Password"
             },
             "verify_email": {
                 "title": "Verify your email address",
@@ -904,22 +910,24 @@
             "description": "Customize your application's branding and appearance",
             "updated_successfully": "Branding updated successfully.",
             "sections": {
-                "logo": "Logo",
-                "favicon": "Favicon",
+                "logos": "Logos",
+                "emblems": "Emblems",
                 "general": "General Information",
                 "colors": "Colors",
                 "typography": "Typography"
             },
             "descriptions": {
-                "logo": "Upload your brand logo to personalize your application",
-                "favicon": "Upload your favicon (shown in browser tabs)",
+                "logos": "Upload separate logos for light and dark mode",
+                "emblems": "Upload your emblems (logo without text) for light and dark mode. Used for favicon and icons.",
                 "general": "Basic information about your application",
                 "colors": "Choose your primary and secondary brand colors",
                 "typography": "Select the font that best represents your brand"
             },
             "labels": {
-                "logo": "Logo",
-                "favicon": "Favicon",
+                "logo_light": "Light Mode Logo",
+                "logo_dark": "Dark Mode Logo",
+                "emblem_light": "Light Mode Emblem",
+                "emblem_dark": "Dark Mode Emblem",
                 "app_name": "Application Name",
                 "tagline": "Tagline",
                 "primary_color": "Primary Color",
@@ -931,12 +939,16 @@
                 "tagline": "A short description of your application"
             },
             "helpers": {
-                "logo": "Max 2MB, supports JPG, PNG, SVG, WebP",
-                "favicon": "Max 1MB, supports ICO, PNG, SVG",
+                "logo_light": "Logo displayed on light backgrounds. Max 2MB",
+                "logo_dark": "Logo displayed on dark backgrounds. Max 2MB",
+                "emblem_light": "Emblem for light backgrounds. Max 1MB",
+                "emblem_dark": "Emblem for dark backgrounds. Max 1MB",
                 "primary_color": "In this admin panel, the color will not perfectly match the chosen color. Due to the provider of this panel, the core application will use the correct colors."
             },
-            "upload_logo": "Upload Logo",
-            "upload_favicon": "Upload Favicon",
+            "upload_logo_light": "Upload",
+            "upload_logo_dark": "Upload",
+            "upload_emblem_light": "Upload",
+            "upload_emblem_dark": "Upload",
             "preview_palette": "Preview Color Palette"
         },
         "integrations": {
@@ -1338,16 +1350,13 @@
                 "description": "Create your first API token to get started."
             },
             "form": {
-                "token_name": "Token Name",
+                "name": "Token Name",
                 "name_placeholder": "e.g., Mobile App Token",
+                "permissions": "Permissions",
                 "permissions_helper": "Select the permissions this token should have. You can only assign permissions that you currently possess."
             },
             "selected_permissions_title": "Selected Permissions",
             "selected_permissions_empty": "No permissions selected.",
-            "form": {
-                "name": "Token Name",
-                "permissions": "Permissions"
-            },
             "table": {
                 "name": "Name",
                 "permissions": "Permissions",

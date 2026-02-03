@@ -1,18 +1,10 @@
-import { Building2, Search, User as UserIcon } from 'lucide-react';
-import { SidebarGroup, SidebarGroupContent, useSidebar } from './ui/sidebar';
-import { useTranslation } from 'react-i18next';
-import {
-    CommandDialog,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-    CommandSeparator,
-} from '@/shared/components/ui/command';
-import { router } from '@inertiajs/react';
-import { useEffect, useMemo, useState } from 'react';
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from '@/shared/components/ui/command';
 import { NavItem, SearchResult } from '@/types';
+import { router } from '@inertiajs/react';
+import { Building2, Search, User as UserIcon } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { SidebarGroup, SidebarGroupContent, useSidebar } from './ui/sidebar';
 
 export function AppSearchBar({ mainNavItems, footerNavItems }: { mainNavItems: NavItem[]; footerNavItems: NavItem[] }) {
     const { t } = useTranslation();
@@ -144,8 +136,8 @@ export function AppSearchBar({ mainNavItems, footerNavItems }: { mainNavItems: N
                             className="flex h-9 w-full items-center gap-2 rounded-md border border-input bg-background px-3 text-sm text-muted-foreground shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
                         >
                             <Search className="h-4 w-4" />
-                            <span className="flex-1 text-left">{t('common.search' as never)}</span>
-                            <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground sm:flex">
+                            <span className="flex-1 text-left">{t('common.actions.search' as never)}</span>
+                            <kbd className="pointer-events-none hidden h-5 items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground select-none sm:flex">
                                 <span className="text-xs">⌘</span>K
                             </kbd>
                         </button>
@@ -156,17 +148,15 @@ export function AppSearchBar({ mainNavItems, footerNavItems }: { mainNavItems: N
             <CommandDialog
                 open={commandOpen}
                 onOpenChange={setCommandOpen}
-                title={t('common.command_palette' as never)}
-                description={t('common.search_commands' as never)}
+                title={t('common.search.command_palette' as never)}
+                description={t('common.search.search_commands' as never)}
                 shouldFilter={!hasSearchQuery}
             >
-                <CommandInput placeholder={t('common.type_to_search' as never)} value={searchQuery} onValueChange={setSearchQuery} />
+                <CommandInput placeholder={t('common.search.type_to_search' as never)} value={searchQuery} onValueChange={setSearchQuery} />
                 <CommandList>
                     {/* Only show empty state when searching and no results found anywhere */}
                     {hasSearchQuery && !hasSearchResults && !hasFilteredNavItems && (
-                        <CommandEmpty>
-                            {isSearching ? (t('common.searching' as never) || 'Searching...') : t('common.no_results' as never)}
-                        </CommandEmpty>
+                        <CommandEmpty>{isSearching ? t('common.search.searching' as never) : t('common.search.no_results' as never)}</CommandEmpty>
                     )}
 
                     {/* Search Results */}
@@ -217,7 +207,7 @@ export function AppSearchBar({ mainNavItems, footerNavItems }: { mainNavItems: N
                     {filteredFooterNavItems.length > 0 && (
                         <>
                             <CommandSeparator />
-                            <CommandGroup heading={t('common.quick_actions' as never)}>
+                            <CommandGroup heading={t('common.labels.quick_actions' as never)}>
                                 {filteredFooterNavItems.map((item) => (
                                     <CommandItem
                                         key={getHrefUrl(item.href)}
