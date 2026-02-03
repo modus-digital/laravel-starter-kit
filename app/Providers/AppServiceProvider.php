@@ -10,7 +10,9 @@ use App\Http\Responses\FortifyLogoutResponse;
 use App\Http\Responses\FortifyRegisterResponse;
 use App\Traits\ConfiguresScribeDocumentation;
 use App\Translation\NestedJsonLoader;
+use App\View\Composers\AppViewComposer;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Events\TwoFactorAuthenticationDisabled;
 use Laravel\Fortify\Events\TwoFactorAuthenticationEnabled;
@@ -36,6 +38,7 @@ final class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        View::composer('app', AppViewComposer::class);
         $this->configureScribe();
         $this->configureEventListeners();
     }
