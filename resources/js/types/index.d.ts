@@ -46,11 +46,13 @@ export interface SharedData {
     };
     modules: ModulesConfig;
     branding: {
-        logo: string;
+        logoLight: string | null;
+        logoDark: string | null;
+        emblemLight: string | null;
+        emblemDark: string | null;
         primaryColor: string;
         secondaryColor: string;
         font: string;
-        logoAspectRatio?: '1:1' | '16:9';
     };
     currentClient?: ClientSummary | null;
     userClients: ClientSummary[];
@@ -73,9 +75,9 @@ export interface User {
 
 export interface SearchResult {
     id: string;
-    type: string;      // e.g., 'User', 'Client'
-    label: string;     // e.g., 'John Doe'
+    type: string; // e.g., 'User', 'Client'
+    label: string; // e.g., 'John Doe'
     subtitle?: string; // e.g., 'john@example.com'
     icon?: string;
-    url: string;       // The show route URL
+    url: string; // The show route URL
 }
