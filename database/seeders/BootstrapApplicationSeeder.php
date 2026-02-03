@@ -9,8 +9,8 @@ use App\Enums\RBAC\Role as RoleEnum;
 use App\Models\Modules\Tasks\TaskStatus;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Outerweb\Settings\Models\Setting;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -29,13 +29,15 @@ final class BootstrapApplicationSeeder extends Seeder
          *
          * @see https://github.com/outerweb/laravel-settings
          */
-        DB::table('settings')->insert([
+        $settings = [
             // Branding
             ['key' => 'branding.primary_color', 'value' => null],
             ['key' => 'branding.secondary_color', 'value' => null],
             ['key' => 'branding.font', 'value' => null],
-            ['key' => 'branding.logo', 'value' => null],
-            ['key' => 'branding.favicon', 'value' => null],
+            ['key' => 'branding.logo_light', 'value' => null],
+            ['key' => 'branding.logo_dark', 'value' => null],
+            ['key' => 'branding.emblem_light', 'value' => null],
+            ['key' => 'branding.emblem_dark', 'value' => null],
             ['key' => 'branding.app_name', 'value' => config('app.name')],
             ['key' => 'branding.tagline', 'value' => null],
 
@@ -63,7 +65,11 @@ final class BootstrapApplicationSeeder extends Seeder
             ['key' => 'integrations.s3.bucket', 'value' => null],
             ['key' => 'integrations.s3.endpoint', 'value' => null],
             ['key' => 'integrations.s3.use_path_style_endpoint', 'value' => false],
-        ]);
+        ];
+
+        foreach ($settings as $row) {
+            Setting::create($row);
+        }
 
         /**
          * ----------------------------------------------------------------------------------
