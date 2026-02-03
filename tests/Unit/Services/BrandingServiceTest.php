@@ -38,29 +38,47 @@ it('retrieves default font when not set', function () {
     expect($font)->toBe('inter');
 });
 
-it('retrieves null logo when not set', function () {
+it('retrieves null light logo when not set', function () {
     $service = app(BrandingService::class);
 
-    $logo = $service->getLogoUrl();
+    $logo = $service->getLogoLightUrl();
 
     expect($logo)->toBeNull();
 });
 
-it('retrieves default logo aspect ratio when not set', function () {
+it('retrieves null dark logo when not set', function () {
     $service = app(BrandingService::class);
 
-    $aspectRatio = $service->getLogoAspectRatio();
+    $logo = $service->getLogoDarkUrl();
 
-    expect($aspectRatio)->toBe('1:1');
+    expect($logo)->toBeNull();
 });
 
-it('includes logo aspect ratio in settings', function () {
+it('retrieves null light emblem when not set', function () {
+    $service = app(BrandingService::class);
+
+    $emblem = $service->getEmblemLightUrl();
+
+    expect($emblem)->toBeNull();
+});
+
+it('retrieves null dark emblem when not set', function () {
+    $service = app(BrandingService::class);
+
+    $emblem = $service->getEmblemDarkUrl();
+
+    expect($emblem)->toBeNull();
+});
+
+it('includes logo_light, logo_dark, emblem_light, and emblem_dark in settings', function () {
     $service = app(BrandingService::class);
 
     $settings = $service->getSettings();
 
-    expect($settings)->toHaveKey('logo_aspect_ratio');
-    expect($settings['logo_aspect_ratio'])->toBe('1:1');
+    expect($settings)->toHaveKey('logo_light');
+    expect($settings)->toHaveKey('logo_dark');
+    expect($settings)->toHaveKey('emblem_light');
+    expect($settings)->toHaveKey('emblem_dark');
 });
 
 it('returns hex color format', function () {

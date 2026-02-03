@@ -72,11 +72,13 @@ final class HandleInertiaRequests extends Middleware
 
             // Pass through the branding settings
             'branding' => [
-                'logo' => $branding['logo'],
+                'logoLight' => $branding['logo_light'],
+                'logoDark' => $branding['logo_dark'],
+                'emblemLight' => $branding['emblem_light'],
+                'emblemDark' => $branding['emblem_dark'],
                 'primaryColor' => $branding['primary_color'],
                 'secondaryColor' => $branding['secondary_color'],
                 'font' => $branding['font'],
-                'logoAspectRatio' => $branding['logo_aspect_ratio'] ?? '1:1',
             ],
 
             // This is used to pass data from the controller to the view after a redirect

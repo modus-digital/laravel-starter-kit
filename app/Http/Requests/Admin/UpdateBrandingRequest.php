@@ -24,14 +24,15 @@ final class UpdateBrandingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'logo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,svg,webp', 'max:2048'],
-            'favicon' => ['nullable', 'image', 'mimes:ico,png,svg', 'max:1024'],
+            'logo_light' => ['nullable', 'image', 'mimes:jpeg,jpg,png,svg,webp', 'max:2048'],
+            'logo_dark' => ['nullable', 'image', 'mimes:jpeg,jpg,png,svg,webp', 'max:2048'],
+            'emblem_light' => ['nullable', 'image', 'mimes:jpeg,jpg,png,svg,webp', 'max:1024'],
+            'emblem_dark' => ['nullable', 'image', 'mimes:jpeg,jpg,png,svg,webp', 'max:1024'],
             'app_name' => ['required', 'string', 'max:255'],
             'tagline' => ['nullable', 'string', 'max:500'],
             'primary_color' => ['required', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
             'secondary_color' => ['required', 'string', 'regex:/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/'],
             'font' => ['required', 'string', 'max:100'],
-            'logo_aspect_ratio' => ['nullable', 'string', 'in:1:1,16:9'],
         ];
     }
 
@@ -43,12 +44,18 @@ final class UpdateBrandingRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'logo.image' => 'The logo must be an image file.',
-            'logo.mimes' => 'The logo must be a file of type: jpeg, jpg, png, svg, webp.',
-            'logo.max' => 'The logo must not be greater than 2MB.',
-            'favicon.image' => 'The favicon must be an image file.',
-            'favicon.mimes' => 'The favicon must be a file of type: ico, png, svg.',
-            'favicon.max' => 'The favicon must not be greater than 1MB.',
+            'logo_light.image' => 'The light logo must be an image file.',
+            'logo_light.mimes' => 'The light logo must be a file of type: jpeg, jpg, png, svg, webp.',
+            'logo_light.max' => 'The light logo must not be greater than 2MB.',
+            'logo_dark.image' => 'The dark logo must be an image file.',
+            'logo_dark.mimes' => 'The dark logo must be a file of type: jpeg, jpg, png, svg, webp.',
+            'logo_dark.max' => 'The dark logo must not be greater than 2MB.',
+            'emblem_light.image' => 'The light emblem must be an image file.',
+            'emblem_light.mimes' => 'The light emblem must be a file of type: jpeg, jpg, png, svg, webp.',
+            'emblem_light.max' => 'The light emblem must not be greater than 1MB.',
+            'emblem_dark.image' => 'The dark emblem must be an image file.',
+            'emblem_dark.mimes' => 'The dark emblem must be a file of type: jpeg, jpg, png, svg, webp.',
+            'emblem_dark.max' => 'The dark emblem must not be greater than 1MB.',
             'primary_color.regex' => 'The primary color must be a valid hex color code.',
             'secondary_color.regex' => 'The secondary color must be a valid hex color code.',
         ];
@@ -62,6 +69,8 @@ final class UpdateBrandingRequest extends FormRequest
     public function attributes(): array
     {
         return [
+            'logo_light' => 'light logo',
+            'logo_dark' => 'dark logo',
             'app_name' => 'application name',
             'primary_color' => 'primary color',
             'secondary_color' => 'secondary color',

@@ -20,14 +20,15 @@ final class BrandingController extends Controller
     public function edit(): Response
     {
         $branding = [
-            'logo' => Setting::get('branding.logo'),
-            'favicon' => Setting::get('branding.favicon'),
+            'logo_light' => Setting::get('branding.logo_light'),
+            'logo_dark' => Setting::get('branding.logo_dark'),
+            'emblem_light' => Setting::get('branding.emblem_light'),
+            'emblem_dark' => Setting::get('branding.emblem_dark'),
             'app_name' => Setting::get('branding.app_name', config('app.name')),
             'tagline' => Setting::get('branding.tagline'),
             'primary_color' => Setting::get('branding.primary_color', '#3b82f6'),
             'secondary_color' => Setting::get('branding.secondary_color', '#8b5cf6'),
             'font' => Setting::get('branding.font', 'Inter'),
-            'logo_aspect_ratio' => Setting::get('branding.logo_aspect_ratio', '1:1'),
         ];
 
         return Inertia::render('core/admin/branding/edit', [
@@ -37,36 +38,64 @@ final class BrandingController extends Controller
 
     public function update(UpdateBrandingRequest $request, FileStorageService $fileStorage): RedirectResponse
     {
-        // Handle logo upload
-        if ($request->hasFile('logo')) {
-            // Delete old logo if exists
-            $oldLogo = Setting::get('branding.logo');
-            if ($oldLogo) {
-                $fileStorage->delete($oldLogo);
+        // Handle light logo upload
+        if ($request->hasFile('logo_light')) {
+            $oldLogoLight = Setting::get('branding.logo_light');
+            if ($oldLogoLight) {
+                $fileStorage->delete($oldLogoLight);
             }
 
-            $logoUrl = $fileStorage->upload(
-                file: $request->file('logo'),
+            $logoLightUrl = $fileStorage->upload(
+                file: $request->file('logo_light'),
                 storagePath: 'branding',
                 public: true
             );
-            Setting::set('branding.logo', $logoUrl);
+            Setting::set('branding.logo_light', $logoLightUrl);
         }
 
-        // Handle favicon upload
-        if ($request->hasFile('favicon')) {
-            // Delete old favicon if exists
-            $oldFavicon = Setting::get('branding.favicon');
-            if ($oldFavicon) {
-                $fileStorage->delete($oldFavicon);
+        // Handle dark logo upload
+        if ($request->hasFile('logo_dark')) {
+            $oldLogoDark = Setting::get('branding.logo_dark');
+            if ($oldLogoDark) {
+                $fileStorage->delete($oldLogoDark);
             }
 
-            $faviconUrl = $fileStorage->upload(
-                file: $request->file('favicon'),
+            $logoDarkUrl = $fileStorage->upload(
+                file: $request->file('logo_dark'),
                 storagePath: 'branding',
                 public: true
             );
-            Setting::set('branding.favicon', $faviconUrl);
+            Setting::set('branding.logo_dark', $logoDarkUrl);
+        }
+
+        // Handle light emblem upload
+        if ($request->hasFile('emblem_light')) {
+            $oldEmblemLight = Setting::get('branding.emblem_light');
+            if ($oldEmblemLight) {
+                $fileStorage->delete($oldEmblemLight);
+            }
+
+            $emblemLightUrl = $fileStorage->upload(
+                file: $request->file('emblem_light'),
+                storagePath: 'branding',
+                public: true
+            );
+            Setting::set('branding.emblem_light', $emblemLightUrl);
+        }
+
+        // Handle dark emblem upload
+        if ($request->hasFile('emblem_dark')) {
+            $oldEmblemDark = Setting::get('branding.emblem_dark');
+            if ($oldEmblemDark) {
+                $fileStorage->delete($oldEmblemDark);
+            }
+
+            $emblemDarkUrl = $fileStorage->upload(
+                file: $request->file('emblem_dark'),
+                storagePath: 'branding',
+                public: true
+            );
+            Setting::set('branding.emblem_dark', $emblemDarkUrl);
         }
 
         // Update other branding settings
@@ -75,10 +104,6 @@ final class BrandingController extends Controller
         Setting::set('branding.primary_color', $request->primary_color);
         Setting::set('branding.secondary_color', $request->secondary_color);
         Setting::set('branding.font', $request->font);
-
-        if ($request->has('logo_aspect_ratio')) {
-            Setting::set('branding.logo_aspect_ratio', $request->logo_aspect_ratio);
-        }
 
         Activity::inLog('administration')
             ->event('branding.updated')

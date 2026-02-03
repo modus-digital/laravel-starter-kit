@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 
 final class BrandingService
 {
@@ -28,8 +27,10 @@ final class BrandingService
             'primary_color' => $this->getPrimaryColorHex(),
             'secondary_color' => $this->getSecondaryColorHex(),
             'font' => $this->getFont(),
-            'logo' => $this->getLogoUrl(),
-            'logo_aspect_ratio' => $this->getLogoAspectRatio(),
+            'logo_light' => $this->getLogoLightUrl(),
+            'logo_dark' => $this->getLogoDarkUrl(),
+            'emblem_light' => $this->getEmblemLightUrl(),
+            'emblem_dark' => $this->getEmblemDarkUrl(),
         ]);
     }
 
@@ -106,31 +107,35 @@ final class BrandingService
     }
 
     /**
-     * Get logo URL or null if not set.
+     * Get light mode logo URL or null if not set.
      */
-    public function getLogoUrl(): ?string
+    public function getLogoLightUrl(): ?string
     {
-        $logo = setting('branding.logo');
-
-        if (! $logo) {
-            return null;
-        }
-
-        // If it's already a full URL, return it
-        if (filter_var($logo, FILTER_VALIDATE_URL)) {
-            return $logo;
-        }
-
-        // Legacy: handle old path-based values
-        return Storage::disk('public')->url($logo);
+        return $this->getAssetUrl('branding.logo_light');
     }
 
     /**
-     * Get logo aspect ratio (1:1 or 16:9).
+     * Get dark mode logo URL or null if not set.
      */
-    public function getLogoAspectRatio(): string
+    public function getLogoDarkUrl(): ?string
     {
-        return setting('branding.logo_aspect_ratio') ?? '1:1';
+        return $this->getAssetUrl('branding.logo_dark');
+    }
+
+    /**
+     * Get light mode emblem URL (logo without text, used for favicon and icon) or null if not set.
+     */
+    public function getEmblemLightUrl(): ?string
+    {
+        return $this->getAssetUrl('branding.emblem_light');
+    }
+
+    /**
+     * Get dark mode emblem URL (logo without text, used for favicon and icon) or null if not set.
+     */
+    public function getEmblemDarkUrl(): ?string
+    {
+        return $this->getAssetUrl('branding.emblem_dark');
     }
 
     /**
@@ -276,6 +281,20 @@ final class BrandingService
         // Threshold of 0.179 corresponds to ~4.5:1 contrast ratio with white
         // This ensures WCAG AA compliance for normal text
         return $luminance > 0.179 ? 'black' : 'white';
+    }
+
+    /**
+     * Get asset URL from setting key.
+     */
+    private function getAssetUrl(string $settingKey): ?string
+    {
+        $asset = setting($settingKey);
+
+        if (! $asset) {
+            return null;
+        }
+
+        return $asset;
     }
 
     /**
