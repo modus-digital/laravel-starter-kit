@@ -1,3 +1,4 @@
+import AppLogo from '@/shared/components/app-logo';
 import AppLogoIcon from '@/shared/components/app-logo-icon';
 import {
     DropdownMenu,
@@ -29,8 +30,7 @@ export function SidebarHeader() {
         router.post(ClientSwitchController(client.id).url);
     };
 
-    const isWideLogo = branding.logo && branding.logoAspectRatio === '16:9';
-    const shouldShowAppName = !branding.logo || branding.logoAspectRatio !== '16:9';
+    const isCollapsed = state === 'collapsed';
 
     // Show simple logo when clients module is disabled or user has no clients
     if (!modules.clients.enabled || userClients.length === 0) {
@@ -39,20 +39,7 @@ export function SidebarHeader() {
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" asChild>
                         <Link href={ApplicationDashboard()} prefetch>
-                            {isWideLogo ? (
-                                // Wide logo: no background, full width
-                                <AppLogoIcon className="h-8 w-auto max-w-full object-contain" />
-                            ) : (
-                                // Square logo or default: with background container
-                                <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
-                                    <AppLogoIcon className="size-5 fill-current text-white dark:text-black" />
-                                </div>
-                            )}
-                            {shouldShowAppName && (
-                                <div className="ml-1 grid flex-1 text-left text-sm">
-                                    <span className="mb-0.5 truncate leading-tight font-semibold">{name}</span>
-                                </div>
-                            )}
+                            {isCollapsed ? <AppLogoIcon className="mx-auto size-6 fill-current text-white dark:text-black" /> : <AppLogo />}
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -90,15 +77,9 @@ export function SidebarHeader() {
                         side={isMobile ? 'bottom' : state === 'collapsed' ? 'right' : 'bottom'}
                         sideOffset={4}
                     >
-                        <DropdownMenuLabel className="text-xs text-muted-foreground">
-                            {t('sidebar.clients')}
-                        </DropdownMenuLabel>
+                        <DropdownMenuLabel className="text-xs text-muted-foreground">{t('sidebar.client_workspace')}</DropdownMenuLabel>
                         {userClients.map((client) => (
-                            <DropdownMenuItem
-                                key={client.id}
-                                onClick={() => handleClientSwitch(client)}
-                                className="cursor-pointer gap-2 p-2"
-                            >
+                            <DropdownMenuItem key={client.id} onClick={() => handleClientSwitch(client)} className="cursor-pointer gap-2 p-2">
                                 <div className="flex size-6 items-center justify-center rounded-sm border">
                                     <Building2 className="size-4 shrink-0" />
                                 </div>

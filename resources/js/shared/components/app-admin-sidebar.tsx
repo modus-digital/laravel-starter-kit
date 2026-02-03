@@ -13,32 +13,28 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    useSidebar,
 } from '@/shared/components/ui/sidebar';
 import { SharedData, type NavItem } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
 import { Activity, Languages, LayoutDashboard, LayoutGrid, LogOut, Mail, Palette, Plug, Shield, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import AppLogo from './app-logo';
-import { Button } from './ui/button';
+import AppLogoIcon from './app-logo-icon';
 import { AppSearchBar } from './app-search-bar';
+import { Button } from './ui/button';
 
 // Routes
 import { dashboard as ApplicationDashboard } from '@/routes';
-import { leave as leaveImpersonation } from '@/routes/impersonate';
 import { index as adminIndex } from '@/routes/admin';
-import { index as usersIndex } from '@/routes/admin/users';
-import { index as rolesIndex } from '@/routes/admin/roles';
-import { index as clientsIndex } from '@/routes/admin/clients';
-import { index as brandingIndex } from '@/routes/admin/branding';
-import { index as activitiesIndex } from '@/routes/admin/activities';
-import { index as translationsIndex } from '@/routes/admin/translations';
-import { index as integrationsIndex } from '@/routes/admin/integrations';
-import { index as mailgunIndex } from '@/routes/admin/mailgun';
+import { leave as leaveImpersonation } from '@/routes/impersonate';
 
 export function AppAdminSidebar() {
     const page = usePage<SharedData>();
     const { isImpersonating, modules } = page.props;
+    const { state } = useSidebar();
     const { t } = useTranslation();
+    const isCollapsed = state === 'collapsed';
 
     const adminNavItems: NavItem[] = [
         {
@@ -129,7 +125,7 @@ export function AppAdminSidebar() {
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
                             <Link href={adminIndex().url} prefetch>
-                                <AppLogo />
+                                {isCollapsed ? <AppLogoIcon className="mx-auto size-6 fill-current text-white dark:text-black" /> : <AppLogo />}
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -138,7 +134,7 @@ export function AppAdminSidebar() {
 
             <SidebarContent>
                 <AppSearchBar mainNavItems={adminNavItems} footerNavItems={footerNavItems} />
-                
+
                 {Object.entries(groupedAdminNavItems).map(([groupName, items]) => (
                     <SidebarGroup key={groupName}>
                         <SidebarGroupLabel>{groupName}</SidebarGroupLabel>
@@ -157,7 +153,11 @@ export function AppAdminSidebar() {
                                 <SidebarMenuItem>
                                     <Button onClick={() => router.post(leaveImpersonation().url)} className="w-full cursor-pointer" variant="ghost">
                                         <Icon iconNode={LogOut} className="h-5 w-5" />
-                                        <span>{t('navigation.labels.leave_impersonation')}</span>
+                                        {isCollapsed ? (
+                                            <span className="sr-only">{t('navigation.labels.leave_impersonation')}</span>
+                                        ) : (
+                                            <span>{t('navigation.labels.leave_impersonation')}</span>
+                                        )}
                                     </Button>
                                 </SidebarMenuItem>
                             </SidebarMenu>

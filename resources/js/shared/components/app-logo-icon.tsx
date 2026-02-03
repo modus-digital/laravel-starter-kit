@@ -2,13 +2,60 @@ import { SharedData } from '@/types';
 import { usePage } from '@inertiajs/react';
 import { SVGAttributes } from 'react';
 
-export default function AppLogoIcon(props: SVGAttributes<SVGElement>) {
-    const { logo } = usePage<SharedData>().props.branding;
+/** Branding can come from shared data (camelCase) or branding page (snake_case) */
+function brandingEmblems(branding: Record<string, unknown>) {
+    return {
+        emblemLight: (branding.emblemLight ?? branding.emblem_light) as string | null | undefined,
+        emblemDark: (branding.emblemDark ?? branding.emblem_dark) as string | null | undefined,
+    };
+}
 
-    if (logo) {
-        return <img src={logo} alt="App Logo" {...(props as React.ImgHTMLAttributes<HTMLImageElement>)} />;
+export default function AppLogoIcon(props: SVGAttributes<SVGElement>) {
+    const { emblemLight, emblemDark } = brandingEmblems(usePage<SharedData>().props.branding as Record<string, unknown>);
+
+    // Only use emblem when set (no logo fallback in this component)
+    if (emblemLight || emblemDark) {
+        return (
+            <>
+                {emblemLight && (
+                    <img
+                        src={emblemLight}
+                        alt="App Logo"
+                        {...(props as React.ImgHTMLAttributes<HTMLImageElement>)}
+                        className={`${props.className ?? ''} dark:hidden`.trim()}
+                    />
+                )}
+                {emblemDark && (
+                    <img
+                        src={emblemDark}
+                        alt="App Logo"
+                        {...(props as React.ImgHTMLAttributes<HTMLImageElement>)}
+                        className={`${props.className ?? ''} hidden dark:block`.trim()}
+                    />
+                )}
+                {/* Fallback: show light emblem in dark mode if dark emblem is missing */}
+                {emblemLight && !emblemDark && (
+                    <img
+                        src={emblemLight}
+                        alt="App Logo"
+                        {...(props as React.ImgHTMLAttributes<HTMLImageElement>)}
+                        className={`${props.className ?? ''} hidden dark:block`.trim()}
+                    />
+                )}
+                {/* Fallback: show dark emblem in light mode if light emblem is missing */}
+                {emblemDark && !emblemLight && (
+                    <img
+                        src={emblemDark}
+                        alt="App Logo"
+                        {...(props as React.ImgHTMLAttributes<HTMLImageElement>)}
+                        className={`${props.className ?? ''} dark:hidden`.trim()}
+                    />
+                )}
+            </>
+        );
     }
 
+    // Default SVG fallback
     return (
         <svg {...props} viewBox="0 0 40 42" xmlns="http://www.w3.org/2000/svg">
             <path
