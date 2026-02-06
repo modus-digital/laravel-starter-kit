@@ -5,10 +5,18 @@ on:
     branches:
       - develop
       - main
+      - master
+      - production
+      - staging
+      - acceptance
   pull_request:
     branches:
       - develop
       - main
+      - master
+      - production
+      - staging
+      - acceptance
 
 jobs:
   ci:
@@ -25,20 +33,25 @@ jobs:
           tools: composer:v2
           coverage: xdebug
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
-
-      - name: Install Node Dependencies
-        run: npm ci
+          cache: 'pnpm'
 
       - name: Install Dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
+      - name: Install Node Dependencies
+        run: pnpm install
+
       - name: Build Assets
-        run: npm run build
+        run: pnpm run build
 
       - name: Copy Environment File
         run: cp .env.example .env
