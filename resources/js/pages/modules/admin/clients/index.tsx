@@ -1,59 +1,61 @@
+import { bulkDelete, bulkRestore, create, destroy, edit, forceDelete, index, show } from '@/routes/admin/clients';
 import { PaginatedDataTable } from '@/shared/components/paginated-data-table';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/shared/components/ui/dropdown-menu';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/shared/components/ui/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import AdminLayout from '@/shared/layouts/admin/layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { type ColumnDef } from '@tanstack/react-table';
+import { type ColumnDef, type Table } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { Edit, Eye, MoreVertical, Plus, RotateCcw, Trash, Trash2 } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { bulkDelete, bulkRestore, create, destroy, edit, forceDelete, index, restore, show } from '@/routes/admin/clients';
-
-type Client = {
-    id: string;
-    name: string;
-    contact_name?: string;
-    contact_email?: string;
-    status: string;
-    created_at: string;
-    deleted_at?: string;
-};
+import { type Client, type PaginatedData } from '@/types/admin/clients';
 
 type PageProps = SharedData & {
-    clients: Client[];
-    filters: {
-        search?: string;
-        status?: string;
-        with_trashed?: boolean;
-        only_trashed?: boolean;
-        sort_by?: string;
-        sort_direction?: 'asc' | 'desc';
-    };
-    statuses: Record<string, string>;
+	clients: PaginatedData<Client>;
+	filters: {
+		search?: string;
+		status?: string;
+		with_trashed?: boolean;
+		only_trashed?: boolean;
+		sort_by?: string;
+		sort_direction?: 'asc' | 'desc';
+	};
+	statuses: Record<string, string>;
+};
+
+type SelectAllCheckboxProps<TData> = {
+    table: Table<TData>;
 };
 
 export default function Index() {
-    const { clients, filters, statuses } = usePage<PageProps>().props;
-    const { t } = useTranslation();
+	const { clients: paginatedClients, filters, statuses } = usePage<PageProps>().props;
+	const clients = paginatedClients.data;
+	const { t } = useTranslation();
 
-    const [status, setStatus] = useState(filters.status || '');
-    const [withTrashed, setWithTrashed] = useState(filters.with_trashed || false);
-    const [onlyTrashed, setOnlyTrashed] = useState(filters.only_trashed || false);
+	const [status, setStatus] = useState(filters.status || '');
+	const [withTrashed, setWithTrashed] = useState(filters.with_trashed || false);
+	const [onlyTrashed, setOnlyTrashed] = useState(filters.only_trashed || false);
 
-    const breadcrumbs: BreadcrumbItem[] = [
-        {
-            title: t('admin.clients.navigation_label', 'Clients'),
-            href: index().url,
-        },
-    ];
+	const breadcrumbs: BreadcrumbItem[] = [
+		{
+			title: t('admin.clients.navigation_label', 'Clients'),
+			href: index().url,
+		},
+	];
 
-    // Apply client-side filters
-    const filteredClients = useMemo(() => {
-        let filtered = [...clients];
+	// Apply client-side filters
+	const filteredClients = useMemo(() => {
+		let filtered = [...clients];
 
         if (status) {
             filtered = filtered.filter((client) => client.status === status);
@@ -104,12 +106,7 @@ export default function Index() {
     const handleForceDelete = (clientId: string, e: React.MouseEvent) => {
         e.stopPropagation();
         if (
-            confirm(
-                t(
-                    'admin.clients.confirm_force_delete',
-                    'Are you sure you want to permanently delete this client? This action cannot be undone.',
-                ),
-            )
+            confirm(t('admin.clients.confirm_force_delete', 'Are you sure you want to permanently delete this client? This action cannot be undone.'))
         ) {
             router.delete(forceDelete({ client: clientId }).url, {
                 preserveScroll: true,
@@ -141,20 +138,38 @@ export default function Index() {
         );
     };
 
+    const SelectAllCheckbox = <TData,>({ table }: SelectAllCheckboxProps<TData>) => {
+        const checkboxRef = useRef<HTMLInputElement>(null);
+        const isAllSelected = table.getIsAllPageRowsSelected();
+        const isSomeSelected = table.getIsSomePageRowsSelected();
+
+        useEffect(() => {
+            if (!checkboxRef.current) {
+                return;
+            }
+
+            checkboxRef.current.indeterminate = isSomeSelected && !isAllSelected;
+        }, [isAllSelected, isSomeSelected]);
+
+        return (
+            <input
+                ref={checkboxRef}
+                type="checkbox"
+                checked={isAllSelected}
+                onChange={(e) => table.toggleAllPageRowsSelected(e.target.checked)}
+                aria-label="Select all"
+                aria-checked={isSomeSelected && !isAllSelected ? 'mixed' : isAllSelected}
+                data-row-select
+            />
+        );
+    };
+
     const columns: ColumnDef<Client>[] = useMemo(
         () => [
             {
                 id: 'select',
                 size: 40,
-                header: ({ table }) => (
-                    <input
-                        type="checkbox"
-                        checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-                        onChange={(e) => table.toggleAllPageRowsSelected(e.target.checked)}
-                        aria-label="Select all"
-                        data-row-select
-                    />
-                ),
+                header: ({ table }) => <SelectAllCheckbox table={table} />,
                 cell: ({ row }) => (
                     <input
                         type="checkbox"
