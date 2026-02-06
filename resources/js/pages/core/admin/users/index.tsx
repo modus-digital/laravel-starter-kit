@@ -26,20 +26,26 @@ type User = {
 };
 
 type PageProps = SharedData & {
-    users: User[];
-    filters: {
-        search?: string;
-        status?: string;
-        with_trashed?: boolean;
-        only_trashed?: boolean;
-        sort_by?: string;
-        sort_direction?: 'asc' | 'desc';
-    };
-    roles: Array<{ name: string; label: string }>;
-    statuses: Record<string, string>;
+	users: {
+		data: User[];
+		current_page: number;
+		last_page: number;
+		links: Array<{ url: string | null; label: string; active: boolean }>;
+	};
+	filters: {
+		search?: string;
+		status?: string;
+		with_trashed?: boolean;
+		only_trashed?: boolean;
+		sort_by?: string;
+		sort_direction?: 'asc' | 'desc';
+	};
+	roles: Array<{ name: string; label: string }>;
+	statuses: Record<string, string>;
 };
 
-export default function Index({ users, filters, roles, statuses }: PageProps) {
+export default function Index({ users: paginatedUsers, filters, roles, statuses }: PageProps) {
+	const users = paginatedUsers.data;
     const { t } = useTranslation();
 
     const [search, setSearch] = useState(filters.search || '');
