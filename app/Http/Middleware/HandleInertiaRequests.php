@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
-use App\Enums\RBAC\Permission;
+use App\Enums\RBAC\Permission as RbacPermission;
+use App\Models\Modules\Clients\Client;
 use App\Services\BrandingService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -41,9 +42,11 @@ final class HandleInertiaRequests extends Middleware
     {
         $brandingService = app(BrandingService::class);
         $branding = $brandingService->getSettings();
+        $userPermissions = $request->user()?->getAllPermissions()->pluck('name')->toArray() ?? [];
 
         return [
             ...parent::share($request),
+
             'name' => config('app.name'),
             'auth' => [
                 'user' => $request->user(),
@@ -52,11 +55,8 @@ final class HandleInertiaRequests extends Middleware
             'locale' => app()->getLocale(),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
 
-            // Manage global layout permissions
-            'permissions' => [
-                'canAccessControlPanel' => $request->user()?->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL) ?? false,
-                'canManageApiTokens' => $request->user()?->hasPermissionTo(Permission::HAS_API_ACCESS) ?? false,
-            ],
+            // Manage global layout permissions - expose all user permissions as array
+            'permissions' => $this->buildPermissionFlags($userPermissions),
 
             // Pass through the modules settings
             'modules' => config('modules'),
@@ -64,9 +64,16 @@ final class HandleInertiaRequests extends Middleware
             // Check if the user is impersonating another user
             'isImpersonating' => $request->session()->has('impersonation'),
 
+            // Client context (only when clients module is enabled)
+            'currentClient' => fn (): ?Client => $this->getCurrentClient($request),
+            'userClients' => fn (): array => $this->getUserClients($request),
+
             // Pass through the branding settings
             'branding' => [
-                'logo' => $branding['logo'],
+                'logoLight' => $branding['logo_light'],
+                'logoDark' => $branding['logo_dark'],
+                'emblemLight' => $branding['emblem_light'],
+                'emblemDark' => $branding['emblem_dark'],
                 'primaryColor' => $branding['primary_color'],
                 'secondaryColor' => $branding['secondary_color'],
                 'font' => $branding['font'],
@@ -75,5 +82,93 @@ final class HandleInertiaRequests extends Middleware
             // This is used to pass data from the controller to the view after a redirect
             'data' => fn (): array => $request->session()->get('data', []),
         ];
+    }
+
+    /**
+     * Get the current client from the session.
+     */
+    private function getCurrentClient(Request $request): ?Client
+    {
+        if (! config('modules.clients.enabled')) {
+            return null;
+        }
+
+        $user = $request->user();
+        if (! $user) {
+            return null;
+        }
+
+        $clientId = $request->session()->get('current_client_id');
+        if (! $clientId) {
+            // If no client is set, default to the first client the user belongs to
+            $firstClient = $user->clients()->first();
+            if ($firstClient) {
+                $request->session()->put('current_client_id', $firstClient->id);
+
+                return $firstClient;
+            }
+
+            return null;
+        }
+
+        return $user->clients()->whereKey($clientId)->first();
+    }
+
+    /**
+     * Get all clients the user belongs to.
+     *
+     * @return array<int, array{id: string, name: string}>
+     */
+    private function getUserClients(Request $request): array
+    {
+        if (! config('modules.clients.enabled')) {
+            return [];
+        }
+
+        $user = $request->user();
+        if (! $user) {
+            return [];
+        }
+
+        return $user->clients()
+            ->select(['clients.id', 'clients.name'])
+            ->get()
+            ->map(fn (Client $client): array => [
+                'id' => $client->id,
+                'name' => $client->name,
+            ])
+            ->all();
+    }
+
+    /**
+     * Build permission flags for frontend consumption.
+     *
+     * @param  array<int, string>  $permissions
+     * @return array<string, bool>
+     */
+    private function buildPermissionFlags(array $permissions): array
+    {
+        $flags = array_fill_keys($permissions, true);
+
+        $flags['canAccessControlPanel'] = in_array(RbacPermission::AccessControlPanel->value, $permissions, true);
+        $flags['canManageApiTokens'] = $this->hasApiTokenPermission($permissions);
+
+        return $flags;
+    }
+
+    /**
+     * Determine if the user can manage API tokens.
+     *
+     * @param  array<int, string>  $permissions
+     */
+    private function hasApiTokenPermission(array $permissions): bool
+    {
+        foreach ($permissions as $permission) {
+            if ($permission === 'access:api' || str_contains($permission, ':api-tokens')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

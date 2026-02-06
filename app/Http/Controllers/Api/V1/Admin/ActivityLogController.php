@@ -95,7 +95,7 @@ final class ActivityLogController extends Controller
         $user = $request->user();
         assert($user instanceof User);
 
-        if ($user->tokenCant(Permission::ACCESS_ACTIVITY_LOGS->value)) {
+        if ($user->tokenCant(Permission::AccessControlPanel->value)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);
@@ -224,7 +224,7 @@ final class ActivityLogController extends Controller
         $user = $request->user();
         assert($user instanceof User);
 
-        if ($user->tokenCant(Permission::ACCESS_ACTIVITY_LOGS->value)) {
+        if ($user->tokenCant(Permission::AccessControlPanel->value)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);

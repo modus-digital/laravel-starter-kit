@@ -25,8 +25,10 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': path.resolve(__dirname, 'resources/js'),
+            '@shared': path.resolve(__dirname, 'resources/js/shared'),
             '@assets': path.resolve(__dirname, 'resources/assets'),
             '@lang': path.resolve(__dirname, 'lang'),
+            '@styles': path.resolve(__dirname, 'resources/css'),
         },
     },
     esbuild: {

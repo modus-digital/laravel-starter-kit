@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use App\Models\User;
-use Database\Seeders\RolesAndPermissionsSeeder;
+use Database\Seeders\BootstrapApplicationSeeder;
 
 beforeEach(function () {
-    $this->seed(RolesAndPermissionsSeeder::class);
+    $this->seed(BootstrapApplicationSeeder::class);
 });
 
 test('guests are redirected to the login page', function () {

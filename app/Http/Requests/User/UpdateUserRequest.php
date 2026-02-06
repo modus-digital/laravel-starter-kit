@@ -17,9 +17,7 @@ final class UpdateUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // TODO: Add proper authorization check based on your permission system
-        // return $this->user()->can('update users');
-        return true;
+        return $this->user()->can(\App\Enums\RBAC\Permission::UpdateUsers->value);
     }
 
     /**

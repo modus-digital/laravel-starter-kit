@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use App\Models\User;
-use Database\Seeders\RolesAndPermissionsSeeder;
+use Database\Seeders\BootstrapApplicationSeeder;
 use Inertia\Testing\AssertableInertia as Assert;
 
 beforeEach(function () {
-    $this->seed(RolesAndPermissionsSeeder::class);
+    $this->seed(BootstrapApplicationSeeder::class);
 });
 
 test('confirm password screen can be rendered', function () {

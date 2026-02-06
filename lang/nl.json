@@ -1,0 +1,16 @@
+{
+    "activity": {
+        "auth": {
+            "login": "logt in"
+        }
+    },
+    "settings": {
+        "profile": {
+            "page_title": "Profiel instellingen",
+            "title": "Profiel informatie",
+            "description": "Bewerk je naam en emailadres",
+            "avatar": "Avatar",
+            "avatar_placeholder": "Upload je avatar"
+        }
+    }
+}

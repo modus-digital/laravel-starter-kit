@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Services;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 
 final class BrandingService
 {
@@ -28,7 +27,10 @@ final class BrandingService
             'primary_color' => $this->getPrimaryColorHex(),
             'secondary_color' => $this->getSecondaryColorHex(),
             'font' => $this->getFont(),
-            'logo' => $this->getLogoUrl(),
+            'logo_light' => $this->getLogoLightUrl(),
+            'logo_dark' => $this->getLogoDarkUrl(),
+            'emblem_light' => $this->getEmblemLightUrl(),
+            'emblem_dark' => $this->getEmblemDarkUrl(),
         ]);
     }
 
@@ -101,21 +103,39 @@ final class BrandingService
      */
     public function getFont(): string
     {
-        return setting('branding.font', self::DEFAULT_FONT);
+        return setting('branding.font') ?? self::DEFAULT_FONT;
     }
 
     /**
-     * Get logo URL or null if not set.
+     * Get light mode logo URL or null if not set.
      */
-    public function getLogoUrl(): ?string
+    public function getLogoLightUrl(): ?string
     {
-        $logoFilename = setting('branding.logo');
+        return $this->getAssetUrl('branding.logo_light');
+    }
 
-        if (! $logoFilename) {
-            return null;
-        }
+    /**
+     * Get dark mode logo URL or null if not set.
+     */
+    public function getLogoDarkUrl(): ?string
+    {
+        return $this->getAssetUrl('branding.logo_dark');
+    }
 
-        return Storage::disk('public')->url($logoFilename);
+    /**
+     * Get light mode emblem URL (logo without text, used for favicon and icon) or null if not set.
+     */
+    public function getEmblemLightUrl(): ?string
+    {
+        return $this->getAssetUrl('branding.emblem_light');
+    }
+
+    /**
+     * Get dark mode emblem URL (logo without text, used for favicon and icon) or null if not set.
+     */
+    public function getEmblemDarkUrl(): ?string
+    {
+        return $this->getAssetUrl('branding.emblem_dark');
     }
 
     /**
@@ -168,6 +188,199 @@ final class BrandingService
     public function clearCache(): void
     {
         Cache::forget(self::CACHE_KEY);
+    }
+
+    /**
+     * Generate a full Tailwind-compatible color scale from a single hex color.
+     * Uses OKLCH color space to maintain perceptual uniformity and stable hue/chroma.
+     * The input color becomes the 500 shade.
+     *
+     * @return array<int, string> Map of shade (50-950) to hex color string
+     */
+    public function generateColorScale(string $hexColor): array
+    {
+        // Convert hex to RGB
+        $rgb = $this->hexToRgb($hexColor);
+
+        // Convert RGB to OKLCH
+        $baseOklch = $this->rgbToOklch($rgb[0], $rgb[1], $rgb[2]);
+
+        // Extract hue and chroma from base color
+        $baseHue = $baseOklch['h'];
+        $baseChroma = $baseOklch['c'];
+
+        // Lightness values for each Tailwind shade in OKLCH space
+        // These values are perceptually uniform, ensuring consistent visual steps
+        $lightnessMap = [
+            50 => 0.95, // lightest
+            100 => 0.90,
+            200 => 0.80,
+            300 => 0.70,
+            400 => 0.60,
+            500 => 0.50, // base
+            600 => 0.40,
+            700 => 0.30,
+            800 => 0.22,
+            900 => 0.15,
+            950 => 0.08, // darkest
+        ];
+
+        // Generate scale by interpolating lightness while keeping hue/chroma stable
+        $scale = [];
+
+        foreach ($lightnessMap as $shade => $targetLightness) {
+            // Scale chroma based on lightness distance from midpoint
+            // This keeps colors vibrant in the middle and more neutral at extremes
+            $adjustedChroma = $baseChroma * $this->chromaScale($targetLightness);
+
+            // Convert OKLCH back to RGB
+            $shadeRgb = $this->oklchToRgb($targetLightness, $adjustedChroma, $baseHue);
+
+            // Convert RGB to hex
+            $scale[$shade] = $this->rgbToHex($shadeRgb[0], $shadeRgb[1], $shadeRgb[2]);
+        }
+
+        return $scale;
+    }
+
+    /**
+     * Generate CSS variables in the format expected by shadcn/ui and Tailwind.
+     * Outputs RGB values as space-separated numbers (e.g., "255 128 64")
+     * which can be used with `rgb(var(--color) / opacity)` syntax.
+     *
+     * @param name Base name for the color scale (e.g., "primary" or "secondary")
+     * @param hexColor Base color in hex format
+     * @return string CSS variable declarations
+     */
+    public function generateCSSVariables(string $name, string $hexColor): string
+    {
+        $scale = $this->generateColorScale($hexColor);
+        $variables = [];
+
+        foreach ($scale as $shade => $hex) {
+            $rgb = $this->hexToRgb($hex);
+            // Format as space-separated RGB values for CSS variable
+            $rgbValues = sprintf('%d %d %d', $rgb[0], $rgb[1], $rgb[2]);
+            $variables[] = sprintf('  --%s-%d: %s;', $name, $shade, $rgbValues);
+        }
+
+        return implode("\n", $variables);
+    }
+
+    /**
+     * Determines whether black or white text should be used on a given background color
+     * to meet WCAG contrast guidelines.
+     *
+     * @param hexColor Background color in hex format
+     * @return 'white' for dark backgrounds, 'black' for light backgrounds
+     */
+    public function getContrastTextColor(string $hexColor): string
+    {
+        $luminance = $this->getRelativeLuminance($hexColor);
+
+        // Threshold of 0.179 corresponds to ~4.5:1 contrast ratio with white
+        // This ensures WCAG AA compliance for normal text
+        return $luminance > 0.179 ? 'black' : 'white';
+    }
+
+    /**
+     * Get asset URL from setting key.
+     */
+    private function getAssetUrl(string $settingKey): ?string
+    {
+        $asset = setting($settingKey);
+
+        if (! $asset) {
+            return null;
+        }
+
+        return $asset;
+    }
+
+    /**
+     * Calculate chroma scaling factor based on lightness.
+     * Keeps colors vibrant in the middle range and reduces saturation at extremes.
+     * Uses a power curve for smooth falloff.
+     */
+    private function chromaScale(float $lightness): float
+    {
+        return pow(1 - abs($lightness - 0.5) * 2, 0.85);
+    }
+
+    /**
+     * Calculate the relative luminance of a color using the WCAG formula.
+     * Used to determine text contrast requirements.
+     *
+     * @param hex Color in hex format
+     * @return float Relative luminance value between 0 (black) and 1 (white)
+     */
+    private function getRelativeLuminance(string $hex): float
+    {
+        $rgb = $this->hexToRgb($hex);
+
+        // Normalize RGB values to 0-1 range
+        $r = $rgb[0] / 255.0;
+        $g = $rgb[1] / 255.0;
+        $b = $rgb[2] / 255.0;
+
+        // Apply gamma correction
+        $r = $r <= 0.03928 ? $r / 12.92 : (($r + 0.055) / 1.055) ** 2.4;
+        $g = $g <= 0.03928 ? $g / 12.92 : (($g + 0.055) / 1.055) ** 2.4;
+        $b = $b <= 0.03928 ? $b / 12.92 : (($b + 0.055) / 1.055) ** 2.4;
+
+        // Calculate relative luminance using WCAG formula
+        return 0.2126 * $r + 0.7152 * $g + 0.0722 * $b;
+    }
+
+    /**
+     * Convert OKLCH to RGB.
+     *
+     * @return array{0: int, 1: int, 2: int} RGB values as integers 0-255
+     */
+    private function oklchToRgb(float $l, float $c, float $h): array
+    {
+        // Convert OKLCH to OKLab
+        $hRad = deg2rad($h);
+        $a = $c * cos($hRad);
+        $b_lab = $c * sin($hRad);
+
+        // Convert OKLab to XYZ
+        $l_ = $l + 0.3963377774 * $a + 0.2158037573 * $b_lab;
+        $m_ = $l - 0.1055613458 * $a - 0.0638541728 * $b_lab;
+        $s_ = $l - 0.0894841775 * $a - 1.2914855480 * $b_lab;
+
+        $l_ = $l_ ** 3;
+        $m_ = $m_ ** 3;
+        $s_ = $s_ ** 3;
+
+        $x = 1.2270138511 * $l_ - 0.5577999807 * $m_ + 0.2812561490 * $s_;
+        $y = 0.0405793773 * $l_ + 0.1849682802 * $m_ - 0.2254883756 * $s_;
+        $z = -0.0763812849 * $l_ + 0.1456170499 * $m_ + 0.6167253928 * $s_;
+
+        // Convert XYZ to linear RGB (D65 illuminant)
+        $r = 3.2404542 * $x - 1.5371385 * $y - 0.4985314 * $z;
+        $g = -0.9692660 * $x + 1.8760108 * $y + 0.0415560 * $z;
+        $b = 0.0556434 * $x - 0.2040259 * $y + 1.0572252 * $z;
+
+        // Apply gamma correction (linear RGB to sRGB)
+        $r = $r <= 0.0031308 ? 12.92 * $r : 1.055 * ($r ** (1 / 2.4)) - 0.055;
+        $g = $g <= 0.0031308 ? 12.92 * $g : 1.055 * ($g ** (1 / 2.4)) - 0.055;
+        $b = $b <= 0.0031308 ? 12.92 * $b : 1.055 * ($b ** (1 / 2.4)) - 0.055;
+
+        // Clamp to 0-1 and convert to 0-255
+        return [
+            (int) round(max(0, min(255, $r * 255))),
+            (int) round(max(0, min(255, $g * 255))),
+            (int) round(max(0, min(255, $b * 255))),
+        ];
+    }
+
+    /**
+     * Convert RGB to hex color string.
+     */
+    private function rgbToHex(int $r, int $g, int $b): string
+    {
+        return sprintf('#%02X%02X%02X', $r, $g, $b);
     }
 
     /**

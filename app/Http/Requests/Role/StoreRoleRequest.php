@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Requests\Role;
 
 use App\Enums\RBAC\Permission;
+use App\Models\Role;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -15,9 +16,7 @@ final class StoreRoleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // TODO: Add proper authorization check
-        // return $this->user()->can(Permission::CREATE_ROLES->value);
-        return true;
+        return $this->user()->can('create', Role::class);
     }
 
     /**
@@ -37,8 +36,6 @@ final class StoreRoleRequest extends FormRequest
                 'not_in:super_admin,admin', // Cannot create internal roles
             ],
             'guard_name' => ['required', 'string', 'max:255', 'in:web'],
-            'icon' => ['nullable', 'string', 'max:255'],
-            'color' => ['nullable', 'string', 'max:255', 'regex:/^#[a-fA-F0-9]{6}$|^[a-fA-F0-9]{3}$/'],
             'permissions' => ['nullable', 'array'],
             'permissions.*' => ['string', Rule::in(array_column(Permission::cases(), 'value'))],
         ];
@@ -54,7 +51,6 @@ final class StoreRoleRequest extends FormRequest
         return [
             'name.regex' => 'The role name may only contain lowercase letters, underscores, and hyphens.',
             'name.not_in' => 'Internal roles (super_admin, admin) cannot be created.',
-            'color.regex' => 'The color must be a valid hex color code.',
             'permissions.*.in' => 'One or more selected permissions are invalid.',
         ];
     }

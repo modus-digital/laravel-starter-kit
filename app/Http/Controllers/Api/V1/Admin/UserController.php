@@ -78,7 +78,7 @@ final class UserController extends Controller
         $user = $request->user();
         assert($user instanceof User);
 
-        if ($user->tokenCant(Permission::READ_USERS->value)) {
+        if ($user->tokenCant(Permission::AccessControlPanel->value)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);
@@ -170,7 +170,7 @@ final class UserController extends Controller
             ], 401);
         }
 
-        if ($actingUser->tokenCant(Permission::CREATE_USERS->value)) {
+        if ($actingUser->tokenCant(Permission::AccessControlPanel->value)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);
@@ -239,7 +239,7 @@ final class UserController extends Controller
             ], 401);
         }
 
-        if ($actingUser->tokenCant(Permission::READ_USERS->value)) {
+        if ($actingUser->tokenCant(Permission::AccessControlPanel->value)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);
@@ -312,7 +312,7 @@ final class UserController extends Controller
             ], 401);
         }
 
-        if ($actingUser->tokenCant(Permission::UPDATE_USERS->value)) {
+        if ($actingUser->tokenCant(Permission::AccessControlPanel->value)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);
@@ -393,7 +393,7 @@ final class UserController extends Controller
             ], 401);
         }
 
-        if ($actingUser->tokenCant(Permission::DELETE_USERS->value)) {
+        if ($actingUser->tokenCant(Permission::AccessControlPanel->value)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);
@@ -453,7 +453,7 @@ final class UserController extends Controller
             ], 401);
         }
 
-        if ($actingUser->tokenCant(Permission::RESTORE_USERS->value)) {
+        if ($actingUser->tokenCant(Permission::AccessControlPanel->value)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);
@@ -501,7 +501,7 @@ final class UserController extends Controller
             ], 401);
         }
 
-        if ($actingUser->tokenCant(Permission::DELETE_USERS->value)) {
+        if ($actingUser->tokenCant(Permission::AccessControlPanel->value)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);

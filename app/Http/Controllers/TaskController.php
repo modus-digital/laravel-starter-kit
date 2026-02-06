@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Enums\Modules\Tasks\TaskViewType;
+use App\Events\Comments\CommentAdded;
 use App\Http\Requests\Tasks\AddCommentRequest;
 use App\Http\Requests\Tasks\CreateTaskRequest;
 use App\Http\Requests\Tasks\CreateTaskViewRequest;
@@ -13,11 +14,13 @@ use App\Http\Requests\Tasks\DeleteTaskViewRequest;
 use App\Http\Requests\Tasks\MakeDefaultTaskViewRequest;
 use App\Http\Requests\Tasks\UpdateTaskRequest;
 use App\Http\Requests\Tasks\UpdateTaskViewRequest;
+use App\Http\Resources\ActivityResource;
 use App\Models\Activity;
 use App\Models\Modules\Tasks\Task;
 use App\Models\Modules\Tasks\TaskView;
 use App\Services\TaskService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Event;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Activitylog\Facades\Activity as ActivityFacade;
@@ -42,7 +45,7 @@ final class TaskController extends Controller
         $statuses = $this->taskService->getStatuses();
 
         return Inertia::render(
-            component: 'tasks/index',
+            component: 'modules/tasks/index',
             props: [
                 'tasks' => $tasks,
                 'taskViews' => $taskViews,
@@ -75,7 +78,9 @@ final class TaskController extends Controller
                 return [
                     'id' => $activity->id,
                     'log_name' => $activity->log_name,
-                    'description' => $activity->getTranslatedDescription(),
+                    'description' => $activity->description,
+                    'translated_description' => $activity->getTranslatedDescription(),
+                    'translation' => $activity->getTranslationPayload(),
                     'subject_type' => $activity->subject_type,
                     'subject_id' => $activity->subject_id,
                     'event' => $activity->event,
@@ -93,7 +98,7 @@ final class TaskController extends Controller
             });
 
         return Inertia::render(
-            component: 'tasks/show',
+            component: 'modules/tasks/show',
             props: [
                 'task' => $task,
                 'statuses' => $statuses,
@@ -194,14 +199,27 @@ final class TaskController extends Controller
     {
         abort_if(boolean: $request->user() === null, code: 401);
 
+        $user = $request->user();
+        $comment = $request->validated('comment');
+
         ActivityFacade::inLog('tasks')
             ->event('tasks.comments.created')
-            ->causedBy($request->user())
+            ->causedBy($user)
             ->performedOn($task)
             ->withProperties([
-                'comment' => $request->validated('comment'),
+                'comment' => $comment,
             ])
             ->log('tasks.comments.created');
+
+        // Load relationships for event
+        $task->load(['assignedTo', 'createdBy']);
+
+        // Dispatch CommentAdded event
+        Event::dispatch(new CommentAdded(
+            task: $task,
+            commenter: $user,
+            comment: $comment,
+        ));
 
         return redirect()->back();
     }
@@ -226,28 +244,8 @@ final class TaskController extends Controller
             ->where('subject_id', $task->getKey())
             ->with(['causer'])
             ->latest('created_at')
-            ->get()
-            ->map(function (Activity $activity) {
-                return [
-                    'id' => $activity->id,
-                    'log_name' => $activity->log_name,
-                    'description' => $activity->getTranslatedDescription(),
-                    'subject_type' => $activity->subject_type,
-                    'subject_id' => $activity->subject_id,
-                    'event' => $activity->event,
-                    'causer_type' => $activity->causer_type,
-                    'causer_id' => $activity->causer_id,
-                    'properties' => $activity->properties,
-                    'created_at' => $activity->created_at,
-                    'updated_at' => $activity->updated_at,
-                    'causer' => $activity->causer ? [
-                        'id' => $activity->causer->id,
-                        'name' => $activity->causer->name,
-                        'email' => $activity->causer->email,
-                    ] : null,
-                ];
-            });
+            ->get();
 
-        return response()->json(['activities' => $activities]);
+        return response()->json(['activities' => ActivityResource::collection($activities)->toArray(request())]);
     }
 }

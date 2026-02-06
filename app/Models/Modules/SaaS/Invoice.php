@@ -13,6 +13,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property string $id
+ * @property string $invoice_id
+ * @property string $client_id
+ * @property string|null $subscription_id
+ * @property float $total
+ * @property string|null $currency
+ * @property BillingStatus $status
+ * @property \Carbon\Carbon|null $paid_at
+ * @property \Carbon\Carbon|null $due_date
+ * @property \Carbon\Carbon $created_at
+ * @property \Carbon\Carbon $updated_at
+ * @property \Carbon\Carbon|null $deleted_at
+ * @property-read Client $client
+ * @property-read Subscription|null $subscription
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Payment> $payments
+ */
 final class Invoice extends Model
 {
     /** @use HasFactory<\Database\Factories\Modules\SaaS\InvoiceFactory> */

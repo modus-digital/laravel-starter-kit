@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Enums\RBAC\Permission;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,12 +17,8 @@ final class DashboardController extends Controller
         /** @var \App\Models\User|null $user */
         $user = Auth::user();
 
-        if ($user && $user->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL)) {
-            return redirect()->to(path: route('filament.control.pages.dashboard', absolute: false));
-        }
-
         return Inertia::render(
-            component: 'dashboard',
+            component: 'core/dashboard',
         );
     }
 }

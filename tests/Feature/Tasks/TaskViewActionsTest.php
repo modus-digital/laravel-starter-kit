@@ -6,10 +6,10 @@ use App\Models\Modules\Clients\Client;
 use App\Models\Modules\Tasks\TaskView;
 use App\Models\User;
 use App\Services\TaskService;
-use Database\Seeders\RolesAndPermissionsSeeder;
+use Database\Seeders\BootstrapApplicationSeeder;
 
 beforeEach(function (): void {
-    $this->seed(RolesAndPermissionsSeeder::class);
+    $this->seed(BootstrapApplicationSeeder::class);
 });
 
 describe('rename view', function (): void {

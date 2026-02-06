@@ -44,7 +44,7 @@ final class LeaveImpersonationController extends Controller
          * Update the password hash in session for AuthenticateSession middleware
          * This prevents the middleware from logging out the impersonated user
          */
-        if ($originalUser->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL)) {
+        if ($originalUser->hasPermissionTo(Permission::AccessControlPanel)) {
             session()->put('password_hash_'.Auth::getDefaultDriver(), $originalUser->getAuthPassword());
         }
 
@@ -57,7 +57,7 @@ final class LeaveImpersonationController extends Controller
             ->withProperties([
                 'target' => $currentUser->name,
             ])
-            ->log('');
+            ->log('activity.impersonate.leave');
 
         return Inertia::location(url: route('dashboard'));
     }

@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use App\Models\User;
-use Database\Seeders\RolesAndPermissionsSeeder;
+use Database\Seeders\BootstrapApplicationSeeder;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Notification;
 
 beforeEach(function () {
-    $this->seed(RolesAndPermissionsSeeder::class);
+    $this->seed(BootstrapApplicationSeeder::class);
 });
 
 test('sends verification notification', function () {

@@ -110,8 +110,13 @@
         "baseUrl": ".",
         "paths": {
             "@/*": ["./resources/js/*"],
+            "@styles/*": ["./resources/css/*"],
+            "@shared/*": ["./resources/js/shared/*"],
             "@assets/*": ["./resources/assets/*"],
-            "@lang/*": ["./lang/*"]
+            "@lang/*": ["./lang/*"],
+            "@types/*": ["./types/*"],
+            "@routes/*": ["./routes/*"],
+            "@actions/*": ["./actions/*"],
         },
         "jsx": "react-jsx"
     },

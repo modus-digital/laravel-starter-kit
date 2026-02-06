@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Services\FileStorageService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,7 +21,7 @@ final class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
-        return Inertia::render('settings/profile', [
+        return Inertia::render('core/settings/profile', [
             'mustVerifyEmail' => false, // User model doesn't implement MustVerifyEmail by default
             'status' => $request->session()->get('status'),
         ]);
@@ -29,11 +30,29 @@ final class ProfileController extends Controller
     /**
      * Update the user's profile settings.
      */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(ProfileUpdateRequest $request, FileStorageService $fileStorage): RedirectResponse
     {
         /** @var \App\Models\User $user */
         $user = $request->user();
-        $user->fill($request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('avatar')) {
+            // Refresh to ensure we have the latest avatar value
+            $user->refresh();
+            $oldAvatar = $user->attributes['avatar'] ?? null;
+
+            if ($oldAvatar) {
+                $fileStorage->delete($oldAvatar);
+            }
+
+            $data['avatar'] = $fileStorage->upload(
+                file: $request->file('avatar'),
+                storagePath: 'avatars',
+                public: true
+            );
+        }
+
+        $user->fill($data);
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;

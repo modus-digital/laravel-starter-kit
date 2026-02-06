@@ -31,13 +31,13 @@ final class LogFailedLogin
                 ->event('auth.login.failed')
                 ->causedBy($user)
                 ->withProperties($properties)
-                ->log('');
+                ->log('activity.auth.login_failed');
         } else {
             // If user doesn't exist, log without subject (attempted login with non-existent email)
             Activity::inLog('authentication')
                 ->event('auth.login.failed')
                 ->withProperties($properties)
-                ->log('');
+                ->log('activity.auth.login_failed');
         }
     }
 }

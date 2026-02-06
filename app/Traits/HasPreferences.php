@@ -16,10 +16,15 @@ trait HasPreferences
             ? ['comments' => NotificationDeliveryMethod::EMAIL_PUSH]
             : [];
 
+        $tasks = config('modules.tasks.enabled')
+            ? ['tasks' => NotificationDeliveryMethod::EMAIL_PUSH]
+            : [];
+
         return [
             'notifications' => [
                 'security_alerts' => NotificationDeliveryMethod::EMAIL,
                 ...$comments,
+                ...$tasks,
             ],
             'language' => Language::EN,
         ];

@@ -6,10 +6,10 @@ use App\Models\Modules\Clients\Client;
 use App\Models\Modules\Tasks\Task;
 use App\Models\Modules\Tasks\TaskStatus;
 use App\Models\User;
-use Database\Seeders\RolesAndPermissionsSeeder;
+use Database\Seeders\BootstrapApplicationSeeder;
 
 beforeEach(function (): void {
-    $this->seed(RolesAndPermissionsSeeder::class);
+    $this->seed(BootstrapApplicationSeeder::class);
 });
 
 it('creates a user-scoped task when no client is selected', function (): void {

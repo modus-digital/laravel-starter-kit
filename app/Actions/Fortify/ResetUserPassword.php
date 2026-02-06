@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Actions\Fortify;
 
+use App\Events\Security\PasswordChanged;
 use App\Models\User;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\ResetsUserPasswords;
 
@@ -26,5 +28,12 @@ final class ResetUserPassword implements ResetsUserPasswords
         $user->forceFill([
             'password' => $input['password'],
         ])->save();
+
+        // Dispatch PasswordChanged event
+        Event::dispatch(new PasswordChanged(
+            user: $user,
+            ipAddress: request()->ip(),
+            userAgent: request()->userAgent(),
+        ));
     }
 }

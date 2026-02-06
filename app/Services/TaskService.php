@@ -7,6 +7,10 @@ namespace App\Services;
 use App\Enums\Modules\Tasks\TaskPriority;
 use App\Enums\Modules\Tasks\TaskType;
 use App\Enums\Modules\Tasks\TaskViewType;
+use App\Events\Tasks\TaskAssigned;
+use App\Events\Tasks\TaskCompleted;
+use App\Events\Tasks\TaskReassigned;
+use App\Events\Tasks\TaskUpdated;
 use App\Models\Modules\Clients\Client;
 use App\Models\Modules\Tasks\Task;
 use App\Models\Modules\Tasks\TaskStatus;
@@ -17,6 +21,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Spatie\Activitylog\Facades\Activity;
@@ -123,7 +128,7 @@ final class TaskService
                     'name' => $taskView->name,
                 ],
             ])
-            ->log('Task view created');
+            ->log('activity.tasks.views.created');
 
         return $taskView;
     }
@@ -151,7 +156,7 @@ final class TaskService
                     'new_name' => $taskView->name,
                 ],
             ])
-            ->log('Task view renamed');
+            ->log('activity.tasks.views.renamed');
 
         return $taskView;
     }
@@ -183,7 +188,7 @@ final class TaskService
                     'status_count' => count($statusIds),
                 ],
             ])
-            ->log('Task view statuses updated');
+            ->log('activity.tasks.views.statuses_updated');
 
         return $taskView;
     }
@@ -214,7 +219,7 @@ final class TaskService
                     'name' => $taskView->name,
                 ],
             ])
-            ->log('Task view set as default');
+            ->log('activity.tasks.views.set_default');
     }
 
     /**
@@ -237,7 +242,7 @@ final class TaskService
             ->withProperties([
                 'task_view' => $taskViewData,
             ])
-            ->log('Task view deleted');
+            ->log('activity.tasks.views.deleted');
     }
 
     public function updateTaskView(TaskView $taskView, string $name, TaskViewType $type): TaskView
@@ -258,7 +263,7 @@ final class TaskService
                     'type' => $taskView->type,
                 ],
             ])
-            ->log('Task view updated');
+            ->log('activity.tasks.views.updated');
 
         return $taskView;
     }
@@ -350,6 +355,9 @@ final class TaskService
             'assigned_to_id' => $data['assigned_to_id'] ?? null,
         ]);
 
+        // Load relationships for event dispatching
+        $task->load(['assignedTo', 'createdBy', 'status']);
+
         Activity::inLog('tasks')
             ->event('tasks.created')
             ->causedBy($user)
@@ -362,7 +370,24 @@ final class TaskService
                     'taskable_id' => $task->taskable_id,
                 ],
             ])
-            ->log('Task created');
+            ->log('activity.tasks.created');
+
+        // Dispatch TaskAssigned event if task is assigned
+        if ($task->assignedTo !== null) {
+            Event::dispatch(new TaskAssigned(
+                task: $task,
+                assignee: $task->assignedTo,
+                assigner: $user,
+            ));
+        }
+
+        // Dispatch TaskCompleted event if task is completed
+        if ($task->completed_at !== null) {
+            Event::dispatch(new TaskCompleted(
+                task: $task,
+                completedBy: $user,
+            ));
+        }
 
         return $task;
     }
@@ -449,12 +474,16 @@ final class TaskService
         // Detect actual changes before updating (only field names and old values)
         $changedFields = $this->detectChangedFields($task, $updateData, $originalValues);
 
+        // Capture assignment changes before update
+        $previousAssignee = $task->assignedTo;
+        $wasCompleted = $task->completed_at !== null;
+
         // Update the task
         $task->update($updateData);
 
         // Reload relationships for accurate logging
         $task->refresh();
-        $task->load(['status', 'assignedTo']);
+        $task->load(['status', 'assignedTo', 'createdBy']);
 
         // Get new values after update
         $newValues = $this->getTaskOriginalValues($task);
@@ -479,6 +508,52 @@ final class TaskService
                 'new' => $newFormatted,
                 'event' => $this->getEventTypeForField($field),
             ]);
+        }
+
+        // Dispatch events based on changes
+        $changesForEvent = [];
+        foreach ($changedFields as $field) {
+            $changesForEvent[$field] = [
+                'old' => $originalValues[$field] ?? null,
+                'new' => $newValues[$field] ?? null,
+            ];
+        }
+
+        // Dispatch TaskReassigned event if assignment changed
+        if (in_array('assigned_to_id', $changedFields, true)) {
+            $newAssignee = $task->assignedTo;
+            if ($previousAssignee?->id !== $newAssignee?->id) {
+                Event::dispatch(new TaskReassigned(
+                    task: $task,
+                    previousAssignee: $previousAssignee,
+                    newAssignee: $newAssignee,
+                    reassigner: $user,
+                ));
+            }
+        }
+
+        // Dispatch TaskCompleted event if task was just completed
+        if (in_array('status_id', $changedFields, true) && ! $wasCompleted && $task->completed_at !== null) {
+            Event::dispatch(new TaskCompleted(
+                task: $task,
+                completedBy: $user,
+            ));
+        }
+
+        // Dispatch TaskUpdated event if there are any changes (excluding assignment/completion which have their own events)
+        $updateChanges = [];
+        foreach ($changesForEvent as $field => $change) {
+            if ($field !== 'assigned_to_id' && $field !== 'status_id') {
+                $updateChanges[$field] = $change;
+            }
+        }
+
+        if (! empty($updateChanges)) {
+            Event::dispatch(new TaskUpdated(
+                task: $task,
+                updatedBy: $user,
+                changes: $updateChanges,
+            ));
         }
 
         return $task;
@@ -506,7 +581,7 @@ final class TaskService
             ->withProperties([
                 'task' => $taskData,
             ])
-            ->log('Task deleted');
+            ->log('activity.tasks.deleted');
     }
 
     /**
@@ -739,7 +814,7 @@ final class TaskService
             ->causedBy($user)
             ->performedOn($task)
             ->withProperties($properties)
-            ->log('Task field changed');
+            ->log('activity.'.$change['event']);
     }
 
     /**

@@ -13,9 +13,6 @@ final class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([
-            RolesAndPermissionsSeeder::class,
-            AdminUserSeeder::class,
-        ]);
+        $this->call(class: BootstrapApplicationSeeder::class);
     }
 }

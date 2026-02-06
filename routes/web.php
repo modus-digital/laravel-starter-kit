@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Admin\ImpersonationController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\LeaveImpersonationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RedirectToApplicationController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', RedirectToApplicationController::class)->name('home');
@@ -15,7 +16,10 @@ Route::middleware(['auth', 'verified'])
         Route::get('dashboard', DashboardController::class)
             ->name('dashboard');
 
-        Route::post('impersonate/leave', LeaveImpersonationController::class)
+        Route::get('search', SearchController::class)
+            ->name('search');
+
+        Route::post('impersonate/leave', [ImpersonationController::class, 'leave'])
             ->name('impersonate.leave');
 
         Route::prefix('notifications')
@@ -31,6 +35,9 @@ Route::middleware(['auth', 'verified'])
                 Route::delete('/', [NotificationController::class, 'clearAll'])->name('clear');
             });
     });
+
+// Admin routes
+require __DIR__.'/admin.php';
 
 // Module routes
 if (config('modules.socialite.enabled')) {

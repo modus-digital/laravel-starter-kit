@@ -31,7 +31,7 @@ final class NotificationController extends Controller
             ->paginate(15)
             ->through(fn (DatabaseNotification $notification): array => NotificationResource::toArrayForUser($notification));
 
-        return Inertia::render('notifications/index', [
+        return Inertia::render('core/notifications/index', [
             'notifications' => $notifications,
             'unreadCount' => $user->unreadNotifications()->count(),
             'activeTab' => $activeTab,
@@ -43,7 +43,7 @@ final class NotificationController extends Controller
         $this->assertOwnsNotification($request->user(), $notification);
         $notification->markAsRead();
 
-        return Inertia::render('notifications/show', [
+        return Inertia::render('core/notifications/show', [
             'notification' => NotificationResource::toArrayForUser($notification),
         ]);
     }

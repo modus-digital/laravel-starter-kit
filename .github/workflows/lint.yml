@@ -5,10 +5,18 @@ on:
     branches:
       - develop
       - main
+      - master
+      - production
+      - staging
+      - acceptance
   pull_request:
     branches:
       - develop
       - main
+      - master
+      - production
+      - staging
+      - acceptance
 
 permissions:
   contents: write
@@ -24,19 +32,34 @@ jobs:
         with:
           php-version: '8.4'
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
       - name: Install Dependencies
-        run: |
-          composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-          npm install
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Install Node Dependencies
+        run: pnpm install
 
       - name: Run Pint
         run: vendor/bin/pint
 
+      - name: Analyze Code (PHPStan)
+        run: vendor/bin/phpstan analyse --memory-limit=4G --ansi
+
       - name: Format Frontend
-        run: npm run format
+        run: pnpm run format
 
       - name: Lint Frontend
-        run: npm run lint
+        run: pnpm run lint
 
       # - name: Commit Changes
       #   uses: stefanzweifel/git-auto-commit-action@v5
