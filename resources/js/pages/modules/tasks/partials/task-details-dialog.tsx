@@ -22,6 +22,7 @@ import type { JSONContent } from 'novel';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { ActivityBadge } from '@/shared/components/tasks/activity-badge';
 import type { Activity, Status, Task, TaskActivityProperties, TaskActivityValue, TaskPriority } from '../types';
 
 type Props = {
@@ -41,51 +42,8 @@ const toDate = (iso: string | null | undefined): Date | undefined => {
 };
 
 const formatDate = (date: Date | undefined): string => {
-    if (!date) return '';
-    return format(date, 'MMM d, yyyy');
-};
-
-const renderActivityBadge = (value: TaskActivityValue | undefined, field?: string) => {
-    if (!value) return null;
-
-    if (typeof value === 'object' && value !== null) {
-        // Handle status with color badge
-        if (field === 'status_id' && value.name && value.color) {
-            return (
-                <Badge
-                    variant="outline"
-                    className="ml-1 border-0"
-                    style={{
-                        backgroundColor: `${value.color}20`,
-                        color: value.color,
-                    }}
-                >
-                    <div className="mr-1.5 h-2 w-2 rounded-full" style={{ backgroundColor: value.color }} />
-                    {value.name}
-                </Badge>
-            );
-        }
-
-        // Handle priority with icon
-        if (field === 'priority' && value.label) {
-            const priorityColor =
-                {
-                    low: 'text-muted-foreground',
-                    normal: 'text-blue-500',
-                    high: 'text-orange-500',
-                    critical: 'text-red-500',
-                }[value.value as TaskPriority] || 'text-muted-foreground';
-
-            return (
-                <span className="ml-1 inline-flex items-center gap-1">
-                    <Flag className={cn('h-3.5 w-3.5', priorityColor)} />
-                    <span>{value.label}</span>
-                </span>
-            );
-        }
-    }
-
-    return null;
+	if (!date) return '';
+	return format(date, 'MMM d, yyyy');
 };
 
 export default function TaskDetailsDialog({ task, statuses = [], activities = [], open, onOpenChange }: Props) {
@@ -513,14 +471,12 @@ function TaskDetailsDialogInner({
                                                                         <span className="font-medium">{userName}</span>{' '}
                                                                         <span className="text-muted-foreground">{String(renderActivityDescription(activity))}</span>
                                                                         {(isStatusChange || isPriorityChange) && (
-                                                                            <div className="mt-1.5 flex items-center gap-1.5">
-                                                                                {props.old && renderActivityBadge(props.old, props.field)}
-                                                                                {props.old && props.new && (
-                                                                                    <span className="text-muted-foreground">→</span>
-                                                                                )}
-                                                                                {props.new && renderActivityBadge(props.new, props.field)}
-                                                                            </div>
-                                                                        )}
+																	<div className="mt-1.5 flex items-center gap-1.5">
+																		{props.old && <ActivityBadge value={props.old} field={props.field} />}
+																		{props.old && props.new && <span className="text-muted-foreground">→</span>}
+																		{props.new && <ActivityBadge value={props.new} field={props.field} />}
+																	</div>
+																)}
                                                                         {commentContent && (
                                                                             <div className="mt-2 rounded-md border bg-muted/50 p-3">
                                                                                 <RichTextRenderer content={commentContent} />
