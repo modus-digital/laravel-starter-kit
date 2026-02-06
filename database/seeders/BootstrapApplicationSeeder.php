@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Enums\RBAC\Permission as PermissionEnum;
-use App\Enums\RBAC\Role as RoleEnum;
 use App\Models\Modules\Tasks\TaskStatus;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Outerweb\Settings\Models\Setting;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 final class BootstrapApplicationSeeder extends Seeder
 {
@@ -108,52 +107,29 @@ final class BootstrapApplicationSeeder extends Seeder
             );
         }
 
-        // Sync system roles from enum
-        foreach (RoleEnum::cases() as $role) {
-            Role::firstOrCreate(
-                ['name' => $role->value, 'guard_name' => 'web']
-            );
-        }
+        // Create internal system roles (bypass global scope)
+        $superAdminRole = Role::withInternal()->firstOrCreate(
+            ['name' => Role::SUPER_ADMIN, 'guard_name' => 'web'],
+            ['internal' => true]
+        );
+        $superAdminRole->update(['internal' => true]);
 
-        // Assign permissions to Super Admin (all permissions)
-        $superAdminRole = Role::where('name', RoleEnum::SUPER_ADMIN->value)->first();
+        $adminRole = Role::withInternal()->firstOrCreate(
+            ['name' => Role::ADMIN, 'guard_name' => 'web'],
+            ['internal' => true]
+        );
+        $adminRole->update(['internal' => true]);
+
+        // Assign permissions to Super Admin (all permissions including internal ones)
         $superAdminRole->syncPermissions(Permission::all());
 
-        // Assign permissions to Admin
-        $adminRole = Role::where('name', RoleEnum::ADMIN->value)->first();
-        $adminRole->syncPermissions([
-            PermissionEnum::ACCESS_CONTROL_PANEL->value,
-            PermissionEnum::ACCESS_ACTIVITY_LOGS->value,
-            PermissionEnum::IMPERSONATE_USERS->value,
-            PermissionEnum::MANAGE_SETTINGS->value,
-            PermissionEnum::CREATE_USERS->value,
-            PermissionEnum::READ_USERS->value,
-            PermissionEnum::UPDATE_USERS->value,
-            PermissionEnum::DELETE_USERS->value,
-            PermissionEnum::RESTORE_USERS->value,
-            PermissionEnum::READ_ROLES->value,
-        ]);
+        // Assign permissions to Admin (all permissions except super-admin-only ones)
+        $adminPermissions = collect(PermissionEnum::cases())
+            ->filter(fn (PermissionEnum $permission) => ! $permission->isInternalOnly() || $permission === PermissionEnum::AccessControlPanel || $permission === PermissionEnum::ImpersonateUsers)
+            ->map(fn (PermissionEnum $permission) => $permission->value)
+            ->all();
 
-        // Check if API module is enabled and add API permissions to Admin
-        if (config('modules.api.enabled', false)) {
-            $adminRole->givePermissionTo([
-                PermissionEnum::HAS_API_ACCESS->value,
-                PermissionEnum::CREATE_API_TOKENS->value,
-                PermissionEnum::READ_API_TOKENS->value,
-                PermissionEnum::UPDATE_API_TOKENS->value,
-                PermissionEnum::DELETE_API_TOKENS->value,
-            ]);
-        }
-
-        // Assign minimal permissions to User role
-        $userRole = Role::where('name', RoleEnum::USER->value)->first();
-        $userPermissions = [];
-
-        if (config('modules.api.enabled', false)) {
-            $userPermissions[] = PermissionEnum::HAS_API_ACCESS->value;
-        }
-
-        $userRole->syncPermissions($userPermissions);
+        $adminRole->syncPermissions($adminPermissions);
 
         /**
          * ----------------------------------------------------------------------------------
@@ -171,6 +147,6 @@ final class BootstrapApplicationSeeder extends Seeder
             'password' => Hash::make('W8chtW00rd01!'),
         ]);
 
-        $user->assignRole(RoleEnum::SUPER_ADMIN);
+        $user->assignRole(Role::SUPER_ADMIN);
     }
 }

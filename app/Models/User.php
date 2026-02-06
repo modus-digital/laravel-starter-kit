@@ -7,17 +7,20 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\ActivityStatus;
 use App\Enums\RBAC\Permission;
+use App\Models\Scopes\ExcludeInternalRolesScope;
 use App\Traits\HasClients;
 use App\Traits\HasPreferences;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
@@ -123,6 +126,33 @@ final class User extends Authenticatable
     public function activities(): MorphMany
     {
         return $this->morphMany(related: Activity::class, name: 'subject');
+    }
+
+    /**
+     * A model may have multiple roles.
+     */
+    public function roles(): BelongsToMany
+    {
+        $relation = $this->morphToMany(
+            config('permission.models.role'),
+            'model',
+            config('permission.table_names.model_has_roles'),
+            config('permission.column_names.model_morph_key'),
+            app(PermissionRegistrar::class)->pivotRole
+        );
+
+        $relation->withoutGlobalScope(ExcludeInternalRolesScope::class);
+
+        if (! app(PermissionRegistrar::class)->teams) {
+            return $relation;
+        }
+
+        $teamsKey = app(PermissionRegistrar::class)->teamsKey;
+        $relation->withPivot($teamsKey);
+        $teamField = config('permission.table_names.roles').'.'.$teamsKey;
+
+        return $relation->wherePivot($teamsKey, getPermissionsTeamId())
+            ->where(fn ($query) => $query->whereNull($teamField)->orWhere($teamField, getPermissionsTeamId()));
     }
 
     /**
