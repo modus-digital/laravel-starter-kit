@@ -1,14 +1,58 @@
 name: Deploy to Staging
 
 on:
-  push:
+  workflow_run:
+    workflows: ['linter', 'tests']
+    types:
+      - completed
     branches:
       - staging
       - acceptance
 
 jobs:
+  # This job checks that both lint and tests passed
+  check-prerequisites:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    outputs:
+      all-checks-passed: ${{ steps.check-status.outputs.all-passed }}
+
+    steps:
+      - name: Check all required workflows passed
+        id: check-status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: checkRuns } = await github.rest.checks.listForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.payload.workflow_run.head_sha,
+            });
+
+            const requiredChecks = ['quality', 'ci'];
+            const checkStatuses = {};
+
+            for (const check of checkRuns.check_runs) {
+              if (requiredChecks.includes(check.name)) {
+                checkStatuses[check.name] = check.conclusion;
+              }
+            }
+
+            const allPassed = requiredChecks.every(name => checkStatuses[name] === 'success');
+
+            console.log('Check statuses:', checkStatuses);
+            console.log('All passed:', allPassed);
+
+            core.setOutput('all-passed', allPassed);
+
+            if (!allPassed) {
+              core.setFailed('Not all required checks have passed yet');
+            }
+
   build:
     runs-on: ubuntu-latest
+    needs: check-prerequisites
+    if: ${{ needs.check-prerequisites.outputs.all-checks-passed == 'true' }}
 
     steps:
       - name: Checkout
@@ -60,26 +104,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    # Wait for lint and tests to complete successfully
-    if: ${{ success() }}
 
     steps:
-      - name: Wait for Lint to Complete
-        uses: lewagon/wait-on-check-action@v1.3.4
-        with:
-          ref: ${{ github.ref }}
-          check-name: 'quality'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10
-
-      - name: Wait for Tests to Complete
-        uses: lewagon/wait-on-check-action@v1.3.4
-        with:
-          ref: ${{ github.ref }}
-          check-name: 'ci'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          wait-interval: 10
-
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:

@@ -1,10 +1,10 @@
+import { login } from '@/routes';
 import { Alert, AlertDescription, AlertTitle } from '@/shared/components/ui/alert';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { PlaceholderPattern } from '@/shared/components/ui/placeholder-pattern';
 import { Separator } from '@/shared/components/ui/separator';
 import { cn } from '@/shared/lib/utils';
-import { home, login } from '@/routes';
 import { Head, Link } from '@inertiajs/react';
 import { ArrowLeft, Home, LogIn, RefreshCcw, TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -177,7 +177,7 @@ export default function ErrorPage({ status }: ErrorPageProps) {
                                 )}
 
                                 <Button asChild variant={isAuthError ? 'outline' : 'default'} className="w-full sm:w-auto">
-                                    <Link href={home()}>
+                                    <Link href="/">
                                         <Home className="size-4" />
                                         {tt('errors.actions.home', 'Home')}
                                     </Link>
