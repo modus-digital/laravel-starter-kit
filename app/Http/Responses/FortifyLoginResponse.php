@@ -58,7 +58,7 @@ final class FortifyLoginResponse implements Responsable
             $request->session()->put($sessionKey, $currentDevice);
         }
 
-        if ($user && $user->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL)) {
+        if ($user && $user->hasPermissionTo(Permission::AccessControlPanel)) {
             return Inertia::location(url: route('admin.index'));
         }
 

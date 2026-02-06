@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use Illuminate\Contracts\Filesystem\Filesystem;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Filesystem\FilesystemAdapter;
-use Illuminate\Contracts\Filesystem\Filesystem;
 
 final class FileStorageService
 {

@@ -16,9 +16,7 @@ final class UpdateClientRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // TODO: Add proper authorization check based on your permission system
-        // return $this->user()->can('update clients');
-        return true;
+        return $this->user()->can(\App\Enums\RBAC\Permission::UpdateClients->value);
     }
 
     /**

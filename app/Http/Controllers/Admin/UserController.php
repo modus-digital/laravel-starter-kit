@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\ActivityStatus;
-use App\Enums\RBAC\Role as RoleEnum;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\BulkDeleteUsersRequest;
+use App\Http\Requests\User\BulkRestoreUsersRequest;
 use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\ActivityResource;
-use App\Models\Role;
+use App\Http\Resources\UserCollection;
 use App\Models\User;
+use App\Services\RoleService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +25,10 @@ use Spatie\Activitylog\Facades\Activity;
 
 final class UserController extends Controller
 {
+    use AuthorizesRequests;
+
+    public function __construct(private readonly RoleService $roleService) {}
+
     public function index(Request $request): Response
     {
         $query = User::query()->with(['roles']);
@@ -60,46 +67,22 @@ final class UserController extends Controller
             $query->latest();
         }
 
-        $users = $query->get()->map(fn (User $user) => [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'phone' => $user->phone,
-            'status' => $user->status->value,
-            'role' => $user->roles->first()?->name,
-            'created_at' => $user->created_at->toISOString(),
-            'deleted_at' => $user->deleted_at?->toISOString(),
-        ]);
-
-        // Get roles for form
-        $roles = Role::query()
-            ->where('name', '!=', RoleEnum::SUPER_ADMIN->value)
-            ->get()
-            ->map(fn (Role $role) => [
-                'name' => $role->name,
-                'label' => RoleEnum::tryFrom($role->name)?->getLabel() ?? str($role->name)->headline()->toString(),
-            ]);
+        $users = $query->paginate(15);
 
         return Inertia::render('core/admin/users/index', [
-            'users' => $users,
+            'users' => new UserCollection($users),
             'filters' => $request->only(['search', 'status', 'with_trashed', 'only_trashed', 'sort_by', 'sort_direction']),
-            'roles' => $roles,
+            'roles' => $this->roleService->getFormattedRoles(),
             'statuses' => ActivityStatus::options(),
         ]);
     }
 
     public function create(): Response
     {
-        $roles = Role::query()
-            ->where('name', '!=', RoleEnum::SUPER_ADMIN->value)
-            ->get()
-            ->map(fn (Role $role) => [
-                'name' => $role->name,
-                'label' => RoleEnum::tryFrom($role->name)?->getLabel() ?? str($role->name)->headline()->toString(),
-            ]);
+        $this->authorize('create', User::class);
 
         return Inertia::render('core/admin/users/create', [
-            'roles' => $roles,
+            'roles' => $this->roleService->getFormattedRoles(),
             'statuses' => ActivityStatus::options(),
         ]);
     }
@@ -143,61 +126,36 @@ final class UserController extends Controller
 
     public function edit(User $user): Response
     {
-        $user->load(['roles']);
+        $this->authorize('update', $user);
 
-        $roles = Role::query()
-            ->where('name', '!=', RoleEnum::SUPER_ADMIN->value)
-            ->get()
-            ->map(fn (Role $role) => [
-                'name' => $role->name,
-                'label' => RoleEnum::tryFrom($role->name)?->getLabel() ?? str($role->name)->headline()->toString(),
-            ]);
+        $user->load(['roles']);
 
         return Inertia::render('core/admin/users/edit', [
             'user' => $user,
-            'roles' => $roles,
+            'roles' => $this->roleService->getFormattedRoles(),
             'statuses' => ActivityStatus::options(),
         ]);
     }
 
     public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
-        $updateData = [];
+        $validated = $request->validated();
 
-        if ($request->has('name')) {
-            $updateData['name'] = $request->name;
+        // Hash password if provided
+        if (isset($validated['password'])) {
+            $validated['password'] = Hash::make($validated['password']);
         }
 
-        if ($request->has('email')) {
-            $updateData['email'] = $request->email;
-        }
+        // Extract roles before updating user
+        $roles = $validated['roles'] ?? null;
+        unset($validated['roles']);
 
-        if ($request->has('phone')) {
-            $updateData['phone'] = $request->phone;
-        }
-
-        if ($request->has('password')) {
-            $updateData['password'] = Hash::make($request->password);
-        }
-
-        if ($request->has('status')) {
-            $updateData['status'] = $request->status;
-        }
-
-        if ($request->has('provider')) {
-            $updateData['provider'] = $request->provider;
-        }
-
-        if ($request->has('email_verified_at')) {
-            $updateData['email_verified_at'] = $request->email_verified_at;
-        }
-
-        $user->update($updateData);
+        $user->update($validated);
 
         // Update roles if provided
-        if ($request->has('roles')) {
-            if (is_array($request->roles) && count($request->roles) > 0) {
-                $user->syncRoles($request->roles);
+        if ($roles !== null) {
+            if (is_array($roles) && count($roles) > 0) {
+                $user->syncRoles($roles);
             } else {
                 $user->roles()->detach();
             }
@@ -222,7 +180,7 @@ final class UserController extends Controller
                     'email' => $user->email,
                     'status' => $user->status->getLabel(),
                     'roles' => $user->roles->first()?->name
-                        ? (RoleEnum::tryFrom($user->roles->first()->name)?->getLabel() ?? str($user->roles->first()->name)->headline()->toString())
+                        ? __('enums.rbac.role.'.$user->roles->first()->name)
                         : null,
                 ],
             ])
@@ -248,7 +206,7 @@ final class UserController extends Controller
                     'email' => $user->email,
                     'status' => $user->status->getLabel(),
                     'roles' => $user->roles->first()?->name
-                        ? (RoleEnum::tryFrom($user->roles->first()->name)?->getLabel() ?? str($user->roles->first()->name)->headline()->toString())
+                        ? __('enums.rbac.role.'.$user->roles->first()->name)
                         : null,
                 ],
             ])
@@ -267,13 +225,8 @@ final class UserController extends Controller
             ->with('success', __('admin.users.permanently_deleted'));
     }
 
-    public function bulkDelete(Request $request): RedirectResponse
+    public function bulkDelete(BulkDeleteUsersRequest $request): RedirectResponse
     {
-        $request->validate([
-            'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['required', 'string', 'exists:users,id'],
-        ]);
-
         $count = User::whereIn('id', $request->ids)->delete();
 
         Activity::inLog('administration')
@@ -289,13 +242,8 @@ final class UserController extends Controller
             ->with('success', __('admin.users.bulk_deleted', ['count' => $count]));
     }
 
-    public function bulkRestore(Request $request): RedirectResponse
+    public function bulkRestore(BulkRestoreUsersRequest $request): RedirectResponse
     {
-        $request->validate([
-            'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['required', 'string'],
-        ]);
-
         $count = User::onlyTrashed()->whereIn('id', $request->ids)->restore();
 
         Activity::inLog('administration')

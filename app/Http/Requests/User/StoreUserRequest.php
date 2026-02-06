@@ -16,9 +16,7 @@ final class StoreUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // TODO: Add proper authorization check based on your permission system
-        // return $this->user()->can('create users');
-        return true;
+        return $this->user()->can(\App\Enums\RBAC\Permission::CreateUsers->value);
     }
 
     /**

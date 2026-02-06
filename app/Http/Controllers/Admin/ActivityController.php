@@ -53,7 +53,7 @@ final class ActivityController extends Controller
             $query->latest();
         }
 
-        $activities = $query->get();
+        $activities = $query->paginate(15);
 
         // Get unique log names for filter
         $logNames = Activity::query()
@@ -63,7 +63,7 @@ final class ActivityController extends Controller
             ->pluck('log_name');
 
         return Inertia::render('core/admin/activities/index', [
-            'activities' => ActivityResource::collection($activities)->toArray(request()),
+            'activities' => ActivityResource::collection($activities),
             'filters' => $request->only(['log_name', 'event', 'causer_id', 'date_from', 'date_to', 'sort_by', 'sort_direction']),
             'logNames' => $logNames,
         ]);

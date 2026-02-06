@@ -79,7 +79,7 @@ final class ClientController extends Controller
         $user = $request->user();
         assert($user instanceof \App\Models\User);
 
-        if ($user->tokenCant(Permission::READ_CLIENTS->value)) {
+        if ($user->tokenCant(Permission::AccessControlPanel->value)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);
@@ -169,7 +169,7 @@ final class ClientController extends Controller
         $user = $request->user();
         assert($user instanceof \App\Models\User);
 
-        if ($user->tokenCant(Permission::CREATE_CLIENTS->value)) {
+        if ($user->tokenCant(Permission::AccessControlPanel->value)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);
@@ -232,7 +232,7 @@ final class ClientController extends Controller
         $user = $request->user();
         assert($user instanceof \App\Models\User);
 
-        if ($user->tokenCant(Permission::READ_CLIENTS->value)) {
+        if ($user->tokenCant(Permission::AccessControlPanel->value)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);
@@ -300,7 +300,7 @@ final class ClientController extends Controller
         $user = $request->user();
         assert($user instanceof \App\Models\User);
 
-        if ($user->tokenCant(Permission::UPDATE_CLIENTS->value)) {
+        if ($user->tokenCant(Permission::AccessControlPanel->value)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);
@@ -380,7 +380,7 @@ final class ClientController extends Controller
         $user = $request->user();
         assert($user instanceof \App\Models\User);
 
-        if ($user->tokenCant(Permission::DELETE_CLIENTS->value)) {
+        if ($user->tokenCant(Permission::AccessControlPanel->value)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);
@@ -438,7 +438,7 @@ final class ClientController extends Controller
         $user = $request->user();
         assert($user instanceof \App\Models\User);
 
-        if ($user->tokenCant(Permission::RESTORE_CLIENTS->value)) {
+        if ($user->tokenCant(Permission::AccessControlPanel->value)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);
@@ -482,7 +482,7 @@ final class ClientController extends Controller
         $user = $request->user();
         assert($user instanceof \App\Models\User);
 
-        if ($user->tokenCant(Permission::DELETE_CLIENTS->value)) {
+        if ($user->tokenCant(Permission::AccessControlPanel->value)) {
             return response()->json([
                 'message' => 'Unauthorized',
             ], 403);

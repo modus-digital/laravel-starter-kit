@@ -22,7 +22,7 @@ final class FortifyRegisterResponse implements Responsable
             ->causedBy($user)
             ->log('activity.auth.register');
 
-        if ($user && $user->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL)) {
+        if ($user && $user->hasPermissionTo(Permission::AccessControlPanel)) {
             return Inertia::location(url: route('filament.control.pages.dashboard'));
         }
 

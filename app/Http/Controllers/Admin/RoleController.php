@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\RBAC\Permission as PermissionEnum;
-use App\Enums\RBAC\Role as RoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Role\StoreRoleRequest;
 use App\Http\Requests\Role\UpdateRoleRequest;
 use App\Http\Resources\ActivityCollection;
 use App\Models\Permission;
 use App\Models\Role;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,9 +21,12 @@ use Spatie\Activitylog\Facades\Activity;
 
 final class RoleController extends Controller
 {
+    use AuthorizesRequests;
+
     public function index(Request $request): Response
     {
-        $query = Role::query()->withCount('permissions', 'users');
+        // Include internal roles for admins managing the system
+        $query = Role::withInternal()->withCount('permissions', 'users');
 
         // Apply search filter
         if ($request->has('search') && $request->search !== '') {
@@ -42,7 +45,7 @@ final class RoleController extends Controller
             $query->latest();
         }
 
-        $roles = $query->get();
+        $roles = $query->paginate(15);
 
         return Inertia::render('core/admin/roles/index', [
             'roles' => $roles,
@@ -52,6 +55,7 @@ final class RoleController extends Controller
 
     public function create(): Response
     {
+        // Show all permissions to admins creating roles
         $permissions = Permission::query()
             ->orderBy('name')
             ->get()
@@ -74,8 +78,6 @@ final class RoleController extends Controller
         $role = Role::create([
             'name' => $request->name,
             'guard_name' => $request->guard_name ?? 'web',
-            'icon' => $request->icon,
-            'color' => $request->color,
         ]);
 
         // Assign permissions if provided
@@ -118,6 +120,7 @@ final class RoleController extends Controller
     {
         $role->load(['permissions']);
 
+        // Show all permissions to admins editing roles
         $permissions = Permission::query()
             ->orderBy('name')
             ->get()
@@ -131,15 +134,13 @@ final class RoleController extends Controller
             ->groupBy('category');
 
         // Check if this is a system role
-        $isSystemRole = in_array($role->name, [RoleEnum::SUPER_ADMIN->value, RoleEnum::ADMIN->value], true);
+        $isSystemRole = $role->isInternal();
 
         return Inertia::render('core/admin/roles/edit', [
             'role' => [
                 'id' => $role->id,
                 'name' => $role->name,
                 'guard_name' => $role->guard_name,
-                'icon' => $role->icon,
-                'color' => $role->color,
                 'permissions' => $role->permissions->pluck('name')->toArray(),
             ],
             'permissions' => $permissions,
@@ -149,16 +150,16 @@ final class RoleController extends Controller
 
     public function update(UpdateRoleRequest $request, Role $role): RedirectResponse
     {
-        // Prevent updating system roles
-        if (in_array($role->name, [RoleEnum::SUPER_ADMIN->value, RoleEnum::ADMIN->value], true)) {
+        // Check if role is internal first to provide friendly error message
+        if ($role->isInternal()) {
             return redirect()->route('admin.roles.show', $role)
                 ->with('error', __('admin.roles.cannot_update_system_role'));
         }
 
+        $this->authorize('update', $role);
+
         $role->update([
             'name' => $request->name,
-            'icon' => $request->icon,
-            'color' => $request->color,
         ]);
 
         // Update permissions
@@ -188,11 +189,13 @@ final class RoleController extends Controller
 
     public function destroy(Role $role): RedirectResponse
     {
-        // Prevent deleting system roles
-        if (in_array($role->name, [RoleEnum::SUPER_ADMIN->value, RoleEnum::ADMIN->value], true)) {
+        // Check if role is internal first to provide friendly error message
+        if ($role->isInternal()) {
             return redirect()->route('admin.roles.index')
                 ->with('error', __('admin.roles.cannot_delete_system_role'));
         }
+
+        $this->authorize('delete', $role);
 
         Activity::inLog('administration')
             ->event('rbac.role.deleted')

@@ -6,11 +6,19 @@ namespace App\Http\Controllers\Admin;
 
 use App\Enums\ActivityStatus;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Client\BulkDeleteClientsRequest;
+use App\Http\Requests\Client\BulkRestoreClientsRequest;
+use App\Http\Requests\Client\StoreClientNewUserRequest;
 use App\Http\Requests\Client\StoreClientRequest;
+use App\Http\Requests\Client\StoreClientUserRequest;
 use App\Http\Requests\Client\UpdateClientRequest;
+use App\Http\Requests\Client\UpdateUserRoleRequest;
 use App\Http\Resources\ActivityCollection;
 use App\Http\Resources\UserCollection;
 use App\Models\Modules\Clients\Client;
+use App\Models\User;
+use App\Services\ClientUserService;
+use App\Services\RoleService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +28,11 @@ use Spatie\Activitylog\Facades\Activity;
 
 final class ClientController extends Controller
 {
+    public function __construct(
+        private readonly RoleService $roleService,
+        private readonly ClientUserService $clientUserService
+    ) {}
+
     public function index(Request $request): Response
     {
         $query = Client::query();
@@ -59,9 +72,9 @@ final class ClientController extends Controller
             $query->latest();
         }
 
-        $clients = $query->get();
+        $clients = $query->paginate(15);
 
-        return Inertia::render('modules/clients/index', [
+        return Inertia::render('modules/admin/clients/index', [
             'clients' => $clients,
             'filters' => $request->only(['search', 'status', 'with_trashed', 'only_trashed', 'sort_by', 'sort_direction']),
             'statuses' => ActivityStatus::options(),
@@ -70,7 +83,7 @@ final class ClientController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('modules/clients/create', [
+        return Inertia::render('modules/admin/clients/create', [
             'statuses' => ActivityStatus::options(),
         ]);
     }
@@ -95,27 +108,38 @@ final class ClientController extends Controller
 
     public function show(Client $client): Response
     {
-        // Load users relation
         $users = $client->users()
             ->with(['roles'])
             ->latest()
             ->paginate(10);
 
-        // Load activities
         $activities = $client->activities()
             ->latest()
             ->paginate(10);
 
-        return Inertia::render('modules/clients/show', [
+        $availableUsers = User::query()
+            ->whereDoesntHave('clients', fn ($query) => $query->where('clients.id', $client->id))
+            ->orderBy('name')
+            ->get(['id', 'name', 'email'])
+            ->map(fn (User $user): array => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+            ]);
+
+        return Inertia::render('modules/admin/clients/show', [
             'client' => $client,
             'users' => new UserCollection($users),
             'activities' => new ActivityCollection($activities),
+            'roles' => $this->roleService->getFormattedRolesForClient(),
+            'availableUsers' => $availableUsers,
+            'statuses' => ActivityStatus::options(),
         ]);
     }
 
     public function edit(Client $client): Response
     {
-        return Inertia::render('modules/clients/edit', [
+        return Inertia::render('modules/admin/clients/edit', [
             'client' => $client,
             'statuses' => ActivityStatus::options(),
         ]);
@@ -123,45 +147,7 @@ final class ClientController extends Controller
 
     public function update(UpdateClientRequest $request, Client $client): RedirectResponse
     {
-        $updateData = [];
-
-        if ($request->has('name')) {
-            $updateData['name'] = $request->name;
-        }
-
-        if ($request->has('contact_name')) {
-            $updateData['contact_name'] = $request->contact_name;
-        }
-
-        if ($request->has('contact_email')) {
-            $updateData['contact_email'] = $request->contact_email;
-        }
-
-        if ($request->has('contact_phone')) {
-            $updateData['contact_phone'] = $request->contact_phone;
-        }
-
-        if ($request->has('address')) {
-            $updateData['address'] = $request->address;
-        }
-
-        if ($request->has('postal_code')) {
-            $updateData['postal_code'] = $request->postal_code;
-        }
-
-        if ($request->has('city')) {
-            $updateData['city'] = $request->city;
-        }
-
-        if ($request->has('country')) {
-            $updateData['country'] = $request->country;
-        }
-
-        if ($request->has('status')) {
-            $updateData['status'] = $request->status;
-        }
-
-        $client->update($updateData);
+        $client->update($request->validated());
 
         return redirect()->route('admin.clients.show', $client)
             ->with('success', __('admin.clients.updated_successfully'));
@@ -210,6 +196,45 @@ final class ClientController extends Controller
             ->with('success', __('admin.clients.restored_successfully'));
     }
 
+    public function addUserToClient(StoreClientUserRequest $request, Client $client): RedirectResponse
+    {
+        $this->clientUserService->addUserToClient(
+            $client,
+            $request->user_id,
+            $request->role_id
+        );
+
+        return redirect()->route('admin.clients.show', $client)
+            ->with('success', __('admin.clients.user_added_to_client'));
+    }
+
+    public function storeNewUserForClient(StoreClientNewUserRequest $request, Client $client): RedirectResponse
+    {
+        $this->clientUserService->createUserForClient(
+            $client,
+            $request->name,
+            $request->email,
+            $request->password,
+            ActivityStatus::from($request->status),
+            $request->role_id
+        );
+
+        return redirect()->route('admin.clients.show', $client)
+            ->with('success', __('admin.clients.user_created_and_added'));
+    }
+
+    public function updateUserRole(UpdateUserRoleRequest $request, Client $client, User $user): RedirectResponse
+    {
+        if (! $client->users()->where('users.id', $user->id)->exists()) {
+            abort(404);
+        }
+
+        $this->clientUserService->updateUserRole($user, $request->role_id);
+
+        return redirect()->route('admin.clients.show', $client)
+            ->with('success', __('admin.clients.user_role_updated'));
+    }
+
     public function forceDelete(string $clientId): RedirectResponse
     {
         $client = Client::withTrashed()->findOrFail($clientId);
@@ -219,13 +244,8 @@ final class ClientController extends Controller
             ->with('success', __('admin.clients.permanently_deleted'));
     }
 
-    public function bulkDelete(Request $request): RedirectResponse
+    public function bulkDelete(BulkDeleteClientsRequest $request): RedirectResponse
     {
-        $request->validate([
-            'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['required', 'string', 'exists:clients,id'],
-        ]);
-
         $count = Client::whereIn('id', $request->ids)->delete();
 
         Activity::inLog('administration')
@@ -241,13 +261,8 @@ final class ClientController extends Controller
             ->with('success', __('admin.clients.bulk_deleted', ['count' => $count]));
     }
 
-    public function bulkRestore(Request $request): RedirectResponse
+    public function bulkRestore(BulkRestoreClientsRequest $request): RedirectResponse
     {
-        $request->validate([
-            'ids' => ['required', 'array', 'min:1'],
-            'ids.*' => ['required', 'string'],
-        ]);
-
         $count = Client::onlyTrashed()->whereIn('id', $request->ids)->restore();
 
         Activity::inLog('administration')
@@ -261,5 +276,28 @@ final class ClientController extends Controller
 
         return redirect()->route('admin.clients.index')
             ->with('success', __('admin.clients.bulk_restored', ['count' => $count]));
+    }
+
+    public function removeUserFromClient(Client $client, User $user): RedirectResponse
+    {
+        if (! $client->users()->where('users.id', $user->id)->exists()) {
+            abort(404);
+        }
+
+        $this->clientUserService->removeUserFromClient($client, $user);
+
+        Activity::inLog('administration')
+            ->event('client.user_removed')
+            ->causedBy(Auth::user())
+            ->performedOn($client)
+            ->withProperties([
+                'user_id' => $user->id,
+                'user_name' => $user->name,
+                'user_email' => $user->email,
+            ])
+            ->log('activity.client.user_removed');
+
+        return redirect()->route('admin.clients.show', $client)
+            ->with('success', __('admin.clients.user_removed'));
     }
 }

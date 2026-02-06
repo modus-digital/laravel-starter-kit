@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Requests\Role;
 
 use App\Enums\RBAC\Permission;
-use App\Enums\RBAC\Role as RoleEnum;
 use App\Models\Role;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -17,9 +16,9 @@ final class UpdateRoleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // TODO: Add proper authorization check
-        // return $this->user()->can(Permission::UPDATE_ROLES->value);
-        return true;
+        $role = $this->route('role');
+
+        return $role instanceof Role && $this->user()->can('update', $role);
     }
 
     /**
@@ -41,7 +40,7 @@ final class UpdateRoleRequest extends FormRequest
                 'regex:/^[a-z_-]+$/',
                 function ($attribute, $value, $fail): void {
                     $role = $this->route('role');
-                    if ($role instanceof Role && in_array($role->name, [RoleEnum::SUPER_ADMIN->value, RoleEnum::ADMIN->value], true)) {
+                    if ($role instanceof Role && $role->isInternal()) {
                         $fail('Internal roles cannot be modified.');
                     }
                 },
@@ -63,7 +62,6 @@ final class UpdateRoleRequest extends FormRequest
     {
         return [
             'name.regex' => 'The role name may only contain lowercase letters, underscores, and hyphens.',
-            'color.regex' => 'The color must be a valid hex color code.',
             'permissions.*.in' => 'One or more selected permissions are invalid.',
         ];
     }

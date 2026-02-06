@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
-use App\Enums\RBAC\Permission;
+use App\Enums\RBAC\Permission as RbacPermission;
 use App\Models\Modules\Clients\Client;
 use App\Services\BrandingService;
 use Illuminate\Http\Request;
@@ -42,6 +42,7 @@ final class HandleInertiaRequests extends Middleware
     {
         $brandingService = app(BrandingService::class);
         $branding = $brandingService->getSettings();
+        $userPermissions = $request->user()?->getAllPermissions()->pluck('name')->toArray() ?? [];
 
         return [
             ...parent::share($request),
@@ -54,11 +55,8 @@ final class HandleInertiaRequests extends Middleware
             'locale' => app()->getLocale(),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
 
-            // Manage global layout permissions
-            'permissions' => [
-                'canAccessControlPanel' => $request->user()?->hasPermissionTo(Permission::ACCESS_CONTROL_PANEL) ?? false,
-                'canManageApiTokens' => $request->user()?->hasPermissionTo(Permission::HAS_API_ACCESS) ?? false,
-            ],
+            // Manage global layout permissions - expose all user permissions as array
+            'permissions' => $this->buildPermissionFlags($userPermissions),
 
             // Pass through the modules settings
             'modules' => config('modules'),
@@ -140,5 +138,37 @@ final class HandleInertiaRequests extends Middleware
                 'name' => $client->name,
             ])
             ->all();
+    }
+
+    /**
+     * Build permission flags for frontend consumption.
+     *
+     * @param  array<int, string>  $permissions
+     * @return array<string, bool>
+     */
+    private function buildPermissionFlags(array $permissions): array
+    {
+        $flags = array_fill_keys($permissions, true);
+
+        $flags['canAccessControlPanel'] = in_array(RbacPermission::AccessControlPanel->value, $permissions, true);
+        $flags['canManageApiTokens'] = $this->hasApiTokenPermission($permissions);
+
+        return $flags;
+    }
+
+    /**
+     * Determine if the user can manage API tokens.
+     *
+     * @param  array<int, string>  $permissions
+     */
+    private function hasApiTokenPermission(array $permissions): bool
+    {
+        foreach ($permissions as $permission) {
+            if ($permission === 'access:api' || str_contains($permission, ':api-tokens')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
