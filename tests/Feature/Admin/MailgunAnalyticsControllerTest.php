@@ -11,8 +11,15 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    // Create permissions
+    foreach (Permission::cases() as $permission) {
+        if ($permission->shouldSync()) {
+            Spatie\Permission\Models\Permission::create(['name' => $permission->value]);
+        }
+    }
+
     $this->user = User::factory()->create();
-    $this->user->givePermissionTo(Permission::MANAGE_SETTINGS);
+    $this->user->givePermissionTo(Permission::AccessControlPanel);
 });
 
 it('can view mailgun analytics dashboard', function () {
@@ -76,7 +83,7 @@ it('handles empty state gracefully', function () {
         );
 });
 
-it('requires manage settings permission to view mailgun analytics', function () {
+it('requires access control panel permission to view mailgun analytics', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->get('/admin/mailgun');

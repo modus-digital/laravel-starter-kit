@@ -19,7 +19,7 @@ it('requires authentication', function (): void {
 
 it('returns empty results for empty query', function (): void {
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::READ_USERS->value);
+    $user->givePermissionTo(Permission::AccessControlPanel->value);
 
     $response = $this->actingAs($user)
         ->get('/search?q=');
@@ -32,7 +32,7 @@ it('returns empty results for empty query', function (): void {
 
 it('returns empty results when query is only whitespace', function (): void {
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::READ_USERS->value);
+    $user->givePermissionTo(Permission::AccessControlPanel->value);
 
     $response = $this->actingAs($user)
         ->get('/search?q='.urlencode('   '));
@@ -45,7 +45,7 @@ it('returns empty results when query is only whitespace', function (): void {
 
 it('can search users when user has permission', function (): void {
     $user = User::factory()->create(['name' => 'John Doe', 'email' => 'john@example.com']);
-    $user->givePermissionTo(Permission::READ_USERS->value);
+    $user->givePermissionTo(Permission::AccessControlPanel->value);
 
     $searchUser = User::factory()->create(['name' => 'Jane Smith', 'email' => 'jane@example.com']);
 
@@ -84,7 +84,7 @@ it('can search clients when user has permission and module is enabled', function
     config(['modules.clients.enabled' => true]);
 
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::READ_CLIENTS->value);
+    $user->givePermissionTo(Permission::AccessControlPanel->value);
 
     $client = Client::factory()->create(['name' => 'Acme Corp', 'contact_email' => 'contact@acme.com']);
 
@@ -130,8 +130,8 @@ it('can search across multiple model types', function (): void {
     config(['modules.clients.enabled' => true]);
 
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::READ_USERS->value);
-    $user->givePermissionTo(Permission::READ_CLIENTS->value);
+    $user->givePermissionTo(Permission::AccessControlPanel->value);
+    $user->givePermissionTo(Permission::AccessControlPanel->value);
 
     $searchUser = User::factory()->create(['name' => 'John Doe', 'email' => 'john@example.com']);
     $client = Client::factory()->create(['name' => 'John Corp', 'contact_email' => 'contact@johncorp.com']);
@@ -153,7 +153,7 @@ it('can search across multiple model types', function (): void {
 
 it('respects the limit parameter', function (): void {
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::READ_USERS->value);
+    $user->givePermissionTo(Permission::AccessControlPanel->value);
 
     // Create multiple users
     User::factory()->count(15)->create(['name' => 'Test User']);
@@ -169,7 +169,7 @@ it('respects the limit parameter', function (): void {
 
 it('searches by name and email for users', function (): void {
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::READ_USERS->value);
+    $user->givePermissionTo(Permission::AccessControlPanel->value);
 
     $searchUser = User::factory()->create(['name' => 'John Doe', 'email' => 'john.doe@example.com']);
 
@@ -196,7 +196,7 @@ it('searches by name, contact name, and email for clients', function (): void {
     config(['modules.clients.enabled' => true]);
 
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::READ_CLIENTS->value);
+    $user->givePermissionTo(Permission::AccessControlPanel->value);
 
     $client = Client::factory()->create([
         'name' => 'Acme Corporation',
@@ -233,7 +233,7 @@ it('searches by name, contact name, and email for clients', function (): void {
 
 it('returns results with correct structure', function (): void {
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::READ_USERS->value);
+    $user->givePermissionTo(Permission::AccessControlPanel->value);
 
     $searchUser = User::factory()->create(['name' => 'Test User', 'email' => 'test@example.com']);
 
@@ -257,7 +257,7 @@ it('returns results with correct structure', function (): void {
 
 it('does not return soft deleted models', function (): void {
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::READ_USERS->value);
+    $user->givePermissionTo(Permission::AccessControlPanel->value);
 
     $deletedUser = User::factory()->create(['name' => 'Deleted User', 'email' => 'deleted@example.com']);
     $deletedUser->delete();

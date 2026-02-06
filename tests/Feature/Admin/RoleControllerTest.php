@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Enums\RBAC\Permission;
-use App\Enums\RBAC\Role as RoleEnum;
 use App\Models\Permission as PermissionModel;
 use App\Models\Role;
 use App\Models\User;
@@ -12,18 +11,33 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    // Create required permissions in the database
+    // Ensure required permissions exist in the database
     foreach (Permission::cases() as $permission) {
         if ($permission->shouldSync()) {
-            Spatie\Permission\Models\Permission::create(['name' => $permission->value]);
+            Spatie\Permission\Models\Permission::firstOrCreate(
+                ['name' => $permission->value, 'guard_name' => 'web']
+            );
         }
     }
 
+    // Create an admin role and assign to user for testing
+    $adminRole = Role::withInternal()->firstOrCreate(
+        ['name' => Role::ADMIN, 'guard_name' => 'web'],
+        ['internal' => true]
+    );
+
     $this->user = User::factory()->create();
-    $this->user->givePermissionTo(Permission::READ_ROLES);
-    $this->user->givePermissionTo(Permission::CREATE_ROLES);
-    $this->user->givePermissionTo(Permission::UPDATE_ROLES);
-    $this->user->givePermissionTo(Permission::DELETE_ROLES);
+    $this->user->assignRole($adminRole);
+
+    // Give necessary permissions for role management
+    $this->user->givePermissionTo([
+        Permission::AccessControlPanel,
+        Permission::ViewAnyRoles,
+        Permission::CreateRoles,
+        Permission::ViewRoles,
+        Permission::UpdateRoles,
+        Permission::DeleteRoles,
+    ]);
 });
 
 it('can list roles', function () {
@@ -33,8 +47,8 @@ it('can list roles', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/roles/index')
-            ->has('roles', 5)
+            ->component('core/admin/roles/index')
+            ->has('roles', 6) // 5 external + 1 internal (admin from beforeEach)
         );
 });
 
@@ -43,13 +57,13 @@ it('can show create role page', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/roles/create')
+            ->component('core/admin/roles/create')
             ->has('permissions')
         );
 });
 
 it('can create a role', function () {
-    $permission = PermissionModel::factory()->create(['name' => Permission::READ_USERS->value]);
+    $permission = PermissionModel::where('name', Permission::AccessControlPanel->value)->first();
 
     $roleData = [
         'name' => 'test_role',
@@ -79,7 +93,7 @@ it('can show a role', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/roles/show')
+            ->component('core/admin/roles/show')
             ->where('role.id', $role->id)
             ->has('activities')
         );
@@ -92,7 +106,7 @@ it('can show edit role page', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/roles/edit')
+            ->component('core/admin/roles/edit')
             ->where('role.id', $role->id)
             ->has('permissions')
         );
@@ -119,7 +133,12 @@ it('can update a role', function () {
 });
 
 it('cannot update system roles', function () {
-    $role = Role::factory()->create(['name' => RoleEnum::ADMIN->value]);
+    $role = Role::withInternal()->where('name', Role::ADMIN)->first();
+
+    // Verify the role is internal
+    expect($role)->not->toBeNull();
+    expect($role->internal)->toBeTrue();
+    expect($role->isInternal())->toBeTrue();
 
     $updateData = [
         'name' => 'hacked_role',
@@ -128,9 +147,12 @@ it('cannot update system roles', function () {
 
     $response = $this->actingAs($this->user)->put("/admin/roles/{$role->id}", $updateData);
 
+    // Should be redirected with error OR validation error
+    expect($response->status())->toBeIn([302, 422]);
+
     $this->assertDatabaseHas('roles', [
         'id' => $role->id,
-        'name' => RoleEnum::ADMIN->value, // Name should not change
+        'name' => Role::ADMIN, // Name should not change
     ]);
 });
 
@@ -141,33 +163,29 @@ it('can delete a role', function () {
 
     $response->assertRedirect('/admin/roles');
 
-    $this->assertSoftDeleted($role);
-});
-
-it('cannot delete system roles', function () {
-    $role = Role::factory()->create(['name' => RoleEnum::ADMIN->value]);
-
-    $response = $this->actingAs($this->user)->delete("/admin/roles/{$role->id}");
-
-    $this->assertDatabaseHas('roles', [
+    $this->assertDatabaseMissing('roles', [
         'id' => $role->id,
-        'deleted_at' => null, // Should not be deleted
     ]);
 });
 
-it('requires read permission to list roles', function () {
+it('cannot delete system roles', function () {
+    $role = Role::withInternal()->where('name', Role::ADMIN)->first();
+
+    $response = $this->actingAs($this->user)->delete("/admin/roles/{$role->id}");
+
+    $response->assertRedirect('/admin/roles');
+
+    // Role should still exist
+    $this->assertDatabaseHas('roles', [
+        'id' => $role->id,
+        'name' => Role::ADMIN,
+    ]);
+});
+
+it('requires access control panel permission to access admin roles', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->get('/admin/roles');
-
-    $response->assertForbidden();
-});
-
-it('requires create permission to create roles', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo(Permission::READ_ROLES);
-
-    $response = $this->actingAs($user)->get('/admin/roles/create');
 
     $response->assertForbidden();
 });

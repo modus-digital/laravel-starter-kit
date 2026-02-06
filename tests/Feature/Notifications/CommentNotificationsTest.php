@@ -6,11 +6,11 @@ use App\Enums\NotificationDeliveryMethod;
 use App\Events\Comments\CommentAdded;
 use App\Models\Modules\Tasks\Task;
 use App\Models\User;
-use Database\Seeders\RolesAndPermissionsSeeder;
+use Database\Seeders\BootstrapApplicationSeeder;
 use Illuminate\Support\Facades\Event;
 
 beforeEach(function () {
-    $this->seed(RolesAndPermissionsSeeder::class);
+    $this->seed(BootstrapApplicationSeeder::class);
 });
 
 test('comment added event sends notification', function () {

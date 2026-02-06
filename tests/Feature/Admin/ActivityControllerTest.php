@@ -19,8 +19,7 @@ beforeEach(function () {
     }
 
     $this->user = User::factory()->create();
-    $this->user->givePermissionTo(Permission::ACCESS_ACTIVITY_LOGS);
-    $this->user->givePermissionTo(Permission::ACCESS_CONTROL_PANEL);
+    $this->user->givePermissionTo(Permission::AccessControlPanel);
 });
 
 it('can list activities', function () {
@@ -83,7 +82,7 @@ it('can filter activities by date range', function () {
 
 // Note: Activity details are shown in a sheet/drawer on the index page, not a separate page
 
-it('requires access activity logs permission to view activities', function () {
+it('requires access control panel permission to view activities', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->get('/admin/activities');

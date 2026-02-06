@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use App\Models\Modules\Clients\Client;
 use App\Models\User;
-use Database\Seeders\RolesAndPermissionsSeeder;
+use Database\Seeders\BootstrapApplicationSeeder;
 
 beforeEach(function (): void {
-    $this->seed(RolesAndPermissionsSeeder::class);
+    $this->seed(BootstrapApplicationSeeder::class);
     $this->user = User::factory()->create();
 });
 

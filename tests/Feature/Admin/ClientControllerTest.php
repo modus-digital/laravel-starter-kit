@@ -19,11 +19,7 @@ beforeEach(function () {
     }
 
     $this->user = User::factory()->create();
-    $this->user->givePermissionTo(Permission::READ_CLIENTS);
-    $this->user->givePermissionTo(Permission::CREATE_CLIENTS);
-    $this->user->givePermissionTo(Permission::UPDATE_CLIENTS);
-    $this->user->givePermissionTo(Permission::DELETE_CLIENTS);
-    $this->user->givePermissionTo(Permission::RESTORE_CLIENTS);
+    $this->user->givePermissionTo(Permission::AccessControlPanel);
 });
 
 it('can list clients', function () {
@@ -177,39 +173,10 @@ it('can permanently delete a client', function () {
     ]);
 });
 
-it('requires read permission to list clients', function () {
+it('requires access control panel permission to access admin clients', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->get('/admin/clients');
-
-    $response->assertForbidden();
-});
-
-it('requires create permission to create clients', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo(Permission::READ_CLIENTS);
-
-    $response = $this->actingAs($user)->get('/admin/clients/create');
-
-    $response->assertForbidden();
-});
-
-it('requires update permission to update clients', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo(Permission::READ_CLIENTS);
-    $client = Client::factory()->create();
-
-    $response = $this->actingAs($user)->get("/admin/clients/{$client->id}/edit");
-
-    $response->assertForbidden();
-});
-
-it('requires delete permission to delete clients', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo(Permission::READ_CLIENTS);
-    $client = Client::factory()->create();
-
-    $response = $this->actingAs($user)->delete("/admin/clients/{$client->id}");
 
     $response->assertForbidden();
 });

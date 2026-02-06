@@ -8,7 +8,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     // Seed roles and permissions
-    $this->artisan('db:seed', ['--class' => 'Database\\Seeders\\RolesAndPermissionsSeeder']);
+    $this->artisan('db:seed', ['--class' => 'Database\\Seeders\\BootstrapApplicationSeeder']);
 });
 
 it('injects branding css variables in app blade template', function () {

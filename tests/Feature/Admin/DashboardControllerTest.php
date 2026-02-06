@@ -10,7 +10,7 @@ uses(RefreshDatabase::class);
 
 it('can view admin dashboard', function () {
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::ACCESS_CONTROL_PANEL);
+    $user->givePermissionTo(Permission::AccessControlPanel);
 
     $response = $this->actingAs($user)->get('/admin');
 
@@ -33,7 +33,7 @@ it('requires access control panel permission to view dashboard', function () {
 
 it('displays correct stats on dashboard', function () {
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::ACCESS_CONTROL_PANEL);
+    $user->givePermissionTo(Permission::AccessControlPanel);
 
     User::factory()->count(5)->create();
 

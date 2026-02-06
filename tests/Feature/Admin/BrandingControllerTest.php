@@ -14,15 +14,14 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     // Create permissions if they don't exist
-    PermissionModel::findOrCreate(Permission::ACCESS_CONTROL_PANEL->value, 'web');
-    PermissionModel::findOrCreate(Permission::MANAGE_SETTINGS->value, 'web');
-    PermissionModel::findOrCreate(Permission::HAS_API_ACCESS->value, 'web');
+    foreach (Permission::cases() as $permission) {
+        if ($permission->shouldSync()) {
+            PermissionModel::findOrCreate($permission->value, 'web');
+        }
+    }
 
     $this->user = User::factory()->create();
-    $this->user->givePermissionTo([
-        Permission::ACCESS_CONTROL_PANEL,
-        Permission::MANAGE_SETTINGS,
-    ]);
+    $this->user->givePermissionTo(Permission::AccessControlPanel);
     Storage::fake('public');
 });
 
@@ -263,7 +262,7 @@ it('replaces old light logo when uploading a new one', function () {
     Storage::disk('public')->assertExists($newPath);
 });
 
-it('requires manage settings permission to edit branding', function () {
+it('requires access control panel permission to edit branding', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->get('/admin/branding');

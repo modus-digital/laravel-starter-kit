@@ -10,12 +10,12 @@ use App\Models\User;
 use App\Notifications\Security\NewDeviceLoginNotification;
 use App\Notifications\Security\PasswordChangedNotification;
 use App\Notifications\Security\TwoFactorStatusNotification;
-use Database\Seeders\RolesAndPermissionsSeeder;
+use Database\Seeders\BootstrapApplicationSeeder;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 
 beforeEach(function () {
-    $this->seed(RolesAndPermissionsSeeder::class);
+    $this->seed(BootstrapApplicationSeeder::class);
 });
 
 test('password changed event sends notification', function () {

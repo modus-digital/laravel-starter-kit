@@ -19,11 +19,7 @@ beforeEach(function () {
     }
 
     $this->user = User::factory()->create();
-    $this->user->givePermissionTo(Permission::READ_USERS);
-    $this->user->givePermissionTo(Permission::CREATE_USERS);
-    $this->user->givePermissionTo(Permission::UPDATE_USERS);
-    $this->user->givePermissionTo(Permission::DELETE_USERS);
-    $this->user->givePermissionTo(Permission::RESTORE_USERS);
+    $this->user->givePermissionTo(Permission::AccessControlPanel);
 });
 
 it('can list users', function () {
@@ -180,39 +176,10 @@ it('can permanently delete a user', function () {
     ]);
 });
 
-it('requires read permission to list users', function () {
+it('requires access control panel permission to access admin users', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->get('/admin/users');
-
-    $response->assertForbidden();
-});
-
-it('requires create permission to create users', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo(Permission::READ_USERS);
-
-    $response = $this->actingAs($user)->get('/admin/users/create');
-
-    $response->assertForbidden();
-});
-
-it('requires update permission to update users', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo(Permission::READ_USERS);
-    $targetUser = User::factory()->create();
-
-    $response = $this->actingAs($user)->get("/admin/users/{$targetUser->id}/edit");
-
-    $response->assertForbidden();
-});
-
-it('requires delete permission to delete users', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo(Permission::READ_USERS);
-    $targetUser = User::factory()->create();
-
-    $response = $this->actingAs($user)->delete("/admin/users/{$targetUser->id}");
 
     $response->assertForbidden();
 });

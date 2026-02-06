@@ -23,7 +23,7 @@ beforeEach(function () {
     }
 
     $this->user = User::factory()->create();
-    $this->user->givePermissionTo(Permission::MANAGE_SETTINGS);
+    $this->user->givePermissionTo(Permission::AccessControlPanel);
 
     $this->originalLangPath = app()->langPath();
     $this->temporaryLangPath = storage_path('framework/testing/lang');
@@ -181,7 +181,7 @@ it('validates target language exists', function () {
     $response->assertSessionHasErrors('language');
 });
 
-it('requires manage settings permission to access translations', function () {
+it('requires access control panel permission to access translations', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->get('/admin/translations');
@@ -189,7 +189,7 @@ it('requires manage settings permission to access translations', function () {
     $response->assertForbidden();
 });
 
-it('requires manage settings permission to update translations', function () {
+it('requires access control panel permission to update translations', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->put('/admin/translations/navigation', [

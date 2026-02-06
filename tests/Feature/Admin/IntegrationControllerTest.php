@@ -18,7 +18,7 @@ beforeEach(function () {
     }
 
     $this->user = User::factory()->create();
-    $this->user->givePermissionTo(Permission::MANAGE_SETTINGS);
+    $this->user->givePermissionTo(Permission::AccessControlPanel);
 });
 
 it('can show integrations edit page', function () {
@@ -194,7 +194,7 @@ it('requires all s3 fields to test connection', function () {
     $response->assertJsonValidationErrors(['s3_key', 's3_secret', 's3_region', 's3_bucket']);
 });
 
-it('requires manage settings permission to test s3 connection', function () {
+it('requires access control panel permission to test s3 connection', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->postJson('/admin/integrations/test-s3', [
@@ -207,7 +207,7 @@ it('requires manage settings permission to test s3 connection', function () {
     $response->assertForbidden();
 });
 
-it('requires manage settings permission to edit integrations', function () {
+it('requires access control panel permission to edit integrations', function () {
     $user = User::factory()->create();
 
     $response = $this->actingAs($user)->get('/admin/integrations');

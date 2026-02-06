@@ -7,10 +7,10 @@ use App\Models\Modules\Clients\Client;
 use App\Models\Modules\Tasks\Task;
 use App\Models\Modules\Tasks\TaskStatus;
 use App\Models\User;
-use Database\Seeders\RolesAndPermissionsSeeder;
+use Database\Seeders\BootstrapApplicationSeeder;
 
 beforeEach(function (): void {
-    $this->seed(RolesAndPermissionsSeeder::class);
+    $this->seed(BootstrapApplicationSeeder::class);
 });
 
 it('shows an accessible task with statuses and activities', function (): void {
@@ -53,7 +53,7 @@ it('shows an accessible task with statuses and activities', function (): void {
 
     $response->assertSuccessful();
     $response->assertInertia(fn ($page) => $page
-        ->component('tasks/show')
+        ->component('modules/tasks/show')
         ->where('task.id', $task->id)
         ->where('task.title', 'My Task')
         ->where('task.description', 'Task description')
@@ -88,7 +88,7 @@ it('shows client-scoped task when user is a member of the client', function (): 
 
     $response->assertSuccessful();
     $response->assertInertia(fn ($page) => $page
-        ->component('tasks/show')
+        ->component('modules/tasks/show')
         ->where('task.id', $task->id)
         ->where('task.title', 'Client Task')
         ->has('statuses')

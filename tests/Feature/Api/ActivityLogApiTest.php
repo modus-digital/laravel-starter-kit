@@ -16,7 +16,7 @@ it('can list activities', function () {
     $user = User::factory()->create();
     // Create the permission if it doesn't exist
     $permission = Spatie\Permission\Models\Permission::firstOrCreate(
-        ['name' => Permission::ACCESS_ACTIVITY_LOGS->value, 'guard_name' => 'web']
+        ['name' => Permission::AccessControlPanel->value, 'guard_name' => 'web']
     );
     $user->givePermissionTo($permission);
     $token = $user->createToken('test-token')->plainTextToken;
@@ -60,7 +60,7 @@ it('can show a specific activity', function () {
     $user = User::factory()->create();
     // Create the permission if it doesn't exist
     $permission = Spatie\Permission\Models\Permission::firstOrCreate(
-        ['name' => Permission::ACCESS_ACTIVITY_LOGS->value, 'guard_name' => 'web']
+        ['name' => Permission::AccessControlPanel->value, 'guard_name' => 'web']
     );
     $user->givePermissionTo($permission);
     $activity = Activity::factory()->create([
@@ -92,7 +92,7 @@ it('can filter activities by search', function () {
     $user = User::factory()->create(['name' => 'John Doe']);
     // Create the permission if it doesn't exist
     $permission = Spatie\Permission\Models\Permission::firstOrCreate(
-        ['name' => Permission::ACCESS_ACTIVITY_LOGS->value, 'guard_name' => 'web']
+        ['name' => Permission::AccessControlPanel->value, 'guard_name' => 'web']
     );
     $user->givePermissionTo($permission);
     Activity::factory()->create([
@@ -116,7 +116,7 @@ it('can filter activities by event type', function () {
     $user = User::factory()->create();
     // Create the permission if it doesn't exist
     $permission = Spatie\Permission\Models\Permission::firstOrCreate(
-        ['name' => Permission::ACCESS_ACTIVITY_LOGS->value, 'guard_name' => 'web']
+        ['name' => Permission::AccessControlPanel->value, 'guard_name' => 'web']
     );
     $user->givePermissionTo($permission);
     Activity::factory()->create([
@@ -138,7 +138,7 @@ it('can filter activities by date range', function () {
     $user = User::factory()->create();
     // Create the permission if it doesn't exist
     $permission = Spatie\Permission\Models\Permission::firstOrCreate(
-        ['name' => Permission::ACCESS_ACTIVITY_LOGS->value, 'guard_name' => 'web']
+        ['name' => Permission::AccessControlPanel->value, 'guard_name' => 'web']
     );
     $user->givePermissionTo($permission);
     Activity::factory()->create([

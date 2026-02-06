@@ -20,7 +20,7 @@ beforeEach(function () {
 
 it('can view v2 admin dashboard with layout', function () {
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::ACCESS_CONTROL_PANEL);
+    $user->givePermissionTo(Permission::AccessControlPanel);
 
     $response = $this->actingAs($user)->get('/admin/dashboard');
 
@@ -34,7 +34,7 @@ it('can view v2 admin dashboard with layout', function () {
 
 it('returns default layout when user has no saved layout', function () {
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::ACCESS_CONTROL_PANEL);
+    $user->givePermissionTo(Permission::AccessControlPanel);
 
     $response = $this->actingAs($user)->get('/admin/dashboard');
 
@@ -50,7 +50,7 @@ it('returns default layout when user has no saved layout', function () {
 
 it('can save dashboard layout', function () {
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::ACCESS_CONTROL_PANEL);
+    $user->givePermissionTo(Permission::AccessControlPanel);
 
     $newLayout = [
         ['i' => 'stats', 'x' => 0, 'y' => 0, 'w' => 12, 'h' => 3],
@@ -70,7 +70,7 @@ it('can save dashboard layout', function () {
 
 it('persists layout between page loads', function () {
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::ACCESS_CONTROL_PANEL);
+    $user->givePermissionTo(Permission::AccessControlPanel);
 
     $customLayout = [
         ['i' => 'activities', 'x' => 0, 'y' => 0, 'w' => 12, 'h' => 4],
@@ -92,7 +92,7 @@ it('persists layout between page loads', function () {
 
 it('validates layout structure when saving', function () {
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::ACCESS_CONTROL_PANEL);
+    $user->givePermissionTo(Permission::AccessControlPanel);
 
     $response = $this->actingAs($user)->putJson('/admin/dashboard/layout', [
         'layout' => [
@@ -129,7 +129,7 @@ it('requires permission to save layout', function () {
 
 it('returns widget data with deferred props', function () {
     $user = User::factory()->create();
-    $user->givePermissionTo(Permission::ACCESS_CONTROL_PANEL);
+    $user->givePermissionTo(Permission::AccessControlPanel);
 
     // Create some test data
     User::factory()->count(3)->create();

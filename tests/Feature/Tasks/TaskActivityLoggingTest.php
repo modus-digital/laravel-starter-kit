@@ -8,10 +8,10 @@ use App\Models\Modules\Tasks\Task;
 use App\Models\Modules\Tasks\TaskStatus;
 use App\Models\User;
 use App\Services\TaskService;
-use Database\Seeders\RolesAndPermissionsSeeder;
+use Database\Seeders\BootstrapApplicationSeeder;
 
 beforeEach(function (): void {
-    $this->seed(RolesAndPermissionsSeeder::class);
+    $this->seed(BootstrapApplicationSeeder::class);
     $this->taskService = new TaskService();
 });
 

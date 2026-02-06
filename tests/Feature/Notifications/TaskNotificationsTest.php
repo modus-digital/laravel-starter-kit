@@ -11,12 +11,12 @@ use App\Models\Modules\Tasks\Task;
 use App\Models\Modules\Tasks\TaskStatus;
 use App\Models\User;
 use App\Notifications\Tasks\TaskAssignedNotification;
-use Database\Seeders\RolesAndPermissionsSeeder;
+use Database\Seeders\BootstrapApplicationSeeder;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 
 beforeEach(function () {
-    $this->seed(RolesAndPermissionsSeeder::class);
+    $this->seed(BootstrapApplicationSeeder::class);
 });
 
 test('task assigned event sends notification to assignee', function () {
