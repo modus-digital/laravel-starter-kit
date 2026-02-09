@@ -1,26 +1,30 @@
 name: tests
 
+# Disabled - tests now run as part of deploy workflows
+# on:
+#   push:
+#     branches:
+#       - develop
+#       - main
+#       - master
+#       - production
+#       - staging
+#       - acceptance
+#   pull_request:
+#     branches:
+#       - develop
+#       - main
+#       - master
+#       - production
+#       - staging
+#       - acceptance
+
 on:
-  push:
-    branches:
-      - develop
-      - main
-      - master
-      - production
-      - staging
-      - acceptance
-  pull_request:
-    branches:
-      - develop
-      - main
-      - master
-      - production
-      - staging
-      - acceptance
+  workflow_dispatch:
 
 jobs:
   ci:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout

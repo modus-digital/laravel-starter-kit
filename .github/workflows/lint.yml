@@ -1,29 +1,33 @@
 name: linter
 
+# Disabled - linting now runs as part of deploy workflows
+# on:
+#   push:
+#     branches:
+#       - develop
+#       - main
+#       - master
+#       - production
+#       - staging
+#       - acceptance
+#   pull_request:
+#     branches:
+#       - develop
+#       - main
+#       - master
+#       - production
+#       - staging
+#       - acceptance
+
 on:
-  push:
-    branches:
-      - develop
-      - main
-      - master
-      - production
-      - staging
-      - acceptance
-  pull_request:
-    branches:
-      - develop
-      - main
-      - master
-      - production
-      - staging
-      - acceptance
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
   quality:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
 
