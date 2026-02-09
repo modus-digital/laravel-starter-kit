@@ -8,7 +8,7 @@ on:
       - production
 
 jobs:
-  quality:
+  code-quality:
     runs-on: self-hosted
     container:
       image: serversideup/php:8.4-cli
@@ -42,7 +42,7 @@ jobs:
       - name: Lint Frontend
         run: pnpm run lint
 
-  ci:
+  tests:
     runs-on: self-hosted
     container:
       image: serversideup/php:8.4-cli
@@ -83,12 +83,12 @@ jobs:
         run: php artisan test --compact
 
   # This job checks that both lint and tests passed
-  build:
+  compile-assets:
     runs-on: self-hosted
     container:
       image: serversideup/php:8.4-cli
       options: --user root
-    needs: [quality, ci]
+    needs: [code-quality, tests]
 
     steps:
       - name: Checkout
@@ -128,7 +128,7 @@ jobs:
 
   deploy:
     runs-on: self-hosted
-    needs: build
+    needs: compile-assets
 
     steps:
       - name: Download Artifacts
