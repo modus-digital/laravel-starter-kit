@@ -65,8 +65,11 @@ jobs:
       - name: Create SQLite Database
         run: touch database/database.sqlite
 
-      - name: Run Migrations
+      - name: Run Migrations (Development DB)
         run: php artisan migrate --force
 
+      - name: Clear Config Cache
+        run: php artisan config:clear
+
       - name: Tests
-        run: php artisan test --compact
+        run: php artisan test --compact --without-tty
