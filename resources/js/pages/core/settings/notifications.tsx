@@ -1,3 +1,4 @@
+import { update } from '@/routes/notifications';
 import HeadingSmall from '@/shared/components/heading-small';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card';
@@ -13,7 +14,6 @@ import { Bell } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { preferences, update } from '@/routes/notifications';
 
 type DeliveryMethod = 'none' | 'email' | 'push' | 'email_push';
 
@@ -52,7 +52,6 @@ const deliveryOptions: { value: DeliveryMethod; label: string }[] = [
     { value: 'email_push', label: 'settings.notifications.delivery.email_push' },
 ];
 
-const breadcrumbs: BreadcrumbItem[] = [];
 type NotificationTypeItemProps = {
     id: keyof NotificationPreferences;
     icon: React.ReactNode;

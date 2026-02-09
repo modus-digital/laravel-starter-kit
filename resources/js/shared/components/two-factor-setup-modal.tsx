@@ -1,10 +1,10 @@
+import { confirm } from '@/routes/two-factor';
 import InputError from '@/shared/components/input-error';
 import { Button } from '@/shared/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/shared/components/ui/dialog';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/shared/components/ui/input-otp';
 import { useClipboard } from '@/shared/hooks/use-clipboard';
 import { OTP_MAX_LENGTH } from '@/shared/hooks/use-two-factor-auth';
-import { confirm } from '@/routes/two-factor';
 import { Form } from '@inertiajs/react';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { Check, Copy, ScanLine } from 'lucide-react';

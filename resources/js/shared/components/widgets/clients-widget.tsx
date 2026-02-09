@@ -37,7 +37,7 @@ export function ClientsWidget({ data, isLoading, onRemove }: ClientsWidgetProps)
                             <stat.icon className={`h-5 w-5 ${stat.color}`} />
                         </div>
                         <div className="flex-1">
-                            <p className="text-muted-foreground text-xs">{stat.label}</p>
+                            <p className="text-xs text-muted-foreground">{stat.label}</p>
                             {isLoading ? <Skeleton className="mt-1 h-6 w-16" /> : <p className="text-xl font-bold">{stat.value.toLocaleString()}</p>}
                         </div>
                     </div>

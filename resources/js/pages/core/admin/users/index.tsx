@@ -1,8 +1,15 @@
+import { bulkDelete, bulkRestore, create, destroy, edit, forceDelete, impersonate, index, restore, show } from '@/routes/admin/users';
 import { PaginatedDataTable } from '@/shared/components/paginated-data-table';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import { Checkbox } from '@/shared/components/ui/checkbox';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/shared/components/ui/dropdown-menu';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/shared/components/ui/dropdown-menu';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import AdminLayout from '@/shared/layouts/admin/layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
@@ -12,7 +19,6 @@ import { format } from 'date-fns';
 import { Edit, Eye, MoreVertical, Plus, RotateCcw, Trash, Trash2, User } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { bulkDelete, bulkRestore, create, destroy, edit, forceDelete, impersonate, index, restore, show } from '@/routes/admin/users';
 
 type User = {
     id: string;
@@ -26,30 +32,29 @@ type User = {
 };
 
 type PageProps = SharedData & {
-	users: {
-		data: User[];
-		current_page: number;
-		last_page: number;
-		links: Array<{ url: string | null; label: string; active: boolean }>;
-	};
-	filters: {
-		search?: string;
-		status?: string;
-		with_trashed?: boolean;
-		only_trashed?: boolean;
-		sort_by?: string;
-		sort_direction?: 'asc' | 'desc';
-	};
-	roles: Array<{ name: string; label: string }>;
-	statuses: Record<string, string>;
+    users: {
+        data: User[];
+        current_page: number;
+        last_page: number;
+        links: Array<{ url: string | null; label: string; active: boolean }>;
+    };
+    filters: {
+        search?: string;
+        status?: string;
+        with_trashed?: boolean;
+        only_trashed?: boolean;
+        sort_by?: string;
+        sort_direction?: 'asc' | 'desc';
+    };
+    roles: Array<{ name: string; label: string }>;
+    statuses: Record<string, string>;
 };
 
-export default function Index({ users: paginatedUsers, filters, roles, statuses }: PageProps) {
-	const users = paginatedUsers.data;
+export default function Index({ users: paginatedUsers, filters, statuses }: PageProps) {
+    const users = paginatedUsers.data;
     const { t } = useTranslation();
 
-    const [search, setSearch] = useState(filters.search || '');
-    const [status, setStatus] = useState(filters.status || '');
+    const [status, setStatus] = useState(filters.search || '');
     const [withTrashed, setWithTrashed] = useState(filters.with_trashed || false);
     const [onlyTrashed, setOnlyTrashed] = useState(filters.only_trashed || false);
 
@@ -87,35 +92,6 @@ export default function Index({ users: paginatedUsers, filters, roles, statuses 
                 return 'secondary';
             default:
                 return 'outline';
-        }
-    };
-
-    const handleDelete = (userId: string, e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (confirm(t('admin.users.confirm_delete', 'Are you sure you want to delete this user?'))) {
-            router.delete(destroy({ user: userId }).url, {
-                preserveScroll: true,
-            });
-        }
-    };
-
-    const handleRestore = (userId: string, e: React.MouseEvent) => {
-        e.stopPropagation();
-        router.post(
-            restore({ user: userId }).url,
-            {},
-            {
-                preserveScroll: true,
-            },
-        );
-    };
-
-    const handleForceDelete = (userId: string, e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (confirm(t('admin.users.confirm_force_delete', 'Are you sure you want to permanently delete this user? This action cannot be undone.'))) {
-            router.delete(forceDelete({ user: userId }).url, {
-                preserveScroll: true,
-            });
         }
     };
 
@@ -246,7 +222,17 @@ export default function Index({ users: paginatedUsers, filters, roles, statuses 
                                                 {t('common.actions.edit')}
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="text-destructive" onClick={(e) => handleDelete(user.id, e)}>
+                                            <DropdownMenuItem
+                                                className="text-destructive"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (confirm(t('admin.users.confirm_delete', 'Are you sure you want to delete this user?'))) {
+                                                        router.delete(destroy({ user: user.id }).url, {
+                                                            preserveScroll: true,
+                                                        });
+                                                    }
+                                                }}
+                                            >
                                                 <Trash2 className="mr-2 h-4 w-4" />
                                                 {t('common.actions.delete')}
                                             </DropdownMenuItem>
@@ -254,12 +240,40 @@ export default function Index({ users: paginatedUsers, filters, roles, statuses 
                                     )}
                                     {user.deleted_at && (
                                         <>
-                                            <DropdownMenuItem onClick={(e) => handleRestore(user.id, e)}>
+                                            <DropdownMenuItem
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    router.post(
+                                                        restore({ user: user.id }).url,
+                                                        {},
+                                                        {
+                                                            preserveScroll: true,
+                                                        },
+                                                    );
+                                                }}
+                                            >
                                                 <RotateCcw className="mr-2 h-4 w-4" />
                                                 {t('common.actions.restore')}
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="text-destructive" onClick={(e) => handleForceDelete(user.id, e)}>
+                                            <DropdownMenuItem
+                                                className="text-destructive"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (
+                                                        confirm(
+                                                            t(
+                                                                'admin.users.confirm_force_delete',
+                                                                'Are you sure you want to permanently delete this user? This action cannot be undone.',
+                                                            ),
+                                                        )
+                                                    ) {
+                                                        router.delete(forceDelete({ user: user.id }).url, {
+                                                            preserveScroll: true,
+                                                        });
+                                                    }
+                                                }}
+                                            >
                                                 <Trash className="mr-2 h-4 w-4" />
                                                 {t('admin.users.force_delete')}
                                             </DropdownMenuItem>
@@ -272,7 +286,7 @@ export default function Index({ users: paginatedUsers, filters, roles, statuses 
                 },
             },
         ],
-        [t, statuses, handleDelete, handleRestore, handleForceDelete],
+        [t, statuses],
     );
 
     return (

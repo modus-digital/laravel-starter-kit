@@ -10,27 +10,20 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
 import AdminLayout from '@/shared/layouts/admin/layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
+import { type AvailableUser, type Client, type ClientActivity, type ClientUser, type PaginatedData, type RoleOption } from '@/types/admin/clients';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { ArrowLeft, Edit, Plus, RotateCcw, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	type AvailableUser,
-	type Client,
-	type ClientActivity,
-	type ClientUser,
-	type PaginatedData,
-	type RoleOption,
-} from '@/types/admin/clients';
 
 type PageProps = SharedData & {
-	client: Client;
-	users: PaginatedData<ClientUser>;
-	activities: PaginatedData<ClientActivity>;
-	roles: RoleOption[];
-	availableUsers: AvailableUser[];
-	statuses: Record<string, string>;
+    client: Client;
+    users: PaginatedData<ClientUser>;
+    activities: PaginatedData<ClientActivity>;
+    roles: RoleOption[];
+    availableUsers: AvailableUser[];
+    statuses: Record<string, string>;
 };
 
 export default function Show() {

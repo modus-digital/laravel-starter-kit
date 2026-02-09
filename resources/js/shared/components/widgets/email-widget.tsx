@@ -44,7 +44,7 @@ export function EmailWidget({ data, isLoading, onRemove }: EmailWidgetProps) {
                             ) : (
                                 <span className="text-lg font-bold">{stat.value.toLocaleString()}</span>
                             )}
-                            <span className="text-muted-foreground text-xs">{stat.label}</span>
+                            <span className="text-xs text-muted-foreground">{stat.label}</span>
                         </div>
                     ))}
                 </div>
@@ -53,7 +53,7 @@ export function EmailWidget({ data, isLoading, onRemove }: EmailWidgetProps) {
                         <span className="text-muted-foreground">Delivery Rate</span>
                         {isLoading ? <Skeleton className="h-4 w-10" /> : <span className="font-medium">{deliveryRate}%</span>}
                     </div>
-                    <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                         {isLoading ? (
                             <Skeleton className="h-full w-full" />
                         ) : (

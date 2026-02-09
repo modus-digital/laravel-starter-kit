@@ -77,7 +77,7 @@ export function ActivityDetailsSheet({ activity, onClose }: ActivityDetailsSheet
     const descriptionText =
         activity?.translation !== undefined
             ? t(activity.translation.key, activity.translation.replacements as never)
-            : activity?.translated_description ?? activity?.description;
+            : (activity?.translated_description ?? activity?.description);
     const descriptionTextString = descriptionText ? String(descriptionText) : '';
 
     return (
@@ -101,12 +101,12 @@ export function ActivityDetailsSheet({ activity, onClose }: ActivityDetailsSheet
                                                     {t('admin.activities.modal.description')}
                                                 </td>
                                             </tr>
-                                        {descriptionTextString && (
-                                            <tr className="border-b">
-                                                <td className="w-[30%] p-3 align-top font-medium whitespace-nowrap">Description</td>
-                                                <td className="p-3 text-sm wrap-break-word">{descriptionTextString}</td>
-                                            </tr>
-                                        )}
+                                            {descriptionTextString && (
+                                                <tr className="border-b">
+                                                    <td className="w-[30%] p-3 align-top font-medium whitespace-nowrap">Description</td>
+                                                    <td className="p-3 text-sm wrap-break-word">{descriptionTextString}</td>
+                                                </tr>
+                                            )}
                                             <tr className="border-b">
                                                 <td className="w-[30%] p-3 align-top font-medium whitespace-nowrap">
                                                     {t('admin.activities.modal.event')}

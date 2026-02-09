@@ -1,3 +1,4 @@
+import { index, show } from '@/routes/notifications';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shared/components/ui/card';
@@ -6,9 +7,8 @@ import AppLayout from '@/shared/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import type { Notification as NotificationType } from '@/types/models';
 import { Head, Link, router } from '@inertiajs/react';
-import { ArrowLeft, Bell, Calendar, CheckCircle, Clock, ExternalLink, Mail, MessageSquare, Trash2, User, Flag } from 'lucide-react';
+import { ArrowLeft, Bell, Calendar, CheckCircle, Clock, ExternalLink, Flag, Mail, MessageSquare, Trash2, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { destroy, index, read, show, unread } from '@/routes/notifications';
 
 type NotificationProps = {
     notification: NotificationType;
@@ -41,12 +41,16 @@ function formatRelativeTime(dateString: string, t: (key: string, options?: { cou
 
     const diffInMinutes = Math.floor(diffInSeconds / 60);
     if (diffInMinutes < 60) {
-        return t(diffInMinutes === 1 ? 'notifications.relative_time.minutes_ago' : 'notifications.relative_time.minutes_ago_plural', { count: diffInMinutes });
+        return t(diffInMinutes === 1 ? 'notifications.relative_time.minutes_ago' : 'notifications.relative_time.minutes_ago_plural', {
+            count: diffInMinutes,
+        });
     }
 
     const diffInHours = Math.floor(diffInMinutes / 60);
     if (diffInHours < 24) {
-        return t(diffInHours === 1 ? 'notifications.relative_time.hours_ago' : 'notifications.relative_time.hours_ago_plural', { count: diffInHours });
+        return t(diffInHours === 1 ? 'notifications.relative_time.hours_ago' : 'notifications.relative_time.hours_ago_plural', {
+            count: diffInHours,
+        });
     }
 
     const diffInDays = Math.floor(diffInHours / 24);
@@ -59,7 +63,7 @@ function formatRelativeTime(dateString: string, t: (key: string, options?: { cou
 
 export default function Notification({ notification }: NotificationProps) {
     const { t } = useTranslation();
-    
+
     // Helper function to translate notification text (handles both translation keys and plain text)
     const translateNotificationText = (text: string | null | undefined, replacements?: Record<string, unknown> | null): string => {
         if (!text) return '';
@@ -196,13 +200,11 @@ export default function Notification({ notification }: NotificationProps) {
                                             <MessageSquare className="size-4" />
                                             Comment Preview
                                         </div>
-                                        <blockquote className="border-l-4 border-primary pl-4 italic text-foreground">
+                                        <blockquote className="border-l-4 border-primary pl-4 text-foreground italic">
                                             {notification.context.comment_preview}
                                         </blockquote>
                                         {notification.context.task_title && (
-                                            <div className="mt-3 text-xs text-muted-foreground">
-                                                Task: {notification.context.task_title}
-                                            </div>
+                                            <div className="mt-3 text-xs text-muted-foreground">Task: {notification.context.task_title}</div>
                                         )}
                                     </div>
                                 )}

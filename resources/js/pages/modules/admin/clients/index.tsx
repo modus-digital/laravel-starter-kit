@@ -12,25 +12,25 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import AdminLayout from '@/shared/layouts/admin/layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
+import { type Client, type PaginatedData } from '@/types/admin/clients';
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { type ColumnDef, type Table } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { Edit, Eye, MoreVertical, Plus, RotateCcw, Trash, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { type Client, type PaginatedData } from '@/types/admin/clients';
 
 type PageProps = SharedData & {
-	clients: PaginatedData<Client>;
-	filters: {
-		search?: string;
-		status?: string;
-		with_trashed?: boolean;
-		only_trashed?: boolean;
-		sort_by?: string;
-		sort_direction?: 'asc' | 'desc';
-	};
-	statuses: Record<string, string>;
+    clients: PaginatedData<Client>;
+    filters: {
+        search?: string;
+        status?: string;
+        with_trashed?: boolean;
+        only_trashed?: boolean;
+        sort_by?: string;
+        sort_direction?: 'asc' | 'desc';
+    };
+    statuses: Record<string, string>;
 };
 
 type SelectAllCheckboxProps<TData> = {
@@ -38,24 +38,24 @@ type SelectAllCheckboxProps<TData> = {
 };
 
 export default function Index() {
-	const { clients: paginatedClients, filters, statuses } = usePage<PageProps>().props;
-	const clients = paginatedClients.data;
-	const { t } = useTranslation();
+    const { clients: paginatedClients, filters, statuses } = usePage<PageProps>().props;
+    const clients = paginatedClients.data;
+    const { t } = useTranslation();
 
-	const [status, setStatus] = useState(filters.status || '');
-	const [withTrashed, setWithTrashed] = useState(filters.with_trashed || false);
-	const [onlyTrashed, setOnlyTrashed] = useState(filters.only_trashed || false);
+    const [status, setStatus] = useState(filters.status || '');
+    const [withTrashed, setWithTrashed] = useState(filters.with_trashed || false);
+    const [onlyTrashed, setOnlyTrashed] = useState(filters.only_trashed || false);
 
-	const breadcrumbs: BreadcrumbItem[] = [
-		{
-			title: t('admin.clients.navigation_label', 'Clients'),
-			href: index().url,
-		},
-	];
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: t('admin.clients.navigation_label', 'Clients'),
+            href: index().url,
+        },
+    ];
 
-	// Apply client-side filters
-	const filteredClients = useMemo(() => {
-		let filtered = [...clients];
+    // Apply client-side filters
+    const filteredClients = useMemo(() => {
+        let filtered = [...clients];
 
         if (status) {
             filtered = filtered.filter((client) => client.status === status);
@@ -80,37 +80,6 @@ export default function Index() {
                 return 'secondary';
             default:
                 return 'outline';
-        }
-    };
-
-    const handleDelete = (clientId: string, e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (confirm(t('admin.clients.confirm_delete', 'Are you sure you want to delete this client?'))) {
-            router.delete(destroy({ client: clientId }).url, {
-                preserveScroll: true,
-            });
-        }
-    };
-
-    const handleRestore = (clientId: string, e: React.MouseEvent) => {
-        e.stopPropagation();
-        router.post(
-            `/admin/clients/${clientId}/restore`,
-            {},
-            {
-                preserveScroll: true,
-            },
-        );
-    };
-
-    const handleForceDelete = (clientId: string, e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (
-            confirm(t('admin.clients.confirm_force_delete', 'Are you sure you want to permanently delete this client? This action cannot be undone.'))
-        ) {
-            router.delete(forceDelete({ client: clientId }).url, {
-                preserveScroll: true,
-            });
         }
     };
 
@@ -247,7 +216,17 @@ export default function Index() {
                                                 {t('common.actions.edit')}
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="text-destructive" onClick={(e) => handleDelete(client.id, e)}>
+                                            <DropdownMenuItem
+                                                className="text-destructive"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (confirm(t('admin.clients.confirm_delete', 'Are you sure you want to delete this client?'))) {
+                                                        router.delete(destroy({ client: client.id }).url, {
+                                                            preserveScroll: true,
+                                                        });
+                                                    }
+                                                }}
+                                            >
                                                 <Trash2 className="mr-2 h-4 w-4" />
                                                 {t('common.actions.delete')}
                                             </DropdownMenuItem>
@@ -255,12 +234,40 @@ export default function Index() {
                                     )}
                                     {client.deleted_at && (
                                         <>
-                                            <DropdownMenuItem onClick={(e) => handleRestore(client.id, e)}>
+                                            <DropdownMenuItem
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    router.post(
+                                                        `/admin/clients/${client.id}/restore`,
+                                                        {},
+                                                        {
+                                                            preserveScroll: true,
+                                                        },
+                                                    );
+                                                }}
+                                            >
                                                 <RotateCcw className="mr-2 h-4 w-4" />
                                                 {t('common.actions.restore')}
                                             </DropdownMenuItem>
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="text-destructive" onClick={(e) => handleForceDelete(client.id, e)}>
+                                            <DropdownMenuItem
+                                                className="text-destructive"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    if (
+                                                        confirm(
+                                                            t(
+                                                                'admin.clients.confirm_force_delete',
+                                                                'Are you sure you want to permanently delete this client? This action cannot be undone.',
+                                                            ),
+                                                        )
+                                                    ) {
+                                                        router.delete(forceDelete({ client: client.id }).url, {
+                                                            preserveScroll: true,
+                                                        });
+                                                    }
+                                                }}
+                                            >
                                                 <Trash className="mr-2 h-4 w-4" />
                                                 {t('admin.clients.force_delete')}
                                             </DropdownMenuItem>
@@ -273,7 +280,7 @@ export default function Index() {
                 },
             },
         ],
-        [t, statuses, handleDelete, handleRestore, handleForceDelete],
+        [t, statuses],
     );
 
     return (

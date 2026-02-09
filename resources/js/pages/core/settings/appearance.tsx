@@ -4,9 +4,9 @@ import AppearanceTabs from '@/shared/components/appearance-tabs';
 import HeadingSmall from '@/shared/components/heading-small';
 import { type BreadcrumbItem } from '@/types';
 
+import { edit as editAppearance } from '@/routes/appearance';
 import AppLayout from '@/shared/layouts/app-layout';
 import SettingsLayout from '@/shared/layouts/settings/layout';
-import { edit as editAppearance } from '@/routes/appearance';
 import { useTranslation } from 'react-i18next';
 
 export default function Appearance() {

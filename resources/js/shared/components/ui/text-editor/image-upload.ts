@@ -1,6 +1,6 @@
+import { image } from '@/routes/api/v1/upload';
 import { createImageUpload } from 'novel';
 import { toast } from 'sonner';
-import { image } from '@/routes/api/v1/upload';
 
 export const onUpload = async (file: File): Promise<string> => {
     const formData = new FormData();

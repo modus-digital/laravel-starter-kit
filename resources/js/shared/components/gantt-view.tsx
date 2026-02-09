@@ -24,11 +24,9 @@ import {
     startOfMonth,
 } from 'date-fns';
 import { atom, useAtom } from 'jotai';
-import throttle from 'lodash.throttle';
 import { PlusIcon, TrashIcon } from 'lucide-react';
 import type { CSSProperties, FC, KeyboardEventHandler, MouseEventHandler, ReactNode, RefObject } from 'react';
 import { createContext, memo, useCallback, useContext, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 const draggingAtom = atom(false);
 const scrollXAtom = atom(0);
@@ -84,7 +82,7 @@ export type GanttContextProps = {
 
 const getsDaysIn = (range: Range) => {
     // For when range is daily
-    let fn = (_date: Date) => 1;
+    let fn = () => 1;
 
     if (range === 'monthly' || range === 'quarterly') {
         fn = getDaysInMonth;
@@ -527,8 +525,15 @@ export const GanttColumn: FC<GanttColumnProps> = ({ index, isColumnSecondary }) 
 
     const handleMouseEnter = () => setHovering(true);
     const handleMouseLeave = () => setHovering(false);
-
-    const top = useThrottle(mousePosition.y - (mouseRef.current?.getBoundingClientRect().y ?? 0) - (windowScroll.y ?? 0), 10);
+    const [offsetY, setOffsetY] = useState(0);
+    
+    useEffect(() => {
+        if (mouseRef.current) {
+            setOffsetY(mouseRef.current.getBoundingClientRect().y);
+        }
+    }, [mouseRef]);
+    
+    const top = useThrottle(mousePosition.y - offsetY - (windowScroll.y ?? 0), 10);
 
     return (
         // biome-ignore lint/a11y/noStaticElementInteractions: "This is a clickable column"
@@ -575,7 +580,15 @@ export const GanttCreateMarkerTrigger: FC<GanttCreateMarkerTriggerProps> = ({ on
     const gantt = useContext(GanttContext);
     const [mousePosition, mouseRef] = useMouse<HTMLDivElement>();
     const [windowScroll] = useWindowScroll();
-    const x = useThrottle(mousePosition.x - (mouseRef.current?.getBoundingClientRect().x ?? 0) - (windowScroll.x ?? 0), 10);
+    const [offsetX, setOffsetX] = useState(0);
+    
+    useEffect(() => {
+        if (mouseRef.current) {
+            setOffsetX(mouseRef.current.getBoundingClientRect().x);
+        }
+    }, [mouseRef]);
+    
+    const x = useThrottle(mousePosition.x - offsetX - (windowScroll.x ?? 0), 10);
 
     const date = getDateByMousePosition(gantt, x);
 
@@ -1016,15 +1029,14 @@ export const GanttProvider: FC<GanttProviderProps> = ({ zoom = 100, range = 'mon
     }, []);
 
     // Fix the useCallback to include all dependencies
-    const handleScroll = useCallback(
-        throttle(() => {
-            const scrollElement = scrollRef.current;
-            if (!scrollElement) {
-                return;
-            }
+    const handleScroll = useCallback(() => {
+        const scrollElement = scrollRef.current;
+        if (!scrollElement) {
+            return;
+        }
 
-            const { scrollLeft, scrollWidth, clientWidth } = scrollElement;
-            setScrollX(scrollLeft);
+        const { scrollLeft, scrollWidth, clientWidth } = scrollElement;
+        setScrollX(scrollLeft);
 
             if (scrollLeft === 0) {
                 // Extend timelineData to the past
@@ -1079,9 +1091,7 @@ export const GanttProvider: FC<GanttProviderProps> = ({ zoom = 100, range = 'mon
                 scrollElement.scrollLeft = scrollElement.scrollWidth - scrollElement.clientWidth;
                 setScrollX(scrollElement.scrollLeft);
             }
-        }, 100),
-        [],
-    );
+    }, [timelineData, setScrollX]);
 
     useEffect(() => {
         const scrollElement = scrollRef.current;

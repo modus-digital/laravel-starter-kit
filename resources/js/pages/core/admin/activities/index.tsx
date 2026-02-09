@@ -70,18 +70,6 @@ export default function Index({ activities, filters, logNames }: PageProps) {
         return filtered;
     }, [activities, logNameFilter, eventFilter, dateFromFilter, dateToFilter]);
 
-    const renderDescription = (activity: Activity) => {
-        if (activity.translation) {
-            return t(activity.translation.key, activity.translation.replacements as never);
-        }
-
-        if (activity.translated_description) {
-            return activity.translated_description;
-        }
-
-        return t(activity.description as never);
-    };
-
     const columns: ColumnDef<Activity>[] = useMemo(
         () => [
             {
@@ -92,7 +80,20 @@ export default function Index({ activities, filters, logNames }: PageProps) {
             {
                 accessorKey: 'translated_description',
                 header: t('admin.activities.table.description'),
-                cell: ({ row }) => <div className="max-w-md truncate">{String(renderDescription(row.original))}</div>,
+                cell: ({ row }) => {
+                    const activity = row.original;
+                    let description: string;
+                    
+                    if (activity.translation) {
+                        description = t(activity.translation.key, activity.translation.replacements as never);
+                    } else if (activity.translated_description) {
+                        description = activity.translated_description;
+                    } else {
+                        description = t(activity.description as never);
+                    }
+                    
+                    return <div className="max-w-md truncate">{String(description)}</div>;
+                },
             },
             {
                 accessorKey: 'event',

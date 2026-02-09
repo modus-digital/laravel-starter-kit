@@ -6,14 +6,14 @@ import { Label } from '@/shared/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import AdminLayout from '@/shared/layouts/admin/layout';
 import { type BreadcrumbItem, type SharedData } from '@/types';
+import { type Client } from '@/types/admin/clients';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { type Client } from '@/types/admin/clients';
 
 type PageProps = SharedData & {
-	client: Client;
-	statuses: Record<string, string>;
+    client: Client;
+    statuses: Record<string, string>;
 };
 
 export default function Edit() {

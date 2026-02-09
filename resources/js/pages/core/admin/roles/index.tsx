@@ -1,7 +1,14 @@
+import { destroy, edit, show } from '@/routes/admin/roles';
 import { PaginatedDataTable } from '@/shared/components/paginated-data-table';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/shared/components/ui/dropdown-menu';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/shared/components/ui/dropdown-menu';
 import AdminLayout from '@/shared/layouts/admin/layout';
 import { type SharedData } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
@@ -10,7 +17,6 @@ import { format } from 'date-fns';
 import { Edit, Eye, MoreVertical, Plus, Trash2 } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { create, destroy, edit, index, show } from '@/routes/admin/roles';
 
 type Role = {
     id: string;
@@ -31,17 +37,8 @@ type PageProps = SharedData & {
     };
 };
 
-export default function Index({ roles, filters }: PageProps) {
+export default function Index({ roles }: PageProps) {
     const { t } = useTranslation();
-
-    const handleDelete = (roleId: string, e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (confirm(t('admin.roles.confirm_delete'))) {
-            router.delete(destroy({ role: roleId }).url, {
-                preserveScroll: true,
-            });
-        }
-    };
 
     const columns: ColumnDef<Role>[] = useMemo(
         () => [
@@ -106,7 +103,17 @@ export default function Index({ roles, filters }: PageProps) {
                                         {t('common.actions.edit')}
                                     </DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem className="text-destructive" onClick={(e) => handleDelete(role.id, e)}>
+                                    <DropdownMenuItem
+                                        className="text-destructive"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            if (confirm(t('admin.roles.confirm_delete'))) {
+                                                router.delete(destroy({ role: role.id }).url, {
+                                                    preserveScroll: true,
+                                                });
+                                            }
+                                        }}
+                                    >
                                         <Trash2 className="mr-2 h-4 w-4" />
                                         {t('common.actions.delete')}
                                     </DropdownMenuItem>
@@ -117,7 +124,7 @@ export default function Index({ roles, filters }: PageProps) {
                 },
             },
         ],
-        [t, handleDelete],
+        [t],
     );
 
     return (

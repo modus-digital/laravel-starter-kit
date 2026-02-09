@@ -1,20 +1,13 @@
 'use client';
 
-import * as React from 'react';
-import ReactCrop, { type Crop, type PixelCrop } from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
 import { Button } from '@/shared/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/shared/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/shared/components/ui/dialog';
 import { Label } from '@/shared/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/shared/components/ui/radio-group';
 import { cn } from '@/shared/lib/utils';
+import * as React from 'react';
+import ReactCrop, { type Crop, type PixelCrop } from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 
 interface ImageCropModalProps {
     open: boolean;
@@ -24,13 +17,7 @@ interface ImageCropModalProps {
     initialAspectRatio?: '1:1' | '16:9';
 }
 
-export function ImageCropModal({
-    open,
-    onOpenChange,
-    imageSrc,
-    onCropComplete,
-    initialAspectRatio = '1:1',
-}: ImageCropModalProps) {
+export function ImageCropModal({ open, onOpenChange, imageSrc, onCropComplete, initialAspectRatio = '1:1' }: ImageCropModalProps) {
     const [aspectRatio, setAspectRatio] = React.useState<'1:1' | '16:9'>(initialAspectRatio);
     const [crop, setCrop] = React.useState<Crop>({ unit: '%', width: 100, height: 100, x: 0, y: 0 });
     const [completedCrop, setCompletedCrop] = React.useState<PixelCrop>();
@@ -154,13 +141,7 @@ export function ImageCropModal({
                                 aspect={aspect}
                                 className={cn('max-h-[60vh] max-w-full')}
                             >
-                                <img
-                                    ref={imgRef}
-                                    alt="Crop me"
-                                    src={imageSrc}
-                                    style={{ maxHeight: '60vh', maxWidth: '100%' }}
-                                    onLoad={onImageLoad}
-                                />
+                                <img ref={imgRef} alt="Crop me" src={imageSrc} style={{ maxHeight: '60vh', maxWidth: '100%' }} onLoad={onImageLoad} />
                             </ReactCrop>
                         </div>
                     )}

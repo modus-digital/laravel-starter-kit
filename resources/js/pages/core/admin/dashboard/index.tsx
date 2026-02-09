@@ -79,8 +79,9 @@ export default function AdminDashboard() {
                     minW: item.minW,
                 })),
             });
-        } catch (error: any) {
-            console.error('Failed to save layout:', error.response?.data || error.message);
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            console.error('Failed to save layout:', error, errorMessage);
         }
     }, 1000);
 

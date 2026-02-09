@@ -1,7 +1,7 @@
+import { redirect } from '@/routes/oauth';
 import { Button } from '@/shared/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/components/ui/tooltip';
 import { cn } from '@/shared/lib/utils';
-import { redirect } from '@/routes/oauth';
 import { SocialiteProvider } from '@/types/modules';
 import { useTranslation } from 'react-i18next';
 
@@ -20,12 +20,12 @@ const providerIcons: Record<string, string> = {
 };
 
 export default function SocialAuthButtons({ providers }: SocialAuthButtonsProps) {
+    const { t } = useTranslation();
+    const isMultiple = providers.length > 1;
+    
     if (providers.length === 0) {
         return null;
     }
-
-    const isMultiple = providers.length > 1;
-    const { t } = useTranslation();
 
     return (
         <TooltipProvider>

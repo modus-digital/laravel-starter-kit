@@ -37,13 +37,15 @@ export function AppSearchBar({ mainNavItems, footerNavItems }: { mainNavItems: N
     // Debounced search effect
     useEffect(() => {
         if (!searchQuery.trim()) {
-            setSearchResults([]);
-            setIsSearching(false);
-            return;
+            const timer = setTimeout(() => {
+                setSearchResults([]);
+                setIsSearching(false);
+            }, 0);
+            return () => clearTimeout(timer);
         }
 
-        setIsSearching(true);
         const timeoutId = setTimeout(() => {
+            setIsSearching(true);
             const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
             fetch(`/search?q=${encodeURIComponent(searchQuery)}&limit=10`, {
@@ -62,7 +64,7 @@ export function AppSearchBar({ mainNavItems, footerNavItems }: { mainNavItems: N
                     setSearchResults([]);
                     setIsSearching(false);
                 });
-        }, 300);
+        }, 0);
 
         return () => clearTimeout(timeoutId);
     }, [searchQuery]);
@@ -70,8 +72,11 @@ export function AppSearchBar({ mainNavItems, footerNavItems }: { mainNavItems: N
     // Reset search when dialog closes
     useEffect(() => {
         if (!commandOpen) {
-            setSearchQuery('');
-            setSearchResults([]);
+            const timer = setTimeout(() => {
+                setSearchQuery('');
+                setSearchResults([]);
+            }, 0);
+            return () => clearTimeout(timer);
         }
     }, [commandOpen]);
 

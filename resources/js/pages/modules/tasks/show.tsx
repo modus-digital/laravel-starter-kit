@@ -1,6 +1,7 @@
+import tasksRoutes from '@/routes/tasks';
 import InputError from '@/shared/components/input-error';
+import { ActivityBadge } from '@/shared/components/tasks/activity-badge';
 import { Avatar, AvatarFallback } from '@/shared/components/ui/avatar';
-import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import { DatePicker } from '@/shared/components/ui/datepicker';
 import { Input } from '@/shared/components/ui/input';
@@ -11,7 +12,6 @@ import RichTextEditor from '@/shared/components/ui/text-editor/index';
 import { RichTextRenderer } from '@/shared/components/ui/text-editor/renderer';
 import AppLayout from '@/shared/layouts/app-layout';
 import { cn } from '@/shared/lib/utils';
-import tasksRoutes from '@/routes/tasks';
 import type { BreadcrumbItem, SharedData } from '@/types';
 import { Form, Head, Link, router, usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
@@ -20,8 +20,7 @@ import type { JSONContent } from 'novel';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ActivityBadge } from '@/shared/components/tasks/activity-badge';
-import type { Activity, Status, Task, TaskActivityProperties, TaskActivityValue, TaskPriority } from './types';
+import type { Activity, Status, Task, TaskActivityProperties, TaskPriority } from './types';
 
 type Props = {
     task: Task;
@@ -32,9 +31,9 @@ type Props = {
 const UNASSIGNED_VALUE = '__unassigned__';
 
 const toDate = (iso: string | null | undefined): Date | undefined => {
-	if (!iso) return undefined;
-	const d = new Date(iso);
-	return Number.isNaN(d.getTime()) ? undefined : d;
+    if (!iso) return undefined;
+    const d = new Date(iso);
+    return Number.isNaN(d.getTime()) ? undefined : d;
 };
 
 export default function Show({ task, statuses = [], activities = [] }: Props) {
@@ -116,9 +115,12 @@ export default function Show({ task, statuses = [], activities = [] }: Props) {
     const [commentEditorKey, setCommentEditorKey] = useState<number>(0);
     // Sync description content when task changes (e.g., after save and Inertia reload)
     useEffect(() => {
-        const newContent = parseDescription(task.description);
-        setDescriptionContent(newContent);
-        setDescriptionEditorKey((prev) => prev + 1);
+        const timer = setTimeout(() => {
+            const newContent = parseDescription(task.description);
+            setDescriptionContent(newContent);
+            setDescriptionEditorKey((prev) => prev + 1);
+        }, 0);
+        return () => clearTimeout(timer);
     }, [task.description]);
 
     const handleCommentSubmit = () => {
@@ -363,14 +365,18 @@ export default function Show({ task, statuses = [], activities = [] }: Props) {
                                                                 <div className="flex-1 space-y-1.5">
                                                                     <div className="text-sm leading-relaxed">
                                                                         <span className="font-medium">{userName}</span>{' '}
-                                                                        <span className="text-muted-foreground">{String(renderActivityDescription(activity))}</span>
+                                                                        <span className="text-muted-foreground">
+                                                                            {String(renderActivityDescription(activity))}
+                                                                        </span>
                                                                         {(isStatusChange || isPriorityChange) && (
-																	<div className="mt-1.5 flex items-center gap-1.5">
-																		{props.old && <ActivityBadge value={props.old} field={props.field} />}
-																		{props.old && props.new && <span className="text-muted-foreground">→</span>}
-																		{props.new && <ActivityBadge value={props.new} field={props.field} />}
-																	</div>
-																)}
+                                                                            <div className="mt-1.5 flex items-center gap-1.5">
+                                                                                {props.old && <ActivityBadge value={props.old} field={props.field} />}
+                                                                                {props.old && props.new && (
+                                                                                    <span className="text-muted-foreground">→</span>
+                                                                                )}
+                                                                                {props.new && <ActivityBadge value={props.new} field={props.field} />}
+                                                                            </div>
+                                                                        )}
                                                                         {commentContent && (
                                                                             <div className="mt-2 rounded-md border bg-muted/50 p-3">
                                                                                 <RichTextRenderer content={commentContent} />

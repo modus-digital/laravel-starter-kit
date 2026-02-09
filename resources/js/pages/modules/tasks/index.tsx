@@ -135,7 +135,9 @@ export default function Index() {
                         <header className="flex items-start justify-between gap-4 border-b border-border p-4">
                             <div className="min-w-0">
                                 <h2 className="text-lg font-medium">{activeView.name}</h2>
-                                <p className="mt-1 text-sm text-muted-foreground capitalize">{t('tasks.views.view_type', { type: activeView.type })}</p>
+                                <p className="mt-1 text-sm text-muted-foreground capitalize">
+                                    {t('tasks.views.view_type', { type: activeView.type })}
+                                </p>
                             </div>
 
                             <div className="shrink-0">

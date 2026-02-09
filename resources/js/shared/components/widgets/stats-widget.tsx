@@ -43,12 +43,8 @@ export function StatsWidget({ data, isLoading, onRemove }: StatsWidgetProps) {
                         <div className={`rounded-full p-2 ${stat.bgColor}`}>
                             <stat.icon className={`h-5 w-5 ${stat.color}`} />
                         </div>
-                        {isLoading ? (
-                            <Skeleton className="h-7 w-12" />
-                        ) : (
-                            <span className="text-2xl font-bold">{stat.value.toLocaleString()}</span>
-                        )}
-                        <span className="text-muted-foreground text-xs">{stat.label}</span>
+                        {isLoading ? <Skeleton className="h-7 w-12" /> : <span className="text-2xl font-bold">{stat.value.toLocaleString()}</span>}
+                        <span className="text-xs text-muted-foreground">{stat.label}</span>
                     </div>
                 ))}
             </div>

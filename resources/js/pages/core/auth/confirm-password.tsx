@@ -1,10 +1,10 @@
+import { store } from '@/routes/password/confirm';
 import InputError from '@/shared/components/input-error';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { Spinner } from '@/shared/components/ui/spinner';
 import AuthLayout from '@/shared/layouts/auth-layout';
-import { store } from '@/routes/password/confirm';
 import { Form, Head } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
 

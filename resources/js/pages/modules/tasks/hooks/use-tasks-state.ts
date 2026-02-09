@@ -1,6 +1,6 @@
+import tasksRoutes from '@/routes/tasks';
 import type { GanttFeature, GanttStatus } from '@/shared/components/gantt-view';
 import type { DragEndEvent } from '@/shared/components/list-view';
-import tasksRoutes from '@/routes/tasks';
 import { router } from '@inertiajs/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,14 +1,12 @@
-import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut } from '@/shared/components/ui/dropdown-menu';
+import { logout } from '@/routes';
+import { edit } from '@/routes/profile';
+import { DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from '@/shared/components/ui/dropdown-menu';
 import { UserInfo } from '@/shared/components/user-info';
 import { useMobileNavigation } from '@/shared/hooks/use-mobile-navigation';
-import { logout } from '@/routes';
-import { index as NotificationsIndex } from '@/routes/notifications';
-import { edit } from '@/routes/profile';
 import { type User } from '@/types';
 import { Link, router } from '@inertiajs/react';
 import { LogOut, Settings } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { UnreadNotificationIcon } from './custom-icons';
 
 interface UserMenuContentProps {
     user: User;

@@ -1,10 +1,10 @@
+import { store } from '@/routes/two-factor/login';
 import InputError from '@/shared/components/input-error';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/shared/components/ui/input-otp';
 import { OTP_MAX_LENGTH } from '@/shared/hooks/use-two-factor-auth';
 import AuthLayout from '@/shared/layouts/auth-layout';
-import { store } from '@/routes/two-factor/login';
 import { Form, Head } from '@inertiajs/react';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { useMemo, useState } from 'react';

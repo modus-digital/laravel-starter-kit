@@ -41,7 +41,6 @@ interface RichTextEditorProps {
 const RichTextEditor = ({ initialContent, onUpdate, onSubmit, name, className }: RichTextEditorProps) => {
     // Track the content for the hidden input (form submission)
     const [content, setContent] = useState<undefined | JSONContent>(initialContent);
-    const [status, setStatus] = useState<'Saved' | 'Unsaved'>('Saved');
     const [openNode, setOpenNode] = useState(false);
     const [openLink, setOpenLink] = useState(false);
     const [openColor, setOpenColor] = useState(false);
@@ -53,15 +52,20 @@ const RichTextEditor = ({ initialContent, onUpdate, onSubmit, name, className }:
     const handleDebouncedUpdate = useDebouncedCallback(async (editor: EditorInstance) => {
         const json = editor.getJSON();
         setContent(json);
-        setStatus('Saved');
         onUpdate?.(json);
     }, 500);
 
     // Sync content and editor key when initialContent changes from parent
     useEffect(() => {
-        setContent(initialContent);
-        setEditorKey(initialContent ? JSON.stringify(initialContent).slice(0, 100) : 'empty');
-    }, [initialContent]);
+        const timer = setTimeout(() => {
+            const newKey = initialContent ? JSON.stringify(initialContent).slice(0, 100) : 'empty';
+            if (newKey !== editorKey) {
+                setContent(() => initialContent);
+                setEditorKey(() => newKey);
+            }
+        }, 0);
+        return () => clearTimeout(timer);
+    }, [initialContent, editorKey]);
 
     const extensions = [
         ...defaultExtensions,

@@ -7,11 +7,11 @@ import { Transition } from '@headlessui/react';
 import { Form, Head } from '@inertiajs/react';
 import { useRef } from 'react';
 
+import { edit } from '@/routes/user-password';
 import HeadingSmall from '@/shared/components/heading-small';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
-import { edit } from '@/routes/user-password';
 import { useTranslation } from 'react-i18next';
 
 export default function Password() {

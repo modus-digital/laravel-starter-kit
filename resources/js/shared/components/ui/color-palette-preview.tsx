@@ -1,6 +1,6 @@
-import * as React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/shared/components/ui/dialog';
 import { generateColorScale, getContrastTextColor, type TailwindShade } from '@/shared/lib/color-scale';
+import * as React from 'react';
 
 interface ColorPalettePreviewProps {
     open: boolean;

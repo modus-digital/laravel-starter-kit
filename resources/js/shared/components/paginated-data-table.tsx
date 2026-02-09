@@ -190,7 +190,11 @@ export function PaginatedDataTable<TData, TValue>({
                                         <TableHead
                                             key={header.id}
                                             style={{ width: `${header.getSize()}px` }}
-                                            className={cn('h-11', header.column.getSize() > 0 && header.column.getSize() < 100 && 'w-px', header.column.columnDef.meta?.className)}
+                                            className={cn(
+                                                'h-11',
+                                                header.column.getSize() > 0 && header.column.getSize() < 100 && 'w-px',
+                                                header.column.columnDef.meta?.className,
+                                            )}
                                         >
                                             {header.isPlaceholder ? null : header.column.getCanSort() ? (
                                                 <div

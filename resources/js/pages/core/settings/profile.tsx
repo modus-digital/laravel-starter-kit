@@ -3,21 +3,21 @@ import { send } from '@/routes/verification';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Transition } from '@headlessui/react';
 import { Form, Head, Link, router, usePage } from '@inertiajs/react';
-import { useState } from 'react';
 import { CameraIcon } from 'lucide-react';
+import { useState } from 'react';
 
+import { edit } from '@/routes/profile';
 import DeleteUser from '@/shared/components/delete-user';
 import HeadingSmall from '@/shared/components/heading-small';
 import InputError from '@/shared/components/input-error';
-import { Button } from '@/shared/components/ui/button';
-import { Input } from '@/shared/components/ui/input';
-import { Label } from '@/shared/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
+import { Button } from '@/shared/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/shared/components/ui/dialog';
 import { Dropzone, DropzoneContent, DropzoneEmptyState } from '@/shared/components/ui/dropzone';
+import { Input } from '@/shared/components/ui/input';
+import { Label } from '@/shared/components/ui/label';
 import AppLayout from '@/shared/layouts/app-layout';
 import SettingsLayout from '@/shared/layouts/settings/layout';
-import { edit } from '@/routes/profile';
 import { useTranslation } from 'react-i18next';
 
 export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: boolean; status?: string }) {
@@ -78,13 +78,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                         <Label className="mb-3 block">{t('settings.profile.avatar')}</Label>
                         <div className="flex items-center gap-4">
                             <Avatar className="size-20">
-                                {auth.user.avatar && (
-                                    <AvatarImage
-                                        src={auth.user.avatar}
-                                        alt={auth.user.name}
-                                        key={auth.user.avatar}
-                                    />
-                                )}
+                                {auth.user.avatar && <AvatarImage src={auth.user.avatar} alt={auth.user.name} key={auth.user.avatar} />}
                                 <AvatarFallback className="text-lg">{getInitials(auth.user.name)}</AvatarFallback>
                             </Avatar>
                             <Button variant="outline" onClick={() => setIsAvatarModalOpen(true)} type="button">
@@ -194,11 +188,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
 
                                 {avatarFile.length > 0 && (
                                     <div className="flex justify-center">
-                                        <img
-                                            src={URL.createObjectURL(avatarFile[0])}
-                                            alt="Preview"
-                                            className="max-h-48 rounded-lg object-contain"
-                                        />
+                                        <img src={URL.createObjectURL(avatarFile[0])} alt="Preview" className="max-h-48 rounded-lg object-contain" />
                                     </div>
                                 )}
                             </div>
@@ -207,11 +197,7 @@ export default function Profile({ mustVerifyEmail, status }: { mustVerifyEmail: 
                                 <Button variant="outline" onClick={() => setIsAvatarModalOpen(false)} type="button">
                                     {t('common.actions.cancel')}
                                 </Button>
-                                <Button
-                                    onClick={handleAvatarUpload}
-                                    disabled={avatarFile.length === 0 || isUploadingAvatar}
-                                    type="button"
-                                >
+                                <Button onClick={handleAvatarUpload} disabled={avatarFile.length === 0 || isUploadingAvatar} type="button">
                                     {isUploadingAvatar ? t('common.status.uploading') : t('common.actions.upload')}
                                 </Button>
                             </DialogFooter>

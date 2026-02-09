@@ -4,7 +4,7 @@ import { cn } from '@/shared/lib/utils';
 import type { WidgetProps } from '@/types/widgets';
 import { GripVertical, X } from 'lucide-react';
 
-export function Widget({ title, description, children, className, isLoading, onRemove }: WidgetProps) {
+export function Widget({ title, description, children, className, onRemove }: WidgetProps) {
     return (
         <Card className={cn('flex h-full flex-col overflow-hidden', className)}>
             <CardHeader className="flex-row items-center justify-between space-y-0 pb-2">

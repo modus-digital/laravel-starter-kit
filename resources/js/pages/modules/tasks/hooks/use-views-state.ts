@@ -33,7 +33,10 @@ export function useViewsState({ taskViews }: UseViewsStateProps) {
     // Reset active view if current one no longer exists
     useEffect(() => {
         if (!activeViewId || !views.some((v) => v.id === activeViewId)) {
-            setActiveViewId(defaultViewId);
+            const timer = setTimeout(() => {
+                setActiveViewId(defaultViewId);
+            }, 0);
+            return () => clearTimeout(timer);
         }
     }, [activeViewId, defaultViewId, views]);
 

@@ -1,3 +1,4 @@
+import { create, index } from '@/routes/admin/users';
 import InputError from '@/shared/components/input-error';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
@@ -8,7 +9,6 @@ import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
 import { ArrowLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { create, index, store } from '@/routes/admin/users';
 
 type PageProps = SharedData & {
     roles: Array<{ name: string; label: string }>;

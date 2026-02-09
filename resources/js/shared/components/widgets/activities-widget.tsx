@@ -50,7 +50,7 @@ export function ActivitiesWidget({ data, isLoading, onRemove }: ActivitiesWidget
         <Widget title="Recent Activities" description="Latest activity feed" onRemove={onRemove}>
             <ScrollArea className="h-full pr-4">
                 {!data || data.length === 0 ? (
-                    <div className="text-muted-foreground flex h-full items-center justify-center text-sm">No recent activities</div>
+                    <div className="flex h-full items-center justify-center text-sm text-muted-foreground">No recent activities</div>
                 ) : (
                     <div className="space-y-3">
                         {data.map((activity) => (
@@ -61,11 +61,13 @@ export function ActivitiesWidget({ data, isLoading, onRemove }: ActivitiesWidget
                                             {activity.causer ? getInitials(activity.causer.name) : 'SY'}
                                         </AvatarFallback>
                                     </Avatar>
-                                    <span className={`absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-white dark:border-gray-900 ${getEventColor(activity.event)}`} />
+                                    <span
+                                        className={`absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-white dark:border-gray-900 ${getEventColor(activity.event)}`}
+                                    />
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <p className="truncate text-sm">{activity.translated_description || activity.description}</p>
-                                    <p className="text-muted-foreground text-xs">
+                                    <p className="text-xs text-muted-foreground">
                                         {activity.causer?.name ?? 'System'} &middot;{' '}
                                         {formatDistanceToNow(new Date(activity.created_at), { addSuffix: true })}
                                     </p>

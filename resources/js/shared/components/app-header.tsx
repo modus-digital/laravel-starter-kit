@@ -1,3 +1,4 @@
+import { dashboard } from '@/routes';
 import { Breadcrumbs } from '@/shared/components/breadcrumbs';
 import { Icon } from '@/shared/components/icon';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
@@ -9,7 +10,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shar
 import { UserMenuContent } from '@/shared/components/user-menu-content';
 import { useInitials } from '@/shared/hooks/use-initials';
 import { cn, isSameUrl, resolveUrl } from '@/shared/lib/utils';
-import { dashboard } from '@/routes';
 import { type BreadcrumbItem, type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid, Menu, Search } from 'lucide-react';

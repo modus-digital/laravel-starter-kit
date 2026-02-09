@@ -259,7 +259,9 @@ export default function ViewsTabBar({
                     <DialogHeader>
                         <DialogTitle>{t('tasks.views.create_view')}</DialogTitle>
                         <DialogDescription>
-                            {pendingType ? t('tasks.views.create_description', { type: t(`tasks.views.${pendingType}`) }) : t('tasks.views.create_description', { type: 'view' })}
+                            {pendingType
+                                ? t('tasks.views.create_description', { type: t(`tasks.views.${pendingType}`) })
+                                : t('tasks.views.create_description', { type: 'view' })}
                         </DialogDescription>
                     </DialogHeader>
 
@@ -379,9 +381,7 @@ export default function ViewsTabBar({
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>{t('tasks.views.configure_columns')}</DialogTitle>
-                        <DialogDescription>
-                            {t('tasks.views.configure_description', { name: viewToConfigure?.name ?? '' })}
-                        </DialogDescription>
+                        <DialogDescription>{t('tasks.views.configure_description', { name: viewToConfigure?.name ?? '' })}</DialogDescription>
                     </DialogHeader>
 
                     <form
@@ -455,9 +455,7 @@ export default function ViewsTabBar({
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>{t('tasks.views.delete')}</DialogTitle>
-                        <DialogDescription>
-                            {t('tasks.views.delete_description', { name: viewToDelete?.name ?? '' })}
-                        </DialogDescription>
+                        <DialogDescription>{t('tasks.views.delete_description', { name: viewToDelete?.name ?? '' })}</DialogDescription>
                     </DialogHeader>
 
                     <DialogFooter>

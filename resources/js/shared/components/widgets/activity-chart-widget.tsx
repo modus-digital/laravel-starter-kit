@@ -23,7 +23,7 @@ export function ActivityChartWidget({ data, isLoading, onRemove }: ActivityChart
     return (
         <Widget title="Activity Trends" description="Activity over the last 30 days" onRemove={onRemove}>
             {chartData.length === 0 ? (
-                <div className="text-muted-foreground flex h-full items-center justify-center text-sm">No activity data available</div>
+                <div className="flex h-full items-center justify-center text-sm text-muted-foreground">No activity data available</div>
             ) : (
                 <ResponsiveContainer width="100%" height="100%">
                     <AreaChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
@@ -48,8 +48,8 @@ export function ActivityChartWidget({ data, isLoading, onRemove }: ActivityChart
                                 if (active && payload && payload.length) {
                                     const item = payload[0].payload;
                                     return (
-                                        <div className="bg-popover text-popover-foreground rounded-lg border px-3 py-2 shadow-md">
-                                            <p className="text-muted-foreground text-xs">{format(parseISO(item.date), 'MMMM d, yyyy')}</p>
+                                        <div className="rounded-lg border bg-popover px-3 py-2 text-popover-foreground shadow-md">
+                                            <p className="text-xs text-muted-foreground">{format(parseISO(item.date), 'MMMM d, yyyy')}</p>
                                             <p className="text-sm font-medium">{item.count} activities</p>
                                         </div>
                                     );
@@ -57,13 +57,7 @@ export function ActivityChartWidget({ data, isLoading, onRemove }: ActivityChart
                                 return null;
                             }}
                         />
-                        <Area
-                            type="monotone"
-                            dataKey="count"
-                            stroke="hsl(var(--primary))"
-                            strokeWidth={2}
-                            fill="url(#activityGradient)"
-                        />
+                        <Area type="monotone" dataKey="count" stroke="hsl(var(--primary))" strokeWidth={2} fill="url(#activityGradient)" />
                     </AreaChart>
                 </ResponsiveContainer>
             )}

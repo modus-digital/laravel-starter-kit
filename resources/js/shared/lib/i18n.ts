@@ -2,8 +2,8 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 // Get all available languages from @lang
-const languageModules = import.meta.glob<{ default: any }>('@lang/*.json', { eager: true });
-const languages: Record<string, { translation: any }> = {};
+const languageModules = import.meta.glob<{ default: Record<string, unknown> }>('@lang/*.json', { eager: true });
+const languages: Record<string, { translation: Record<string, unknown> }> = {};
 
 for (const path in languageModules) {
     // Example: Extract 'en' from '@lang/en.json' -> 'en'

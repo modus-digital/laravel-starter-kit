@@ -81,7 +81,7 @@ export default function Edit({ integrations }: PageProps) {
         s3: false,
     });
 
-    const { data, setData, put, processing, errors } = useForm({
+    const { data, setData, processing, errors } = useForm({
         mailgun: {
             webhook_signing_key: integrations.mailgun.webhook_signing_key ?? '',
         },
@@ -175,7 +175,7 @@ export default function Edit({ integrations }: PageProps) {
         e.preventDefault();
 
         // Only submit fields for the active section
-        let sectionData: Record<string, any> = {};
+        let sectionData: Record<string, unknown> = {};
 
         switch (activeSection) {
             case 'mailgun':

@@ -59,5 +59,14 @@ jobs:
       - name: Generate Application Key
         run: php artisan key:generate
 
+      - name: Create Database Directory
+        run: mkdir -p database
+
+      - name: Create SQLite Database
+        run: touch database/database.sqlite
+
+      - name: Run Migrations
+        run: php artisan migrate --force
+
       - name: Tests
-        run: ./vendor/bin/pest
+        run: php artisan test --compact

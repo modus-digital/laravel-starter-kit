@@ -1,3 +1,4 @@
+import tasksRoutes from '@/routes/tasks';
 import InputError from '@/shared/components/input-error';
 import { Button } from '@/shared/components/ui/button';
 import { DatePicker } from '@/shared/components/ui/datepicker';
@@ -7,7 +8,6 @@ import { Label } from '@/shared/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import RichTextEditor from '@/shared/components/ui/text-editor';
 import { cn } from '@/shared/lib/utils';
-import tasksRoutes from '@/routes/tasks';
 import type { SharedData } from '@/types';
 import { Form, usePage } from '@inertiajs/react';
 import { Flag } from 'lucide-react';

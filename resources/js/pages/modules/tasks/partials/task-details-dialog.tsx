@@ -1,5 +1,7 @@
 import { activities as fetchActivitiesAction } from '@/actions/App/Http/Controllers/TaskController';
+import tasksRoutes from '@/routes/tasks';
 import InputError from '@/shared/components/input-error';
+import { ActivityBadge } from '@/shared/components/tasks/activity-badge';
 import { Avatar, AvatarFallback } from '@/shared/components/ui/avatar';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
@@ -13,7 +15,6 @@ import RichTextEditor from '@/shared/components/ui/text-editor/index';
 import { RichTextRenderer } from '@/shared/components/ui/text-editor/renderer';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/components/ui/tooltip';
 import { cn } from '@/shared/lib/utils';
-import tasksRoutes from '@/routes/tasks';
 import type { SharedData } from '@/types';
 import { Form, router, usePage } from '@inertiajs/react';
 import { format } from 'date-fns';
@@ -22,8 +23,7 @@ import type { JSONContent } from 'novel';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ActivityBadge } from '@/shared/components/tasks/activity-badge';
-import type { Activity, Status, Task, TaskActivityProperties, TaskActivityValue, TaskPriority } from '../types';
+import type { Activity, Status, Task, TaskActivityProperties, TaskPriority } from '../types';
 
 type Props = {
     task: Task | null;
@@ -41,10 +41,6 @@ const toDate = (iso: string | null | undefined): Date | undefined => {
     return Number.isNaN(d.getTime()) ? undefined : d;
 };
 
-const formatDate = (date: Date | undefined): string => {
-	if (!date) return '';
-	return format(date, 'MMM d, yyyy');
-};
 
 export default function TaskDetailsDialog({ task, statuses = [], activities = [], open, onOpenChange }: Props) {
     if (!task) {
@@ -116,18 +112,30 @@ function TaskDetailsDialogInner({
     // Fetch activities when dialog opens (if not provided via props)
     useEffect(() => {
         if (open && propActivities.length === 0) {
-            setIsLoadingActivities(true);
-            fetch(fetchActivitiesAction.url(task.id))
-                .then((res) => res.json())
-                .then((data) => {
-                    setFetchedActivities(data.activities || []);
-                })
-                .catch(() => {
+            let isCancelled = false;
+            
+            const fetchData = async () => {
+                try {
+                    const res = await fetch(fetchActivitiesAction.url(task.id));
+                    const data = await res.json();
+                    if (!isCancelled) {
+                        setFetchedActivities(data.activities || []);
+                    }
+                } catch {
                     // Silently fail - activities are not critical
-                })
-                .finally(() => {
-                    setIsLoadingActivities(false);
-                });
+                } finally {
+                    if (!isCancelled) {
+                        setIsLoadingActivities(false);
+                    }
+                }
+            };
+            
+            setIsLoadingActivities(true);
+            fetchData();
+            
+            return () => {
+                isCancelled = true;
+            };
         }
     }, [open, task.id, propActivities.length]);
 
@@ -159,9 +167,12 @@ function TaskDetailsDialogInner({
 
     // Sync description content when task changes (e.g., after save and Inertia reload)
     useEffect(() => {
-        const newContent = parseDescription(task.description);
-        setDescriptionContent(newContent);
-        setDescriptionEditorKey((prev) => prev + 1);
+        const timer = setTimeout(() => {
+            const newContent = parseDescription(task.description);
+            setDescriptionContent(newContent);
+            setDescriptionEditorKey((prev) => prev + 1);
+        }, 0);
+        return () => clearTimeout(timer);
     }, [task.description]);
 
     const refetchActivities = () => {
@@ -210,7 +221,7 @@ function TaskDetailsDialogInner({
         try {
             await navigator.clipboard.writeText(taskUrl);
             toast.success(t('tasks.url_copied'));
-        } catch (err) {
+        } catch {
             toast.error(t('tasks.url_copy_failed'));
         }
     };
@@ -469,14 +480,18 @@ function TaskDetailsDialogInner({
                                                                 <div className="flex-1 space-y-1.5">
                                                                     <div className="text-sm leading-relaxed">
                                                                         <span className="font-medium">{userName}</span>{' '}
-                                                                        <span className="text-muted-foreground">{String(renderActivityDescription(activity))}</span>
+                                                                        <span className="text-muted-foreground">
+                                                                            {String(renderActivityDescription(activity))}
+                                                                        </span>
                                                                         {(isStatusChange || isPriorityChange) && (
-																	<div className="mt-1.5 flex items-center gap-1.5">
-																		{props.old && <ActivityBadge value={props.old} field={props.field} />}
-																		{props.old && props.new && <span className="text-muted-foreground">→</span>}
-																		{props.new && <ActivityBadge value={props.new} field={props.field} />}
-																	</div>
-																)}
+                                                                            <div className="mt-1.5 flex items-center gap-1.5">
+                                                                                {props.old && <ActivityBadge value={props.old} field={props.field} />}
+                                                                                {props.old && props.new && (
+                                                                                    <span className="text-muted-foreground">→</span>
+                                                                                )}
+                                                                                {props.new && <ActivityBadge value={props.new} field={props.field} />}
+                                                                            </div>
+                                                                        )}
                                                                         {commentContent && (
                                                                             <div className="mt-2 rounded-md border bg-muted/50 p-3">
                                                                                 <RichTextRenderer content={commentContent} />

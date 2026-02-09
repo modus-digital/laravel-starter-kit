@@ -1,3 +1,4 @@
+import { disable, enable, show } from '@/routes/two-factor';
 import HeadingSmall from '@/shared/components/heading-small';
 import TwoFactorRecoveryCodes from '@/shared/components/two-factor-recovery-codes';
 import TwoFactorSetupModal from '@/shared/components/two-factor-setup-modal';
@@ -6,7 +7,6 @@ import { Button } from '@/shared/components/ui/button';
 import { useTwoFactorAuth } from '@/shared/hooks/use-two-factor-auth';
 import AppLayout from '@/shared/layouts/app-layout';
 import SettingsLayout from '@/shared/layouts/settings/layout';
-import { disable, enable, show } from '@/routes/two-factor';
 import { type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/react';
 import { ShieldBan, ShieldCheck } from 'lucide-react';

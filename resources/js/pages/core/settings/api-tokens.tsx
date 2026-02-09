@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ApiTokenController from '@/actions/App/Http/Controllers/Settings/ApiTokenController';
-import { destroy, index } from '@/routes/api-tokens';
+import { index } from '@/routes/api-tokens';
 import HeadingSmall from '@/shared/components/heading-small';
 import InputError from '@/shared/components/input-error';
 import { Alert, AlertDescription, AlertTitle } from '@/shared/components/ui/alert';
@@ -58,8 +58,11 @@ export default function ApiTokens({
     const apiToken = page.props.data?.token as string | undefined;
 
     useEffect(() => {
+        // Show token modal when a new token is created
         if (apiToken) {
-            setShowToken(true);
+            // Use setTimeout to defer state update after render
+            const timer = setTimeout(() => setShowToken(true), 0);
+            return () => clearTimeout(timer);
         }
     }, [apiToken]);
 
