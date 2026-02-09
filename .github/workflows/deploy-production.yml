@@ -10,26 +10,19 @@ on:
 jobs:
   quality:
     runs-on: self-hosted
+    container:
+      image: serversideup/php:8.4-cli
+      options: --user root
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'pnpm'
+      - name: Install Node.js and pnpm
+        run: |
+          curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+          apt-get install -y nodejs
+          npm install -g pnpm@10
 
       - name: Install PHP Dependencies
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
@@ -51,28 +44,19 @@ jobs:
 
   ci:
     runs-on: self-hosted
+    container:
+      image: serversideup/php:8.4-cli
+      options: --user root
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.4
-          tools: composer:v2
-          coverage: xdebug
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'pnpm'
+      - name: Install Node.js and pnpm
+        run: |
+          curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+          apt-get install -y nodejs
+          npm install -g pnpm@10
 
       - name: Install PHP Dependencies
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
@@ -101,31 +85,23 @@ jobs:
   # This job checks that both lint and tests passed
   build:
     runs-on: self-hosted
+    container:
+      image: serversideup/php:8.4-cli
+      options: --user root
     needs: [quality, ci]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          tools: composer:v2
+      - name: Install Node.js and pnpm
+        run: |
+          curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+          apt-get install -y nodejs
+          npm install -g pnpm@10
 
       - name: Install PHP Dependencies
         run: composer install --prefer-dist --no-progress --no-interaction --no-dev
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'pnpm'
 
       - name: Install Node Dependencies
         run: pnpm install
