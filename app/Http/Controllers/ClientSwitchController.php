@@ -15,6 +15,7 @@ final class ClientSwitchController extends Controller
      */
     public function __invoke(Request $request, Client $client): RedirectResponse
     {
+        /** @var \App\Models\User $user */
         $user = $request->user();
 
         // Verify the user belongs to this client

@@ -47,7 +47,7 @@ final class Permission extends SpatiePermission
     public function scopeExcludeInternalOnly(Builder $query): Builder
     {
         $internalOnlyPermissions = collect(PermissionEnum::cases())
-            ->filter(fn (PermissionEnum $permission) => $permission->isInternalOnly())
+            ->filter(fn (PermissionEnum $permission): bool => $permission->isInternalOnly())
             ->map(fn (PermissionEnum $permission) => $permission->value)
             ->toArray();
 
@@ -60,7 +60,7 @@ final class Permission extends SpatiePermission
     public function scopeOnlyInternal(Builder $query): Builder
     {
         $internalOnlyPermissions = collect(PermissionEnum::cases())
-            ->filter(fn (PermissionEnum $permission) => $permission->isInternalOnly())
+            ->filter(fn (PermissionEnum $permission): bool => $permission->isInternalOnly())
             ->map(fn (PermissionEnum $permission) => $permission->value)
             ->toArray();
 

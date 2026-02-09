@@ -24,12 +24,8 @@ final class ExcludeInternalRolesScope implements Scope
      */
     public function extend(Builder $builder): void
     {
-        $builder->macro('withInternal', function (Builder $builder) {
-            return $builder->withoutGlobalScope($this);
-        });
+        $builder->macro('withInternal', fn (Builder $builder) => $builder->withoutGlobalScope($this));
 
-        $builder->macro('onlyInternal', function (Builder $builder) {
-            return $builder->withoutGlobalScope($this)->where('internal', true);
-        });
+        $builder->macro('onlyInternal', fn (Builder $builder) => $builder->withoutGlobalScope($this)->where('internal', true));
     }
 }

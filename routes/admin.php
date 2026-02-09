@@ -65,6 +65,7 @@ Route::middleware(['auth', 'verified', 'can:'.Permission::AccessControlPanel->va
             ->group(function (): void {
                 Route::get('/', [IntegrationController::class, 'edit'])->name('edit');
                 Route::put('/', [IntegrationController::class, 'update'])->name('update');
+                Route::post('/test-s3', [IntegrationController::class, 'testS3Connection'])->name('test-s3');
             });
 
         // Mailgun Analytics routes
@@ -109,8 +110,8 @@ Route::middleware(['auth', 'verified', 'can:'.Permission::AccessControlPanel->va
                     Route::get('/{client}/edit', [ClientController::class, 'edit'])->name('edit');
                     Route::put('/{client}', [ClientController::class, 'update'])->name('update');
                     Route::delete('/{client}', [ClientController::class, 'destroy'])->name('destroy');
-                    Route::post('/{client}/restore', [ClientController::class, 'restore'])->name('restore');
-                    Route::delete('/{client}/force', [ClientController::class, 'forceDelete'])->name('force-delete');
+                    Route::post('/{clientId}/restore', [ClientController::class, 'restore'])->name('restore');
+                    Route::delete('/{clientId}/force', [ClientController::class, 'forceDelete'])->name('force-delete');
                     Route::post('/{client}/add-user', [ClientController::class, 'addUserToClient'])->name('add-user');
                     Route::post('/{client}/users', [ClientController::class, 'storeNewUserForClient'])->name('users.store');
                     Route::put('/{client}/users/{user}/role', [ClientController::class, 'updateUserRole'])->name('users.update-role');

@@ -118,7 +118,7 @@ final class User extends Authenticatable
     /**
      * Permission required to search this model.
      */
-    protected static string $searchPermission = 'read:users';
+    protected static string $searchPermission = 'view-any:users';
 
     /**
      * @return MorphMany<Activity, $this>

@@ -8,13 +8,13 @@ use App\Models\Modules\Tasks\Task;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-final class TaskDueApproaching
+final readonly class TaskDueApproaching
 {
     use Dispatchable;
     use SerializesModels;
 
     public function __construct(
-        public readonly Task $task,
-        public readonly int $daysUntilDue,
+        public Task $task,
+        public int $daysUntilDue,
     ) {}
 }

@@ -11,15 +11,27 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    // Enable the clients module
+    config(['modules.clients.enabled' => true]);
+
     // Create required permissions in the database
     foreach (Permission::cases() as $permission) {
         if ($permission->shouldSync()) {
-            Spatie\Permission\Models\Permission::create(['name' => $permission->value]);
+            Spatie\Permission\Models\Permission::firstOrCreate(['name' => $permission->value]);
         }
     }
 
     $this->user = User::factory()->create();
-    $this->user->givePermissionTo(Permission::AccessControlPanel);
+    $this->user->givePermissionTo([
+        Permission::AccessControlPanel,
+        Permission::ViewAnyClients,
+        Permission::CreateClients,
+        Permission::ViewClients,
+        Permission::UpdateClients,
+        Permission::DeleteClients,
+        Permission::RestoreClients,
+        Permission::ForceDeleteClients,
+    ]);
 });
 
 it('can list clients', function () {
@@ -29,8 +41,8 @@ it('can list clients', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/clients/index')
-            ->has('clients', 5)
+            ->component('modules/admin/clients/index')
+            ->has('clients.data', 5)
         );
 });
 
@@ -42,9 +54,9 @@ it('can filter clients by search', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/clients/index')
-            ->has('clients', 1)
-            ->where('clients.0.name', 'Acme Corp')
+            ->component('modules/admin/clients/index')
+            ->has('clients.data', 1)
+            ->where('clients.data.0.name', 'Acme Corp')
         );
 });
 
@@ -56,7 +68,7 @@ it('can filter clients by status', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/clients/index')
+            ->component('modules/admin/clients/index')
             ->has('clients')
         );
 });
@@ -66,7 +78,7 @@ it('can show create client page', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/clients/create')
+            ->component('modules/admin/clients/create')
             ->has('statuses')
         );
 });
@@ -97,7 +109,7 @@ it('can show a client', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/clients/show')
+            ->component('modules/admin/clients/show')
             ->where('client.id', $client->id)
             ->has('users')
             ->has('activities')
@@ -111,7 +123,7 @@ it('can show edit client page', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/clients/edit')
+            ->component('modules/admin/clients/edit')
             ->where('client.id', $client->id)
             ->has('statuses')
         );

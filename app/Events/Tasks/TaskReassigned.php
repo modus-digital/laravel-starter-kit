@@ -9,15 +9,15 @@ use App\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-final class TaskReassigned
+final readonly class TaskReassigned
 {
     use Dispatchable;
     use SerializesModels;
 
     public function __construct(
-        public readonly Task $task,
-        public readonly ?User $previousAssignee,
-        public readonly ?User $newAssignee,
-        public readonly User $reassigner,
+        public Task $task,
+        public ?User $previousAssignee,
+        public ?User $newAssignee,
+        public User $reassigner,
     ) {}
 }

@@ -43,18 +43,14 @@ return new class extends Migration
         $adminRole = Role::withInternal()->where('name', Role::ADMIN)->first();
         if ($adminRole) {
             $adminPermissions = collect(PermissionEnum::cases())
-                ->filter(function (PermissionEnum $permission) {
+                ->filter(function (PermissionEnum $permission): bool {
                     // Admin gets access control panel and impersonate users but not manage roles
                     if ($permission === PermissionEnum::AccessControlPanel || $permission === PermissionEnum::ImpersonateUsers) {
                         return true;
                     }
 
                     // Admin does not get internal-only permissions
-                    if ($permission->isInternalOnly()) {
-                        return false;
-                    }
-
-                    return true;
+                    return ! $permission->isInternalOnly();
                 })
                 ->map(fn (PermissionEnum $permission) => $permission->value)
                 ->all();

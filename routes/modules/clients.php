@@ -17,7 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
 
-    Route::name('clients.')
+    Route::prefix('portal')
+        ->name('clients.')
         ->group(function (): void {
             // Client portal dashboard
             Route::get('/', [ClientController::class, 'show'])

@@ -14,8 +14,7 @@ final class DashboardController extends Controller
 {
     public function __invoke(Request $request): RedirectResponse|Response
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
+        Auth::user();
 
         return Inertia::render(
             component: 'core/dashboard',

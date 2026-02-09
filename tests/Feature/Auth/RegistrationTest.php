@@ -15,7 +15,7 @@ test('registration screen can be rendered', function () {
 });
 
 test('new users can register', function () {
-    $response = $this->post(route('register.store'), [
+    $response = $this->post('/register', [
         'name' => 'Test User',
         'email' => 'test@example.com',
         'password' => 'password',
@@ -24,5 +24,5 @@ test('new users can register', function () {
 
     $this->assertAuthenticated();
     // User model doesn't implement MustVerifyEmail, so users go straight to dashboard
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect('/dashboard');
 });

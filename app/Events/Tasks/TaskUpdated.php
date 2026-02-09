@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-final class TaskUpdated
+final readonly class TaskUpdated
 {
     use Dispatchable;
     use SerializesModels;
@@ -18,8 +18,8 @@ final class TaskUpdated
      * @param  array<string, mixed>  $changes
      */
     public function __construct(
-        public readonly Task $task,
-        public readonly User $updatedBy,
-        public readonly array $changes,
+        public Task $task,
+        public User $updatedBy,
+        public array $changes,
     ) {}
 }

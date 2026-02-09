@@ -56,7 +56,7 @@ enum Permission: string
     {
         return array_filter(
             self::cases(),
-            fn (self $permission) => $permission->getCategory() === $entity
+            fn (self $permission): bool => $permission->getCategory() === $entity
         );
     }
 

@@ -51,7 +51,7 @@ trait HasPreferences
 
     protected static function booted(): void
     {
-        static::creating(function (User $user) {
+        static::creating(function (User $user): void {
             $user->preferences = array_replace_recursive(
                 static::defaultPreferences(),
                 $user->preferences ?? []

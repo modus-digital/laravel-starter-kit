@@ -15,7 +15,7 @@ final class StoreClientRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->can(\App\Enums\RBAC\Permission::CreateClients->value);
+        return $this->user()?->can(\App\Enums\RBAC\Permission::CreateClients->value);
     }
 
     /**

@@ -13,7 +13,7 @@ final class BulkDeleteClientsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->can(\App\Enums\RBAC\Permission::DeleteClients->value);
+        return $this->user()?->can(\App\Enums\RBAC\Permission::DeleteClients->value);
     }
 
     /**

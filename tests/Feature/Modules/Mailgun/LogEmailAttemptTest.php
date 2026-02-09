@@ -7,6 +7,9 @@ use App\Listeners\Modules\Mailgun\LogEmailAttempt;
 use App\Models\Modules\Mailgun\EmailMessage;
 use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Support\Facades\Config;
+use Symfony\Component\Mailer\Envelope;
+use Symfony\Component\Mailer\SentMessage;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email as SymfonyEmail;
 
 beforeEach(function () {
@@ -28,11 +31,19 @@ test('listener creates email message record when email is sent', function () {
 
     $message = new SymfonyEmail();
     $message->subject('Test Email');
-    $message->to('recipient@example.com');
-    $message->from('noreply@example.com', 'Test App');
+    $message->to(new Address('recipient@example.com'));
+    $message->from(new Address('noreply@example.com', 'Test App'));
+    $message->text('Test email body');
+
+    $envelope = new Envelope(
+        new Address('noreply@example.com'),
+        [new Address('recipient@example.com')]
+    );
+
+    $sentMessage = new SentMessage($message, $envelope);
 
     $event = new MessageSent(
-        sent: new Illuminate\Mail\SentMessage($message, $message),
+        sent: new Illuminate\Mail\SentMessage($sentMessage),
         data: ['mailable' => $mailable],
     );
 
@@ -66,12 +77,20 @@ test('listener extracts correlation id from headers', function () {
 
     $message = new SymfonyEmail();
     $message->subject('Test Email');
-    $message->to('recipient@example.com');
-    $message->from('noreply@example.com');
+    $message->to(new Address('recipient@example.com'));
+    $message->from(new Address('noreply@example.com'));
+    $message->text('Test email body');
     $message->getHeaders()->addTextHeader('X-Correlation-ID', 'test-correlation-id');
 
+    $envelope = new Envelope(
+        new Address('noreply@example.com'),
+        [new Address('recipient@example.com')]
+    );
+
+    $sentMessage = new SentMessage($message, $envelope);
+
     $event = new MessageSent(
-        sent: new Illuminate\Mail\SentMessage($message, $message),
+        sent: new Illuminate\Mail\SentMessage($sentMessage),
         data: ['mailable' => $mailable],
     );
 
@@ -95,12 +114,20 @@ test('listener extracts mailgun message id from headers', function () {
 
     $message = new SymfonyEmail();
     $message->subject('Test Email');
-    $message->to('recipient@example.com');
-    $message->from('noreply@example.com');
-    $message->getHeaders()->addIdHeader('Message-ID', '<test-message-id@mailgun.com>');
+    $message->to(new Address('recipient@example.com'));
+    $message->from(new Address('noreply@example.com'));
+    $message->text('Test email body');
+    $message->getHeaders()->addIdHeader('Message-ID', 'test-message-id@mailgun.com');
+
+    $envelope = new Envelope(
+        new Address('noreply@example.com'),
+        [new Address('recipient@example.com')]
+    );
+
+    $sentMessage = new SentMessage($message, $envelope);
 
     $event = new MessageSent(
-        sent: new Illuminate\Mail\SentMessage($message, $message),
+        sent: new Illuminate\Mail\SentMessage($sentMessage),
         data: ['mailable' => $mailable],
     );
 
@@ -124,12 +151,20 @@ test('listener extracts tags from mailgun headers', function () {
 
     $message = new SymfonyEmail();
     $message->subject('Test Email');
-    $message->to('recipient@example.com');
-    $message->from('noreply@example.com');
+    $message->to(new Address('recipient@example.com'));
+    $message->from(new Address('noreply@example.com'));
+    $message->text('Test email body');
     $message->getHeaders()->addTextHeader('X-Mailgun-Tag', 'welcome,notification');
 
+    $envelope = new Envelope(
+        new Address('noreply@example.com'),
+        [new Address('recipient@example.com')]
+    );
+
+    $sentMessage = new SentMessage($message, $envelope);
+
     $event = new MessageSent(
-        sent: new Illuminate\Mail\SentMessage($message, $message),
+        sent: new Illuminate\Mail\SentMessage($sentMessage),
         data: ['mailable' => $mailable],
     );
 
@@ -155,10 +190,19 @@ test('listener does not create record when module is disabled', function () {
 
     $message = new SymfonyEmail();
     $message->subject('Test Email');
-    $message->to('recipient@example.com');
+    $message->to(new Address('recipient@example.com'));
+    $message->from(new Address('noreply@example.com'));
+    $message->text('Test email body');
+
+    $envelope = new Envelope(
+        new Address('noreply@example.com'),
+        [new Address('recipient@example.com')]
+    );
+
+    $sentMessage = new SentMessage($message, $envelope);
 
     $event = new MessageSent(
-        sent: new Illuminate\Mail\SentMessage($message, $message),
+        sent: new Illuminate\Mail\SentMessage($sentMessage),
         data: ['mailable' => $mailable],
     );
 

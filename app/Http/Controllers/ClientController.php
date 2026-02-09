@@ -39,7 +39,7 @@ final class ClientController extends Controller
         $users = $client->users()
             ->with(['roles'])
             ->get()
-            ->map(fn ($user) => [
+            ->map(fn ($user): array => [
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
@@ -113,6 +113,6 @@ final class ClientController extends Controller
             return null;
         }
 
-        return Client::find($clientId);
+        return Client::query()->whereKey($clientId)->first();
     }
 }

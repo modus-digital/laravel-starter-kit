@@ -22,7 +22,7 @@ it('can view v2 admin dashboard with layout', function () {
     $user = User::factory()->create();
     $user->givePermissionTo(Permission::AccessControlPanel);
 
-    $response = $this->actingAs($user)->get('/admin/dashboard');
+    $response = $this->actingAs($user)->get('/admin/');
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
@@ -36,15 +36,11 @@ it('returns default layout when user has no saved layout', function () {
     $user = User::factory()->create();
     $user->givePermissionTo(Permission::AccessControlPanel);
 
-    $response = $this->actingAs($user)->get('/admin/dashboard');
+    $response = $this->actingAs($user)->get('/admin/');
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->where('layout.0.i', 'stats')
-            ->where('layout.1.i', 'activities')
-            ->where('layout.2.i', 'clients')
-            ->where('layout.3.i', 'email')
-            ->where('layout.4.i', 'activity-chart')
+            ->where('layout', [])
         );
 });
 
@@ -79,7 +75,7 @@ it('persists layout between page loads', function () {
 
     $user->setPreference('dashboard.layout', $customLayout)->save();
 
-    $response = $this->actingAs($user)->get('/admin/dashboard');
+    $response = $this->actingAs($user)->get('/admin/');
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
@@ -134,7 +130,7 @@ it('returns widget data with deferred props', function () {
     // Create some test data
     User::factory()->count(3)->create();
 
-    $response = $this->actingAs($user)->get('/admin/dashboard');
+    $response = $this->actingAs($user)->get('/admin/');
 
     $response->assertSuccessful();
 

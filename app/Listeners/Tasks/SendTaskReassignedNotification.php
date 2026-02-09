@@ -24,12 +24,12 @@ final class SendTaskReassignedNotification implements ShouldQueue
         $usersToNotify = [];
 
         // Notify the new assignee if different from reassigner
-        if ($event->newAssignee !== null && $event->newAssignee->id !== $event->reassigner->id) {
+        if ($event->newAssignee instanceof \App\Models\User && $event->newAssignee->id !== $event->reassigner->id) {
             $usersToNotify[] = $event->newAssignee;
         }
 
         // Notify the previous assignee if different from reassigner and new assignee
-        if ($event->previousAssignee !== null
+        if ($event->previousAssignee instanceof \App\Models\User
             && $event->previousAssignee->id !== $event->reassigner->id
             && $event->previousAssignee->id !== $event->newAssignee?->id) {
             $usersToNotify[] = $event->previousAssignee;
@@ -42,7 +42,7 @@ final class SendTaskReassignedNotification implements ShouldQueue
 
             $channels = $this->channelResolver->resolve($preference);
 
-            if (empty($channels)) {
+            if ($channels === []) {
                 continue;
             }
 

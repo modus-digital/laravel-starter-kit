@@ -53,6 +53,10 @@ final class TranslationService
         // Force fresh read by using file_get_contents instead of File facade
         $content = file_get_contents($path);
 
+        if ($content === false) {
+            return [];
+        }
+
         /** @var array<string, mixed> $decoded */
         $decoded = json_decode($content, true) ?? [];
 

@@ -23,7 +23,7 @@ final class UpdateClientSettingsRequest extends FormRequest
 
         $client = Client::find($clientId);
 
-        return $client instanceof Client && $this->user()->can('update', $client);
+        return $client instanceof Client && $this->user()?->can('update', $client);
     }
 
     /**

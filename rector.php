@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\DeadCode\Rector\ClassMethod\RemoveUnusedPublicMethodParameterRector;
 use Rector\Privatization\Rector\ClassMethod\PrivatizeFinalClassMethodRector;
 
 return RectorConfig::configure()
@@ -14,6 +15,10 @@ return RectorConfig::configure()
     ])
     ->withSkip([
         PrivatizeFinalClassMethodRector::class,
+        // Skip removing unused parameters from Policy classes - Laravel needs them for authorization
+        RemoveUnusedPublicMethodParameterRector::class => [
+            __DIR__.'/app/Policies',
+        ],
     ])
     ->withPreparedSets(
         deadCode: true,

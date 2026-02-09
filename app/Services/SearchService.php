@@ -59,7 +59,7 @@ final class SearchService
      */
     public function search(string $query, User $user, int $limit = 10): array
     {
-        if (empty(mb_trim($query))) {
+        if (in_array(mb_trim($query), ['', '0'], true)) {
             return [];
         }
 
@@ -77,7 +77,7 @@ final class SearchService
         }
 
         // Sort results by relevance (simple: by label match)
-        usort($results, function ($a, $b) use ($query) {
+        usort($results, function (array $a, array $b) use ($query): int {
             $aScore = $this->calculateRelevanceScore($a['label'], $query);
             $bScore = $this->calculateRelevanceScore($b['label'], $query);
 
@@ -96,7 +96,7 @@ final class SearchService
      */
     private function filterByPermission(array $models, User $user): array
     {
-        return array_filter($models, function ($modelClass) use ($user) {
+        return array_filter($models, function (string $modelClass) use ($user): bool {
             $permission = $modelClass::getSearchPermission();
 
             // No permission required - all authenticated users can search

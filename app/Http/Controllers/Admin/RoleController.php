@@ -59,7 +59,7 @@ final class RoleController extends Controller
         $permissions = Permission::query()
             ->orderBy('name')
             ->get()
-            ->map(fn (Permission $permission) => [
+            ->map(fn (Permission $permission): array => [
                 'id' => $permission->id,
                 'name' => $permission->name,
                 'label' => PermissionEnum::tryFrom($permission->name)?->getLabel() ?? str($permission->name)->headline()->toString(),
@@ -124,7 +124,7 @@ final class RoleController extends Controller
         $permissions = Permission::query()
             ->orderBy('name')
             ->get()
-            ->map(fn (Permission $permission) => [
+            ->map(fn (Permission $permission): array => [
                 'id' => $permission->id,
                 'name' => $permission->name,
                 'label' => PermissionEnum::tryFrom($permission->name)?->getLabel() ?? str($permission->name)->headline()->toString(),

@@ -8,15 +8,15 @@ use App\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-final class NewDeviceLogin
+final readonly class NewDeviceLogin
 {
     use Dispatchable;
     use SerializesModels;
 
     public function __construct(
-        public readonly User $user,
-        public readonly string $ipAddress,
-        public readonly string $userAgent,
-        public readonly ?string $location = null,
+        public User $user,
+        public string $ipAddress,
+        public string $userAgent,
+        public ?string $location = null,
     ) {}
 }

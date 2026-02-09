@@ -29,7 +29,7 @@ final class SendTwoFactorStatusNotification implements ShouldQueue
 
         $channels = $this->channelResolver->resolve($preference);
 
-        if (empty($channels)) {
+        if ($channels === []) {
             return;
         }
 

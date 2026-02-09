@@ -16,7 +16,7 @@ final class StoreUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->can(\App\Enums\RBAC\Permission::CreateUsers->value);
+        return $this->user()?->can(\App\Enums\RBAC\Permission::CreateUsers->value);
     }
 
     /**

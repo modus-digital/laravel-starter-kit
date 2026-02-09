@@ -13,7 +13,7 @@ beforeEach(function () {
     // Create required permissions in the database
     foreach (Permission::cases() as $permission) {
         if ($permission->shouldSync()) {
-            Spatie\Permission\Models\Permission::create(['name' => $permission->value]);
+            Spatie\Permission\Models\Permission::firstOrCreate(['name' => $permission->value]);
         }
     }
 
@@ -26,7 +26,7 @@ it('can show integrations edit page', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/integrations/edit')
+            ->component('core/admin/integrations/edit')
             ->has('integrations')
         );
 });

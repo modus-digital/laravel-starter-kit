@@ -18,7 +18,7 @@ final class ExcludeInternalOnlyPermissionsScope implements Scope
     public function apply(Builder $builder, Model $model): void
     {
         $internalOnlyPermissions = collect(PermissionEnum::cases())
-            ->filter(fn (PermissionEnum $permission) => $permission->isInternalOnly())
+            ->filter(fn (PermissionEnum $permission): bool => $permission->isInternalOnly())
             ->map(fn (PermissionEnum $permission) => $permission->value)
             ->toArray();
 
@@ -30,13 +30,11 @@ final class ExcludeInternalOnlyPermissionsScope implements Scope
      */
     public function extend(Builder $builder): void
     {
-        $builder->macro('withInternalPermissions', function (Builder $builder) {
-            return $builder->withoutGlobalScope($this);
-        });
+        $builder->macro('withInternalPermissions', fn (Builder $builder) => $builder->withoutGlobalScope($this));
 
         $builder->macro('onlyInternalPermissions', function (Builder $builder) {
             $internalOnlyPermissions = collect(PermissionEnum::cases())
-                ->filter(fn (PermissionEnum $permission) => $permission->isInternalOnly())
+                ->filter(fn (PermissionEnum $permission): bool => $permission->isInternalOnly())
                 ->map(fn (PermissionEnum $permission) => $permission->value)
                 ->toArray();
 

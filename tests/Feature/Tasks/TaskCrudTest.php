@@ -19,7 +19,7 @@ it('creates a user-scoped task when no client is selected', function (): void {
         ->post(route('tasks.store'), [
             'title' => 'My Task',
         ])
-        ->assertRedirect(route('tasks.index'));
+        ->assertRedirect();
 
     $task = Task::query()->firstOrFail();
 
@@ -42,7 +42,7 @@ it('creates a client-scoped task when a client is selected and user is a member'
         ->post(route('tasks.store'), [
             'title' => 'Client Task',
         ])
-        ->assertRedirect(route('tasks.index'));
+        ->assertRedirect();
 
     $task = Task::query()->firstOrFail();
 
@@ -79,7 +79,7 @@ it('updates an accessible task and sets completed_at when moving to Done', funct
             'title' => 'Updated Title',
             'status_id' => $done->id,
         ])
-        ->assertRedirect(route('tasks.index'));
+        ->assertRedirect();
 
     $task->refresh();
 

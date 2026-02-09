@@ -14,12 +14,21 @@ beforeEach(function () {
     // Create required permissions in the database
     foreach (Permission::cases() as $permission) {
         if ($permission->shouldSync()) {
-            Spatie\Permission\Models\Permission::create(['name' => $permission->value]);
+            Spatie\Permission\Models\Permission::firstOrCreate(['name' => $permission->value]);
         }
     }
 
     $this->user = User::factory()->create();
-    $this->user->givePermissionTo(Permission::AccessControlPanel);
+    $this->user->givePermissionTo([
+        Permission::AccessControlPanel,
+        Permission::ViewAnyUsers,
+        Permission::CreateUsers,
+        Permission::ViewUsers,
+        Permission::UpdateUsers,
+        Permission::DeleteUsers,
+        Permission::RestoreUsers,
+        Permission::ForceDeleteUsers,
+    ]);
 });
 
 it('can list users', function () {
@@ -29,8 +38,8 @@ it('can list users', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/users/index')
-            ->has('users', 6) // 5 created + 1 authenticated user
+            ->component('core/admin/users/index')
+            ->has('users.data', 6) // 5 created + 1 authenticated user
         );
 });
 
@@ -42,9 +51,9 @@ it('can filter users by search', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/users/index')
-            ->has('users', 1)
-            ->where('users.0.name', 'John Doe')
+            ->component('core/admin/users/index')
+            ->has('users.data', 1)
+            ->where('users.data.0.name', 'John Doe')
         );
 });
 
@@ -56,7 +65,7 @@ it('can filter users by status', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/users/index')
+            ->component('core/admin/users/index')
             ->has('users')
         );
 });
@@ -66,7 +75,7 @@ it('can show create user page', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/users/create')
+            ->component('core/admin/users/create')
             ->has('roles')
             ->has('statuses')
         );
@@ -100,7 +109,7 @@ it('can show a user', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/users/show')
+            ->component('core/admin/users/show')
             ->where('user.id', $targetUser->id)
             ->has('activities')
         );
@@ -113,7 +122,7 @@ it('can show edit user page', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/users/edit')
+            ->component('core/admin/users/edit')
             ->where('user.id', $targetUser->id)
             ->has('roles')
             ->has('statuses')

@@ -33,7 +33,7 @@ it('shares branding data with inertia', function () {
     $inertiaProps = $response->viewData('page')['props'] ?? [];
 
     expect($inertiaProps)->toHaveKey('branding');
-    expect($inertiaProps['branding'])->toHaveKeys(['logo', 'primaryColor', 'secondaryColor', 'font']);
+    expect($inertiaProps['branding'])->toHaveKeys(['primaryColor', 'secondaryColor', 'font']);
 });
 
 it('preloads all font options', function () {

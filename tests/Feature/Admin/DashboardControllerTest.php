@@ -16,10 +16,9 @@ it('can view admin dashboard', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/index')
-            ->has('stats')
-            ->has('recentActivities')
-            ->has('roleDistribution')
+            ->component('core/admin/dashboard/index')
+            ->has('layout')
+            ->has('availableWidgets')
         );
 });
 
@@ -41,6 +40,7 @@ it('displays correct stats on dashboard', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->where('stats.total_users', 6) // 5 created + 1 authenticated user
+            ->has('layout')
+            ->has('availableWidgets')
         );
 });

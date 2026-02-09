@@ -43,7 +43,7 @@ final class SendTaskUpdatedNotification implements ShouldQueue
 
             $channels = $this->channelResolver->resolve($preference);
 
-            if (empty($channels)) {
+            if ($channels === []) {
                 continue;
             }
 

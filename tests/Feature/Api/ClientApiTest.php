@@ -2,11 +2,21 @@
 
 declare(strict_types=1);
 
+use App\Enums\RBAC\Permission;
 use App\Models\Modules\Clients\Client;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    // Create required permissions in the database
+    foreach (Permission::cases() as $permission) {
+        if ($permission->shouldSync()) {
+            Spatie\Permission\Models\Permission::firstOrCreate(['name' => $permission->value]);
+        }
+    }
+});
 
 it('can list clients', function () {
     Client::factory()->count(5)->create();
@@ -54,6 +64,7 @@ it('can list clients', function () {
 
 it('can create a client', function () {
     $user = User::factory()->create();
+    $user->givePermissionTo(Permission::CreateClients);
     $token = $user->createToken('test-token')->plainTextToken;
 
     $clientData = [
@@ -96,6 +107,7 @@ it('can show a client', function () {
     $client = Client::factory()->create();
 
     $user = User::factory()->create();
+    $user->givePermissionTo(Permission::ViewClients);
     $token = $user->createToken('test-token')->plainTextToken;
 
     $response = $this->withToken($token)->getJson("/api/v1/admin/clients/{$client->id}");
@@ -130,6 +142,7 @@ it('can update a client', function () {
     $client = Client::factory()->create();
 
     $user = User::factory()->create();
+    $user->givePermissionTo(Permission::UpdateClients);
     $token = $user->createToken('test-token')->plainTextToken;
 
     $updatedData = [
@@ -171,6 +184,7 @@ it('can delete a client', function () {
     $client = Client::factory()->create();
 
     $user = User::factory()->create();
+    $user->givePermissionTo(Permission::DeleteClients);
     $token = $user->createToken('test-token')->plainTextToken;
 
     $response = $this->withToken($token)->deleteJson("/api/v1/admin/clients/{$client->id}");
@@ -224,6 +238,7 @@ it('can permanently delete a client', function () {
     $client->delete();
 
     $user = User::factory()->create();
+    $user->givePermissionTo(Permission::ForceDeleteClients);
     $token = $user->createToken('test-token')->plainTextToken;
 
     $response = $this->withToken($token)->deleteJson("/api/v1/admin/clients/{$client->id}/force-delete");
@@ -240,6 +255,7 @@ it('can permanently delete a client', function () {
 
 it('validates client creation', function () {
     $user = User::factory()->create();
+    $user->givePermissionTo(Permission::CreateClients);
     $token = $user->createToken('test-token')->plainTextToken;
 
     $response = $this->withToken($token)->postJson('/api/v1/admin/clients', []);
@@ -253,6 +269,7 @@ it('validates client update', function () {
     Client::factory()->create(['name' => 'Existing Client']);
 
     $user = User::factory()->create();
+    $user->givePermissionTo(Permission::UpdateClients);
     $token = $user->createToken('test-token')->plainTextToken;
 
     $response = $this->withToken($token)->putJson("/api/v1/admin/clients/{$client->id}", [

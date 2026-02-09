@@ -13,7 +13,7 @@ final class UpdateIntegrationSettingsRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->can(\App\Enums\RBAC\Permission::AccessControlPanel->value);
+        return $this->user()?->can(\App\Enums\RBAC\Permission::AccessControlPanel->value);
     }
 
     /**

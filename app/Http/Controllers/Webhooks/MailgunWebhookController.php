@@ -116,8 +116,8 @@ final class MailgunWebhookController extends Controller
         $eventTime = Carbon::createFromTimestamp((int) $timestamp);
         $now = Carbon::now();
 
-        // Allow events within 5 minutes
-        return $now->diffInMinutes($eventTime) <= 5;
+        // Allow events within 5 minutes (check absolute difference)
+        return abs($now->diffInMinutes($eventTime, false)) <= 5;
     }
 
     /**
@@ -149,7 +149,7 @@ final class MailgunWebhookController extends Controller
 
         // Map Mailgun event type to our enum
         $emailEventType = $this->mapEventType($eventType);
-        if (! $emailEventType) {
+        if (! $emailEventType instanceof EmailEventType) {
             Log::warning('Mailgun webhook unknown event type', ['event_type' => $eventType]);
 
             return; // Unknown event type, skip
@@ -158,7 +158,7 @@ final class MailgunWebhookController extends Controller
         // Find email message by Mailgun Message-ID or correlation ID
         $emailMessage = $this->findEmailMessage($eventData);
 
-        if (! $emailMessage) {
+        if (! $emailMessage instanceof EmailMessage) {
             // Event for unknown email - could be from before module was enabled
             // We could optionally create a stub record here, but for now we'll skip
             Log::warning('Mailgun webhook email message not found', [
@@ -170,7 +170,7 @@ final class MailgunWebhookController extends Controller
         }
 
         // Create event record
-        $emailEvent = EmailEvent::create([
+        EmailEvent::create([
             'email_message_id' => $emailMessage->id,
             'event_type' => $emailEventType,
             'mailgun_event_id' => $mailgunEventId,
@@ -220,14 +220,18 @@ final class MailgunWebhookController extends Controller
     private function findEmailMessage(array $eventData): ?EmailMessage
     {
         $messageId = $eventData['message']['headers']['message-id'] ?? null;
-        if ($messageId) {
-            // Remove angle brackets if present
-            $messageId = mb_trim($messageId, '<>');
+        // Remove angle brackets if present (case-insensitive for both forms)
+        if ($messageId && (str_starts_with((string) $messageId, '<') && str_ends_with((string) $messageId, '>'))) {
+            $messageId = mb_substr((string) $messageId, 1, mb_strlen((string) $messageId) - 2);
         }
 
         // Try to find by Mailgun Message-ID first
         if ($messageId) {
             $emailMessage = EmailMessage::where('mailgun_message_id', $messageId)->first();
+            if (! $emailMessage) {
+                // Also try with angle brackets added
+                $emailMessage = EmailMessage::where('mailgun_message_id', '<'.$messageId.'>')->first();
+            }
             if ($emailMessage) {
                 return $emailMessage;
             }

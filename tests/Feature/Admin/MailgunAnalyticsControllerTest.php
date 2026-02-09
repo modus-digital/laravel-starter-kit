@@ -14,7 +14,7 @@ beforeEach(function () {
     // Create permissions
     foreach (Permission::cases() as $permission) {
         if ($permission->shouldSync()) {
-            Spatie\Permission\Models\Permission::create(['name' => $permission->value]);
+            Spatie\Permission\Models\Permission::firstOrCreate(['name' => $permission->value]);
         }
     }
 
@@ -27,7 +27,7 @@ it('can view mailgun analytics dashboard', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/mailgun/index')
+            ->component('core/admin/mailgun/index')
             ->has('stats')
             ->has('recentMessages')
             ->has('eventBreakdown')
@@ -35,9 +35,20 @@ it('can view mailgun analytics dashboard', function () {
 });
 
 it('displays correct email statistics', function () {
-    EmailMessage::factory()->count(5)->create();
-    EmailEvent::factory()->count(3)->create(['event' => 'delivered']);
-    EmailEvent::factory()->count(2)->create(['event' => 'opened']);
+    // Create 5 email messages
+    $messages = EmailMessage::factory()->count(5)->create();
+
+    // Create events for 3 delivered (using first 3 messages)
+    EmailEvent::factory()->count(3)->create([
+        'event_type' => 'delivered',
+        'email_message_id' => fn () => $messages->random()->id,
+    ]);
+
+    // Create events for 2 opened (using first 2 messages)
+    EmailEvent::factory()->count(2)->create([
+        'event_type' => 'opened',
+        'email_message_id' => fn () => $messages->random()->id,
+    ]);
 
     $response = $this->actingAs($this->user)->get('/admin/mailgun');
 
@@ -61,9 +72,9 @@ it('displays recent messages', function () {
 });
 
 it('displays event breakdown', function () {
-    EmailEvent::factory()->count(5)->create(['event' => 'delivered']);
-    EmailEvent::factory()->count(3)->create(['event' => 'opened']);
-    EmailEvent::factory()->count(2)->create(['event' => 'bounced']);
+    EmailEvent::factory()->count(5)->create(['event_type' => 'delivered']);
+    EmailEvent::factory()->count(3)->create(['event_type' => 'opened']);
+    EmailEvent::factory()->count(2)->create(['event_type' => 'failed']);
 
     $response = $this->actingAs($this->user)->get('/admin/mailgun');
 

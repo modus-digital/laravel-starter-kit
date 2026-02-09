@@ -16,7 +16,7 @@ it('can switch to a client the user belongs to', function (): void {
     $this->user->clients()->attach($client);
 
     $response = $this->actingAs($this->user)
-        ->post("/clients/{$client->id}/switch");
+        ->post("/portal/switch-client/{$client->id}");
 
     $response->assertRedirect();
     expect(session('current_client_id'))->toBe($client->id);
@@ -26,7 +26,7 @@ it('cannot switch to a client the user does not belong to', function (): void {
     $client = Client::factory()->create();
 
     $response = $this->actingAs($this->user)
-        ->post("/clients/{$client->id}/switch");
+        ->post("/portal/switch-client/{$client->id}");
 
     $response->assertForbidden();
     expect(session('current_client_id'))->toBeNull();
@@ -39,14 +39,14 @@ it('can switch between multiple clients', function (): void {
 
     // Switch to client 1
     $this->actingAs($this->user)
-        ->post("/clients/{$client1->id}/switch")
+        ->post("/portal/switch-client/{$client1->id}")
         ->assertRedirect();
 
     expect(session('current_client_id'))->toBe($client1->id);
 
     // Switch to client 2
     $this->actingAs($this->user)
-        ->post("/clients/{$client2->id}/switch")
+        ->post("/portal/switch-client/{$client2->id}")
         ->assertRedirect();
 
     expect(session('current_client_id'))->toBe($client2->id);
@@ -55,7 +55,7 @@ it('can switch between multiple clients', function (): void {
 it('requires authentication', function (): void {
     $client = Client::factory()->create();
 
-    $response = $this->post("/clients/{$client->id}/switch");
+    $response = $this->post("/portal/switch-client/{$client->id}");
 
     $response->assertRedirect('/login');
 });

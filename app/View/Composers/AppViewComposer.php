@@ -8,7 +8,7 @@ use App\Services\BrandingService;
 use Illuminate\View\View;
 use Throwable;
 
-final class AppViewComposer
+final readonly class AppViewComposer
 {
     private const FONT_MAP = [
         'inter' => 'Inter',
@@ -25,7 +25,7 @@ final class AppViewComposer
 
     private const DEFAULT_SECONDARY = '#6b7280';
 
-    public function __construct(private readonly BrandingService $brandingService) {}
+    public function __construct(private BrandingService $brandingService) {}
 
     public function compose(View $view): void
     {

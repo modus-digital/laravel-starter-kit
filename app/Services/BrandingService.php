@@ -248,8 +248,8 @@ final class BrandingService
      * Outputs RGB values as space-separated numbers (e.g., "255 128 64")
      * which can be used with `rgb(var(--color) / opacity)` syntax.
      *
-     * @param name Base name for the color scale (e.g., "primary" or "secondary")
-     * @param hexColor Base color in hex format
+     * @param  string  $name  Base name for the color scale (e.g., "primary" or "secondary")
+     * @param  string  $hexColor  Base color in hex format
      * @return string CSS variable declarations
      */
     public function generateCSSVariables(string $name, string $hexColor): string
@@ -271,8 +271,8 @@ final class BrandingService
      * Determines whether black or white text should be used on a given background color
      * to meet WCAG contrast guidelines.
      *
-     * @param hexColor Background color in hex format
-     * @return 'white' for dark backgrounds, 'black' for light backgrounds
+     * @param  string  $hexColor  Background color in hex format
+     * @return 'black'|'white' 'white' for dark backgrounds, 'black' for light backgrounds
      */
     public function getContrastTextColor(string $hexColor): string
     {
@@ -304,14 +304,14 @@ final class BrandingService
      */
     private function chromaScale(float $lightness): float
     {
-        return pow(1 - abs($lightness - 0.5) * 2, 0.85);
+        return (1 - abs($lightness - 0.5) * 2) ** 0.85;
     }
 
     /**
      * Calculate the relative luminance of a color using the WCAG formula.
      * Used to determine text contrast requirements.
      *
-     * @param hex Color in hex format
+     * @param  string  $hex  Color in hex format
      * @return float Relative luminance value between 0 (black) and 1 (white)
      */
     private function getRelativeLuminance(string $hex): float
@@ -349,9 +349,9 @@ final class BrandingService
         $m_ = $l - 0.1055613458 * $a - 0.0638541728 * $b_lab;
         $s_ = $l - 0.0894841775 * $a - 1.2914855480 * $b_lab;
 
-        $l_ = $l_ ** 3;
-        $m_ = $m_ ** 3;
-        $s_ = $s_ ** 3;
+        $l_ **= 3;
+        $m_ **= 3;
+        $s_ **= 3;
 
         $x = 1.2270138511 * $l_ - 0.5577999807 * $m_ + 0.2812561490 * $s_;
         $y = 0.0405793773 * $l_ + 0.1849682802 * $m_ - 0.2254883756 * $s_;

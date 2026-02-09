@@ -162,7 +162,7 @@ final class TranslationController extends Controller
         $this->translationService->setTranslation($targetLanguage, $request->translation_key, $request->translation);
 
         // Verify it was saved by reading it back
-        $saved = $this->translationService->getTranslation($targetLanguage, $request->translation_key);
+        $this->translationService->getTranslation($targetLanguage, $request->translation_key);
 
         // Check if there are more missing translations
         $missingTranslations = $this->translationService->getMissingTranslations($targetLanguage, $group);
@@ -191,7 +191,7 @@ final class TranslationController extends Controller
 
             return redirect()->back()
                 ->with('success', __('admin.translations.notifications.language_created.title'));
-        } catch (Exception $e) {
+        } catch (Exception) {
             return redirect()->back()
                 ->withErrors(['language_code' => __('admin.translations.notifications.language_creation_failed.body')]);
         }

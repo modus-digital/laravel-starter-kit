@@ -27,7 +27,7 @@ final class DashboardController extends Controller
         return Inertia::render('core/admin/dashboard/index', [
             'layout' => $user->getPreference('dashboard.layout', $this->defaultLayout()),
             'availableWidgets' => $this->getAvailableWidgets(),
-            'widgetData' => Inertia::defer(fn () => [
+            'widgetData' => Inertia::defer(fn (): array => [
                 'stats' => $this->getStats(),
                 'recentActivities' => $this->getRecentActivities(),
                 'clientStats' => $this->getClientStats(),
@@ -62,7 +62,10 @@ final class DashboardController extends Controller
             ->limit(10)
             ->get();
 
-        return ActivityResource::collection($activities)->toArray(request());
+        /** @var array<int, array<string, mixed>> $result */
+        $result = ActivityResource::collection($activities)->toArray(request());
+
+        return $result;
     }
 
     /**

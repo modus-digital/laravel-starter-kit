@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 final class FileStorageService
 {
@@ -21,6 +21,10 @@ final class FileStorageService
             file: $file,
             name: $fileName ?? $this->generateFileName($file)
         );
+
+        if ($path === false) {
+            throw new RuntimeException('Failed to upload file.');
+        }
 
         if ($public) {
             $disk->setVisibility(path: $path, visibility: 'public');
@@ -55,10 +59,7 @@ final class FileStorageService
         return $disk->delete($path);
     }
 
-    /**
-     * @return FilesystemAdapter
-     */
-    public function getDisk(): Filesystem
+    public function getDisk(): FilesystemAdapter
     {
         $s3Enabled = setting('integrations.s3.enabled', false);
 
@@ -78,6 +79,7 @@ final class FileStorageService
             'use_path_style_endpoint' => setting('integrations.s3.use_path_style_endpoint', false),
         ];
 
+        /** @var FilesystemAdapter */
         return Storage::build($config);
     }
 

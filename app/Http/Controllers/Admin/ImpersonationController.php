@@ -16,11 +16,8 @@ final class ImpersonationController extends Controller
 {
     public function start(Request $request, User $targetUser): RedirectResponse
     {
-        /** @var User|null $currentUser */
+        /** @var User $currentUser */
         $currentUser = $request->user();
-
-        assert($currentUser instanceof User);
-        assert($targetUser instanceof User);
 
         session()->put('impersonation', [
             'is_impersonating' => true,

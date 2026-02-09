@@ -18,7 +18,7 @@ final class UpdateRoleRequest extends FormRequest
     {
         $role = $this->route('role');
 
-        return $role instanceof Role && $this->user()->can('update', $role);
+        return $role instanceof Role && $this->user()?->can('update', $role);
     }
 
     /**

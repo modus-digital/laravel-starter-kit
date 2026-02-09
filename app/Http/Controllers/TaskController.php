@@ -74,28 +74,26 @@ final class TaskController extends Controller
             ->with(['causer'])
             ->latest('created_at')
             ->get()
-            ->map(function (Activity $activity) {
-                return [
-                    'id' => $activity->id,
-                    'log_name' => $activity->log_name,
-                    'description' => $activity->description,
-                    'translated_description' => $activity->getTranslatedDescription(),
-                    'translation' => $activity->getTranslationPayload(),
-                    'subject_type' => $activity->subject_type,
-                    'subject_id' => $activity->subject_id,
-                    'event' => $activity->event,
-                    'causer_type' => $activity->causer_type,
-                    'causer_id' => $activity->causer_id,
-                    'properties' => $activity->properties,
-                    'created_at' => $activity->created_at,
-                    'updated_at' => $activity->updated_at,
-                    'causer' => $activity->causer ? [
-                        'id' => $activity->causer->id,
-                        'name' => $activity->causer->name,
-                        'email' => $activity->causer->email,
-                    ] : null,
-                ];
-            });
+            ->map(fn (Activity $activity): array => [
+                'id' => $activity->id,
+                'log_name' => $activity->log_name,
+                'description' => $activity->description,
+                'translated_description' => $activity->getTranslatedDescription(),
+                'translation' => $activity->getTranslationPayload(),
+                'subject_type' => $activity->subject_type,
+                'subject_id' => $activity->subject_id,
+                'event' => $activity->event,
+                'causer_type' => $activity->causer_type,
+                'causer_id' => $activity->causer_id,
+                'properties' => $activity->properties,
+                'created_at' => $activity->created_at,
+                'updated_at' => $activity->updated_at,
+                'causer' => $activity->causer ? [
+                    'id' => $activity->causer->id,
+                    'name' => $activity->causer->name,
+                    'email' => $activity->causer->email,
+                ] : null,
+            ]);
 
         return Inertia::render(
             component: 'modules/tasks/show',

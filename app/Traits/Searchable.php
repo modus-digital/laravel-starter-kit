@@ -47,12 +47,7 @@ trait Searchable
             return null;
         }
 
-        // If it's already a Permission enum, return it
-        if (static::$searchPermission instanceof Permission) {
-            return static::$searchPermission;
-        }
-
-        // If it's a string, try to find the matching Permission enum case
+        // Try to find the matching Permission enum case from the string value
         return Permission::tryFrom(static::$searchPermission);
     }
 
@@ -96,7 +91,7 @@ trait Searchable
     /**
      * Perform a search query on this model.
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Builder<static>
      */
     public static function performSearch(string $query, int $limit = 10)
     {

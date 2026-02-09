@@ -380,11 +380,11 @@ final class RbacController extends Controller
             ], 403);
         }
 
-        $permissions = collect(Permission::cases())->map(fn ($permission): array => [
+        $permissions = collect(Permission::cases())->map(fn (Permission $permission): array => [
             'name' => $permission->value,
             'label' => $permission->getLabel(),
             'description' => $permission->getDescription(),
-            'is_super_admin_only' => $permission->isSuperAdminOnly(),
+            'is_super_admin_only' => $permission->isInternalOnly(),
         ]);
 
         if ($request->boolean('grouped')) {

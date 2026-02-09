@@ -8,15 +8,15 @@ use App\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-final class TwoFactorStatusChanged
+final readonly class TwoFactorStatusChanged
 {
     use Dispatchable;
     use SerializesModels;
 
     public function __construct(
-        public readonly User $user,
-        public readonly bool $enabled,
-        public readonly ?string $ipAddress = null,
-        public readonly ?string $userAgent = null,
+        public User $user,
+        public bool $enabled,
+        public ?string $ipAddress = null,
+        public ?string $userAgent = null,
     ) {}
 }

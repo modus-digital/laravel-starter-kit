@@ -16,14 +16,29 @@ final class ImageUploadController extends Controller
      */
     public function __invoke(ImageUploadRequest $request, FileStorageService $fileStorage): JsonResponse
     {
+        $file = $request->file('image');
         $url = $fileStorage->upload(
-            file: $request->file('image'),
+            file: $file,
             storagePath: 'images',
             public: true
         );
 
+        // Extract path and filename from URL
+        $path = parse_url($url, PHP_URL_PATH);
+        if ($path && str_starts_with($path, '/')) {
+            $path = mb_ltrim($path, '/');
+        }
+        if ($path && str_starts_with($path, 'storage/')) {
+            $path = mb_substr($path, mb_strlen('storage/'));
+        }
+
+        // Extract the actual stored filename from path
+        $filename = basename(is_string($path) ? $path : '');
+
         return response()->json([
             'url' => $url,
+            'path' => $path ?? 'images/'.$filename,
+            'filename' => $filename,
         ], 200);
     }
 }

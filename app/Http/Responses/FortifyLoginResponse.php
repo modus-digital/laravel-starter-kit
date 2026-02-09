@@ -49,8 +49,7 @@ final class FortifyLoginResponse implements Responsable
                 Event::dispatch(new NewDeviceLogin(
                     user: $user,
                     ipAddress: $request->ip(),
-                    userAgent: $request->userAgent(),
-                    location: null, // Could be enhanced with geolocation service
+                    userAgent: $request->userAgent(), // Could be enhanced with geolocation service
                 ));
             }
 

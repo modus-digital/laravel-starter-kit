@@ -14,7 +14,7 @@ beforeEach(function () {
     // Create required permissions in the database
     foreach (Permission::cases() as $permission) {
         if ($permission->shouldSync()) {
-            SpatiePermission::create(['name' => $permission->value]);
+            SpatiePermission::firstOrCreate(['name' => $permission->value]);
         }
     }
 
@@ -32,7 +32,7 @@ it('can list activities', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/activities/index')
+            ->component('core/admin/activities/index')
             ->has('activities')
             ->where('activities', fn ($activities) => count($activities) >= 1)
             ->has('logNames')
@@ -47,8 +47,8 @@ it('can filter activities by log name', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/activities/index')
-            ->has('activities', 1)
+            ->component('core/admin/activities/index')
+            ->has('activities.data', 1)
         );
 });
 
@@ -60,8 +60,8 @@ it('can filter activities by event', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/activities/index')
-            ->has('activities', 1)
+            ->component('core/admin/activities/index')
+            ->has('activities.data', 1)
         );
 });
 
@@ -75,8 +75,8 @@ it('can filter activities by date range', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/activities/index')
-            ->has('activities', 1)
+            ->component('core/admin/activities/index')
+            ->has('activities.data', 1)
         );
 });
 

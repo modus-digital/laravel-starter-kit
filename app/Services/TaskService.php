@@ -472,7 +472,7 @@ final class TaskService
         }
 
         // Detect actual changes before updating (only field names and old values)
-        $changedFields = $this->detectChangedFields($task, $updateData, $originalValues);
+        $changedFields = $this->detectChangedFields($updateData, $originalValues);
 
         // Capture assignment changes before update
         $previousAssignee = $task->assignedTo;
@@ -548,7 +548,7 @@ final class TaskService
             }
         }
 
-        if (! empty($updateChanges)) {
+        if ($updateChanges !== []) {
             Event::dispatch(new TaskUpdated(
                 task: $task,
                 updatedBy: $user,
@@ -670,7 +670,7 @@ final class TaskService
      * @param  array<string, mixed>  $originalValues
      * @return array<int, string>
      */
-    private function detectChangedFields(Task $task, array $updateData, array $originalValues): array
+    private function detectChangedFields(array $updateData, array $originalValues): array
     {
         $changedFields = [];
 

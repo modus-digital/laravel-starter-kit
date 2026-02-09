@@ -9,14 +9,14 @@ use App\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-final class TaskAssigned
+final readonly class TaskAssigned
 {
     use Dispatchable;
     use SerializesModels;
 
     public function __construct(
-        public readonly Task $task,
-        public readonly User $assignee,
-        public readonly User $assigner,
+        public Task $task,
+        public User $assignee,
+        public User $assigner,
     ) {}
 }

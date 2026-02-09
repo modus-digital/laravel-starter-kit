@@ -20,6 +20,11 @@ final class RedirectToApplicationController extends Controller
             return to_route(route: 'login');
         }
 
+        // Redirect to client portal if clients module is enabled
+        if (config('modules.clients.enabled')) {
+            return to_route(route: 'clients.show');
+        }
+
         return to_route(route: 'dashboard');
     }
 }

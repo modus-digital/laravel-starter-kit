@@ -35,7 +35,7 @@ final class MailgunAnalyticsController extends Controller
             ->latest()
             ->limit(10)
             ->get()
-            ->map(fn (EmailMessage $message) => [
+            ->map(fn (EmailMessage $message): array => [
                 'id' => $message->id,
                 'recipient' => $message->to_address,
                 'subject' => $message->subject,
@@ -44,13 +44,14 @@ final class MailgunAnalyticsController extends Controller
             ]);
 
         // Get event breakdown
+        /** @var \Illuminate\Support\Collection<int, array{event: string, count: int}> $eventBreakdown */
         $eventBreakdown = EmailEvent::query()
             ->selectRaw('event_type, COUNT(*) as count')
             ->groupBy('event_type')
             ->get()
-            ->map(fn ($event) => [
+            ->map(fn (EmailEvent $event): array => [
                 'event' => $event->event_type,
-                'count' => $event->count,
+                'count' => (int) $event->getAttribute('count'),
             ]);
 
         return Inertia::render('core/admin/mailgun/index', [
@@ -73,7 +74,7 @@ final class MailgunAnalyticsController extends Controller
 
         // Generate all dates in the range
         $dates = collect(CarbonPeriod::create($startDate, $endDate))
-            ->mapWithKeys(fn (Carbon $date) => [$date->format('Y-m-d') => 0]);
+            ->mapWithKeys(fn (Carbon $date): array => [$date->format('Y-m-d') => 0]);
 
         // Get sent counts by day
         $sentByDay = EmailMessage::query()
@@ -97,7 +98,7 @@ final class MailgunAnalyticsController extends Controller
 
         // Format the data for charts
         $formatTrend = fn ($data) => $dates->merge($data)
-            ->map(fn ($count, $date) => ['date' => $date, 'count' => (int) $count])
+            ->map(fn ($count, $date): array => ['date' => $date, 'count' => (int) $count])
             ->values()
             ->toArray();
 

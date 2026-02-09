@@ -76,7 +76,7 @@ final class Client extends Model
     /**
      * Permission required to search this model.
      */
-    protected static string $searchPermission = 'read:clients';
+    protected static string $searchPermission = 'view-any:clients';
 
     /**
      * @return BelongsToMany<User, $this, ClientUser>

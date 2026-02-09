@@ -114,11 +114,11 @@ final class EmailMessage extends Model
      */
     public function scopeSentBetween($query, ?\Carbon\Carbon $start, ?\Carbon\Carbon $end): void
     {
-        if ($start !== null) {
+        if ($start instanceof \Carbon\Carbon) {
             $query->where('sent_at', '>=', $start);
         }
 
-        if ($end !== null) {
+        if ($end instanceof \Carbon\Carbon) {
             $query->where('sent_at', '<=', $end);
         }
     }

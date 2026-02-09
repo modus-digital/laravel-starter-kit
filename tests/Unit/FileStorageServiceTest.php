@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Storage;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    Config::set('filesystems.disks.local.permissions', [
+    Config::set('filesystems.disks.public.permissions', [
         'file' => [
             'public' => 0644,
             'private' => 0600,
@@ -22,7 +22,7 @@ beforeEach(function () {
         ],
     ]);
 
-    Storage::fake('local');
+    Storage::fake('public');
     Storage::fake('s3');
 });
 
@@ -48,7 +48,7 @@ it('uploads a file to local storage when s3 is disabled and returns URL', functi
     // Remove /storage prefix if present (Laravel adds this to URLs)
     $path = str_replace('storage/', '', $path);
 
-    Storage::disk('local')->assertExists($path);
+    Storage::disk('public')->assertExists($path);
     expect($url)->toBeString();
     expect($path)->toStartWith('uploads/');
     expect($path)->toEndWith('.jpg');
@@ -120,7 +120,7 @@ it('uploads file and calls setVisibility with private by default', function () {
 
     $path = mb_ltrim(parse_url($url, PHP_URL_PATH) ?? '', '/');
     $path = str_replace('storage/', '', $path);
-    Storage::disk('local')->assertExists($path);
+    Storage::disk('public')->assertExists($path);
 
     // Note: Storage::fake() has limitations with visibility on local disk
     // In production, the setVisibility call in FileStorageService ensures private visibility
@@ -136,8 +136,8 @@ it('uploads file with public visibility when specified', function () {
 
     $path = mb_ltrim(parse_url($url, PHP_URL_PATH) ?? '', '/');
     $path = str_replace('storage/', '', $path);
-    Storage::disk('local')->assertExists($path);
-    expect(Storage::disk('local')->getVisibility($path))->toBe('public');
+    Storage::disk('public')->assertExists($path);
+    expect(Storage::disk('public')->getVisibility($path))->toBe('public');
 });
 
 it('respects custom storage paths', function () {
@@ -150,7 +150,7 @@ it('respects custom storage paths', function () {
 
     $path = mb_ltrim(parse_url($url, PHP_URL_PATH) ?? '', '/');
     $path = str_replace('storage/', '', $path);
-    Storage::disk('local')->assertExists($path);
+    Storage::disk('public')->assertExists($path);
     expect($path)->toStartWith('custom/path/here/');
 });
 
@@ -168,7 +168,7 @@ it('can check if file exists by URL', function () {
     $path = mb_ltrim($parsedUrl['path'] ?? '', '/');
     $path = str_replace('storage/', '', $path);
 
-    Storage::disk('local')->assertExists($path);
+    Storage::disk('public')->assertExists($path);
     expect($service->exists('http://example.com/nonexistent.jpg'))->toBeFalse();
 });
 
@@ -184,12 +184,12 @@ it('can delete file by URL', function () {
     $path = mb_ltrim(parse_url($url, PHP_URL_PATH) ?? $url, '/');
     $path = str_replace('storage/', '', $path);
 
-    Storage::disk('local')->assertExists($path);
+    Storage::disk('public')->assertExists($path);
 
     $deleted = $service->delete($url);
 
     expect($deleted)->toBeTrue();
-    Storage::disk('local')->assertMissing($path);
+    Storage::disk('public')->assertMissing($path);
 });
 
 it('returns false when deleting non-existent file', function () {

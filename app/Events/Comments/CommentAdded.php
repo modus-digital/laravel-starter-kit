@@ -9,7 +9,7 @@ use App\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-final class CommentAdded
+final readonly class CommentAdded
 {
     use Dispatchable;
     use SerializesModels;
@@ -18,8 +18,8 @@ final class CommentAdded
      * @param  array<string, mixed>  $comment
      */
     public function __construct(
-        public readonly Task $task,
-        public readonly User $commenter,
-        public readonly array $comment,
+        public Task $task,
+        public User $commenter,
+        public array $comment,
     ) {}
 }

@@ -17,13 +17,13 @@ beforeEach(function () {
     // Create required permissions in the database
     foreach (Permission::cases() as $permission) {
         if ($permission->shouldSync()) {
-            Spatie\Permission\Models\Permission::create(['name' => $permission->value]);
+            Spatie\Permission\Models\Permission::firstOrCreate(['name' => $permission->value]);
         }
     }
 
     // Create required roles
     foreach (Role::cases() as $role) {
-        Spatie\Permission\Models\Role::create(['name' => $role->value]);
+        Spatie\Permission\Models\Role::firstOrCreate(['name' => $role->value]);
     }
 
     // Enable registration

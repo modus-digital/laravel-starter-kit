@@ -66,7 +66,7 @@ it('can list translation groups', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/translations/index')
+            ->component('core/admin/translations/index')
             ->has('groups', 2)
             ->has('availableLanguages')
             ->has('targetLanguage')
@@ -78,7 +78,7 @@ it('can show a translation group', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/translations/[group]/index')
+            ->component('core/admin/translations/[group]/index')
             ->where('group', 'navigation')
             ->has('translations')
             ->has('progress')
@@ -102,7 +102,7 @@ it('can show quick translate page', function () {
 
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
-            ->component('admin/translations/[group]/quick-translate')
+            ->component('core/admin/translations/[group]/quick-translate')
             ->where('group', 'navigation')
             ->has('currentKey')
             ->has('currentEnglish')

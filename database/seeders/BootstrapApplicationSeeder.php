@@ -120,12 +120,18 @@ final class BootstrapApplicationSeeder extends Seeder
         );
         $adminRole->update(['internal' => true]);
 
+        // Create user role (non-internal, can be assigned to users)
+        Role::firstOrCreate(
+            ['name' => \App\Enums\RBAC\Role::USER->value, 'guard_name' => 'web'],
+            ['internal' => false]
+        );
+
         // Assign permissions to Super Admin (all permissions including internal ones)
         $superAdminRole->syncPermissions(Permission::all());
 
         // Assign permissions to Admin (all permissions except super-admin-only ones)
         $adminPermissions = collect(PermissionEnum::cases())
-            ->filter(fn (PermissionEnum $permission) => ! $permission->isInternalOnly() || $permission === PermissionEnum::AccessControlPanel || $permission === PermissionEnum::ImpersonateUsers)
+            ->filter(fn (PermissionEnum $permission): bool => ! $permission->isInternalOnly() || $permission === PermissionEnum::AccessControlPanel || $permission === PermissionEnum::ImpersonateUsers)
             ->map(fn (PermissionEnum $permission) => $permission->value)
             ->all();
 

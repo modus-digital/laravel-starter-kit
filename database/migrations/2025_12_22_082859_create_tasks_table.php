@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('task_views', function (Blueprint $table) {
+        Schema::create('task_views', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->uuidMorphs('taskable');
             $table->boolean('is_default')->default(false);
@@ -33,7 +33,7 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('task_statuses', function (Blueprint $table) {
+        Schema::create('task_statuses', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->string('name')->unique();
             $table->string('color');
@@ -41,7 +41,7 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        Schema::create('tasks', function (Blueprint $table) {
+        Schema::create('tasks', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->uuidMorphs('taskable');
             $table->string('title');
@@ -60,7 +60,7 @@ return new class extends Migration
             $table->index(['taskable_type', 'taskable_id', 'status_id', 'order']);
         });
 
-        Schema::create('task_view_statuses', function (Blueprint $table) {
+        Schema::create('task_view_statuses', function (Blueprint $table): void {
             $table->foreignUuid('task_view_id')->constrained('task_views')->onDelete('cascade');
             $table->foreignUuid('task_status_id')->constrained('task_statuses')->onDelete('cascade');
             $table->integer('position')->default(0);

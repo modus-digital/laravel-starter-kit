@@ -296,7 +296,7 @@ final class Activity extends BaseActivity
 
                 return $date->format('M j, Y');
             } catch (Exception) {
-                return (string) $value;
+                return $value;
             }
         }
 

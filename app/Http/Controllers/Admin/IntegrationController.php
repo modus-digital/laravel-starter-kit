@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\TestS3ConnectionRequest;
 use App\Http\Requests\Admin\UpdateIntegrationSettingsRequest;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -59,6 +61,52 @@ final class IntegrationController extends Controller
         return Inertia::render('core/admin/integrations/edit', [
             'integrations' => $integrations,
         ]);
+    }
+
+    /**
+     * Test S3 connection with provided credentials.
+     */
+    public function testS3Connection(TestS3ConnectionRequest $request): JsonResponse
+    {
+        try {
+            $config = [
+                'key' => $request->input('s3_key'),
+                'secret' => $request->input('s3_secret'),
+                'region' => $request->input('s3_region'),
+                'bucket' => $request->input('s3_bucket'),
+                'endpoint' => $request->input('s3_endpoint'),
+                'use_path_style_endpoint' => $request->boolean('s3_use_path_style_endpoint'),
+            ];
+
+            $s3 = new \Aws\S3\S3Client([
+                'version' => 'latest',
+                'region' => $config['region'],
+                'credentials' => [
+                    'key' => $config['key'],
+                    'secret' => $config['secret'],
+                ],
+                'endpoint' => $config['endpoint'],
+                'use_path_style_endpoint' => $config['use_path_style_endpoint'],
+            ]);
+
+            // Test connection by listing buckets or checking if bucket exists
+            $s3->headBucket(['Bucket' => $config['bucket']]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'S3 connection successful',
+            ]);
+        } catch (\Aws\Exception\AwsException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'S3 connection failed: '.$e->getMessage(),
+            ], 500);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error testing S3 connection: '.$e->getMessage(),
+            ], 500);
+        }
     }
 
     public function update(UpdateIntegrationSettingsRequest $request): RedirectResponse

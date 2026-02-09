@@ -33,7 +33,7 @@ final class RoleFactory extends Factory
      */
     public function internal(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'internal' => true,
         ]);
     }
@@ -43,7 +43,7 @@ final class RoleFactory extends Factory
      */
     public function external(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'internal' => false,
         ]);
     }

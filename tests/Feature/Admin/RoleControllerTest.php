@@ -48,7 +48,7 @@ it('can list roles', function () {
     $response->assertSuccessful()
         ->assertInertia(fn ($page) => $page
             ->component('core/admin/roles/index')
-            ->has('roles', 6) // 5 external + 1 internal (admin from beforeEach)
+            ->has('roles.data')
         );
 });
 

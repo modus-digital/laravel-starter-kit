@@ -2,10 +2,20 @@
 
 declare(strict_types=1);
 
+use App\Enums\RBAC\Permission;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    // Create required permissions in the database
+    foreach (Permission::cases() as $permission) {
+        if ($permission->shouldSync()) {
+            Spatie\Permission\Models\Permission::firstOrCreate(['name' => $permission->value]);
+        }
+    }
+});
 
 it('can get current user info', function () {
     $user = User::factory()->create();
@@ -38,6 +48,7 @@ it('can list users', function () {
     User::factory()->count(5)->create();
 
     $user = User::factory()->create();
+    $user->givePermissionTo(Permission::ViewAnyUsers);
     $token = $user->createToken('test-token')->plainTextToken;
 
     $response = $this->withToken($token)->getJson('/api/v1/admin/users');
@@ -63,6 +74,7 @@ it('can list users', function () {
 
 it('can create a user', function () {
     $user = User::factory()->create();
+    $user->givePermissionTo(Permission::CreateUsers);
     $token = $user->createToken('test-token')->plainTextToken;
 
     $userData = [
@@ -92,6 +104,7 @@ it('can create a user', function () {
 
 it('can show a user', function () {
     $user = User::factory()->create();
+    $user->givePermissionTo(Permission::ViewUsers);
     $token = $user->createToken('test-token')->plainTextToken;
 
     $targetUser = User::factory()->create();
@@ -111,6 +124,7 @@ it('can show a user', function () {
 
 it('can update a user', function () {
     $user = User::factory()->create();
+    $user->givePermissionTo(Permission::UpdateUsers);
     $token = $user->createToken('test-token')->plainTextToken;
 
     $targetUser = User::factory()->create();
@@ -141,6 +155,7 @@ it('can update a user', function () {
 
 it('can delete a user', function () {
     $user = User::factory()->create();
+    $user->givePermissionTo(Permission::DeleteUsers);
     $token = $user->createToken('test-token')->plainTextToken;
 
     $targetUser = User::factory()->create();
@@ -157,6 +172,7 @@ it('can delete a user', function () {
 
 it('can restore a deleted user', function () {
     $user = User::factory()->create();
+    $user->givePermissionTo(Permission::RestoreUsers);
     $token = $user->createToken('test-token')->plainTextToken;
 
     $targetUser = User::factory()->create();
@@ -182,6 +198,7 @@ it('can restore a deleted user', function () {
 
 it('can permanently delete a user', function () {
     $user = User::factory()->create();
+    $user->givePermissionTo(Permission::ForceDeleteUsers);
     $token = $user->createToken('test-token')->plainTextToken;
 
     $targetUser = User::factory()->create();

@@ -14,7 +14,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     seed();
-    Storage::fake('local');
+    Storage::fake('public');
 });
 
 it('can upload an avatar', function () {
@@ -34,24 +34,20 @@ it('can upload an avatar', function () {
     expect($user->avatar)->not->toBeNull();
     expect($user->avatar)->toBeString();
 
-    // Extract path from URL/relative path to verify file exists
-    // Storage::fake() may return relative paths like /storage/avatars/... or full URLs
-    $path = $user->avatar;
-    if (filter_var($user->avatar, FILTER_VALIDATE_URL)) {
-        $parsedUrl = parse_url($user->avatar);
-        $path = mb_ltrim($parsedUrl['path'] ?? '', '/');
-    } else {
-        $path = mb_ltrim($user->avatar, '/');
-    }
-    $path = str_replace('storage/', '', $path);
-    Storage::disk('local')->assertExists($path);
+    // For fake disk, the avatar URL is the full URL, so we need to extract just the filename
+    // FileStorageService returns the full URL from $disk->url($path)
+    // The fake disk stores files at their putFileAs() path directly (e.g., 'avatars/uuid.jpg')
+
+    // Get all files in avatars directory to verify upload worked
+    $files = Storage::disk('public')->files('avatars');
+    expect($files)->not->toBeEmpty();
 });
 
 it('replaces old avatar when uploading a new one', function () {
     // Create old avatar URL (simulating existing data - use relative path like Storage::fake() returns)
     $oldAvatarUrl = '/storage/avatars/old-avatar.jpg';
     $user = User::factory()->create(['avatar' => $oldAvatarUrl]);
-    Storage::disk('local')->put('avatars/old-avatar.jpg', 'old content');
+    Storage::disk('public')->put('avatars/old-avatar.jpg', 'old content');
 
     $newFile = UploadedFile::fake()->image('new-avatar.jpg');
 
@@ -82,7 +78,7 @@ it('replaces old avatar when uploading a new one', function () {
         $path = mb_ltrim($user->avatar, '/');
     }
     $path = str_replace('storage/', '', $path);
-    Storage::disk('local')->assertExists($path);
+    Storage::disk('public')->assertExists($path);
 });
 
 it('validates avatar file type', function () {

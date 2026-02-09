@@ -132,9 +132,9 @@ final class NotificationController extends Controller
         return back();
     }
 
-    private function assertOwnsNotification(User $user, DatabaseNotification $notification): void
+    private function assertOwnsNotification(?User $user, DatabaseNotification $notification): void
     {
-        if ($notification->notifiable_type !== $user::class || $notification->notifiable_id !== $user->getKey()) {
+        if (! $user instanceof User || $notification->notifiable_type !== $user::class || $notification->notifiable_id !== $user->getKey()) {
             abort(403);
         }
     }

@@ -17,6 +17,8 @@ use Spatie\Permission\Models\Role as SpatieRole;
  * @property string $name
  * @property string $guard_name
  * @property bool $internal
+ * @property string|null $icon
+ * @property string|null $color
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Permission> $permissions
@@ -30,8 +32,14 @@ final class Role extends SpatieRole
 {
     use HasFactory;
 
+    /**
+     * @deprecated Use App\Enums\RBAC\Role enum instead
+     */
     public const SUPER_ADMIN = 'super_admin';
 
+    /**
+     * @deprecated Use App\Enums\RBAC\Role enum instead
+     */
     public const ADMIN = 'admin';
 
     /**
@@ -39,7 +47,7 @@ final class Role extends SpatieRole
      */
     public static function findByName(string $name, ?string $guardName = null): \Spatie\Permission\Contracts\Role
     {
-        $guardName = $guardName ?? config('auth.defaults.guard');
+        $guardName ??= config('auth.defaults.guard');
 
         return self::withInternal()
             ->where('name', $name)
@@ -98,7 +106,7 @@ final class Role extends SpatieRole
             $permissions = collect($permissions)
                 ->flatten()
                 ->map(fn ($permission) => is_string($permission) ? $permission : $permission->name)
-                ->filter(function (string $permissionName) {
+                ->filter(function (string $permissionName): bool {
                     $permissionEnum = PermissionEnum::tryFrom($permissionName);
 
                     return $permissionEnum === null || ! $permissionEnum->isInternalOnly();
@@ -122,7 +130,7 @@ final class Role extends SpatieRole
      */
     protected static function booted(): void
     {
-        static::addGlobalScope(new ExcludeInternalRolesScope);
+        self::addGlobalScope(new ExcludeInternalRolesScope);
     }
 
     /**

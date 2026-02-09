@@ -35,7 +35,7 @@ test('failed login listener creates audit log with user', function () {
         ->first();
 
     expect($activity)->not->toBeNull()
-        ->and($activity->description)->toBe('activity.auth.login.failed')
+        ->and($activity->description)->toBe('activity.auth.login_failed')
         ->and($activity->properties->get('credentials')['email'])->toBe('test@example.com')
         ->and($activity->properties->get('guard'))->toBe('web')
         ->and($activity->properties->get('issuer'))->toBeArray()
@@ -63,7 +63,7 @@ test('failed login listener creates audit log without subject for non-existent u
         ->first();
 
     expect($activity)->not->toBeNull()
-        ->and($activity->description)->toBe('activity.auth.login.failed')
+        ->and($activity->description)->toBe('activity.auth.login_failed')
         ->and($activity->properties->get('credentials')['email'])->toBe('nonexistent@example.com')
         ->and($activity->properties->get('issuer')['name'])->toBe('System');
 });

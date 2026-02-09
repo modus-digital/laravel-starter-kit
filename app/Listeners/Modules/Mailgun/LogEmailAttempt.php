@@ -50,13 +50,13 @@ final class LogEmailAttempt
         $fromAddresses = $this->extractAddresses($message->getFrom());
         $fromData = $fromAddresses[0] ?? null;
         $fromAddress = $fromData['address'] ?? config('mail.from.address', 'noreply@example.com');
-        $fromName = $fromData['name'] ?? config('mail.from.name', null);
+        $fromName = $fromData['name'] ?? config('mail.from.name');
 
         // Extract tags from headers
         $tags = $this->extractTags($message);
 
         // Get mailable class name
-        $mailableClass = $original ? get_class($original) : null;
+        $mailableClass = $original ? $original::class : null;
 
         // Create email message record
         $emailMessage = new EmailMessage;
@@ -68,9 +68,9 @@ final class LogEmailAttempt
         $emailMessage->from_name = $fromName;
         $emailMessage->to_address = $primaryRecipient['address'];
         $emailMessage->to_name = $primaryRecipient['name'];
-        $emailMessage->cc = ! empty($ccAddresses) ? $ccAddresses : null;
-        $emailMessage->bcc = ! empty($bccAddresses) ? $bccAddresses : null;
-        $emailMessage->tags = ! empty($tags) ? $tags : null;
+        $emailMessage->cc = $ccAddresses === [] ? null : $ccAddresses;
+        $emailMessage->bcc = $bccAddresses === [] ? null : $bccAddresses;
+        $emailMessage->tags = $tags === null || $tags === [] ? null : $tags;
         $emailMessage->status = EmailStatus::ATTEMPTED;
         $emailMessage->sent_at = now();
         $emailMessage->save();
@@ -84,7 +84,7 @@ final class LogEmailAttempt
         $headers = $message->getHeaders();
         $correlationHeader = $headers->get('X-Correlation-ID');
 
-        return $correlationHeader ? $correlationHeader->getBodyAsString() : null;
+        return $correlationHeader instanceof \Symfony\Component\Mime\Header\HeaderInterface ? $correlationHeader->getBodyAsString() : null;
     }
 
     /**
@@ -95,7 +95,7 @@ final class LogEmailAttempt
         $headers = $message->getHeaders();
         $messageIdHeader = $headers->get('Message-ID');
 
-        if (! $messageIdHeader) {
+        if (! $messageIdHeader instanceof \Symfony\Component\Mime\Header\HeaderInterface) {
             return null;
         }
 
@@ -117,20 +117,10 @@ final class LogEmailAttempt
             return [];
         }
 
-        return array_map(function (Address $address): array {
-            return [
-                'address' => $address->getAddress(),
-                'name' => $address->getName(),
-            ];
-        }, $addresses);
-    }
-
-    /**
-     * Extract name from an Address.
-     */
-    private function extractName(?Address $address): ?string
-    {
-        return $address?->getName();
+        return array_map(fn (Address $address): array => [
+            'address' => $address->getAddress(),
+            'name' => $address->getName(),
+        ], $addresses);
     }
 
     /**
@@ -143,13 +133,13 @@ final class LogEmailAttempt
         $headers = $message->getHeaders();
         $tagHeader = $headers->get('X-Mailgun-Tag');
 
-        if (! $tagHeader) {
+        if (! $tagHeader instanceof \Symfony\Component\Mime\Header\HeaderInterface) {
             return null;
         }
 
         $tags = $tagHeader->getBodyAsString();
 
         // Tags can be comma-separated
-        return array_map('trim', explode(',', $tags));
+        return array_map(trim(...), explode(',', $tags));
     }
 }

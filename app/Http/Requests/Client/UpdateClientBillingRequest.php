@@ -16,7 +16,7 @@ final class UpdateClientBillingRequest extends FormRequest
     {
         $client = $this->route('client');
 
-        return $client instanceof Client && $this->user()->can('update', $client);
+        return $client instanceof Client && $this->user()?->can('update', $client);
     }
 
     /**
