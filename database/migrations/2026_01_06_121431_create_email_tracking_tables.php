@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function shouldRun(): bool
     {
-        return config('modules.mailgun_analytics.enabled') === true;
+        return (bool) config('modules.mailgun_analytics.enabled');
     }
 
     /**
