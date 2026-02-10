@@ -18,9 +18,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install PHP Extensions
-        run: install-php-extensions gd
-
       - name: Install Node.js and pnpm
         run: |
           curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
@@ -99,10 +96,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Install PHP Extensions
-        run: install-php-extensions gd
-
       - name: Install Node.js and pnpm
         run: |
           curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
@@ -140,6 +133,9 @@ jobs:
     needs: compile-assets
 
     steps:
+      - name: Clean Workspace
+        run: rm -rf artifacts.tar.gz .deployment
+
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
