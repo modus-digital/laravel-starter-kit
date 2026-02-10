@@ -54,18 +54,20 @@ trait ConfiguresScribeDocumentation
      */
     private function replaceAppUrlInGeneratedFiles(array $paths): void
     {
-        $appUrl = config('app.url');
+        $appUrl = (string) config('app.url', '');
 
         // Process each generated file path
         foreach ($paths as $path) {
-            if (file_exists($path)) {
-                if (is_dir($path)) {
-                    // Handle directories (like js, css, images)
-                    $this->processDirectory($path, $appUrl);
-                } else {
-                    // Handle files
-                    $this->processFile($path, $appUrl);
-                }
+            if (! is_string($path) || $path === '' || ! file_exists($path)) {
+                continue;
+            }
+
+            if (is_dir($path)) {
+                // Handle directories (like js, css, images)
+                $this->processDirectory($path, $appUrl);
+            } else {
+                // Handle files
+                $this->processFile($path, $appUrl);
             }
         }
     }
@@ -81,7 +83,11 @@ trait ConfiguresScribeDocumentation
 
         foreach ($iterator as $file) {
             if ($file->isFile()) {
-                $this->processFile($file->getRealPath(), $appUrl);
+                $filePath = $file->getRealPath();
+
+                if (is_string($filePath) && $filePath !== '') {
+                    $this->processFile($filePath, $appUrl);
+                }
             }
         }
     }
