@@ -130,18 +130,3 @@ it('clears all notifications for the user', function (): void {
 
     expect($user->notifications()->count())->toBe(0);
 });
-
-it('allows Filament users to access the notifications page', function (): void {
-    $this->markTestSkipped('Filament panel routes not registered in test environment');
-
-    $user = User::factory()->create();
-    $permission = SpatiePermission::firstOrCreate(
-        ['name' => Permission::AccessControlPanel->value, 'guard_name' => 'web']
-    );
-    $user->givePermissionTo($permission);
-
-    $this->actingAs($user);
-
-    $this->get(route('filament.control.pages.dashboard'))
-        ->assertOk();
-});

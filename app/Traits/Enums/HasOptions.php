@@ -6,7 +6,6 @@ namespace App\Traits\Enums;
 
 /**
  * This trait provides an options() method for enums.
- * It requires the enum to implement Filament's HasLabel interface.
  */
 trait HasOptions
 {

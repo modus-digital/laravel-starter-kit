@@ -9,7 +9,6 @@
 - React
 - Tailwind
 - ShadCn
-- Filament 4.x (Admin Panel)
 
 ### Testing + Code tools
 
