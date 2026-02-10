@@ -72,7 +72,7 @@ jobs:
         run: php artisan config:clear --ansi
 
       - name: Run Tests
-        run: php artisan test --compact
+        run: php -d memory_limit=512M artisan test --compact
 
   # This job checks that both lint and tests passed
   compile-assets:
