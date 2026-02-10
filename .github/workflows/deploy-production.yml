@@ -12,6 +12,7 @@ jobs:
     runs-on: self-hosted
     container:
       image: serversideup/php:8.4-cli
+      options: --user 1000:1000
 
     steps:
       - name: Checkout
@@ -45,6 +46,7 @@ jobs:
     runs-on: self-hosted
     container:
       image: serversideup/php:8.4-cli
+      options: --user 1000:1000
 
     steps:
       - name: Checkout
@@ -88,6 +90,7 @@ jobs:
     runs-on: self-hosted
     container:
       image: serversideup/php:8.4-cli
+      options: --user 1000:1000
 
     needs: [code-quality, tests]
 
