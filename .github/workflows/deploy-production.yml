@@ -11,8 +11,7 @@ jobs:
   code-quality:
     runs-on: self-hosted
     container:
-      image: serversideup/php:8.4-cli
-      options: --user 1000:1000
+      image: lorisleiva/laravel-docker:8.4
 
     steps:
       - name: Checkout
@@ -45,8 +44,7 @@ jobs:
   tests:
     runs-on: self-hosted
     container:
-      image: serversideup/php:8.4-cli
-      options: --user 1000:1000
+      image: lorisleiva/laravel-docker:8.4
 
     steps:
       - name: Checkout
@@ -89,8 +87,7 @@ jobs:
   compile-assets:
     runs-on: self-hosted
     container:
-      image: serversideup/php:8.4-cli
-      options: --user 1000:1000
+      image: lorisleiva/laravel-docker:8.4
 
     needs: [code-quality, tests]
 
