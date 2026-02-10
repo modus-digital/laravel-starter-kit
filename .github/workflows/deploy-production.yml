@@ -18,6 +18,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install PHP Extensions
+        run: install-php-extensions gd
+
       - name: Install Node.js and pnpm
         run: |
           curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
@@ -51,6 +54,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Install PHP Extensions
+        run: install-php-extensions gd
 
       - name: Install Node.js and pnpm
         run: |
@@ -93,6 +99,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Install PHP Extensions
+        run: install-php-extensions gd
 
       - name: Install Node.js and pnpm
         run: |
