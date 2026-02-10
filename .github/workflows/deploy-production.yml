@@ -147,7 +147,7 @@ jobs:
 
       - name: Extract Deployment Scripts
         run: |
-          tar -xf artifacts.tar.gz .deployment/prepare.sh
+          tar --overwrite -xf artifacts.tar.gz .deployment/prepare.sh
 
       - name: Setup SSH
         run: |
