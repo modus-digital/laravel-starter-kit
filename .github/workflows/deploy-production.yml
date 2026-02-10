@@ -118,6 +118,8 @@ jobs:
   deploy:
     runs-on: self-hosted
     needs: compile-assets
+    container:
+      image: atlassian/default-image:5
 
     steps:
       - name: Download Artifacts
