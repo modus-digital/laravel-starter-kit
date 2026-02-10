@@ -134,8 +134,10 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.DEPLOY_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          key_path="$RUNNER_TEMP/deploy_id_ed25519"
+          printf '%s\n' "${{ secrets.DEPLOY_PRIVATE_KEY }}" | tr -d '\r' > "$key_path"
+          chmod 600 "$key_path"
+          echo "DEPLOY_SSH_KEY_PATH=$key_path" >> "$GITHUB_ENV"
           ssh-keyscan -H "${{ secrets.DEPLOY_SSH_HOST }}" >> ~/.ssh/known_hosts
 
       - name: Deploy to Production
@@ -145,5 +147,6 @@ jobs:
           ssh_host: ${{ secrets.DEPLOY_SSH_HOST }}
           ssh_port: ${{ secrets.DEPLOY_SSH_PORT }}
           php_executable: ${{ secrets.DEPLOY_PHP_EXECUTABLE }}
+          DEPLOY_SSH_KEY_PATH: ${{ env.DEPLOY_SSH_KEY_PATH }}
         run: |
           bash .deployment/prepare.sh "$base_directory" "$ssh_user" "$ssh_host" "$ssh_port" "$php_executable"
