@@ -1,5 +1,8 @@
 php_executable=$1
 
+# Running migrations
+"$php_executable" artisan migrate --force
+
 # Clearing old caches
 "$php_executable" artisan optimize:clear
 
@@ -12,8 +15,6 @@ php_executable=$1
 "$php_executable" artisan route:cache
 "$php_executable" artisan view:cache
 
-# Running migrations
-"$php_executable" artisan migrate --force
 
 # Generating api documentation
 "$php_executable" artisan scribe:generate
