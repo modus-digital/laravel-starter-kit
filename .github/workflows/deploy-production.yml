@@ -133,9 +133,6 @@ jobs:
     needs: compile-assets
 
     steps:
-      - name: Clean Workspace
-        run: rm -rf artifacts.tar.gz .deployment
-
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
