@@ -116,7 +116,7 @@ jobs:
               --exclude="public/storage" \
               --exclude="storage" \
               --exclude="tests" \
-              --file artifacts.tar.gz * .deployment
+              --file artifacts.tar.gz * .github/deployment
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -137,7 +137,7 @@ jobs:
 
       - name: Extract Deployment Scripts
         run: |
-          tar -xf artifacts.tar.gz .deployment/prepare.sh
+          tar -xf artifacts.tar.gz .github/deployment/prepare.sh
 
       - name: Setup SSH
         run: |
@@ -154,4 +154,4 @@ jobs:
           ssh_port: ${{ secrets.DEPLOY_SSH_PORT }}
           php_executable: ${{ secrets.DEPLOY_PHP_EXECUTABLE }}
         run: |
-          bash .deployment/prepare.sh "$base_directory" "$ssh_user" "$ssh_host" "$ssh_port" "$php_executable"
+          bash .github/deployment/prepare.sh "$base_directory" "$ssh_user" "$ssh_host" "$ssh_port" "$php_executable"

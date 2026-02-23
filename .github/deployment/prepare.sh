@@ -62,4 +62,4 @@ scp "${SSH_OPTIONS[@]}" -P "$ssh_port" "artifacts.tar.gz" "$ssh_user@$ssh_host:$
 
 echo "Running the deployment script on the remote server."
 
-ssh "${SSH_OPTIONS[@]}" -p "$ssh_port" "$ssh_user@$ssh_host" "tar -xf $remote_artifacts_path .deployment/deploy.sh -O | bash -seo pipefail -- \"$remote_artifacts_path\" \"$base_directory\" \"$php_executable\""
+ssh "${SSH_OPTIONS[@]}" -p "$ssh_port" "$ssh_user@$ssh_host" "tar -xf $remote_artifacts_path .github/deployment/deploy.sh -O | bash -seo pipefail -- \"$remote_artifacts_path\" \"$base_directory\" \"$php_executable\""
