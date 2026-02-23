@@ -24,7 +24,7 @@ on:
 
 jobs:
   ci:
-    runs-on: self-hosted
+    runs-on: 'ubuntu-24.04' # Switch to self-hosted on private repositories
     container:
       image: serversideup/php:8.4-cli
       options: --user root

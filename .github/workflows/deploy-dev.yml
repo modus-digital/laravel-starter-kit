@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: self-hosted
+    runs-on: 'ubuntu-24.04' # Switch to self-hosted on private repositories
     container:
       image: serversideup/php:8.4-cli
       options: --user root
@@ -51,7 +51,7 @@ jobs:
           retention-days: 1
 
   deploy:
-    runs-on: self-hosted
+    runs-on: 'ubuntu-24.04' # Switch to self-hosted on private repositories
     needs: build
 
     steps:

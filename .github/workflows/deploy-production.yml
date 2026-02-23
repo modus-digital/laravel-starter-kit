@@ -9,7 +9,7 @@ on:
 
 jobs:
   code-quality:
-    runs-on: self-hosted
+    runs-on: 'ubuntu-24.04' # Switch to self-hosted on private repositories
     container:
       image: lorisleiva/laravel-docker:8.4
 
@@ -39,7 +39,7 @@ jobs:
         run: pnpm run lint
 
   tests:
-    runs-on: self-hosted
+    runs-on: 'ubuntu-24.04' # Switch to self-hosted on private repositories
     container:
       image: lorisleiva/laravel-docker:8.4
 
@@ -76,7 +76,7 @@ jobs:
 
   # This job checks that both lint and tests passed
   compile-assets:
-    runs-on: self-hosted
+    runs-on: 'ubuntu-24.04' # Switch to self-hosted on private repositories
     container:
       image: lorisleiva/laravel-docker:8.4
 
@@ -116,7 +116,7 @@ jobs:
           retention-days: 1
 
   deploy:
-    runs-on: self-hosted
+    runs-on: 'ubuntu-24.04' # Switch to self-hosted on private repositories
     needs: compile-assets
     container:
       image: atlassian/default-image:5
